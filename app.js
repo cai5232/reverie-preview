@@ -230,8 +230,50 @@ function msgAction(action){
   if(!row)return
   const text=row.dataset.text||''
   if(action==='quote')setQuote(text)
-  else if(action==='delete')row.remove()
   else if(action==='copy')navigator.clipboard&&navigator.clipboard.writeText(text)
+  else if(action==='edit')editMsg(row)
+  else if(action==='delete')deleteMsg(row)
+}
+
+function editMsg(row){
+  const bubble=row.querySelector('.bubble')
+  if(!bubble)return
+  const old=row.dataset.text||''
+  const ta=document.createElement('textarea')
+  ta.value=old
+  ta.style.cssText='width:100%;background:transparent;color:#fff;border:none;outline:none;font-family:inherit;font-size:14px;line-height:1.5;resize:none;min-height:40px'
+  ta.rows=Math.max(2,old.split('\n').length)
+  bubble.innerHTML=''
+  bubble.appendChild(ta)
+  ta.focus()
+  ta.addEventListener('blur',()=>{
+    const newText=ta.value.trim()||old
+    bubble.textContent=newText
+    row.dataset.text=newText
+    // 同步到chatHistory，只保留编辑后版本
+    const side=row.classList.contains('me')?'user':'assistant'
+    for(let i=chatHistory.length-1;i>=0;i--){
+      if(chatHistory[i].role===side&&chatHistory[i].content===old){
+        chatHistory[i].content=newText
+        break
+      }
+    }
+    localStorage.setItem('chat_history',JSON.stringify(chatHistory))
+  })
+}
+
+function deleteMsg(row){
+  const text=row.dataset.text||''
+  const side=row.classList.contains('me')?'user':'assistant'
+  // 从chatHistory永久删除
+  for(let i=chatHistory.length-1;i>=0;i--){
+    if(chatHistory[i].role===side&&chatHistory[i].content===text){
+      chatHistory.splice(i,1)
+      break
+    }
+  }
+  localStorage.setItem('chat_history',JSON.stringify(chatHistory))
+  row.remove()
 }
 
 function setQuote(text){
