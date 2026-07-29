@@ -151,23 +151,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('chatInput').addEventListener('keydown',function(e){
     if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();handleSendBtn()}
   })
-  // iOS键盘弹起：用visualViewport锁定chat页高度，header不动
-  if(window.visualViewport){
-    const inputBar=document.querySelector('.input-bar')
-    const onVP=()=>{
-      const vp=window.visualViewport
-      // iOS 键盘弹起时 vp.height 缩小，window.innerHeight 不变
-      // 把 input-bar 的 bottom 设为键盘高度，就顶到键盘上方了
-      const kbHeight=window.innerHeight-vp.height-vp.offsetTop
-      inputBar.style.bottom=Math.max(0,kbHeight)+'px'
-      // 滚到底
-      const box=document.getElementById('messages')
-      box.scrollTop=box.scrollHeight
-    }
-    window.visualViewport.addEventListener('resize',onVP)
-    window.visualViewport.addEventListener('scroll',onVP)
-    onVP()
-  }
+  // body 已用 position:fixed + inset:0 锁定，iOS 键盘弹起不会推动布局，无需 JS 干预
   document.getElementById('searchInput').addEventListener('input',function(){
     doSearch(this.value)
   })
