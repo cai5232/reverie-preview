@@ -340,9 +340,12 @@ async function callAI(){
   if(isGenerating)return
   isGenerating=true
 
+  // 只传 system + 当前用户消息，历史上下文由 xiaoke timeline 统一注入
+  // 这样 Kelivo 和 reverie 两边的历史都在 xiaoke 的 timeline 里，自然互通
+  const currentUserMsg=chatHistory[chatHistory.length-1]
   const messages=[
     {role:'system',content:SYSTEM_PROMPT},
-    ...chatHistory.slice(-20).map(m=>({role:m.role,content:m.content}))
+    ...(currentUserMsg&&currentUserMsg.role==='user'?[{role:currentUserMsg.role,content:currentUserMsg.content}]:[])
   ]
 
   const placeholderRow=appendMsg('them','',null,null,null)
