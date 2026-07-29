@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   })
   document.addEventListener('click',function(e){
     const pp=document.getElementById('plusPopup')
-    if(pp.classList.contains('open')&&!pp.contains(e.target)&&!e.target.classList.contains('input-plus'))closePlus()
+    if(pp.classList.contains('open')&&!pp.contains(e.target)&&!e.target.closest('.input-plus-btn'))closePlus()
   })
   renderChat()
   applyKeepalive()
