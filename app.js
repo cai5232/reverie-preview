@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     if(!vv)return
     const chatPage=document.getElementById('page-chat')
     chatPage.style.height=vv.height+'px'
-    chatPage.style.top=vv.offsetTop+'px'
+    chatPage.style.top='0px'
     const box=document.getElementById('messages')
     box.scrollTop=box.scrollHeight
   }
