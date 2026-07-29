@@ -663,6 +663,8 @@ function initMemory(){
   if(url)document.getElementById('memUrl').value=url
   if(key)document.getElementById('memKey').value=key
 }
+
+function changeAvatar(e){
   const file=e.target.files[0]
   if(!file)return
   const reader=new FileReader()
