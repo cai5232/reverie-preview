@@ -31,9 +31,13 @@ body{background:#000;color:#fff;font-family:-apple-system,'PingFang SC',sans-ser
 .msg-row{display:flex;flex-direction:column;margin-bottom:6px}
 .msg-row.me{align-items:flex-end}
 .msg-row.them{align-items:flex-start}
-.bubble{max-width:72%;padding:7px 12px;border-radius:18px;font-size:14px;line-height:1.5;word-break:break-word}
+.bubble{max-width:72%;padding:8px 14px;border-radius:20px;font-size:15px;line-height:1.5;word-break:break-word;position:relative}
 .msg-row.me .bubble{background:#1d6fe5;color:#fff;border-bottom-right-radius:4px}
 .msg-row.them .bubble{background:#1c1c1e;color:#fff;border-bottom-left-radius:4px}
+/* 右侧小尾巴 */
+.msg-row.me .bubble::after{content:'';position:absolute;bottom:0;right:-6px;width:12px;height:14px;background:#1d6fe5;clip-path:polygon(0 0,100% 100%,0 100%);border-radius:0 0 3px 0}
+/* 左侧小尾巴 */
+.msg-row.them .bubble::after{content:'';position:absolute;bottom:0;left:-6px;width:12px;height:14px;background:#1c1c1e;clip-path:polygon(100% 0,0 100%,100% 100%);border-radius:0 0 0 3px}
 .read-label{font-size:10px;color:#555;margin-top:2px;padding-right:2px}
 .msg-row.them .read-label{padding-left:2px}
 .action-text{font-size:11.5px;color:#555;font-style:italic;margin-top:4px;padding-left:4px;letter-spacing:.2px}
