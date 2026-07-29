@@ -92,15 +92,18 @@
   </div>
   <div class="messages" id="messages"></div>
   <div class="input-bar">
-    <div class="input-plus" onclick="togglePlus()">+</div>
+    <div class="input-img-btn" onclick="document.getElementById('imgInput').click()">
+      <svg width="17" height="17" viewBox="0 0 17 17" fill="none"><rect x="1" y="1" width="15" height="15" rx="3" stroke="#aaa" stroke-width="1.4"/><circle cx="5.5" cy="5.5" r="1.5" fill="#aaa"/><path d="M1 11l4-4 3 3 2-2 5 5" stroke="#aaa" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
     <div class="input-wrap">
       <div class="quote-preview" id="quotePreview">
         <span id="quoteText"></span>
         <span class="quote-preview-close" onclick="clearQuote()">×</span>
       </div>
-      <textarea class="input-field" id="chatInput" placeholder="发消息" rows="1"></textarea>
+      <textarea class="input-field" id="chatInput" placeholder="iMessage信息" rows="1"></textarea>
     </div>
-    <button class="input-btn" onclick="sendMsg()"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M13.5 7.5L1 1l2 6.5L1 14l12.5-6.5z" fill="#fff"/></svg></button>
+    <div class="input-emoji-btn" onclick="toggleEmojiPanel()">☺</div>
+    <button class="input-btn" id="sendBtn" onclick="handleSendBtn()"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 13V2M2 7l5.5-5.5L13 7" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   </div>
 </div>
 
