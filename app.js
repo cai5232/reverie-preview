@@ -385,7 +385,9 @@ async function callAI(){
       }
     }
     cursor.remove()
-    const segments=full.split(/\n\n/).map(s=>s.trim()).filter(Boolean)
+    const rawSegs=full.split(/\n\n/).map(s=>s.trim()).filter(Boolean)
+    // 少于3段时把最后一段再拆，保证至少3条
+    const segments=rawSegs.length>=3?rawSegs:full.split(/\n/).map(s=>s.trim()).filter(Boolean)
     placeholderRow.remove()
     let thinkInserted=false
     let firstRow=null
