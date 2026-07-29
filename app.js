@@ -602,7 +602,66 @@ function showToast(msg){
   t._t=setTimeout(()=>t.style.opacity='0',1800)
 }
 
-function changeAvatar(e){
+// Memory 页
+let memCurrentTab='记忆'
+function memTab(el,name){
+  document.querySelectorAll('.mem-tab').forEach(t=>t.classList.remove('active'))
+  el.classList.add('active')
+  memCurrentTab=name
+  renderMemList()
+}
+
+let memCache={记忆:[],承诺:[],印象:[]}
+
+async function fetchMemory(){
+  const url=document.getElementById('memUrl').value.trim()
+  const key=document.getElementById('memKey').value.trim()
+  if(!url)return
+  localStorage.setItem('mem_url',url)
+  localStorage.setItem('mem_key',key)
+  const btn=document.querySelector('.mem-fetch-btn')
+  btn.textContent='连接中…'
+  try{
+    // 拉 breath（高权重记忆）
+    const res=await fetch(url+'/breath',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+      body:JSON.stringify({})
+    })
+    if(!res.ok)throw new Error('HTTP '+res.status)
+    const j=await res.json()
+    const buckets=j.buckets||j.memories||j.results||[]
+    memCache['记忆']=buckets.filter(b=>!b.tags?.includes('plan')&&!b.feel)
+    memCache['承诺']=buckets.filter(b=>b.tags?.includes('plan')||b.domain==='plan')
+    memCache['印象']=buckets.filter(b=>b.feel||b.tags?.includes('feel'))
+    renderMemList()
+    btn.textContent='已同步 ✓'
+  }catch(e){
+    btn.textContent='失败'
+    document.getElementById('memList').innerHTML=`<div class="mem-empty">连接失败：${e.message}</div>`
+  }
+  setTimeout(()=>btn.textContent='连接',2000)
+}
+
+function renderMemList(){
+  const list=document.getElementById('memList')
+  const data=memCache[memCurrentTab]||[]
+  if(!data.length){list.innerHTML='<div class="mem-empty">暂无内容，先点连接同步</div>';return}
+  list.innerHTML=data.map(b=>{
+    const name=b.name||b.bucket_id||''
+    const content=b.content||''
+    const date=b.created_at?(new Date(b.created_at)).toLocaleDateString('zh-CN'):''
+    return`<div class="mem-card"><div class="mem-card-name">${name}</div><div class="mem-card-content">${escHtml(content)}</div>${date?`<div class="mem-card-meta">${date}</div>`:''}</div>`
+  }).join('')
+}
+
+// 初始化时恢复上次的jiwen地址
+function initMemory(){
+  const url=localStorage.getItem('mem_url')||''
+  const key=localStorage.getItem('mem_key')||''
+  if(url)document.getElementById('memUrl').value=url
+  if(key)document.getElementById('memKey').value=key
+}
   const file=e.target.files[0]
   if(!file)return
   const reader=new FileReader()
