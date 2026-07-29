@@ -20,6 +20,34 @@ let chatHistory=JSON.parse(localStorage.getItem('chat_history')||'[]')
 let quoteMsg=null
 let cur='chat'
 let keepaliveTimer=null
+let lastAssistantRow=null  // 上一条AI回复，用于重新生成
+let isGenerating=false
+
+// 发送按钮：空输入框时重新生成，有内容时发送
+function handleSendBtn(){
+  const ta=document.getElementById('chatInput')
+  if(ta.value.trim()){
+    sendMsg()
+  }else if(lastAssistantRow&&!isGenerating){
+    regenLast()
+  }
+}
+
+async function regenLast(){
+  if(!lastAssistantRow||isGenerating)return
+  lastAssistantRow.remove()
+  // 从历史中去掉最后一条assistant
+  for(let i=chatHistory.length-1;i>=0;i--){
+    if(chatHistory[i].role==='assistant'){chatHistory.splice(i,1);break}
+  }
+  localStorage.setItem('chat_history',JSON.stringify(chatHistory))
+  await callAI()
+}
+
+function toggleEmojiPanel(){
+  // 简单：聚焦输入框并弹系统键盘，后续可扩展颜文字面板
+  document.getElementById('chatInput').focus()
+}
 
 // 页面导航
 function navTo(name){
