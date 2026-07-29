@@ -93,8 +93,8 @@
   </div>
   <div class="messages" id="messages"></div>
   <div class="input-bar">
-    <div class="input-img-btn" onclick="document.getElementById('imgInput').click()">
-      <svg width="17" height="17" viewBox="0 0 17 17" fill="none"><rect x="1" y="1" width="15" height="15" rx="3" stroke="#aaa" stroke-width="1.4"/><circle cx="5.5" cy="5.5" r="1.5" fill="#aaa"/><path d="M1 11l4-4 3 3 2-2 5 5" stroke="#aaa" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div class="input-plus-btn" onclick="togglePlus()">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="#aaa" stroke-width="2" stroke-linecap="round"/></svg>
     </div>
     <div class="input-wrap">
       <div class="quote-preview" id="quotePreview">
@@ -103,10 +103,15 @@
       </div>
       <textarea class="input-field" id="chatInput" placeholder="iMessage信息" rows="1"></textarea>
     </div>
-    <div class="input-emoji-btn" onclick="toggleEmojiPanel()">
-      <svg width="17" height="17" viewBox="0 0 17 17" fill="none"><circle cx="8.5" cy="8.5" r="7" stroke="#aaa" stroke-width="1.4"/><circle cx="6" cy="7" r="1" fill="#aaa"/><circle cx="11" cy="7" r="1" fill="#aaa"/><path d="M5.5 10.5c.8 1.2 5.2 1.2 6 0" stroke="#aaa" stroke-width="1.3" stroke-linecap="round"/></svg>
-    </div>
     <button class="input-btn" id="sendBtn" onclick="handleSendBtn()"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 13V2M2 7l5.5-5.5L13 7" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </div>
+
+  <!-- plus弹出菜单 -->
+  <div class="plus-popup-dark" id="plusPopup">
+    <div class="plus-item-dark" onclick="triggerImg()">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="1" y="1" width="16" height="16" rx="3" stroke="#aaa" stroke-width="1.4"/><circle cx="6" cy="6" r="1.8" fill="#aaa"/><path d="M1 12l4-4 3 3 2-2 6 5" stroke="#aaa" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      照片
+    </div>
   </div>
 </div>
 
