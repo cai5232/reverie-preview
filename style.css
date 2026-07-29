@@ -1,6 +1,6 @@
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#000;color:#fff;font-family:-apple-system,'PingFang SC',sans-serif;height:100dvh;display:flex;flex-direction:column;max-width:430px;margin:0 auto}
-html{background:#000;height:100%}
+html,body{height:100%;background:#000}
+body{color:#fff;font-family:-apple-system,'PingFang SC',sans-serif;display:flex;flex-direction:column;max-width:430px;margin:0 auto}
 @media all and (display-mode:standalone){
   textarea,input{-webkit-user-select:text!important;user-select:text!important;pointer-events:auto!important}
 }
