@@ -49,10 +49,10 @@ async function regenLast(){
 }
 
 function togglePlus(){
-  document.getElementById('plusPopup').classList.toggle('open')
+  document.getElementById('plusPopupDark').classList.toggle('open')
 }
 function closePlus(){
-  document.getElementById('plusPopup').classList.remove('open')
+  document.getElementById('plusPopupDark').classList.remove('open')
 }
 function triggerImg(){
   closePlus()
