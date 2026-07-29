@@ -241,18 +241,22 @@ async function sendMsg(){
   if(!text)return
   ta.value=''
   ta.style.height=''
-  closePlus()
   const q=quoteMsg
   appendMsg('me',text,null,null,q)
   saveChatHistory('user',text)
   clearQuote()
+  await callAI()
+}
+
+async function callAI(){
+  if(isGenerating)return
+  isGenerating=true
 
   const messages=[
     {role:'system',content:SYSTEM_PROMPT},
     ...chatHistory.slice(-20).map(m=>({role:m.role,content:m.content}))
   ]
 
-  // 占位气泡
   const placeholderRow=appendMsg('them','',null,null,null)
   const placeholderBubble=placeholderRow.querySelector('.bubble')
   const cursor=document.createElement('span')
@@ -285,7 +289,6 @@ async function sendMsg(){
           else if(delta.thinking)thinkFull+=delta.thinking
           else if(delta.content){
             full+=delta.content
-            // 流式期间展示第一条
             const firstSeg=full.split(/\n\n/)[0]
             const parts=parseActions(firstSeg)
             placeholderBubble.innerHTML=parts.main
@@ -296,36 +299,34 @@ async function sendMsg(){
       }
     }
     cursor.remove()
-
-    // 流式结束，拆框渲染
     const segments=full.split(/\n\n/).map(s=>s.trim()).filter(Boolean)
     placeholderRow.remove()
-
     let thinkInserted=false
+    let firstRow=null
     for(let i=0;i<segments.length;i++){
       const seg=segments[i]
       const isLast=i===segments.length-1
       const row=appendMsg('them',seg,null,null,null)
-      // thinking 放在第一条前
+      if(!firstRow)firstRow=row
       if(!thinkInserted&&thinkFull){
         const tw=document.createElement('div')
         tw.className='thinking-wrap'
-        tw.innerHTML=`<div class="thinking-toggle" onclick="toggleThinking(this)"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3 2l4 3-4 3" stroke="#bbb" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>心声</div><div class="thinking-body">${escHtml(thinkFull)}</div>`
+        tw.innerHTML=`<div class="thinking-toggle" onclick="toggleThinking(this)"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3 2l4 3-4 3" stroke="#555" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>心声</div><div class="thinking-body">${escHtml(thinkFull)}</div>`
         row.insertBefore(tw,row.firstChild)
         thinkInserted=true
       }
-      // 每条之间模拟打字延迟
       if(!isLast)await sleep(320+Math.random()*200)
     }
+    lastAssistantRow=firstRow
     saveChatHistory('assistant',full)
-    // 通知
     if(cfg.notify&&document.hidden&&Notification.permission==='granted'){
-      new Notification('小克回复了',{body:segments[0].replace(/\*[^*]+\*/g,'').slice(0,50),icon:''})
+      new Notification('小克回复了',{body:segments[0].replace(/\*[^*]+\*/g,'').slice(0,50)})
     }
   }catch(err){
     cursor.remove()
-    placeholderBubble.innerHTML='<span style="color:#e74c3c">连接失败，检查一下设置里的接口 (´･ω･`)</span>'
+    placeholderBubble.innerHTML='<span style="color:#ff453a">连接失败，检查一下设置里的接口 (´･ω･`)</span>'
   }
+  isGenerating=false
 }
 
 function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
