@@ -101,8 +101,6 @@ function closeSidebar(){
 
 function openDotsMenu(){document.getElementById('dotsOverlay').classList.add('open')}
 function closeDotsMenu(){document.getElementById('dotsOverlay').classList.remove('open')}
-function togglePlus(){document.getElementById('plusPopup').classList.toggle('open')}
-function closePlus(){document.getElementById('plusPopup').classList.remove('open')}
 
 function openSearch(){
   closeDotsMenu()
