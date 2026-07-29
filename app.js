@@ -170,6 +170,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   })
   renderChat()
   applyKeepalive()
+  initMemory()
 })
 
 function renderChat(){
