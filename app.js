@@ -139,6 +139,11 @@ document.addEventListener('DOMContentLoaded',()=>{
     }
     reader.readAsDataURL(file)
   })
+  // iOS PWA 模式下 textarea 需要在 touchend 里显式 focus 才能弹键盘
+  document.getElementById('chatInput').addEventListener('touchend',function(e){
+    e.preventDefault()
+    this.focus()
+  },{passive:false})
   document.getElementById('chatInput').addEventListener('input',function(){
     this.style.height='auto'
     this.style.height=this.scrollHeight+'px'
