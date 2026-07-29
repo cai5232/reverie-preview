@@ -186,7 +186,16 @@ function appendMsg(side,text,thinking,imgSrc,quoteText,noScroll){
     const parts=parseActions(text||'')
     const bubble=document.createElement('div')
     bubble.className='bubble'
-    bubble.innerHTML=parts.main
+    // 引用嵌在气泡内部
+    if(quoteText){
+      const qi=document.createElement('div')
+      qi.className='bubble-quote'
+      qi.innerHTML=`<div class="bubble-quote-name">${side==='me'?'言言':'小克'}</div><div class="bubble-quote-text">${escHtml(quoteText.slice(0,60)+(quoteText.length>60?'…':''))}</div>`
+      bubble.appendChild(qi)
+    }
+    const textNode=document.createElement('div')
+    textNode.innerHTML=parts.main
+    bubble.appendChild(textNode)
     row.appendChild(bubble)
     if(parts.action&&side==='them'){
       const at=document.createElement('div')
