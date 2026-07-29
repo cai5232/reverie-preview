@@ -153,10 +153,14 @@ document.addEventListener('DOMContentLoaded',()=>{
   })
   // iOS键盘弹起：用visualViewport锁定chat页高度，header不动
   if(window.visualViewport){
+    const inputBar=document.querySelector('.input-bar')
     const onVP=()=>{
       const vp=window.visualViewport
-      document.body.style.top=vp.offsetTop+'px'
-      document.body.style.height=vp.height+'px'
+      // iOS 键盘弹起时 vp.height 缩小，window.innerHeight 不变
+      // 把 input-bar 的 bottom 设为键盘高度，就顶到键盘上方了
+      const kbHeight=window.innerHeight-vp.height-vp.offsetTop
+      inputBar.style.bottom=Math.max(0,kbHeight)+'px'
+      // 滚到底
       const box=document.getElementById('messages')
       box.scrollTop=box.scrollHeight
     }
