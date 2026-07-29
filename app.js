@@ -190,6 +190,7 @@ function parseActions(text){
 
 function appendMsg(side,text,thinking,imgSrc,quoteText,noScroll){
   const box=document.getElementById('messages')
+  if(!noScroll)maybeInsertTimeLabel(box)
   const row=document.createElement('div')
   row.className='msg-row '+side
   row.dataset.text=text||''
