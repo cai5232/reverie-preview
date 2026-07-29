@@ -110,11 +110,18 @@ document.addEventListener('DOMContentLoaded',()=>{
   })
   document.getElementById('chatInput').addEventListener('input',function(){
     this.style.height='auto'
-    this.style.height=Math.min(this.scrollHeight,120)+'px'
+    this.style.height=this.scrollHeight+'px'
   })
   document.getElementById('chatInput').addEventListener('keydown',function(e){
-    if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg()}
+    if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();handleSendBtn()}
   })
+  // 键盘弹起时滚到底，header固定不动
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize',()=>{
+      const box=document.getElementById('messages')
+      box.scrollTop=box.scrollHeight
+    })
+  }
   document.getElementById('searchInput').addEventListener('input',function(){
     doSearch(this.value)
   })
