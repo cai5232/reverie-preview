@@ -164,13 +164,6 @@ function appendMsg(side,text,thinking,imgSrc,quoteText,noScroll){
   const row=document.createElement('div')
   row.className='msg-row '+side
   row.dataset.text=text||''
-
-  if(quoteText){
-    const qb=document.createElement('div')
-    qb.className='quote-bar'
-    qb.textContent='↩ '+(quoteText.length>40?quoteText.slice(0,40)+'…':quoteText)
-    row.appendChild(qb)
-  }
   if(thinking){
     const tw=document.createElement('div')
     tw.className='thinking-wrap'
