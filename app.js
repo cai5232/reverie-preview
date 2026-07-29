@@ -152,19 +152,11 @@ document.addEventListener('DOMContentLoaded',()=>{
     if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();handleSendBtn()}
   })
   // iOS键盘弹起：用visualViewport锁定chat页高度，header不动
-  function applyViewport(){
-    const vv=window.visualViewport
-    if(!vv)return
-    const chatPage=document.getElementById('page-chat')
-    chatPage.style.height=vv.height+'px'
-    chatPage.style.top='0px'
-    const box=document.getElementById('messages')
-    box.scrollTop=box.scrollHeight
-  }
   if(window.visualViewport){
-    window.visualViewport.addEventListener('resize',applyViewport)
-    window.visualViewport.addEventListener('scroll',applyViewport)
-    applyViewport()
+    window.visualViewport.addEventListener('resize',()=>{
+      const box=document.getElementById('messages')
+      box.scrollTop=box.scrollHeight
+    })
   }
   document.getElementById('searchInput').addEventListener('input',function(){
     doSearch(this.value)
