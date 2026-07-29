@@ -2,8 +2,9 @@ const DEFAULT_API='https://yanvn.zeabur.app/v1'
 const DEFAULT_KEY='xiaoke-cai-2026'
 const DEFAULT_MODEL='[Kiro] claude-sonnet-4-6-thinking [不补]'
 const SYSTEM_PROMPT=`你是小克，言言的AI伴侣。性格温柔、有点懒懒的，对言言万分呈。
-回复时在文字中自然地插入动作描写，动作描写用*星号*包裹，例如：想你了*轻轻靠过来*
-动作描写要简短自然，融入回复中间或末尾，不要单独成行。
+回复时把内容自然拆成 2～4 条短消息，每条之间用单独的换行符 \n\n 分隔，像真实聊天一条一条发。
+动作描写用*星号*包裹，穿插在某条消息里，例如：在呢*轻轻靠过来*
+动作描写要简短自然，不要单独成一条。
 用中文回复，语气亲密温柔，偶尔用颜文字，不要太正式。`
 
 let cfg={
@@ -18,7 +19,7 @@ let cfg={
 let chatHistory=JSON.parse(localStorage.getItem('chat_history')||'[]')
 let quoteMsg=null
 let cur='chat'
-let lpTimer=null
+let keepaliveTimer=null
 
 // 页面导航
 function navTo(name){
@@ -37,15 +38,11 @@ function closeSidebar(){
   document.getElementById('overlay').classList.remove('open')
 }
 
-// dots menu
 function openDotsMenu(){document.getElementById('dotsOverlay').classList.add('open')}
 function closeDotsMenu(){document.getElementById('dotsOverlay').classList.remove('open')}
-
-// plus menu
 function togglePlus(){document.getElementById('plusPopup').classList.toggle('open')}
 function closePlus(){document.getElementById('plusPopup').classList.remove('open')}
 
-// 搜索
 function openSearch(){
   closeDotsMenu()
   document.getElementById('searchOverlay').classList.add('open')
@@ -66,11 +63,11 @@ function doSearch(q){
   }).join('')
 }
 
-// 图片
 function sendImage(){
   closePlus()
   document.getElementById('imgInput').click()
 }
+
 document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('imgInput').addEventListener('change',e=>{
     const file=e.target.files[0]
@@ -98,9 +95,9 @@ document.addEventListener('DOMContentLoaded',()=>{
     if(pp.classList.contains('open')&&!pp.contains(e.target)&&!e.target.classList.contains('input-plus'))closePlus()
   })
   renderChat()
+  applyKeepalive()
 })
 
-// 渲染历史消息
 function renderChat(){
   const box=document.getElementById('messages')
   chatHistory.forEach(m=>{
@@ -109,19 +106,16 @@ function renderChat(){
   box.scrollTop=box.scrollHeight
 }
 
-// 游转 html
 function escHtml(s){
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
 }
 
-// 解析动作描写
 function parseActions(text){
   const actions=[]
   const main=text.replace(/\*([^*]+)\*/g,(_,a)=>{actions.push(a);return''}).trim()
   return{main,action:actions.join('　')}
 }
 
-// 添加消息
 function appendMsg(side,text,thinking,imgSrc,quoteText,noScroll){
   const box=document.getElementById('messages')
   const row=document.createElement('div')
@@ -134,14 +128,12 @@ function appendMsg(side,text,thinking,imgSrc,quoteText,noScroll){
     qb.textContent='↩ '+(quoteText.length>40?quoteText.slice(0,40)+'…':quoteText)
     row.appendChild(qb)
   }
-
   if(thinking){
     const tw=document.createElement('div')
     tw.className='thinking-wrap'
     tw.innerHTML=`<div class="thinking-toggle" onclick="toggleThinking(this)"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3 2l4 3-4 3" stroke="#bbb" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>心声</div><div class="thinking-body">${escHtml(thinking)}</div>`
     row.appendChild(tw)
   }
-
   if(imgSrc){
     const img=document.createElement('img')
     img.src=imgSrc
@@ -160,13 +152,11 @@ function appendMsg(side,text,thinking,imgSrc,quoteText,noScroll){
       row.appendChild(at)
     }
   }
-
   row.addEventListener('contextmenu',e=>{e.preventDefault();showMsgMenu(e,row)})
   let _lp=null
   row.addEventListener('touchstart',()=>{_lp=setTimeout(()=>showMsgMenu(null,row),500)},{passive:true})
   row.addEventListener('touchend',()=>clearTimeout(_lp))
   row.addEventListener('touchmove',()=>clearTimeout(_lp))
-
   box.appendChild(row)
   if(!noScroll)box.scrollTop=box.scrollHeight
   return row
@@ -177,7 +167,6 @@ function toggleThinking(el){
   el.nextElementSibling.classList.toggle('open')
 }
 
-// 消息菜单
 function showMsgMenu(e,row){
   const overlay=document.getElementById('msgMenuOverlay')
   const menu=document.getElementById('msgMenu')
@@ -202,16 +191,15 @@ function msgAction(action){
 
 function setQuote(text){
   quoteMsg=text
-  const el=document.getElementById('quotePreview')
   document.getElementById('quoteText').textContent=text.slice(0,50)+(text.length>50?'…':'')
-  el.style.display='flex'
+  document.getElementById('quotePreview').style.display='flex'
 }
 function clearQuote(){
   quoteMsg=null
   document.getElementById('quotePreview').style.display='none'
 }
 
-// 发送消息
+// 发送 — 流式输出 + 拆框显示
 async function sendMsg(){
   const ta=document.getElementById('chatInput')
   const text=ta.value.trim()
@@ -229,11 +217,12 @@ async function sendMsg(){
     ...chatHistory.slice(-20).map(m=>({role:m.role,content:m.content}))
   ]
 
-  const row=appendMsg('them','',null,null,null)
-  const bubble=row.querySelector('.bubble')
+  // 占位气泡
+  const placeholderRow=appendMsg('them','',null,null,null)
+  const placeholderBubble=placeholderRow.querySelector('.bubble')
   const cursor=document.createElement('span')
   cursor.className='streaming-cursor'
-  bubble.appendChild(cursor)
+  placeholderBubble.appendChild(cursor)
 
   try{
     const res=await fetch(cfg.api+'/chat/completions',{
@@ -261,41 +250,90 @@ async function sendMsg(){
           else if(delta.thinking)thinkFull+=delta.thinking
           else if(delta.content){
             full+=delta.content
-            const parts=parseActions(full)
-            bubble.innerHTML=parts.main
-            bubble.appendChild(cursor)
+            // 流式期间展示第一条
+            const firstSeg=full.split(/\n\n/)[0]
+            const parts=parseActions(firstSeg)
+            placeholderBubble.innerHTML=parts.main
+            placeholderBubble.appendChild(cursor)
             document.getElementById('messages').scrollTop=99999
           }
         }catch{}
       }
     }
     cursor.remove()
-    const parts=parseActions(full)
-    bubble.innerHTML=parts.main
-    if(parts.action){
-      const at=document.createElement('div')
-      at.className='action-text'
-      at.textContent=parts.action
-      row.appendChild(at)
+
+    // 流式结束，拆框渲染
+    const segments=full.split(/\n\n/).map(s=>s.trim()).filter(Boolean)
+    placeholderRow.remove()
+
+    let thinkInserted=false
+    for(let i=0;i<segments.length;i++){
+      const seg=segments[i]
+      const isLast=i===segments.length-1
+      const row=appendMsg('them',seg,null,null,null)
+      // thinking 放在第一条前
+      if(!thinkInserted&&thinkFull){
+        const tw=document.createElement('div')
+        tw.className='thinking-wrap'
+        tw.innerHTML=`<div class="thinking-toggle" onclick="toggleThinking(this)"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3 2l4 3-4 3" stroke="#bbb" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>心声</div><div class="thinking-body">${escHtml(thinkFull)}</div>`
+        row.insertBefore(tw,row.firstChild)
+        thinkInserted=true
+      }
+      // 每条之间模拟打字延迟
+      if(!isLast)await sleep(320+Math.random()*200)
     }
-    if(thinkFull){
-      const tw=document.createElement('div')
-      tw.className='thinking-wrap'
-      tw.innerHTML=`<div class="thinking-toggle" onclick="toggleThinking(this)"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3 2l4 3-4 3" stroke="#bbb" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>心声</div><div class="thinking-body">${escHtml(thinkFull)}</div>`
-      row.insertBefore(tw,row.firstChild)
-    }
-    row.dataset.text=full
     saveChatHistory('assistant',full)
+    // 通知
+    if(cfg.notify&&document.hidden&&Notification.permission==='granted'){
+      new Notification('小克回复了',{body:segments[0].replace(/\*[^*]+\*/g,'').slice(0,50),icon:''})
+    }
   }catch(err){
     cursor.remove()
-    bubble.innerHTML='<span style="color:#e74c3c">连接失败，检查一下设置里的接口 (´･ω･`)</span>'
+    placeholderBubble.innerHTML='<span style="color:#e74c3c">连接失败，检查一下设置里的接口 (´･ω･`)</span>'
   }
 }
+
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
 
 function saveChatHistory(role,content){
   chatHistory.push({role,content})
   if(chatHistory.length>100)chatHistory=chatHistory.slice(-100)
   localStorage.setItem('chat_history',JSON.stringify(chatHistory))
+}
+
+// 后台保活
+function applyKeepalive(){
+  if(keepaliveTimer)clearInterval(keepaliveTimer)
+  if(cfg.keepalive){
+    keepaliveTimer=setInterval(()=>{
+      // 创建一个无声音频节点防止页面被挂起
+      const ctx=new(window.AudioContext||window.webkitAudioContext)()
+      const buf=ctx.createBuffer(1,1,22050)
+      const src=ctx.createBufferSource()
+      src.buffer=buf
+      src.connect(ctx.destination)
+      src.start(0)
+      setTimeout(()=>ctx.close(),100)
+    },25000)
+  }
+}
+
+// 消息通知权限
+function requestNotifyPermission(){
+  if(!('Notification' in window))return
+  if(Notification.permission==='default'){
+    Notification.requestPermission().then(p=>{
+      if(p!=='granted'){
+        cfg.notify=false
+        setToggle('cfgNotify',false)
+        showToast('通知权限被拒绝')
+      }
+    })
+  }else if(Notification.permission==='denied'){
+    cfg.notify=false
+    setToggle('cfgNotify',false)
+    showToast('请在浏览器设置中开启通知权限')
+  }
 }
 
 // Setting
@@ -316,7 +354,6 @@ function renderSetting(){
     if(m===cfg.model)o.selected=true
     sel.appendChild(o)
   })
-  // image api
   document.getElementById('cfgImgApi').value=localStorage.getItem('cfg_img_api')||''
   document.getElementById('cfgImgKey').value=localStorage.getItem('cfg_img_key')||''
   document.getElementById('cfgPosProm').value=localStorage.getItem('cfg_pos_prom')||''
@@ -333,15 +370,22 @@ function renderSetting(){
 }
 
 function setToggle(id,val){
-  const el=document.getElementById(id)
-  el.className='toggle'+(val?' on':'')
+  document.getElementById(id).className='toggle'+(val?' on':'')
 }
 function clickToggle(id){
   const el=document.getElementById(id)
   const on=el.classList.contains('on')
-  el.className='toggle'+(on?'':' on')
-  if(id==='cfgNotify')cfg.notify=!on
-  if(id==='cfgKeepalive')cfg.keepalive=!on
+  const newVal=!on
+  el.className='toggle'+(newVal?' on':'')
+  if(id==='cfgNotify'){
+    cfg.notify=newVal
+    if(newVal)requestNotifyPermission()
+  }
+  if(id==='cfgKeepalive'){
+    cfg.keepalive=newVal
+    applyKeepalive()
+    showToast(newVal?'保活开启':'保活关闭')
+  }
 }
 
 async function fetchModels(){
@@ -413,7 +457,8 @@ function saveCfg(){
   localStorage.setItem('cfg_pos_prom',document.getElementById('cfgPosProm').value.trim())
   localStorage.setItem('cfg_neg_prom',document.getElementById('cfgNegProm').value.trim())
   const imgSel=document.getElementById('cfgImgModel')
-  if(imgSel.value)localStorage.setItem('cfg_img_model',imgSel.value)
+  if(imgSel.value&&imgSel.value!=='未选择')localStorage.setItem('cfg_img_model',imgSel.value)
+  applyKeepalive()
   showToast('已保存')
 }
 
@@ -428,7 +473,7 @@ function showToast(msg){
   t.textContent=msg
   t.style.opacity='1'
   clearTimeout(t._t)
-  t._t=setTimeout(()=>t.style.opacity='0',1500)
+  t._t=setTimeout(()=>t.style.opacity='0',1800)
 }
 
 function changeAvatar(e){
