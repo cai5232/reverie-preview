@@ -44,9 +44,38 @@ async function regenLast(){
   await callAI()
 }
 
+function togglePlus(){
+  document.getElementById('plusPopup').classList.toggle('open')
+}
+function closePlus(){
+  document.getElementById('plusPopup').classList.remove('open')
+}
+function triggerImg(){
+  closePlus()
+  document.getElementById('imgInput').click()
+}
 function toggleEmojiPanel(){
-  // 简单：聚焦输入框并弹系统键盘，后续可扩展颜文字面板
   document.getElementById('chatInput').focus()
+}
+
+// 时间标签：每隔5分钟或首条消息插入
+let lastMsgTime=0
+function maybeInsertTimeLabel(box){
+  const now=Date.now()
+  if(now-lastMsgTime>5*60*1000){
+    const d=new Date()
+    const label=document.createElement('div')
+    label.className='time-label'
+    const m=d.getMonth()+1
+    const day=d.getDate()
+    const weekdays=['日','一','二','三','四','五','六']
+    const w=weekdays[d.getDay()]
+    const h=String(d.getHours()).padStart(2,'0')
+    const min=String(d.getMinutes()).padStart(2,'0')
+    label.textContent=`${m}月${day}日 周${w} ${h}:${min}`
+    box.appendChild(label)
+  }
+  lastMsgTime=now
 }
 
 // 页面导航
