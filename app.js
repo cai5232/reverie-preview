@@ -181,7 +181,32 @@ document.addEventListener('DOMContentLoaded',()=>{
 function renderChat(){
   const box=document.getElementById('messages')
   chatHistory.forEach(m=>{
-    appendMsg(m.role==='user'?'me':'them',m.content,null,null,null,true)
+    if(m.role==='user'){
+      appendMsg('me',m.content,null,null,null,true)
+    }else{
+      // 同 callAI 的解析逻辑：提取心声+分段
+      let heartText=''
+      let bodyText=m.content
+      const hm=m.content.match(/\[心声\]([\s\S]*?)\[\/心声\]/)
+      if(hm){heartText=hm[1].trim();bodyText=m.content.slice(hm.index+hm[0].length).trim()}
+      let segs=bodyText.split(/\n\n/).map(s=>s.trim()).filter(Boolean)
+      if(segs.length<2)segs=bodyText.split(/\n/).map(s=>s.trim()).filter(Boolean)
+      if(!segs.length)segs=[bodyText]
+      let thinkInserted=false
+      for(let i=0;i<segs.length;i++){
+        const seg=segs[i]
+        if(!seg)continue
+        const isLast=i===segs.length-1
+        const row=appendMsg('them',seg,null,null,null,true,!isLast)
+        if(!thinkInserted&&heartText){
+          const tw=document.createElement('div')
+          tw.className='thinking-wrap'
+          tw.innerHTML=`<div class="thinking-toggle" onclick="toggleThinking(this)"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3 2l4 3-4 3" stroke="#555" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>心声</div><div class="thinking-body">${escHtml(heartText)}</div>`
+          row.insertBefore(tw,row.firstChild)
+          thinkInserted=true
+        }
+      }
+    }
   })
   box.scrollTop=box.scrollHeight
 }
