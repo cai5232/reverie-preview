@@ -337,12 +337,12 @@ function editMsg(row){
 function deleteMsg(row){
   const text=row.dataset.text||''
   const side=row.classList.contains('me')?'user':'assistant'
-  // 从chatHistory永久删除
+  // assistant消息用includes匹配（一条raw content对应多个气泡），user消息精准匹配
   for(let i=chatHistory.length-1;i>=0;i--){
-    if(chatHistory[i].role===side&&chatHistory[i].content===text){
-      chatHistory.splice(i,1)
-      break
-    }
+    const m=chatHistory[i]
+    if(m.role!==side)continue
+    const match=side==='assistant'?m.content.includes(text):m.content===text
+    if(match){chatHistory.splice(i,1);break}
   }
   localStorage.setItem('chat_history',JSON.stringify(chatHistory))
   row.remove()
