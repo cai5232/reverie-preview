@@ -155,18 +155,12 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('chatInput').addEventListener('keydown',function(e){
     if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();handleSendBtn()}
   })
-  // iOS PWA: visualViewport 控制 body 高度，让 input-bar 跟着键盘走
-  function syncVP(){
-    const vp=window.visualViewport
-    if(!vp)return
-    document.body.style.height=vp.height+'px'
-    const box=document.getElementById('messages')
-    if(box)box.scrollTop=box.scrollHeight
-  }
+  // 键盘弹起时滚到底
   if(window.visualViewport){
-    window.visualViewport.addEventListener('resize',syncVP)
-    window.visualViewport.addEventListener('scroll',syncVP)
-    syncVP()
+    window.visualViewport.addEventListener('resize',()=>{
+      const box=document.getElementById('messages')
+      if(box)setTimeout(()=>box.scrollTop=box.scrollHeight,50)
+    })
   }
   document.getElementById('searchInput').addEventListener('input',function(){
     doSearch(this.value)
