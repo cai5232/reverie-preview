@@ -1,6 +1,6 @@
 *{margin:0;padding:0;box-sizing:border-box}
 html{height:100%;background:#000}
-body{color:#fff;font-family:-apple-system,'PingFang SC',sans-serif;display:flex;flex-direction:column;max-width:430px;margin:0 auto;position:fixed;top:0;bottom:0;left:0;right:0;overflow:hidden}
+body{color:#fff;font-family:-apple-system,'PingFang SC',sans-serif;display:flex;flex-direction:column;max-width:430px;margin:0 auto;position:fixed;top:0;left:0;right:0;bottom:0;overflow:hidden}
 @media (min-width:430px){body{left:50%;right:auto;width:430px;transform:translateX(-50%)}}
 @media all and (display-mode:standalone){
   textarea,input{-webkit-user-select:text!important;user-select:text!important;pointer-events:auto!important}
