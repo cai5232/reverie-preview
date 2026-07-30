@@ -155,15 +155,11 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('chatInput').addEventListener('keydown',function(e){
     if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();handleSendBtn()}
   })
-  // iOS PWA: use visualViewport to resize body so input-bar rides above keyboard
   if(window.visualViewport){
-    const syncVP=()=>{
-      document.body.style.height=window.visualViewport.height+'px'
+    window.visualViewport.addEventListener('resize',()=>{
       const box=document.getElementById('messages')
       if(box)box.scrollTop=box.scrollHeight
-    }
-    window.visualViewport.addEventListener('resize',syncVP)
-    syncVP()
+    })
   }
   document.getElementById('searchInput').addEventListener('input',function(){
     doSearch(this.value)
