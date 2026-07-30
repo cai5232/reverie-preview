@@ -305,6 +305,34 @@ function msgAction(action){
   else if(action==='copy')navigator.clipboard&&navigator.clipboard.writeText(text)
   else if(action==='edit')editMsg(row)
   else if(action==='delete')deleteMsg(row)
+  else if(action==='regen')regenFromRow(row)
+}
+
+function regenFromRow(row){
+  // 找到这条消息在DOM里往后所有的them气泡，一起删掉（同一次回复的多段）
+  // 简单处理：删掉chatHistory最后一条assistant，重新生成
+  for(let i=chatHistory.length-1;i>=0;i--){
+    if(chatHistory[i].role==='assistant'){chatHistory.splice(i,1);break}
+  }
+  localStorage.setItem('chat_history',JSON.stringify(chatHistory))
+  // 删掉DOM里所有them气泡和时间戳，直到遇到me气泡或头部
+  const box=document.getElementById('messages')
+  const children=Array.from(box.children)
+  const rowIdx=children.indexOf(row)
+  if(rowIdx<0){callAI();return}
+  // 往后找到第一个me气泡，删掉它之前的所有them及时间节点
+  let delFrom=rowIdx
+  for(let i=rowIdx+1;i<children.length;i++){
+    if(children[i].classList.contains('me'))break
+    delFrom=i
+  }
+  for(let i=delFrom;i>=rowIdx;i--){
+    children[i].remove()
+  }
+  // 删掉row前面紧邻的time-label（如果有）
+  const prev=box.children[rowIdx-1]
+  if(prev&&prev.classList.contains('time-label'))prev.remove()
+  callAI()
 }
 
 function editMsg(row){
