@@ -221,7 +221,7 @@ function parseActions(text){
   return{main,action:actions.join('　')}
 }
 
-function appendMsg(side,text,thinking,imgSrc,quoteText,noScroll,noTail){
+function appendMsg(side,text,thinking,imgSrc,quoteText,noScroll,noTail,fullContent){
   const box=document.getElementById('messages')
   if(!noScroll&&!noTail)maybeInsertTimeLabel(box)
   const row=document.createElement('div')
