@@ -504,7 +504,9 @@ async function callAI(){
     }
   }catch(err){
     cursor.remove()
-    placeholderBubble.innerHTML='<span style="color:#ff453a">连接失败，检查一下设置里的接口 (´･ω･`)</span>'
+    const msg=err&&err.message?err.message:'unknown'
+    placeholderBubble.innerHTML=`<span style="color:#ff453a">连接失败：${escHtml(msg)}</span>`
+    console.error('[callAI]',err)
   }
   isGenerating=false
 }
