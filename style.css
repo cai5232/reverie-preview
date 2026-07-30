@@ -10,7 +10,7 @@ body{color:#fff;font-family:-apple-system,'PingFang SC',sans-serif;display:flex;
 .sidebar{position:fixed;top:0;left:0;height:100%;width:78%;max-width:290px;background:#111;z-index:60;transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow-y:auto;box-shadow:2px 0 20px rgba(0,0,0,.6)}
 .sidebar.open{transform:translateX(0)}
 .sidebar::-webkit-scrollbar{display:none}
-.sb-profile{display:flex;align-items:center;gap:14px;padding:54px 20px 20px}
+.sb-profile{display:flex;align-items:center;gap:14px;padding:calc(env(safe-area-inset-top,0px) + 30px) 20px 20px}
 .sb-avatar{width:62px;height:62px;border-radius:50%;object-fit:cover;background:#333;cursor:pointer;display:block}
 .sb-avatar-placeholder{width:62px;height:62px;border-radius:50%;background:#222;display:flex;align-items:center;justify-content:center;font-size:26px;cursor:pointer}
 .sb-name{font-size:20px;font-weight:600;color:#fff}
