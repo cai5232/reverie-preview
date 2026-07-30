@@ -419,7 +419,7 @@ async function callAI(){
       const seg=segments[i].trim()
       if(!seg)continue
       const isLast=i===segments.length-1
-      const row=appendMsg('them',seg,null,null,null)
+      const row=appendMsg('them',seg,null,null,null,false,!isLast)
       if(!firstRow)firstRow=row
       if(!thinkInserted&&heartText){
         const tw=document.createElement('div')
