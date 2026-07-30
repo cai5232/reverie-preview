@@ -27,7 +27,7 @@ body{color:#fff;font-family:-apple-system,'PingFang SC',sans-serif;display:flex;
 .header-sub-menu{cursor:pointer;-webkit-tap-highlight-color:transparent;padding:2px}
 .page{display:none;flex-direction:column;overflow:hidden;position:relative;flex:1;min-height:0}
 .page.active{display:flex}
-.messages{flex:1;overflow-y:auto;padding:8px 12px 12px;display:flex;flex-direction:column;gap:2px;background:#000;min-height:0}
+.messages{flex:1;overflow-y:auto;padding:8px 12px 60px;display:flex;flex-direction:column;gap:2px;background:#000;min-height:0}
 .messages::-webkit-scrollbar{display:none}
 .time-label{text-align:center;font-size:11px;color:#666;margin:10px 0 4px;user-select:none}
 .msg-row{display:flex;flex-direction:column;margin-bottom:6px}
