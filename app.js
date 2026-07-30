@@ -157,10 +157,12 @@ document.addEventListener('DOMContentLoaded',()=>{
   })
   document.getElementById('chatInput').addEventListener('focus',()=>{
     setTimeout(()=>{
+      window.scrollTo(0,0)
       const box=document.getElementById('messages')
       if(box)box.scrollTop=box.scrollHeight
-    },300)
+    },100)
   })
+  window.addEventListener('scroll',()=>{window.scrollTo(0,0)})
   document.getElementById('searchInput').addEventListener('input',function(){
     doSearch(this.value)
   })
