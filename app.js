@@ -292,6 +292,9 @@ function showMsgMenu(e,row){
   const menu=document.getElementById('msgMenu')
   overlay._row=row
   overlay.classList.add('open')
+  // 只有小克的消息才显示重回
+  const regenItem=document.getElementById('menuRegen')
+  if(regenItem)regenItem.style.display=row.classList.contains('them')?'block':'none'
   const x=e?Math.min(e.clientX,window.innerWidth-160):60
   const y=e?Math.min(e.clientY,window.innerHeight-180):200
   menu.style.left=x+'px'
