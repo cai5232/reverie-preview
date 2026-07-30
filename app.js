@@ -437,29 +437,19 @@ async function callAI(){
       if(!a||!b)break
       segments.splice(idx,1,a,b)
     }
-    // placeholder row 和它之前插入的 time-label 一起删掉
     const prevSibling=placeholderRow.previousElementSibling
     if(prevSibling&&prevSibling.classList.contains('time-label')){
-      // 只删掉这条 placeholder 专属的 time-label（它和 placeholder 之间没有其他 msg-row）
       prevSibling.remove()
     }
     placeholderRow.remove()
     let thinkInserted=false
     let firstRow=null
-    // 颜文字：最多出现1次（出现在随机段落）
-    const kaomojiRe=/([(（][^)）\n]{2,20}[)）]|[ᔦᗜ૮♡][\s\S]{0,15}[ᔨᗜ]?)/g
-    let kaomojiCount=0
-    const kaomojiSegIdx=Math.floor(Math.random()*segments.length)
     for(let i=0;i<segments.length;i++){
-      let seg=segments[i]
-      // 除了指定段落外，过滤掉颜文字
-      if(i!==kaomojiSegIdx){seg=seg.replace(kaomojiRe,'')}
-      seg=seg.trim()
+      const seg=segments[i].trim()
       if(!seg)continue
       const isLast=i===segments.length-1
       const row=appendMsg('them',seg,null,null,null)
       if(!firstRow)firstRow=row
-      // 心声插在第一条前面
       if(!thinkInserted&&thinkFull){
         const tw=document.createElement('div')
         tw.className='thinking-wrap'
