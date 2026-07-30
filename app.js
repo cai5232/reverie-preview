@@ -291,6 +291,9 @@ function showMsgMenu(e,row){
   const overlay=document.getElementById('msgMenuOverlay')
   const menu=document.getElementById('msgMenu')
   overlay._row=row
+  // 重回只对 them 消息显示
+  const regenItem=document.getElementById('menuRegen')
+  if(regenItem)regenItem.style.display=row.classList.contains('them')?'':'none'
   overlay.classList.add('open')
   // 只有小克的消息才显示重回
   const regenItem=document.getElementById('menuRegen')
