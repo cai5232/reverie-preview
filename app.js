@@ -230,6 +230,8 @@ function appendMsg(side,text,thinking,imgSrc,quoteText,noScroll,noTail,fullConte
   const row=document.createElement('div')
   row.className='msg-row '+side+(noTail?' no-tail':'')
   row.dataset.text=text||''
+  // fullContent 存原始完整内容（含[心声]），用于精准删除 localStorage
+  if(!row.dataset.fullContent)row.dataset.fullContent=text||''
   if(thinking){
     const tw=document.createElement('div')
     tw.className='thinking-wrap'
