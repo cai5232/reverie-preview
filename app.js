@@ -155,10 +155,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('chatInput').addEventListener('keydown',function(e){
     if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();handleSendBtn()}
   })
-  // iOS PWA: prevent window scroll when keyboard appears
-  window.addEventListener('scroll',()=>window.scrollTo(0,0),{passive:false})
   document.getElementById('chatInput').addEventListener('focus',()=>{
-    setTimeout(()=>{window.scrollTo(0,0)},50)
     setTimeout(()=>{
       const box=document.getElementById('messages')
       if(box)box.scrollTop=box.scrollHeight
