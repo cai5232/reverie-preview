@@ -413,23 +413,29 @@ async function callAI(){
       }
     }
     cursor.remove()
-    // 按 \n\n 分段，不足5段则按 \n 再拆，保证至少5条
-    let segments=full.split(/\n\n/).map(s=>s.trim()).filter(Boolean)
-    if(segments.length<5){
-      segments=full.split(/\n/).map(s=>s.trim()).filter(Boolean)
+    // 解析心声标签
+    let thinkFull=''
+    let bodyText=full
+    const thinkMatch=full.match(/\[心声\]([\s\S]*?)\[\/心声\]/)
+    if(thinkMatch){
+      thinkFull=thinkMatch[1].trim()
+      bodyText=full.slice(thinkMatch.index+thinkMatch[0].length).trim()
     }
-    if(segments.length<5&&segments.length>0){
-      // 强行把最长段再对半拆
-      while(segments.length<5){
-        let idx=0,max=0
-        segments.forEach((s,i)=>{if(s.length>max){max=s.length;idx=i}})
-        const mid=Math.floor(segments[idx].length/2)
-        const sp=segments[idx].indexOf('，',mid)||segments[idx].indexOf('。',mid)||mid
-        const a=segments[idx].slice(0,sp+1).trim()
-        const b=segments[idx].slice(sp+1).trim()
-        if(!a||!b)break
-        segments.splice(idx,1,a,b)
-      }
+    // 分段，保证至少5条
+    let segments=bodyText.split(/\n\n/).map(s=>s.trim()).filter(Boolean)
+    if(segments.length<5){
+      segments=bodyText.split(/\n/).map(s=>s.trim()).filter(Boolean)
+    }
+    while(segments.length<5&&segments.length>0){
+      let idx=0,max=0
+      segments.forEach((s,i)=>{if(s.length>max){max=s.length;idx=i}})
+      const mid=Math.floor(segments[idx].length/2)
+      let sp=mid
+      for(let ci=mid;ci<segments[idx].length;ci++){if('，。！？'.includes(segments[idx][ci])){sp=ci;break}}
+      const a=segments[idx].slice(0,sp+1).trim()
+      const b=segments[idx].slice(sp+1).trim()
+      if(!a||!b)break
+      segments.splice(idx,1,a,b)
     }
     // placeholder row 和它之前插入的 time-label 一起删掉
     const prevSibling=placeholderRow.previousElementSibling
