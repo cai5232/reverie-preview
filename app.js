@@ -151,7 +151,18 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('chatInput').addEventListener('keydown',function(e){
     if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();handleSendBtn()}
   })
-  // body 已用 position:fixed + inset:0 锁定，iOS 键盘弹起不会推动布局，无需 JS 干预
+  // iOS键盘：body fixed top=0，用visualViewport动态更新body高度把input-bar顶到键盘上方
+  if(window.visualViewport){
+    const onVP=()=>{
+      const vp=window.visualViewport
+      document.body.style.height=vp.height+'px'
+      document.body.style.top=vp.offsetTop+'px'
+      document.getElementById('messages').scrollTop=99999
+    }
+    window.visualViewport.addEventListener('resize',onVP)
+    window.visualViewport.addEventListener('scroll',onVP)
+    onVP()
+  }
   document.getElementById('searchInput').addEventListener('input',function(){
     doSearch(this.value)
   })
