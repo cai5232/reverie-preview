@@ -408,17 +408,6 @@ async function callAI(){
     if(segments.length<5){
       segments=bodyText.split(/\n/).map(s=>s.trim()).filter(Boolean)
     }
-    while(segments.length<5&&segments.length>0){
-      let idx=0,max=0
-      segments.forEach((s,i)=>{if(s.length>max){max=s.length;idx=i}})
-      const mid=Math.floor(segments[idx].length/2)
-      let sp=mid
-      for(let ci=mid;ci<segments[idx].length;ci++){if('，。！？'.includes(segments[idx][ci])){sp=ci;break}}
-      const a=segments[idx].slice(0,sp+1).trim()
-      const b=segments[idx].slice(sp+1).trim()
-      if(!a||!b)break
-      segments.splice(idx,1,a,b)
-    }
     const prevSibling=placeholderRow.previousElementSibling
     if(prevSibling&&prevSibling.classList.contains('time-label')){
       prevSibling.remove()
