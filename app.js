@@ -157,9 +157,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   })
   if(window.visualViewport){
     const onVP=()=>{
-      const vp=window.visualViewport
-      document.body.style.height=vp.height+'px'
-      document.body.style.top=vp.offsetTop+'px'
+      document.body.style.height=window.visualViewport.height+'px'
       const box=document.getElementById('messages')
       if(box)box.scrollTop=box.scrollHeight
     }
