@@ -163,6 +163,18 @@ document.addEventListener('DOMContentLoaded',()=>{
     window.visualViewport.addEventListener('scroll',onVP)
     onVP()
   }
+  // iOS键盘：body fixed top=0，用visualViewport动态更新body高度把input-bar顶到键盘上方
+  if(window.visualViewport){
+    const onVP=()=>{
+      const vp=window.visualViewport
+      document.body.style.height=vp.height+'px'
+      document.body.style.top=vp.offsetTop+'px'
+      document.getElementById('messages').scrollTop=99999
+    }
+    window.visualViewport.addEventListener('resize',onVP)
+    window.visualViewport.addEventListener('scroll',onVP)
+    onVP()
+  }
   document.getElementById('searchInput').addEventListener('input',function(){
     doSearch(this.value)
   })
