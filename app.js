@@ -409,17 +409,41 @@ async function callAI(){
       }
     }
     cursor.remove()
-    const rawSegs=full.split(/\n\n/).map(s=>s.trim()).filter(Boolean)
-    // 少于3段时把最后一段再拆，保证至少3条
-    const segments=rawSegs.length>=3?rawSegs:full.split(/\n/).map(s=>s.trim()).filter(Boolean)
+    // 按 \n\n 分段，不足5段则按 \n 再拆，保证至少5条
+    let segments=full.split(/\n\n/).map(s=>s.trim()).filter(Boolean)
+    if(segments.length<5){
+      segments=full.split(/\n/).map(s=>s.trim()).filter(Boolean)
+    }
+    if(segments.length<5&&segments.length>0){
+      // 强行把最长段再对半拆
+      while(segments.length<5){
+        let idx=0,max=0
+        segments.forEach((s,i)=>{if(s.length>max){max=s.length;idx=i}})
+        const mid=Math.floor(segments[idx].length/2)
+        const sp=segments[idx].indexOf('，',mid)||segments[idx].indexOf('。',mid)||mid
+        const a=segments[idx].slice(0,sp+1).trim()
+        const b=segments[idx].slice(sp+1).trim()
+        if(!a||!b)break
+        segments.splice(idx,1,a,b)
+      }
+    }
     placeholderRow.remove()
     let thinkInserted=false
     let firstRow=null
+    // 颜文字：最多出现1次（出现在随机段落）
+    const kaomojiRe=/([(（][^)）\n]{2,20}[)）]|[ᔦᗜ૮♡][\s\S]{0,15}[ᔨᗜ]?)/g
+    let kaomojiCount=0
+    const kaomojiSegIdx=Math.floor(Math.random()*segments.length)
     for(let i=0;i<segments.length;i++){
-      const seg=segments[i]
+      let seg=segments[i]
+      // 除了指定段落外，过滤掉颜文字
+      if(i!==kaomojiSegIdx){seg=seg.replace(kaomojiRe,'')}
+      seg=seg.trim()
+      if(!seg)continue
       const isLast=i===segments.length-1
       const row=appendMsg('them',seg,null,null,null)
       if(!firstRow)firstRow=row
+      // 心声插在第一条前面
       if(!thinkInserted&&thinkFull){
         const tw=document.createElement('div')
         tw.className='thinking-wrap'
