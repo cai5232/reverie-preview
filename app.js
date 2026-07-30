@@ -353,7 +353,7 @@ async function callAI(){
     ...(currentUserMsg&&currentUserMsg.role==='user'?[{role:currentUserMsg.role,content:currentUserMsg.content}]:[])
   ]
 
-  const placeholderRow=appendMsg('them','',null,null,null)
+  const placeholderRow=appendMsg('them','',null,null,null,false,true)
   const placeholderBubble=placeholderRow.querySelector('.bubble')
   const cursor=document.createElement('span')
   cursor.className='streaming-cursor'
