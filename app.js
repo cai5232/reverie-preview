@@ -155,12 +155,20 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('chatInput').addEventListener('keydown',function(e){
     if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();handleSendBtn()}
   })
-  // 键盘弹起时滚到底
+  // 键盘弹起：只用 transform 推 input-bar，header 完全不动
+  const _inputBar=document.querySelector('#page-chat .input-bar')
+  function onVPChange(){
+    const vp=window.visualViewport
+    if(!vp||!_inputBar)return
+    // offsetTop>0 说明系统把视口往上 scroll 了，加进去一起补偿
+    const kh=Math.max(0,window.innerHeight-vp.height-vp.offsetTop)
+    _inputBar.style.transform=kh>0?`translateY(-${kh}px)`:''
+    const box=document.getElementById('messages')
+    if(box)setTimeout(()=>box.scrollTop=box.scrollHeight,50)
+  }
   if(window.visualViewport){
-    window.visualViewport.addEventListener('resize',()=>{
-      const box=document.getElementById('messages')
-      if(box)setTimeout(()=>box.scrollTop=box.scrollHeight,50)
-    })
+    window.visualViewport.addEventListener('resize',onVPChange)
+    window.visualViewport.addEventListener('scroll',onVPChange)
   }
   document.getElementById('searchInput').addEventListener('input',function(){
     doSearch(this.value)
