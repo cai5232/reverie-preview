@@ -156,16 +156,10 @@ document.addEventListener('DOMContentLoaded',()=>{
     if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();handleSendBtn()}
   })
   if(window.visualViewport){
-    const onVP=()=>{
-      const vp=window.visualViewport
-      document.body.style.top=vp.offsetTop+'px'
-      document.body.style.height=vp.height+'px'
+    window.visualViewport.addEventListener('resize',()=>{
       const box=document.getElementById('messages')
       if(box)box.scrollTop=box.scrollHeight
-    }
-    window.visualViewport.addEventListener('resize',onVP)
-    window.visualViewport.addEventListener('scroll',onVP)
-    onVP()
+    })
   }
   document.getElementById('searchInput').addEventListener('input',function(){
     doSearch(this.value)
