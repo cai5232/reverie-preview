@@ -160,7 +160,6 @@ document.addEventListener('DOMContentLoaded',()=>{
     const vp=window.visualViewport
     if(!vp)return
     document.body.style.height=vp.height+'px'
-    document.body.style.top=vp.offsetTop+'px'
     const box=document.getElementById('messages')
     if(box)box.scrollTop=box.scrollHeight
   }
