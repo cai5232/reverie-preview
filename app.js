@@ -399,12 +399,12 @@ async function callAI(){
       }
     }
     cursor.remove()
-    // 解析心声标签
-    let thinkFull=''
+    // 解析心声标签（从 content 里提取 [心声]...[/心声]）
+    let heartText=''
     let bodyText=full
     const thinkMatch=full.match(/\[心声\]([\s\S]*?)\[\/心声\]/)
     if(thinkMatch){
-      thinkFull=thinkMatch[1].trim()
+      heartText=thinkMatch[1].trim()
       bodyText=full.slice(thinkMatch.index+thinkMatch[0].length).trim()
     }
     // 分段，保证至少5条
