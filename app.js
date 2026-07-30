@@ -436,10 +436,10 @@ async function callAI(){
       const isLast=i===segments.length-1
       const row=appendMsg('them',seg,null,null,null)
       if(!firstRow)firstRow=row
-      if(!thinkInserted&&thinkFull){
+      if(!thinkInserted&&heartText){
         const tw=document.createElement('div')
         tw.className='thinking-wrap'
-        tw.innerHTML=`<div class="thinking-toggle" onclick="toggleThinking(this)"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3 2l4 3-4 3" stroke="#555" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>心声</div><div class="thinking-body">${escHtml(thinkFull)}</div>`
+        tw.innerHTML=`<div class="thinking-toggle" onclick="toggleThinking(this)"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3 2l4 3-4 3" stroke="#555" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>心声</div><div class="thinking-body">${escHtml(heartText)}</div>`
         row.insertBefore(tw,row.firstChild)
         thinkInserted=true
       }
