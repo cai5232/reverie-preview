@@ -1,10 +1,8 @@
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;background:#000}
-body{color:#fff;font-family:-apple-system,'PingFang SC',sans-serif;display:flex;flex-direction:column;max-width:430px;margin:0 auto;height:100%;height:-webkit-fill-available;overflow:hidden}
-@media (min-width:430px){body{position:fixed;left:50%;right:auto;width:430px;transform:translateX(-50%);top:0;bottom:0;height:100%}}
-@media all and (display-mode:standalone){
-  textarea,input{-webkit-user-select:text!important;user-select:text!important;pointer-events:auto!important}
-}
+html{height:100%;background:#000}
+body{color:#fff;font-family:-apple-system,'PingFang SC',sans-serif;display:flex;flex-direction:column;width:100%;max-width:430px;margin:0 auto;position:fixed;left:0;right:0;top:0;height:100%;overflow:hidden}
+@media (min-width:430px){body{left:50%;right:auto;transform:translateX(-50%)}}
+@media all and (display-mode:standalone){textarea,input{-webkit-user-select:text!important;user-select:text!important;pointer-events:auto!important}}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;opacity:0;pointer-events:none;transition:opacity .28s ease}
 .overlay.open{opacity:1;pointer-events:auto}
 .sidebar{position:fixed;top:0;left:0;height:100%;width:78%;max-width:290px;background:#111;z-index:60;transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow-y:auto;box-shadow:2px 0 20px rgba(0,0,0,.6)}
@@ -61,7 +59,7 @@ body{color:#fff;font-family:-apple-system,'PingFang SC',sans-serif;display:flex;
 .bubble-quote-name{font-size:11px;font-weight:600;color:rgba(255,255,255,.55);margin-bottom:2px}
 .msg-row.them .bubble-quote-name{color:#5a9fe8}
 .bubble-quote-text{font-size:12px;color:rgba(255,255,255,.45);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.input-bar{padding:8px 12px;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px));display:flex;align-items:flex-end;gap:8px;background:#000;border-top:.5px solid #222;flex-shrink:0}
+.input-bar{padding:8px 12px env(safe-area-inset-bottom,8px);display:flex;align-items:flex-end;gap:8px;background:#000;border-top:.5px solid #222;flex-shrink:0}
 .input-img-btn{display:none}
 .input-emoji-btn{display:none}
 .input-plus-btn{width:32px;height:32px;border-radius:50%;border:1.5px solid #444;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;-webkit-tap-highlight-color:transparent;margin-bottom:1px}
