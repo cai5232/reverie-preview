@@ -433,35 +433,11 @@ async function callAI(){
       body:JSON.stringify({model:cfg.model,messages,stream:false,temperature:cfg.temp})
     })
     if(!res.ok)throw new Error('HTTP '+res.status)
-    const reader=res.body.getReader()
-    const dec=new TextDecoder()
-    let full='',thinkFull=''
-    while(true){
-      const{done,value}=await reader.read()
-      if(done)break
-      const lines=dec.decode(value).split('\n')
-      for(const line of lines){
-        if(!line.startsWith('data: '))continue
-        const data=line.slice(6)
-        if(data==='[DONE]')continue
-        try{
-          const j=JSON.parse(data)
-          const delta=j.choices?.[0]?.delta
-          if(!delta)continue
-          if(delta.type==='thinking')thinkFull+=delta.thinking||''
-          else if(delta.thinking)thinkFull+=delta.thinking
-          else if(delta.content){
-            full+=delta.content
-            const firstSeg=full.split(/\n\n/)[0]
-            const parts=parseActions(firstSeg)
-            placeholderBubble.innerHTML=parts.main
-            placeholderBubble.appendChild(cursor)
-            document.getElementById('messages').scrollTop=99999
-          }
-        }catch{}
-      }
-    }
+
+    const j=await res.json()
+    const full=(j.choices?.[0]?.message?.content)||''
     cursor.remove()
+    if(!full)throw new Error('empty response')
     // 解析心声标签（从 content 里提取 [心声]...[/心声]）
     let heartText=''
     let bodyText=full
