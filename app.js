@@ -250,6 +250,14 @@ function appendMsg(side,text,thinking,imgSrc,quoteText,noScroll){
   row.addEventListener('touchend',()=>clearTimeout(_lp))
   row.addEventListener('touchmove',()=>clearTimeout(_lp))
   box.appendChild(row)
+  // 每条消息下方显示时间（对方消息左对齐小字，我的消息右对齐小字）
+  if(!noScroll){
+    const tl=document.createElement('div')
+    tl.className=side==='me'?'read-label':'msg-time'
+    const now=new Date()
+    tl.textContent=(side==='me'?'read ':'')+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')
+    box.appendChild(tl)
+  }
   if(!noScroll)box.scrollTop=box.scrollHeight
   return row
 }
