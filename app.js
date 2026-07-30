@@ -155,16 +155,19 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('chatInput').addEventListener('keydown',function(e){
     if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();handleSendBtn()}
   })
-  window.addEventListener('scroll',()=>window.scrollTo(0,0),{passive:false})
-  document.getElementById('chatInput').addEventListener('focus',()=>{
-    setTimeout(()=>window.scrollTo(0,0),50)
-  })
+  // iOS PWA: visualViewport 控制 body 高度，让 input-bar 跟着键盘走
+  function syncVP(){
+    const vp=window.visualViewport
+    if(!vp)return
+    document.body.style.height=vp.height+'px'
+    document.body.style.top=vp.offsetTop+'px'
+    const box=document.getElementById('messages')
+    if(box)box.scrollTop=box.scrollHeight
+  }
   if(window.visualViewport){
-    window.visualViewport.addEventListener('resize',()=>{
-      window.scrollTo(0,0)
-      const box=document.getElementById('messages')
-      if(box)box.scrollTop=box.scrollHeight
-    })
+    window.visualViewport.addEventListener('resize',syncVP)
+    window.visualViewport.addEventListener('scroll',syncVP)
+    syncVP()
   }
   document.getElementById('searchInput').addEventListener('input',function(){
     doSearch(this.value)
