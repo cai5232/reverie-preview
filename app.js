@@ -195,7 +195,7 @@ function appendMsg(side,text,thinking,imgSrc,quoteText,noScroll,noTail){
   const box=document.getElementById('messages')
   if(!noScroll)maybeInsertTimeLabel(box)
   const row=document.createElement('div')
-  row.className='msg-row '+side
+  row.className='msg-row '+side+(noTail?' no-tail':'')
   row.dataset.text=text||''
   if(thinking){
     const tw=document.createElement('div')
