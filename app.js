@@ -193,7 +193,7 @@ function parseActions(text){
 
 function appendMsg(side,text,thinking,imgSrc,quoteText,noScroll,noTail){
   const box=document.getElementById('messages')
-  if(!noScroll)maybeInsertTimeLabel(box)
+  if(!noScroll&&!noTail)maybeInsertTimeLabel(box)
   const row=document.createElement('div')
   row.className='msg-row '+side+(noTail?' no-tail':'')
   row.dataset.text=text||''
