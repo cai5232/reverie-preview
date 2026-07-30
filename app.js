@@ -155,25 +155,13 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('chatInput').addEventListener('keydown',function(e){
     if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();handleSendBtn()}
   })
-  // iOS键盘：body fixed top=0，用visualViewport动态更新body高度把input-bar顶到键盘上方
   if(window.visualViewport){
     const onVP=()=>{
       const vp=window.visualViewport
       document.body.style.height=vp.height+'px'
       document.body.style.top=vp.offsetTop+'px'
-      document.getElementById('messages').scrollTop=99999
-    }
-    window.visualViewport.addEventListener('resize',onVP)
-    window.visualViewport.addEventListener('scroll',onVP)
-    onVP()
-  }
-  // iOS键盘：body fixed top=0，用visualViewport动态更新body高度把input-bar顶到键盘上方
-  if(window.visualViewport){
-    const onVP=()=>{
-      const vp=window.visualViewport
-      document.body.style.height=vp.height+'px'
-      document.body.style.top=vp.offsetTop+'px'
-      document.getElementById('messages').scrollTop=99999
+      const box=document.getElementById('messages')
+      if(box)box.scrollTop=box.scrollHeight
     }
     window.visualViewport.addEventListener('resize',onVP)
     window.visualViewport.addEventListener('scroll',onVP)
