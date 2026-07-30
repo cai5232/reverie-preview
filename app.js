@@ -427,6 +427,12 @@ async function callAI(){
         segments.splice(idx,1,a,b)
       }
     }
+    // placeholder row 和它之前插入的 time-label 一起删掉
+    const prevSibling=placeholderRow.previousElementSibling
+    if(prevSibling&&prevSibling.classList.contains('time-label')){
+      // 只删掉这条 placeholder 专属的 time-label（它和 placeholder 之间没有其他 msg-row）
+      prevSibling.remove()
+    }
     placeholderRow.remove()
     let thinkInserted=false
     let firstRow=null
