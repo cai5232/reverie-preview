@@ -429,7 +429,7 @@ async function callAI(){
   try{
     const res=await fetch(cfg.api+'/chat/completions',{
       method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key},
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key,'X-Session-Id':'reverie-yy'},
       body:JSON.stringify({model:cfg.model,messages,stream:true,temperature:cfg.temp})
     })
     if(!res.ok)throw new Error('HTTP '+res.status)
