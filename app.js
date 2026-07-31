@@ -869,6 +869,7 @@ function startReading(id){
   document.getElementById('nvFontSizeLabel').textContent='20px'
   renderFullBook()
   document.getElementById('nvReaderOverlay').classList.add('open')
+  document.body.style.background='#1a1816'
 }
 
 function renderFullBook(){
