@@ -864,17 +864,19 @@ function startReading(id){
   }
   if(curCh)chapters.push(curCh)
   if(!chapters.length)chapters.push({title:'正文',lines})
-  window._nvReader={b,chapters,chIdx:b.lastChapter||0,fontSize:18,uiVisible:false,animating:false,globalPage:0,allPages:[]}
+  window._nvReader={b,chapters,chIdx:b.lastChapter||0,fontSize:20,globalPage:0,allPages:[]}
   document.getElementById('nvReaderTopTitle').textContent=b.title
+  document.getElementById('nvFontSizeLabel').textContent='20px'
   buildAllPages()
-  renderReaderPage()
   document.getElementById('nvReaderOverlay').classList.add('open')
-  initReaderSwipe()
+  initReaderTap()
 }
 
 function buildAllPages(){
   const r=window._nvReader
-  const PAGE_SIZE=200
+  // 20px字体，内容区宽约382px，每行约19字，行高38px，可用高约720px，约19行
+  // 340字保守估算，字体每调1px增减约17字
+  const PAGE_SIZE=Math.round(340+((r.fontSize-20)*17))
   r.allPages=[]
   r.chapters.forEach((ch,ci)=>{
     const raw=ch.lines.join('\n').trim()
@@ -888,7 +890,9 @@ function buildAllPages(){
     for(const para of paras){
       let pos=0
       while(pos<para.length){
-        const remain=PAGE_SIZE-buf.replace(/\n/g,'').length
+        const used=buf.replace(/\n/g,'').length
+        const remain=PAGE_SIZE-used
+        if(remain<=0){flush();continue}
         const chunk=para.slice(pos,pos+remain)
         buf+=(buf?'\n':'')+chunk
         pos+=chunk.length
@@ -899,6 +903,7 @@ function buildAllPages(){
   })
   r.globalPage=r.allPages.findIndex(p=>p.chIdx===(r.b.lastChapter||0))
   if(r.globalPage<0)r.globalPage=0
+  renderReaderPage()
 }
 
 function renderReaderPage(){
@@ -909,9 +914,7 @@ function renderReaderPage(){
   el.style.fontSize=r.fontSize+'px'
   const showTitle=pg.isFirst&&r.chapters.length>1&&r.chapters[pg.chIdx].title!=='正文'
   const titleHtml=showTitle?`<div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:18px">${escHtml(r.chapters[pg.chIdx].title)}</div>`:''
-  const bodyHtml=escHtml(pg.text).replace(/\n/g,'<br>')
-  el.innerHTML=titleHtml+`<div style="color:#ccc;line-height:1.9;word-break:break-all">${bodyHtml}</div>`
-  // 页数写入固定底部元素
+  el.innerHTML=titleHtml+`<div>${escHtml(pg.text).replace(/\n/g,'<br>')}</div>`
   const total=r.allPages.length
   const ind=document.getElementById('nvPageIndicator')
   if(ind)ind.textContent=`${r.globalPage+1} / ${total}`
@@ -922,7 +925,6 @@ function renderReaderPage(){
   if(idx>=0){novelBooks[idx]=r.b;localStorage.setItem('novel_books',JSON.stringify(novelBooks))}
 }
 
-function slideToPage(){}
 function readerPrevPage(){
   const r=window._nvReader
   if(r.globalPage>0){r.globalPage--;renderReaderPage()}
@@ -934,32 +936,23 @@ function readerNextPage(){
   else showToast('已经是最后一页了 (´・ω・`)')
 }
 
-function initReaderSwipe(){
+function initReaderTap(){
   const el=document.getElementById('nvReaderContent')
   let sx=0,sy=0
   el.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true})
   el.addEventListener('touchend',e=>{
-    const dx=e.changedTouches[0].clientX-sx
-    const dy=e.changedTouches[0].clientY-sy
-    if(Math.abs(dx)<8&&Math.abs(dy)<8){
-      // 点击：左1/3上一页，右1/3下一页，中间弹菜单
+    const dx=Math.abs(e.changedTouches[0].clientX-sx)
+    const dy=Math.abs(e.changedTouches[0].clientY-sy)
+    if(dx<10&&dy<10){
       const cx=e.changedTouches[0].clientX
-      const w=window.innerWidth
-      if(cx<w/3)readerPrevPage()
-      else if(cx>w*2/3)readerNextPage()
-      else toggleReaderUI()
+      if(cx<window.innerWidth/2)readerPrevPage()
+      else readerNextPage()
     }
   },{passive:true})
 }
 
-function toggleReaderUI(){
-  const r=window._nvReader
-  if(!r)return
-  r.uiVisible=!r.uiVisible
-  document.getElementById('nvReaderTopbar').classList.toggle('show',r.uiVisible)
-  document.getElementById('nvReaderToolbar').classList.toggle('show',r.uiVisible)
-  if(!r.uiVisible){closeToc();closeReaderSettings()}
-}
+function slideToPage(){}
+function toggleReaderUI(){}
 function hideReader(){document.getElementById('nvReaderOverlay').classList.remove('open');renderNovels()}
 function openToc(){
   document.getElementById('nvTocPanel').classList.add('open')
