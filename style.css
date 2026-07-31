@@ -196,9 +196,9 @@ body{color:#fff;font-family:-apple-system,'PingFang SC',sans-serif;display:flex;
 .nv-detail-author{font-size:14px;color:#888;text-align:center;margin-top:8px}
 .nv-detail-read-btn{margin:24px auto 0;display:block;width:calc(100% - 48px);padding:14px;background:#1d6fe5;color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:600;font-family:inherit;cursor:pointer;text-align:center}
 .nv-shelf-empty-text{font-size:13px;color:#444;text-align:center;line-height:1.7}
-.nv-reader-overlay{position:absolute;inset:0;background:#000;z-index:20;display:none;flex-direction:column;overflow:hidden}
+.nv-reader-overlay{position:absolute;inset:0;background:#1a1816;z-index:20;display:none;flex-direction:column;overflow:hidden}
 .nv-reader-overlay.open{display:flex}
-.nv-reader-topbar{display:flex;align-items:center;padding:calc(env(safe-area-inset-top,0px) + 10px) 14px 10px;background:#000;border-bottom:.5px solid #1a1a1a;flex-shrink:0}
+.nv-reader-topbar{display:flex;align-items:center;padding:calc(env(safe-area-inset-top,0px) + 10px) 14px 10px;background:#1a1816;border-bottom:.5px solid #2e2b27;flex-shrink:0}
 .nv-reader-back{font-size:15px;color:#aaa;padding:4px 12px 4px 0;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap}
 .nv-reader-topbar-title{flex:1;font-size:13px;color:#555;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;text-align:center;padding:0 4px}
 .nv-reader-topbar-actions{display:flex;gap:0;flex-shrink:0}
