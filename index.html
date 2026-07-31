@@ -176,18 +176,14 @@
   <div class="nv-modal-overlay" id="nvModalOverlay" onclick="closeNovelModal()">
     <div class="nv-modal" onclick="event.stopPropagation()">
       <div class="nv-modal-title">添加书籍</div>
+      <input type="file" id="nvCoverInput" accept="image/*" style="display:none" onchange="handleCoverPick(event)">
+      <input type="file" id="nvTxtInput" accept=".txt" style="display:none" onchange="handleTxtImport(event)">
+      <div class="nv-cover-pick" id="nvCoverPick" onclick="document.getElementById('nvCoverInput').click()">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="1" y="1" width="20" height="20" rx="4" stroke="#555" stroke-width="1.4"/><circle cx="7.5" cy="7.5" r="2" stroke="#555" stroke-width="1.2"/><path d="M1 15l5-5 4 4 3-3 7 6" stroke="#555" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>添加封面</span>
+      </div>
       <input class="nv-modal-input" id="nvBookTitle" placeholder="书名">
       <input class="nv-modal-input" id="nvBookAuthor" placeholder="作者（可选）">
-      <div class="nv-modal-color-label">封面色</div>
-      <div class="nv-color-row" id="nvColorRow">
-        <div class="nv-color-dot active" style="background:#f4a7b9" data-color="#f4a7b9" onclick="pickColor(this)"></div>
-        <div class="nv-color-dot" style="background:#b5d5f5" data-color="#b5d5f5" onclick="pickColor(this)"></div>
-        <div class="nv-color-dot" style="background:#c3e8d0" data-color="#c3e8d0" onclick="pickColor(this)"></div>
-        <div class="nv-color-dot" style="background:#f9e0a2" data-color="#f9e0a2" onclick="pickColor(this)"></div>
-        <div class="nv-color-dot" style="background:#d9b8f5" data-color="#d9b8f5" onclick="pickColor(this)"></div>
-        <div class="nv-color-dot" style="background:#f5c8a0" data-color="#f5c8a0" onclick="pickColor(this)"></div>
-      </div>
-      <input type="file" id="nvTxtInput" accept=".txt" style="display:none" onchange="handleTxtImport(event)">
       <div style="display:flex;gap:10px;margin-top:4px">
         <button class="nv-modal-btn ghost" onclick="closeNovelModal()">取消</button>
         <button class="nv-modal-btn" onclick="triggerTxtImport()">导入 txt</button>
