@@ -841,15 +841,15 @@ function openBook(id){
   const overlay=document.getElementById('nvDetailOverlay')
   const body=document.getElementById('nvDetailBody')
   const coverHtml=b.coverImg
-    ?`<img class="nv-detail-cover" src="${b.coverImg}">`
-    :`<div class="nv-detail-cover-placeholder"><svg width="40" height="40" viewBox="0 0 40 40" fill="none"><rect x="6" y="2" width="20" height="28" rx="3" stroke="#444" stroke-width="1.6"/><rect x="18" y="4" width="16" height="28" rx="3" stroke="#444" stroke-width="1.6"/></svg></div>`
+    ?`<img class="nv-detail-cover" src="${b.coverImg}" onclick="startReading(${b.id})" style="cursor:pointer">`
+    :`<div class="nv-detail-cover-placeholder" onclick="startReading(${b.id})" style="cursor:pointer"><svg width="40" height="40" viewBox="0 0 40 40" fill="none"><rect x="6" y="2" width="20" height="28" rx="3" stroke="#444" stroke-width="1.6"/><rect x="18" y="4" width="16" height="28" rx="3" stroke="#444" stroke-width="1.6"/></svg></div>`
   body.innerHTML=`
     <div style="display:flex;flex-direction:column;align-items:center;padding:28px 0 0">
       ${coverHtml}
       <div class="nv-detail-title">${escHtml(b.title)}</div>
       ${b.author?`<div class="nv-detail-author">${escHtml(b.author)}</div>`:''}
+      <div style="margin-top:16px;font-size:12px;color:#555">点击封面开始阅读</div>
     </div>
-    <button class="nv-detail-read-btn" onclick="startReading(${b.id})">开始阅读</button>
   `
   overlay.classList.add('open')
 }
