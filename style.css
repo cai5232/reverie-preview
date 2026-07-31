@@ -161,7 +161,7 @@ body{color:#fff;font-family:-apple-system,'PingFang SC',sans-serif;display:flex;
 .nv-recent-cover{width:120px;height:170px;border-radius:10px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.5);transition:transform .15s;display:flex;flex-direction:column}
 .nv-recent-cover-top{flex:2;min-height:0}
 .nv-recent-cover-bottom{flex:0 0 56px;background:#fff;padding:8px 10px;display:flex;flex-direction:column;justify-content:center}
-.nv-recent-cover-title{font-size:11px;font-weight:700;color:#111;line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.nv-recent-cover-title{font-size:13px;font-weight:700;color:#111;line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .nv-recent-cover-author{font-size:10px;color:#999;margin-top:3px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .nv-recent-foot{display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding:0 2px}
 .nv-recent-progress{font-size:11px;color:#888}
