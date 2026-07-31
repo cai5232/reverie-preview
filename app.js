@@ -859,7 +859,6 @@ function hideBookDetail(){
 function startReading(id){
   const b=novelBooks.find(x=>x.id===id)
   if(!b||!b.content)return showToast('没有正文内容')
-  // 解析章节（按"第X章"或"第X卷"拆）
   const lines=b.content.split('\n')
   const chapters=[]
   let cur=null
@@ -880,12 +879,40 @@ function startReading(id){
   renderReaderChapter()
   document.getElementById('nvReaderOverlay').classList.add('open')
   hideBookDetail()
+  initReaderSwipe()
+}
+function initReaderSwipe(){
+  const el=document.getElementById('nvReaderContent')
+  let startX=0,startY=0,moved=false
+  el.addEventListener('touchstart',e=>{
+    startX=e.touches[0].clientX
+    startY=e.touches[0].clientY
+    moved=false
+  },{passive:true})
+  el.addEventListener('touchmove',e=>{
+    if(Math.abs(e.touches[0].clientX-startX)>8)moved=true
+  },{passive:true})
+  el.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-startX
+    const dy=e.changedTouches[0].clientY-startY
+    if(Math.abs(dx)<8&&Math.abs(dy)<8&&!moved){
+      // 点击中间1/3区域才弹菜单
+      const mid=window.innerWidth/3
+      if(e.changedTouches[0].clientX>mid&&e.changedTouches[0].clientX<mid*2){
+        toggleReaderUI()
+      }
+      return
+    }
+    if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)*1.2){
+      if(dx<0)readerNextPage()
+      else readerPrevPage()
+    }
+  },{passive:true})
 }
 function renderReaderChapter(){
   const r=window._nvReader
   const ch=r.chapters[r.chIdx]
   const text=ch.lines.join('\n').trim()
-  // 按字数分页，约600字一页
   const PAGE_SIZE=600
   const pages=[]
   for(let i=0;i<text.length;i+=PAGE_SIZE)pages.push(text.slice(i,i+PAGE_SIZE))
@@ -898,12 +925,12 @@ function renderReaderPage(){
   const r=window._nvReader
   const ch=r.chapters[r.chIdx]
   const el=document.getElementById('nvReaderContent')
-  const title=r.chIdx===0&&r.chapters.length===1?'':`<div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:24px">${escHtml(ch.title)}</div>`
+  const showTitle=!(r.chIdx===0&&r.chapters.length===1)
+  const title=showTitle?`<div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:24px">${escHtml(ch.title)}</div>`:''
   const txt=escHtml(r.pages[r.page]||'').replace(/\n/g,'<br>')
   el.style.fontSize=r.fontSize+'px'
   el.innerHTML=title+`<div>${txt}</div>`
   document.getElementById('nvPageIndicator').textContent=`${r.chIdx+1}/${r.chapters.length} 章 · ${r.page+1}/${r.pages.length} 页`
-  // 保存进度
   r.b.lastChapter=r.chIdx
   r.b.progress=Math.round((r.chIdx/r.chapters.length)*100)
   const idx=novelBooks.findIndex(x=>x.id===r.b.id)
@@ -913,6 +940,7 @@ function readerPrevPage(){
   const r=window._nvReader
   if(r.page>0){r.page--;renderReaderPage()}
   else if(r.chIdx>0){r.chIdx--;r.page=9999;renderReaderChapter()}
+  else showToast('已经是第一页了 (´・ω・`)')
 }
 function readerNextPage(){
   const r=window._nvReader
@@ -925,7 +953,7 @@ function toggleReaderUI(){
   r.uiVisible=!r.uiVisible
   document.getElementById('nvReaderTopbar').classList.toggle('show',r.uiVisible)
   document.getElementById('nvReaderToolbar').classList.toggle('show',r.uiVisible)
-  closeToc();closeReaderSettings()
+  if(!r.uiVisible){closeToc();closeReaderSettings()}
 }
 function hideReader(){
   document.getElementById('nvReaderOverlay').classList.remove('open')
