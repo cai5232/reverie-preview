@@ -910,59 +910,46 @@ function renderReaderPage(){
   const showTitle=pg.isFirst&&r.chapters.length>1&&r.chapters[pg.chIdx].title!=='正文'
   const titleHtml=showTitle?`<div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:18px">${escHtml(r.chapters[pg.chIdx].title)}</div>`:''
   const bodyHtml=escHtml(pg.text).replace(/\n/g,'<br>')
+  el.innerHTML=titleHtml+`<div style="color:#ccc;line-height:1.9;word-break:break-all">${bodyHtml}</div>`
+  // 页数写入固定底部元素
   const total=r.allPages.length
-  el.innerHTML=`${titleHtml}<div style="flex:1;color:#ccc;line-height:1.9;word-break:break-all">${bodyHtml}</div><div style="text-align:center;font-size:11px;color:#444;padding-top:20px">${r.globalPage+1} / ${total}</div>`
+  const ind=document.getElementById('nvPageIndicator')
+  if(ind)ind.textContent=`${r.globalPage+1} / ${total}`
   r.chIdx=pg.chIdx
   r.b.lastChapter=r.chIdx
   r.b.progress=Math.round(((r.globalPage+1)/total)*100)
   const idx=novelBooks.findIndex(x=>x.id===r.b.id)
   if(idx>=0){novelBooks[idx]=r.b;localStorage.setItem('novel_books',JSON.stringify(novelBooks))}
-  const ind=document.getElementById('nvPageIndicator')
-  if(ind)ind.textContent=''
 }
 
-function slideToPage(dir){
+function slideToPage(){}
+function readerPrevPage(){
   const r=window._nvReader
-  if(r.animating)return
-  const next=r.globalPage+dir
-  if(next<0)return showToast('已经是第一页 (´・ω・`)')
-  if(next>=r.allPages.length)return showToast('已经是最后一页 (´・ω・`)')
-  const el=document.getElementById('nvReaderContent')
-  r.animating=true
-  el.style.transition='transform .22s cubic-bezier(.4,0,.2,1)'
-  el.style.transform=`translateX(${dir<0?'100%':'-100%'})`
-  setTimeout(()=>{
-    el.style.transition='none'
-    el.style.transform=`translateX(${dir<0?'-100%':'100%'})`
-    r.globalPage=next
-    renderReaderPage()
-    el.getBoundingClientRect()
-    el.style.transition='transform .22s cubic-bezier(.4,0,.2,1)'
-    el.style.transform='translateX(0)'
-    setTimeout(()=>{el.style.transition='';r.animating=false},230)
-  },220)
+  if(r.globalPage>0){r.globalPage--;renderReaderPage()}
+  else showToast('已经是第一页了 (´・ω・`)')
 }
-
-function readerPrevPage(){slideToPage(-1)}
-function readerNextPage(){slideToPage(1)}
+function readerNextPage(){
+  const r=window._nvReader
+  if(r.globalPage<r.allPages.length-1){r.globalPage++;renderReaderPage()}
+  else showToast('已经是最后一页了 (´・ω・`)')
+}
 
 function initReaderSwipe(){
   const el=document.getElementById('nvReaderContent')
-  let sx=0,sy=0,dragging=false,dx=0
-  const onStart=e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;dx=0;dragging=false}
-  const onMove=e=>{dx=e.touches[0].clientX-sx;if(Math.abs(dx)>8&&Math.abs(dx)>Math.abs(e.touches[0].clientY-sy))dragging=true}
-  const onEnd=e=>{
-    const r=window._nvReader
-    if(r&&r.animating)return
-    if(dragging&&Math.abs(dx)>40){dx<0?readerNextPage():readerPrevPage()}
-    else if(!dragging&&Math.abs(dx)<8&&Math.abs(e.changedTouches[0].clientY-sy)<8){
+  let sx=0,sy=0
+  el.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true})
+  el.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-sx
+    const dy=e.changedTouches[0].clientY-sy
+    if(Math.abs(dx)<8&&Math.abs(dy)<8){
+      // 点击：左1/3上一页，右1/3下一页，中间弹菜单
       const cx=e.changedTouches[0].clientX
-      if(cx>window.innerWidth/3&&cx<window.innerWidth*2/3)toggleReaderUI()
+      const w=window.innerWidth
+      if(cx<w/3)readerPrevPage()
+      else if(cx>w*2/3)readerNextPage()
+      else toggleReaderUI()
     }
-  }
-  el.addEventListener('touchstart',onStart,{passive:true})
-  el.addEventListener('touchmove',onMove,{passive:true})
-  el.addEventListener('touchend',onEnd,{passive:true})
+  },{passive:true})
 }
 
 function toggleReaderUI(){
