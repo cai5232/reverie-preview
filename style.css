@@ -221,5 +221,6 @@ body{color:#fff;font-family:-apple-system,'PingFang SC',sans-serif;display:flex;
 .nv-toc-item:active{background:#2a2a2a}
 .nv-toc-item.active{color:#1d6fe5}
 .nv-rs-btn{background:#2a2a2a;color:#ccc;border:none;border-radius:8px;padding:8px 18px;font-size:15px;cursor:pointer;font-family:inherit}
+.nv-shelf-empty{width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 0 40px;gap:20px}
 .nv-reader-page-indicator{position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 8px);left:0;right:0;text-align:center;font-size:11px;color:#444;pointer-events:none;z-index:4}
 .nv-shelf-empty{width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 0 40px;gap:20px}
