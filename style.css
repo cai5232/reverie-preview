@@ -178,3 +178,8 @@ body{color:#fff;font-family:-apple-system,'PingFang SC',sans-serif;display:flex;
 .nv-shelf-empty-book-line1{position:absolute;left:18px;right:10px;top:30px;height:2px;background:#3d3d3d;border-radius:1px}
 .nv-shelf-empty-book-line2{position:absolute;left:18px;right:18px;top:38px;height:2px;background:#3d3d3d;border-radius:1px}
 .nv-shelf-empty-text{font-size:13px;color:#444;text-align:center;line-height:1.7}
+/* 强制覆盖：弹窗居中 */
+.nv-modal-overlay{position:fixed!important;inset:0!important;background:rgba(0,0,0,.6)!important;z-index:100!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:0 24px!important;opacity:0;pointer-events:none;transition:opacity .22s}
+.nv-modal-overlay.open{opacity:1!important;pointer-events:auto!important}
+.nv-modal{background:#1c1c1e!important;border-radius:18px!important;padding:24px 20px 20px!important;width:100%!important;max-width:380px!important;transform:scale(.94);transition:transform .25s}
+.nv-modal-overlay.open .nv-modal{transform:scale(1)!important}
