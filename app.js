@@ -874,9 +874,17 @@ function startReading(id){
 
 function buildAllPages(){
   const r=window._nvReader
-  // 每行字符数 = 内容区宽 / 字号，内容区宽 = 屏幕宽 - 左右padding各24px
-  const CHARS_PER_LINE=Math.floor((window.innerWidth-48)/r.fontSize)||19
-  const LINES_PER_PAGE=20
+  // 动态计算每页最多几行
+  // 可用高度 = 屏幕高 - topbar高(约52px+安全区) - 上下padding(各20px) - 底部安全区
+  const safeTop=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sat')||'0')||44
+  const safeBot=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sab')||'0')||34
+  const topbarH=52+safeTop
+  const paddingV=20+20+safeBot+24  // top+bottom padding+safe
+  const availH=window.innerHeight-topbarH-paddingV
+  const lineH=r.fontSize*1.85
+  const LINES_PER_PAGE=Math.max(8,Math.floor(availH/lineH))
+
+  const CHARS_PER_LINE=Math.floor((window.innerWidth-48)/r.fontSize)||18
   r.allPages=[]
 
   r.chapters.forEach((ch,ci)=>{
@@ -888,24 +896,20 @@ function buildAllPages(){
     let pageBuf=[]
     let isFirstPage=true
 
-    // 章节标题第一页顶部占2行
     const hasTitle=r.chapters.length>1&&ch.title!=='正文'
     if(hasTitle)pageLines=2
 
     const flushPage=()=>{
-      if(pageBuf.length>0||pageLines>0){
-        r.allPages.push({chIdx:ci,isFirst:isFirstPage,text:pageBuf.join('\n')})
-        isFirstPage=false
-        pageBuf=[]
-        pageLines=0
-      }
+      r.allPages.push({chIdx:ci,isFirst:isFirstPage,text:pageBuf.join('\n')})
+      isFirstPage=false
+      pageBuf=[]
+      pageLines=0
     }
 
     for(const para of paras){
       const paraLines=Math.ceil(para.length/CHARS_PER_LINE)||1
 
       if(paraLines>=LINES_PER_PAGE){
-        // 超长段落强制按行拆
         if(pageBuf.length>0)flushPage()
         let pos=0
         while(pos<para.length){
@@ -917,7 +921,6 @@ function buildAllPages(){
           if(pos<para.length)flushPage()
         }
       }else if(pageLines+paraLines>LINES_PER_PAGE){
-        // 加上这段会超出，先换页
         flushPage()
         pageBuf=[para]
         pageLines=paraLines
@@ -926,7 +929,7 @@ function buildAllPages(){
         pageLines+=paraLines
       }
     }
-    flushPage()
+    if(pageBuf.length>0)flushPage()
   })
 
   r.globalPage=r.allPages.findIndex(p=>p.chIdx===(r.b.lastChapter||0))
