@@ -761,24 +761,30 @@ function initMemory(){
 
 // ── Novel 一起读 ──
 let novelBooks=JSON.parse(localStorage.getItem('novel_books')||'[]')
-let novelSelectedColor='#f4a7b9'
+let novelCoverDataUrl=null
 
 function novelImport(){
   document.getElementById('nvModalOverlay').classList.add('open')
   document.getElementById('nvBookTitle').value=''
   document.getElementById('nvBookAuthor').value=''
-  novelSelectedColor='#f4a7b9'
-  document.querySelectorAll('.nv-color-dot').forEach(d=>{
-    d.classList.toggle('active',d.dataset.color===novelSelectedColor)
-  })
+  novelCoverDataUrl=null
+  const pick=document.getElementById('nvCoverPick')
+  if(pick)pick.innerHTML=`<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="1" y="1" width="20" height="20" rx="4" stroke="#555" stroke-width="1.4"/><circle cx="7.5" cy="7.5" r="2" stroke="#555" stroke-width="1.2"/><path d="M1 15l5-5 4 4 3-3 7 6" stroke="#555" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span>添加封面</span>`
 }
 function closeNovelModal(){
   document.getElementById('nvModalOverlay').classList.remove('open')
 }
-function pickColor(el){
-  novelSelectedColor=el.dataset.color
-  document.querySelectorAll('.nv-color-dot').forEach(d=>d.classList.remove('active'))
-  el.classList.add('active')
+function handleCoverPick(e){
+  const file=e.target.files[0]
+  if(!file)return
+  const reader=new FileReader()
+  reader.onload=ev=>{
+    novelCoverDataUrl=ev.target.result
+    const pick=document.getElementById('nvCoverPick')
+    if(pick)pick.innerHTML=`<img src="${novelCoverDataUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:8px">`
+  }
+  reader.readAsDataURL(file)
+  e.target.value=''
 }
 function triggerTxtImport(){
   const title=document.getElementById('nvBookTitle').value.trim()
@@ -803,16 +809,6 @@ function handleTxtImport(e){
   }
   reader.readAsText(file,'utf-8')
 }
-function addBook(){
-  const title=document.getElementById('nvBookTitle').value.trim()
-  if(!title)return
-  const author=document.getElementById('nvBookAuthor').value.trim()
-  const book={id:Date.now(),title,author,color:novelSelectedColor,progress:0,addedAt:Date.now()}
-  novelBooks.unshift(book)
-  localStorage.setItem('novel_books',JSON.stringify(novelBooks))
-  closeNovelModal()
-  renderNovels()
-}
 function renderNovels(){
   const recentEl=document.getElementById('nvRecent')
   if(!novelBooks.length){
@@ -836,9 +832,7 @@ function renderNovels(){
       </div>
     </div>`).join('')
 }
-function openBook(id){
-  showToast('阅读功能即将上线 (´・ω・`)')
-}
+function openBook(id){showToast('阅读功能即将上线 (´・ω・`)')}
 function bookMenu(id){
   if(confirm('删除这本书？')){
     novelBooks=novelBooks.filter(b=>b.id!==id)
