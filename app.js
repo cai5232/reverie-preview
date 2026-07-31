@@ -816,7 +816,7 @@ function addBook(){
 function renderNovels(){
   const recentEl=document.getElementById('nvRecent')
   if(!novelBooks.length){
-    recentEl.innerHTML='<div class="nv-empty-recent">还没有读过的书</div>'
+    recentEl.innerHTML=`<div class="nv-shelf-empty"><div class="nv-shelf-empty-book"><div class="nv-shelf-empty-book-spine"></div><div class="nv-shelf-empty-book-front"><div class="nv-shelf-empty-book-line1"></div><div class="nv-shelf-empty-book-line2"></div></div><div class="nv-shelf-empty-book-shadow"></div></div><div class="nv-shelf-empty-text">还没有读过的书<br>点右上角导入第一本</div></div>`
     return
   }
   recentEl.innerHTML=novelBooks.map(b=>`
