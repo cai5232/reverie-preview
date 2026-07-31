@@ -138,7 +138,61 @@
 <div class="page" id="page-memo"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Memo</div><div class="sub-desc">备忘录</div><div class="card">待开发</div></div></div>
 <div class="page" id="page-music"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Music</div><div class="sub-desc">一起听</div><div class="card">待开发</div></div></div>
 <div class="page" id="page-dream"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Dream</div><div class="sub-desc">梦境</div><div class="card">待开发</div></div></div>
-<div class="page" id="page-novel"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Novel</div><div class="sub-desc">一起读</div><div class="card">待开发</div></div></div>
+<div class="page" id="page-novel">
+  <div class="nv-header">
+    <div class="nv-header-left" onclick="openSidebar()">
+      <svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg>
+    </div>
+    <div class="nv-header-title">一起读</div>
+    <div class="nv-header-actions">
+      <div class="nv-icon-btn" onclick="novelImport()">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M17 13v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3" stroke="#555" stroke-width="1.5" stroke-linecap="round"/><path d="M10 3v9M7 9l3 3 3-3" stroke="#555" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="nv-icon-btn" onclick="novelMore()">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="4" cy="10" r="1.5" fill="#555"/><circle cx="10" cy="10" r="1.5" fill="#555"/><circle cx="16" cy="10" r="1.5" fill="#555"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="nv-body" id="nvBody">
+    <!-- 最近阅读 -->
+    <div class="nv-section-label">最近阅读</div>
+    <div class="nv-recent-scroll" id="nvRecent">
+      <div class="nv-empty-recent">还没有读过的书</div>
+    </div>
+
+    <!-- 书架 -->
+    <div class="nv-section-label" style="margin-top:24px">书架</div>
+    <div class="nv-shelf" id="nvShelf">
+      <div class="nv-shelf-empty">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><rect x="8" y="6" width="16" height="22" rx="2" stroke="#ddd" stroke-width="1.5"/><rect x="18" y="8" width="14" height="22" rx="2" stroke="#ddd" stroke-width="1.5"/><path d="M6 30h28" stroke="#ddd" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <div class="nv-shelf-empty-text">书架空空的<br>点右上角导入第一本书</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 导入弹窗 -->
+  <div class="nv-modal-overlay" id="nvModalOverlay" onclick="closeNovelModal()">
+    <div class="nv-modal" onclick="event.stopPropagation()">
+      <div class="nv-modal-title">添加书籍</div>
+      <input class="nv-modal-input" id="nvBookTitle" placeholder="书名">
+      <input class="nv-modal-input" id="nvBookAuthor" placeholder="作者（可选）">
+      <div class="nv-modal-color-label">封面色</div>
+      <div class="nv-color-row" id="nvColorRow">
+        <div class="nv-color-dot active" style="background:#f4a7b9" data-color="#f4a7b9" onclick="pickColor(this)"></div>
+        <div class="nv-color-dot" style="background:#b5d5f5" data-color="#b5d5f5" onclick="pickColor(this)"></div>
+        <div class="nv-color-dot" style="background:#c3e8d0" data-color="#c3e8d0" onclick="pickColor(this)"></div>
+        <div class="nv-color-dot" style="background:#f9e0a2" data-color="#f9e0a2" onclick="pickColor(this)"></div>
+        <div class="nv-color-dot" style="background:#d9b8f5" data-color="#d9b8f5" onclick="pickColor(this)"></div>
+        <div class="nv-color-dot" style="background:#f5c8a0" data-color="#f5c8a0" onclick="pickColor(this)"></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:6px">
+        <button class="nv-modal-btn ghost" onclick="closeNovelModal()">取消</button>
+        <button class="nv-modal-btn" onclick="addBook()">添加</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="page" id="page-game"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Game</div><div class="sub-desc">一起玩</div><div class="card">待开发</div></div></div>
 <div class="page" id="page-shop"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Shop</div><div class="sub-desc">小克的小店</div><div class="card">待开发</div></div></div>
 <div class="page" id="page-diary"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Diary</div><div class="sub-desc">日记</div><div class="card">待开发</div></div></div>
