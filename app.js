@@ -975,7 +975,8 @@ function changeReaderFont(d){
   const r=window._nvReader
   r.fontSize=Math.min(26,Math.max(14,r.fontSize+d))
   document.getElementById('nvFontSizeLabel').textContent=r.fontSize+'px'
-  renderReaderPage()
+  document.getElementById('nvReaderContent').style.fontSize=r.fontSize+'px'
+  buildAllPages()
 }
 
 function changeAvatar(e){
