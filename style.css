@@ -144,7 +144,7 @@ body{color:#fff;font-family:-apple-system,'PingFang SC',sans-serif;display:flex;
 .mem-card-meta{font-size:11px;color:#555;margin-top:6px}
 .streaming-cursor{display:inline-block;width:2px;height:13px;background:#666;margin-left:1px;vertical-align:middle;animation:blink .8s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-.nv-header{display:flex;align-items:center;padding:calc(env(safe-area-inset-top,0px) + 14px) 18px 12px;background:#111;border-bottom:.5px solid #222;flex-shrink:0}
+.nv-header{display:flex;align-items:center;padding:calc(env(safe-area-inset-top,0px) + 14px) 18px 12px;background:#000;border-bottom:.5px solid #222;flex-shrink:0}
 .nv-header-left{cursor:pointer;padding:2px;margin-right:12px}
 .nv-header-title{flex:1;font-size:17px;font-weight:700;color:#fff;letter-spacing:.2px}
 .nv-header-actions{display:flex;gap:4px}
