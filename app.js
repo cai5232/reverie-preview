@@ -812,7 +812,7 @@ function handleTxtImport(e){
 function renderNovels(){
   const recentEl=document.getElementById('nvRecent')
   if(!novelBooks.length){
-    recentEl.innerHTML=`<div class="nv-shelf-empty"><div class="nv-shelf-empty-book"><div class="nv-shelf-empty-book-spine"></div><div class="nv-shelf-empty-book-front"><div class="nv-shelf-empty-book-line1"></div><div class="nv-shelf-empty-book-line2"></div></div><div class="nv-shelf-empty-book-shadow"></div></div><div class="nv-shelf-empty-text">还没有读过的书<br>点右上角导入第一本</div></div>`
+    recentEl.innerHTML=`<div class="nv-shelf-empty"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><rect x="8" y="4" width="20" height="28" rx="3" stroke="#444" stroke-width="1.6"/><rect x="22" y="6" width="16" height="28" rx="3" stroke="#444" stroke-width="1.6"/><path d="M6 34h32" stroke="#444" stroke-width="1.6" stroke-linecap="round"/></svg><div class="nv-shelf-empty-text">还没有读过的书<br>点右上角导入第一本</div></div>`
     return
   }
   recentEl.innerHTML=novelBooks.map(b=>`
