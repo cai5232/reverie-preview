@@ -795,32 +795,33 @@ function renderNovels(){
   const shelfEl=document.getElementById('nvShelf')
   if(!novelBooks.length){
     recentEl.innerHTML='<div class="nv-empty-recent">还没有读过的书</div>'
-    shelfEl.innerHTML='<div class="nv-shelf-empty"><svg width="40" height="40" viewBox="0 0 40 40" fill="none"><rect x="8" y="6" width="16" height="22" rx="2" stroke="#ddd" stroke-width="1.5"/><rect x="18" y="8" width="14" height="22" rx="2" stroke="#ddd" stroke-width="1.5"/><path d="M6 30h28" stroke="#ddd" stroke-width="1.5" stroke-linecap="round"/></svg><div class="nv-shelf-empty-text">书架空空的<br>点右上角导入第一本书</div></div>'
+    shelfEl.innerHTML='<div class="nv-shelf-empty"><svg width="40" height="40" viewBox="0 0 40 40" fill="none"><rect x="8" y="6" width="16" height="22" rx="2" stroke="#444" stroke-width="1.5"/><rect x="18" y="8" width="14" height="22" rx="2" stroke="#444" stroke-width="1.5"/><path d="M6 30h28" stroke="#444" stroke-width="1.5" stroke-linecap="round"/></svg><div class="nv-shelf-empty-text">书架空空的<br>点右上角导入第一本书</div></div>'
     return
   }
-  // 最近阅读：前3本
-  const recent=novelBooks.slice(0,3)
+  // 最近阅读：前4本，封面色块+毛玻璃底部信息条
+  const recent=novelBooks.slice(0,4)
   recentEl.innerHTML=recent.map(b=>`
     <div class="nv-recent-card" onclick="openBook(${b.id})">
       <div class="nv-recent-cover" style="background:${b.color}">
-        <div class="nv-recent-cover-title">${b.title}</div>
-        ${b.author?`<div class="nv-recent-cover-author">${b.author}</div>`:''}
-        <div class="nv-recent-dots" onclick="event.stopPropagation();bookMenu(${b.id})">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="2" cy="6" r="1.2" fill="#fff"/><circle cx="6" cy="6" r="1.2" fill="#fff"/><circle cx="10" cy="6" r="1.2" fill="#fff"/></svg>
+        <div class="nv-recent-cover-band">
+          <div class="nv-recent-cover-title">${b.title}</div>
+          ${b.author?`<div class="nv-recent-cover-author">${b.author}</div>`:''}
         </div>
       </div>
-      <div class="nv-recent-meta">
-        <div class="nv-recent-name">${b.title}</div>
+      <div class="nv-recent-foot">
         <div class="nv-recent-progress">${b.progress?b.progress+'%':'未开始'}</div>
+        <div class="nv-recent-dots" onclick="event.stopPropagation();bookMenu(${b.id})">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="2" cy="7" r="1.3" fill="#666"/><circle cx="7" cy="7" r="1.3" fill="#666"/><circle cx="12" cy="7" r="1.3" fill="#666"/></svg>
+        </div>
       </div>
     </div>`).join('')
-  // 书架：全部
+  // 书架：竖排书脊，writing-mode竖向文字
   shelfEl.innerHTML=novelBooks.map(b=>`
     <div class="nv-shelf-book" onclick="openBook(${b.id})">
-      <div class="nv-shelf-spine-wrap" style="background:${b.color}">
-        <div class="nv-shelf-spine-title">${b.title}</div>
+      <div class="nv-shelf-spine" style="background:${b.color}">
+        <div class="nv-shelf-spine-text">${b.title}</div>
+        ${b.progress?`<div class="nv-shelf-spine-progress">${b.progress}%</div>`:''}
       </div>
-      <div class="nv-shelf-book-name">${b.title}</div>
     </div>`).join('')
 }
 function openBook(id){
