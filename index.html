@@ -177,9 +177,15 @@
       <div class="nv-modal-title">添加书籍</div>
       <input type="file" id="nvCoverInput" accept="image/*" style="display:none" onchange="handleCoverPick(event)">
       <input type="file" id="nvTxtInput" accept=".txt" style="display:none" onchange="handleTxtImport(event)">
-      <div class="nv-cover-pick" id="nvCoverPick" onclick="document.getElementById('nvCoverInput').click()">
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="1" y="1" width="20" height="20" rx="4" stroke="#555" stroke-width="1.4"/><circle cx="7.5" cy="7.5" r="2" stroke="#555" stroke-width="1.2"/><path d="M1 15l5-5 4 4 3-3 7 6" stroke="#555" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span>添加封面</span>
+      <div style="display:flex;gap:10px;margin-bottom:10px">
+        <div class="nv-cover-pick" id="nvCoverPick" onclick="document.getElementById('nvCoverInput').click()" style="flex:1">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="1" y="1" width="20" height="20" rx="4" stroke="#555" stroke-width="1.4"/><circle cx="7.5" cy="7.5" r="2" stroke="#555" stroke-width="1.2"/><path d="M1 15l5-5 4 4 3-3 7 6" stroke="#555" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>添加封面</span>
+        </div>
+        <div class="nv-add-quick" onclick="triggerTxtImport()">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 4v14M4 11h14" stroke="#555" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span>导入txt</span>
+        </div>
       </div>
       <input class="nv-modal-input" id="nvBookTitle" placeholder="书名">
       <input class="nv-modal-input" id="nvBookAuthor" placeholder="作者（可选）">
