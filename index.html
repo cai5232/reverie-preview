@@ -162,7 +162,16 @@
     </div>
   </div>
 
-  <!-- 导入弹窗 -->
+  <!-- 书籍详情页 -->
+  <div class="nv-detail-overlay" id="nvDetailOverlay">
+    <div class="nv-detail-header">
+      <div class="nv-detail-back" onclick="hideBookDetail()">
+        <svg width="10" height="18" viewBox="0 0 10 18" fill="none"><path d="M9 1L1 9l8 8" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+    <div class="nv-detail-body" id="nvDetailBody"></div>
+  </div>
+</div>
   <div class="nv-modal-overlay" id="nvModalOverlay" onclick="closeNovelModal()">
     <div class="nv-modal" onclick="event.stopPropagation()">
       <div class="nv-modal-title">添加书籍</div>
