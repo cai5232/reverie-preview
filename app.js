@@ -867,9 +867,8 @@ function startReading(id){
   window._nvReader={b,chapters,chIdx:b.lastChapter||0,fontSize:20,globalPage:0,allPages:[]}
   document.getElementById('nvReaderTopTitle').textContent=b.title
   document.getElementById('nvFontSizeLabel').textContent='20px'
-  buildAllPages()
+  renderFullBook()
   document.getElementById('nvReaderOverlay').classList.add('open')
-  initReaderTap()
 }
 
 function renderFullBook(){
