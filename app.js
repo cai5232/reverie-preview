@@ -874,9 +874,9 @@ function startReading(id){
 
 function buildAllPages(){
   const r=window._nvReader
-  // 20px字体，内容区宽约382px，每行约19字，行高38px，可用高约720px，约19行
-  // 340字保守估算，字体每调1px增减约17字
-  const PAGE_SIZE=Math.round(340+((r.fontSize-20)*17))
+  // 20px字体，内容区宽约382px，每行约19字，行高1.85即37px
+  // 内容区高约720px，约19-20行可见；目标22行上限，22×19=418，取390保守
+  const PAGE_SIZE=Math.round(390+((r.fontSize-20)*19))
   r.allPages=[]
   r.chapters.forEach((ch,ci)=>{
     const raw=ch.lines.join('\n').trim()
