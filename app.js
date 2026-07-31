@@ -965,12 +965,10 @@ function openToc(){
 }
 function closeToc(){document.getElementById('nvTocPanel').classList.remove('open')}
 function tocJump(i){
-  const r=window._nvReader
-  const pg=r.allPages.findIndex(p=>p.chIdx===i)
-  if(pg>=0)r.globalPage=pg
-  r.chIdx=i
-  renderReaderPage()
   closeToc()
+  const el=document.getElementById('nv-ch-'+i)
+  if(el)el.scrollIntoView({behavior:'smooth'})
+  if(window._nvReader)window._nvReader.chIdx=i
 }
 function openReaderSettings(){document.getElementById('nvRSettingsPanel').classList.add('open')}
 function closeReaderSettings(){document.getElementById('nvRSettingsPanel').classList.remove('open')}
@@ -978,8 +976,9 @@ function changeReaderFont(d){
   const r=window._nvReader
   r.fontSize=Math.min(26,Math.max(14,r.fontSize+d))
   document.getElementById('nvFontSizeLabel').textContent=r.fontSize+'px'
-  document.getElementById('nvReaderContent').style.fontSize=r.fontSize+'px'
-  buildAllPages()
+  const el=document.getElementById('nvReaderContent')
+  el.style.fontSize=r.fontSize+'px'
+  // 字号变了段落行高不用重建，直接改 fontSize 即可
 }
 
 function changeAvatar(e){
