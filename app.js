@@ -857,7 +857,95 @@ function hideBookDetail(){
   document.getElementById('nvDetailOverlay').classList.remove('open')
 }
 function startReading(id){
-  showToast('阅读功能即将上线 (´・ω・`)')
+  const b=novelBooks.find(x=>x.id===id)
+  if(!b||!b.content)return showToast('没有正文内容')
+  // 解析章节（按"第X章"或"第X卷"拆）
+  const lines=b.content.split('\n')
+  const chapters=[]
+  let cur=null
+  const chReg=/^[第【\[]([\d一二三四五六七八九十百千]+)[章节卷话]/
+  for(const l of lines){
+    if(chReg.test(l.trim())){
+      if(cur)chapters.push(cur)
+      cur={title:l.trim(),lines:[]}
+    }else{
+      if(!cur)cur={title:'正文',lines:[]}
+      cur.lines.push(l)
+    }
+  }
+  if(cur)chapters.push(cur)
+  if(!chapters.length)chapters.push({title:'正文',lines})
+  window._nvReader={b,chapters,chIdx:b.lastChapter||0,page:0,fontSize:18,uiVisible:false}
+  document.getElementById('nvReaderTopTitle').textContent=b.title
+  renderReaderChapter()
+  document.getElementById('nvReaderOverlay').classList.add('open')
+  hideBookDetail()
+}
+function renderReaderChapter(){
+  const r=window._nvReader
+  const ch=r.chapters[r.chIdx]
+  const text=ch.lines.join('\n').trim()
+  // 按字数分页，约600字一页
+  const PAGE_SIZE=600
+  const pages=[]
+  for(let i=0;i<text.length;i+=PAGE_SIZE)pages.push(text.slice(i,i+PAGE_SIZE))
+  if(!pages.length)pages.push('')
+  r.pages=pages
+  r.page=Math.min(r.page,pages.length-1)
+  renderReaderPage()
+}
+function renderReaderPage(){
+  const r=window._nvReader
+  const ch=r.chapters[r.chIdx]
+  const el=document.getElementById('nvReaderContent')
+  const title=r.chIdx===0&&r.chapters.length===1?'':`<div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:24px">${escHtml(ch.title)}</div>`
+  const txt=escHtml(r.pages[r.page]||'').replace(/\n/g,'<br>')
+  el.style.fontSize=r.fontSize+'px'
+  el.innerHTML=title+`<div>${txt}</div>`
+  document.getElementById('nvPageIndicator').textContent=`${r.chIdx+1}/${r.chapters.length} 章 · ${r.page+1}/${r.pages.length} 页`
+  // 保存进度
+  r.b.lastChapter=r.chIdx
+  r.b.progress=Math.round((r.chIdx/r.chapters.length)*100)
+  const idx=novelBooks.findIndex(x=>x.id===r.b.id)
+  if(idx>=0){novelBooks[idx]=r.b;localStorage.setItem('novel_books',JSON.stringify(novelBooks))}
+}
+function readerPrevPage(){
+  const r=window._nvReader
+  if(r.page>0){r.page--;renderReaderPage()}
+  else if(r.chIdx>0){r.chIdx--;r.page=9999;renderReaderChapter()}
+}
+function readerNextPage(){
+  const r=window._nvReader
+  if(r.page<r.pages.length-1){r.page++;renderReaderPage()}
+  else if(r.chIdx<r.chapters.length-1){r.chIdx++;r.page=0;renderReaderChapter()}
+  else showToast('已经是最后一页了 (´・ω・`)')
+}
+function toggleReaderUI(){
+  const r=window._nvReader
+  r.uiVisible=!r.uiVisible
+  document.getElementById('nvReaderTopbar').classList.toggle('show',r.uiVisible)
+  document.getElementById('nvReaderToolbar').classList.toggle('show',r.uiVisible)
+  closeToc();closeReaderSettings()
+}
+function hideReader(){
+  document.getElementById('nvReaderOverlay').classList.remove('open')
+  renderNovels()
+}
+function openToc(){
+  document.getElementById('nvTocPanel').classList.add('open')
+  const r=window._nvReader
+  const list=document.getElementById('nvTocList')
+  list.innerHTML=r.chapters.map((ch,i)=>`<div class="nv-toc-item${i===r.chIdx?' active':''}" onclick="tocJump(${i})">${escHtml(ch.title)}</div>`).join('')
+}
+function closeToc(){document.getElementById('nvTocPanel').classList.remove('open')}
+function tocJump(i){window._nvReader.chIdx=i;window._nvReader.page=0;renderReaderChapter();closeToc()}
+function openReaderSettings(){document.getElementById('nvRSettingsPanel').classList.add('open')}
+function closeReaderSettings(){document.getElementById('nvRSettingsPanel').classList.remove('open')}
+function changeReaderFont(d){
+  const r=window._nvReader
+  r.fontSize=Math.min(26,Math.max(14,r.fontSize+d))
+  document.getElementById('nvFontSizeLabel').textContent=r.fontSize+'px'
+  renderReaderPage()
 }
 function bookMenu(id){
   if(confirm('删除这本书？')){
