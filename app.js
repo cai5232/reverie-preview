@@ -832,7 +832,30 @@ function renderNovels(){
       </div>
     </div>`).join('')
 }
-function openBook(id){showToast('阅读功能即将上线 (´・ω・`)')}
+function openBook(id){
+  const b=novelBooks.find(x=>x.id===id)
+  if(!b)return
+  const overlay=document.getElementById('nvDetailOverlay')
+  const body=document.getElementById('nvDetailBody')
+  const coverHtml=b.coverImg
+    ?`<img class="nv-detail-cover" src="${b.coverImg}">`
+    :`<div class="nv-detail-cover-placeholder"><svg width="40" height="40" viewBox="0 0 40 40" fill="none"><rect x="6" y="2" width="20" height="28" rx="3" stroke="#444" stroke-width="1.6"/><rect x="18" y="4" width="16" height="28" rx="3" stroke="#444" stroke-width="1.6"/></svg></div>`
+  body.innerHTML=`
+    <div style="display:flex;flex-direction:column;align-items:center;padding:28px 0 0">
+      ${coverHtml}
+      <div class="nv-detail-title">${escHtml(b.title)}</div>
+      ${b.author?`<div class="nv-detail-author">${escHtml(b.author)}</div>`:''}
+    </div>
+    <button class="nv-detail-read-btn" onclick="startReading(${b.id})">开始阅读</button>
+  `
+  overlay.classList.add('open')
+}
+function hideBookDetail(){
+  document.getElementById('nvDetailOverlay').classList.remove('open')
+}
+function startReading(id){
+  showToast('阅读功能即将上线 (´・ω・`)')
+}
 function bookMenu(id){
   if(confirm('删除这本书？')){
     novelBooks=novelBooks.filter(b=>b.id!==id)
