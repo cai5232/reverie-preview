@@ -203,6 +203,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   renderChat()
   applyKeepalive()
   initMemory()
+  renderNovels()
 })
 
 function renderChat(){
