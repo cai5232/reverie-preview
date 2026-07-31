@@ -872,69 +872,44 @@ function startReading(id){
   initReaderTap()
 }
 
-function buildAllPages(){
+function renderFullBook(){
   const r=window._nvReader
-  // 动态计算每页最多几行
-  // 可用高度 = 屏幕高 - topbar高(约52px+安全区) - 上下padding(各20px) - 底部安全区
-  const safeTop=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sat')||'0')||44
-  const safeBot=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sab')||'0')||34
-  const topbarH=52+safeTop
-  const paddingV=20+20+safeBot+24  // top+bottom padding+safe
-  const availH=window.innerHeight-topbarH-paddingV
-  const lineH=r.fontSize*1.85
-  const LINES_PER_PAGE=Math.max(8,Math.floor(availH/lineH))
-
-  const CHARS_PER_LINE=Math.floor((window.innerWidth-48)/r.fontSize)||18
-  r.allPages=[]
-
-  r.chapters.forEach((ch,ci)=>{
-    const raw=ch.lines.join('\n').trim()
-    if(!raw){r.allPages.push({chIdx:ci,isFirst:true,text:''});return}
-
-    const paras=raw.split(/\n+/).map(s=>s.trim()).filter(Boolean)
-    let pageLines=0
-    let pageBuf=[]
-    let isFirstPage=true
-
-    const hasTitle=r.chapters.length>1&&ch.title!=='正文'
-    if(hasTitle)pageLines=2
-
-    const flushPage=()=>{
-      r.allPages.push({chIdx:ci,isFirst:isFirstPage,text:pageBuf.join('\n')})
-      isFirstPage=false
-      pageBuf=[]
-      pageLines=0
+  const el=document.getElementById('nvReaderContent')
+  el.style.fontSize=r.fontSize+'px'
+  let html=''
+  r.chapters.forEach((ch,i)=>{
+    html+=`<div id="nv-ch-${i}" class="nv-chapter-block">`
+    if(r.chapters.length>1&&ch.title!=='正文'){
+      html+=`<div class="nv-chapter-title">${escHtml(ch.title)}</div>`
     }
-
-    for(const para of paras){
-      const paraLines=Math.ceil(para.length/CHARS_PER_LINE)||1
-
-      if(paraLines>=LINES_PER_PAGE){
-        if(pageBuf.length>0)flushPage()
-        let pos=0
-        while(pos<para.length){
-          const chunkChars=CHARS_PER_LINE*LINES_PER_PAGE
-          const chunk=para.slice(pos,pos+chunkChars)
-          pageBuf=[chunk]
-          pageLines=Math.ceil(chunk.length/CHARS_PER_LINE)
-          pos+=chunkChars
-          if(pos<para.length)flushPage()
+    const paras=ch.lines.join('\n').split(/\n+/).map(s=>s.trim()).filter(Boolean)
+    html+=paras.map(p=>`<p class="nv-para">${escHtml(p)}</p>`).join('')
+    html+='</div>'
+  })
+  el.innerHTML=html
+  // 滚动到上次章节
+  setTimeout(()=>{
+    const target=document.getElementById('nv-ch-'+(r.chIdx||0))
+    if(target)target.scrollIntoView()
+  },50)
+  // 监听滚动，更新当前章节和进度
+  el.onscroll=()=>{
+    const chs=r.chapters
+    for(let i=chs.length-1;i>=0;i--){
+      const chEl=document.getElementById('nv-ch-'+i)
+      if(chEl&&chEl.getBoundingClientRect().top<=120){
+        if(r.chIdx!==i){
+          r.chIdx=i
+          r.b.lastChapter=i
         }
-      }else if(pageLines+paraLines>LINES_PER_PAGE){
-        flushPage()
-        pageBuf=[para]
-        pageLines=paraLines
-      }else{
-        pageBuf.push(para)
-        pageLines+=paraLines
+        break
       }
     }
-    if(pageBuf.length>0)flushPage()
-  })
-
-  r.globalPage=r.allPages.findIndex(p=>p.chIdx===(r.b.lastChapter||0))
-  if(r.globalPage<0)r.globalPage=0
-  renderReaderPage()
+    const pct=el.scrollHeight>el.clientHeight?Math.round(el.scrollTop/(el.scrollHeight-el.clientHeight)*100):0
+    r.b.progress=pct
+    const idx=novelBooks.findIndex(x=>x.id===r.b.id)
+    if(idx>=0){novelBooks[idx]=r.b;localStorage.setItem('novel_books',JSON.stringify(novelBooks))}
+  }
 }
 
 function renderReaderPage(){
