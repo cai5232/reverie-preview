@@ -169,17 +169,3 @@ body{color:#fff;font-family:-apple-system,'PingFang SC',sans-serif;display:flex;
 .nv-recent-dots{width:24px;height:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:50%}
 .nv-recent-dots:active{background:#2a2a2a}
 .nv-modal-btn{flex:1;padding:13px;border:none;border-radius:12px;font-size:15px;font-family:inherit;cursor:pointer;background:#fff;color:#111;font-weight:600}
-.nv-modal-btn.ghost{background:#2a2a2a;color:#aaa}
-.nv-shelf-empty{width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 0 40px;gap:20px}
-.nv-shelf-empty-book{position:relative;width:72px;height:96px}
-.nv-shelf-empty-book-front{position:absolute;inset:0;background:#333;border-radius:3px 6px 6px 3px;box-shadow:inset -4px 0 8px rgba(0,0,0,.5),0 4px 12px rgba(0,0,0,.4)}
-.nv-shelf-empty-book-spine{position:absolute;left:0;top:4px;bottom:4px;width:10px;background:#252525;border-radius:3px 0 0 3px;box-shadow:inset -2px 0 5px rgba(0,0,0,.6)}
-.nv-shelf-empty-book-shadow{position:absolute;right:-10px;top:8px;bottom:8px;width:10px;background:linear-gradient(to right,rgba(0,0,0,.35),transparent);border-radius:0 4px 4px 0}
-.nv-shelf-empty-book-line1{position:absolute;left:18px;right:10px;top:30px;height:2px;background:#3d3d3d;border-radius:1px}
-.nv-shelf-empty-book-line2{position:absolute;left:18px;right:18px;top:38px;height:2px;background:#3d3d3d;border-radius:1px}
-.nv-shelf-empty-text{font-size:13px;color:#444;text-align:center;line-height:1.7}
-/* 强制覆盖：弹窗居中 */
-.nv-modal-overlay{position:fixed!important;inset:0!important;background:rgba(0,0,0,.6)!important;z-index:100!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:0 24px!important;opacity:0;pointer-events:none;transition:opacity .22s}
-.nv-modal-overlay.open{opacity:1!important;pointer-events:auto!important}
-.nv-modal{background:#1c1c1e!important;border-radius:18px!important;padding:24px 20px 20px!important;width:100%!important;max-width:380px!important;transform:scale(.94);transition:transform .25s}
-.nv-modal-overlay.open .nv-modal{transform:scale(1)!important}
