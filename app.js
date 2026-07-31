@@ -846,6 +846,158 @@ function bookMenu(id){
 }
 function novelMore(){showToast('更多功能开发中')}
 
+function startReading(id){
+  const b=novelBooks.find(x=>x.id===id)
+  if(!b||!b.content)return showToast('没有正文内容')
+  const lines=b.content.split('\n')
+  const chapters=[]
+  let curCh=null
+  const chReg=/^[第【\[]([\d一二三四五六七八九十百千]+)[章节卷话]/
+  for(const l of lines){
+    if(chReg.test(l.trim())){
+      if(curCh)chapters.push(curCh)
+      curCh={title:l.trim(),lines:[]}
+    }else{
+      if(!curCh)curCh={title:'正文',lines:[]}
+      curCh.lines.push(l)
+    }
+  }
+  if(curCh)chapters.push(curCh)
+  if(!chapters.length)chapters.push({title:'正文',lines})
+  window._nvReader={b,chapters,chIdx:b.lastChapter||0,fontSize:18,uiVisible:false,animating:false,globalPage:0,allPages:[]}
+  document.getElementById('nvReaderTopTitle').textContent=b.title
+  buildAllPages()
+  renderReaderPage()
+  document.getElementById('nvReaderOverlay').classList.add('open')
+  initReaderSwipe()
+}
+
+function buildAllPages(){
+  const r=window._nvReader
+  const PAGE_SIZE=200
+  r.allPages=[]
+  r.chapters.forEach((ch,ci)=>{
+    const raw=ch.lines.join('\n').trim()
+    if(!raw){r.allPages.push({chIdx:ci,isFirst:true,text:''});return}
+    const paras=raw.split(/\n+/).filter(s=>s.trim())
+    let buf=''
+    let pageInCh=0
+    const flush=()=>{
+      if(buf.trim()){r.allPages.push({chIdx:ci,isFirst:pageInCh===0,text:buf.trim()});pageInCh++;buf=''}
+    }
+    for(const para of paras){
+      let pos=0
+      while(pos<para.length){
+        const remain=PAGE_SIZE-buf.replace(/\n/g,'').length
+        const chunk=para.slice(pos,pos+remain)
+        buf+=(buf?'\n':'')+chunk
+        pos+=chunk.length
+        if(buf.replace(/\n/g,'').length>=PAGE_SIZE)flush()
+      }
+    }
+    flush()
+  })
+  r.globalPage=r.allPages.findIndex(p=>p.chIdx===(r.b.lastChapter||0))
+  if(r.globalPage<0)r.globalPage=0
+}
+
+function renderReaderPage(){
+  const r=window._nvReader
+  const pg=r.allPages[r.globalPage]
+  if(!pg)return
+  const el=document.getElementById('nvReaderContent')
+  el.style.fontSize=r.fontSize+'px'
+  const showTitle=pg.isFirst&&r.chapters.length>1&&r.chapters[pg.chIdx].title!=='正文'
+  const titleHtml=showTitle?`<div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:18px">${escHtml(r.chapters[pg.chIdx].title)}</div>`:''
+  const bodyHtml=escHtml(pg.text).replace(/\n/g,'<br>')
+  const total=r.allPages.length
+  el.innerHTML=`${titleHtml}<div style="flex:1;color:#ccc;line-height:1.9;word-break:break-all">${bodyHtml}</div><div style="text-align:center;font-size:11px;color:#444;padding-top:20px">${r.globalPage+1} / ${total}</div>`
+  r.chIdx=pg.chIdx
+  r.b.lastChapter=r.chIdx
+  r.b.progress=Math.round(((r.globalPage+1)/total)*100)
+  const idx=novelBooks.findIndex(x=>x.id===r.b.id)
+  if(idx>=0){novelBooks[idx]=r.b;localStorage.setItem('novel_books',JSON.stringify(novelBooks))}
+  const ind=document.getElementById('nvPageIndicator')
+  if(ind)ind.textContent=''
+}
+
+function slideToPage(dir){
+  const r=window._nvReader
+  if(r.animating)return
+  const next=r.globalPage+dir
+  if(next<0)return showToast('已经是第一页 (´・ω・`)')
+  if(next>=r.allPages.length)return showToast('已经是最后一页 (´・ω・`)')
+  const el=document.getElementById('nvReaderContent')
+  r.animating=true
+  el.style.transition='transform .22s cubic-bezier(.4,0,.2,1)'
+  el.style.transform=`translateX(${dir<0?'100%':'-100%'})`
+  setTimeout(()=>{
+    el.style.transition='none'
+    el.style.transform=`translateX(${dir<0?'-100%':'100%'})`
+    r.globalPage=next
+    renderReaderPage()
+    el.getBoundingClientRect()
+    el.style.transition='transform .22s cubic-bezier(.4,0,.2,1)'
+    el.style.transform='translateX(0)'
+    setTimeout(()=>{el.style.transition='';r.animating=false},230)
+  },220)
+}
+
+function readerPrevPage(){slideToPage(-1)}
+function readerNextPage(){slideToPage(1)}
+
+function initReaderSwipe(){
+  const el=document.getElementById('nvReaderContent')
+  let sx=0,sy=0,dragging=false,dx=0
+  const onStart=e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;dx=0;dragging=false}
+  const onMove=e=>{dx=e.touches[0].clientX-sx;if(Math.abs(dx)>8&&Math.abs(dx)>Math.abs(e.touches[0].clientY-sy))dragging=true}
+  const onEnd=e=>{
+    const r=window._nvReader
+    if(r&&r.animating)return
+    if(dragging&&Math.abs(dx)>40){dx<0?readerNextPage():readerPrevPage()}
+    else if(!dragging&&Math.abs(dx)<8&&Math.abs(e.changedTouches[0].clientY-sy)<8){
+      const cx=e.changedTouches[0].clientX
+      if(cx>window.innerWidth/3&&cx<window.innerWidth*2/3)toggleReaderUI()
+    }
+  }
+  el.addEventListener('touchstart',onStart,{passive:true})
+  el.addEventListener('touchmove',onMove,{passive:true})
+  el.addEventListener('touchend',onEnd,{passive:true})
+}
+
+function toggleReaderUI(){
+  const r=window._nvReader
+  if(!r)return
+  r.uiVisible=!r.uiVisible
+  document.getElementById('nvReaderTopbar').classList.toggle('show',r.uiVisible)
+  document.getElementById('nvReaderToolbar').classList.toggle('show',r.uiVisible)
+  if(!r.uiVisible){closeToc();closeReaderSettings()}
+}
+function hideReader(){document.getElementById('nvReaderOverlay').classList.remove('open');renderNovels()}
+function openToc(){
+  document.getElementById('nvTocPanel').classList.add('open')
+  const r=window._nvReader
+  const list=document.getElementById('nvTocList')
+  list.innerHTML=r.chapters.map((ch,i)=>`<div class="nv-toc-item${i===r.chIdx?' active':''}" onclick="tocJump(${i})">${escHtml(ch.title)}</div>`).join('')
+}
+function closeToc(){document.getElementById('nvTocPanel').classList.remove('open')}
+function tocJump(i){
+  const r=window._nvReader
+  const pg=r.allPages.findIndex(p=>p.chIdx===i)
+  if(pg>=0)r.globalPage=pg
+  r.chIdx=i
+  renderReaderPage()
+  closeToc()
+}
+function openReaderSettings(){document.getElementById('nvRSettingsPanel').classList.add('open')}
+function closeReaderSettings(){document.getElementById('nvRSettingsPanel').classList.remove('open')}
+function changeReaderFont(d){
+  const r=window._nvReader
+  r.fontSize=Math.min(26,Math.max(14,r.fontSize+d))
+  document.getElementById('nvFontSizeLabel').textContent=r.fontSize+'px'
+  renderReaderPage()
+}
+
 function changeAvatar(e){
   const file=e.target.files[0]
   if(!file)return
