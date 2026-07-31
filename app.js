@@ -928,34 +928,6 @@ function renderReaderPage(){
   if(idx>=0){novelBooks[idx]=r.b;localStorage.setItem('novel_books',JSON.stringify(novelBooks))}
 }
 
-function readerPrevPage(){
-  const r=window._nvReader
-  if(r.globalPage>0){r.globalPage--;renderReaderPage()}
-  else showToast('已经是第一页了 (´・ω・`)')
-}
-function readerNextPage(){
-  const r=window._nvReader
-  if(r.globalPage<r.allPages.length-1){r.globalPage++;renderReaderPage()}
-  else showToast('已经是最后一页了 (´・ω・`)')
-}
-
-function initReaderTap(){
-  const el=document.getElementById('nvReaderContent')
-  let sx=0,sy=0
-  el.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true})
-  el.addEventListener('touchend',e=>{
-    const dx=Math.abs(e.changedTouches[0].clientX-sx)
-    const dy=Math.abs(e.changedTouches[0].clientY-sy)
-    if(dx<10&&dy<10){
-      const cx=e.changedTouches[0].clientX
-      if(cx<window.innerWidth/2)readerPrevPage()
-      else readerNextPage()
-    }
-  },{passive:true})
-}
-
-function slideToPage(){}
-function toggleReaderUI(){}
 function hideReader(){document.getElementById('nvReaderOverlay').classList.remove('open');renderNovels()}
 function openToc(){
   document.getElementById('nvTocPanel').classList.add('open')
