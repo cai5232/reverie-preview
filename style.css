@@ -178,11 +178,11 @@ body{color:#fff;font-family:-apple-system,'PingFang SC',sans-serif;display:flex;
 .nv-shelf-spine{width:54px;height:160px;border-radius:6px;display:flex;align-items:center;justify-content:center;box-shadow:3px 3px 10px rgba(0,0,0,.5);transition:transform .15s;position:relative}
 .nv-shelf-spine-text{font-size:11px;font-weight:700;color:#fff;writing-mode:vertical-rl;text-orientation:mixed;letter-spacing:2px;line-height:1.2;max-height:130px;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 3px rgba(0,0,0,.3)}
 .nv-shelf-spine-progress{position:absolute;bottom:6px;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,.8);font-weight:600}
-.nv-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .22s}
+.nv-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;display:flex;align-items:center;justify-content:center;padding:0 24px;opacity:0;pointer-events:none;transition:opacity .22s}
 .nv-modal-overlay.open{opacity:1;pointer-events:auto}
-.nv-modal{background:#1c1c1e;border-radius:22px 22px 0 0;padding:24px 22px calc(env(safe-area-inset-bottom,0px)+24px);width:100%;max-width:430px;transform:translateY(30px);transition:transform .25s}
-.nv-modal-overlay.open .nv-modal{transform:translateY(0)}
-.nv-modal-title{font-size:16px;font-weight:700;color:#fff;margin-bottom:18px}
+.nv-modal{background:#1c1c1e;border-radius:18px;padding:24px 20px 20px;width:100%;max-width:380px;transform:scale(.94);transition:transform .25s}
+.nv-modal-overlay.open .nv-modal{transform:scale(1)}
+.nv-modal-title{font-size:16px;font-weight:700;color:#fff;margin-bottom:16px}
 .nv-modal-input{width:100%;background:#2a2a2a;border:none;border-radius:10px;padding:12px 14px;font-size:15px;color:#fff;outline:none;font-family:inherit;margin-bottom:10px;display:block}
 .nv-modal-input::placeholder{color:#555}
 .nv-modal-color-label{font-size:12px;color:#666;margin-bottom:10px;margin-top:2px}
@@ -191,3 +191,11 @@ body{color:#fff;font-family:-apple-system,'PingFang SC',sans-serif;display:flex;
 .nv-color-dot.active{border-color:#fff}
 .nv-modal-btn{flex:1;padding:13px;border:none;border-radius:12px;font-size:15px;font-family:inherit;cursor:pointer;background:#fff;color:#111;font-weight:600}
 .nv-modal-btn.ghost{background:#2a2a2a;color:#aaa}
+.nv-shelf-empty{width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 0 40px;gap:20px}
+.nv-shelf-empty-book{position:relative;width:72px;height:96px}
+.nv-shelf-empty-book-front{position:absolute;inset:0;background:#2a2a2a;border-radius:3px 6px 6px 3px;box-shadow:inset -3px 0 6px rgba(0,0,0,.3)}
+.nv-shelf-empty-book-spine{position:absolute;left:0;top:4px;bottom:4px;width:10px;background:#222;border-radius:3px 0 0 3px;box-shadow:inset -2px 0 4px rgba(0,0,0,.4)}
+.nv-shelf-empty-book-shadow{position:absolute;right:-8px;top:6px;bottom:6px;width:8px;background:linear-gradient(to right,rgba(0,0,0,.3),transparent);border-radius:0 3px 3px 0}
+.nv-shelf-empty-book-line1{position:absolute;left:18px;right:10px;top:28px;height:2px;background:#333;border-radius:1px}
+.nv-shelf-empty-book-line2{position:absolute;left:18px;right:16px;top:36px;height:2px;background:#333;border-radius:1px}
+.nv-shelf-empty-text{font-size:13px;color:#444;text-align:center;line-height:1.7}
