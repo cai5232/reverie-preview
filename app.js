@@ -758,6 +758,82 @@ function initMemory(){
   if(key)document.getElementById('memKey').value=key
 }
 
+// ── Novel 一起读 ──
+let novelBooks=JSON.parse(localStorage.getItem('novel_books')||'[]')
+let novelSelectedColor='#f4a7b9'
+
+function novelImport(){
+  document.getElementById('nvModalOverlay').classList.add('open')
+  document.getElementById('nvBookTitle').value=''
+  document.getElementById('nvBookAuthor').value=''
+  novelSelectedColor='#f4a7b9'
+  document.querySelectorAll('.nv-color-dot').forEach(d=>{
+    d.classList.toggle('active',d.dataset.color===novelSelectedColor)
+  })
+}
+function closeNovelModal(){
+  document.getElementById('nvModalOverlay').classList.remove('open')
+}
+function pickColor(el){
+  novelSelectedColor=el.dataset.color
+  document.querySelectorAll('.nv-color-dot').forEach(d=>d.classList.remove('active'))
+  el.classList.add('active')
+}
+function addBook(){
+  const title=document.getElementById('nvBookTitle').value.trim()
+  if(!title)return
+  const author=document.getElementById('nvBookAuthor').value.trim()
+  const book={id:Date.now(),title,author,color:novelSelectedColor,progress:0,addedAt:Date.now()}
+  novelBooks.unshift(book)
+  localStorage.setItem('novel_books',JSON.stringify(novelBooks))
+  closeNovelModal()
+  renderNovels()
+}
+function renderNovels(){
+  const recentEl=document.getElementById('nvRecent')
+  const shelfEl=document.getElementById('nvShelf')
+  if(!novelBooks.length){
+    recentEl.innerHTML='<div class="nv-empty-recent">还没有读过的书</div>'
+    shelfEl.innerHTML='<div class="nv-shelf-empty"><svg width="40" height="40" viewBox="0 0 40 40" fill="none"><rect x="8" y="6" width="16" height="22" rx="2" stroke="#ddd" stroke-width="1.5"/><rect x="18" y="8" width="14" height="22" rx="2" stroke="#ddd" stroke-width="1.5"/><path d="M6 30h28" stroke="#ddd" stroke-width="1.5" stroke-linecap="round"/></svg><div class="nv-shelf-empty-text">书架空空的<br>点右上角导入第一本书</div></div>'
+    return
+  }
+  // 最近阅读：前3本
+  const recent=novelBooks.slice(0,3)
+  recentEl.innerHTML=recent.map(b=>`
+    <div class="nv-recent-card" onclick="openBook(${b.id})">
+      <div class="nv-recent-cover" style="background:${b.color}">
+        <div class="nv-recent-cover-title">${b.title}</div>
+        ${b.author?`<div class="nv-recent-cover-author">${b.author}</div>`:''}
+        <div class="nv-recent-dots" onclick="event.stopPropagation();bookMenu(${b.id})">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="2" cy="6" r="1.2" fill="#fff"/><circle cx="6" cy="6" r="1.2" fill="#fff"/><circle cx="10" cy="6" r="1.2" fill="#fff"/></svg>
+        </div>
+      </div>
+      <div class="nv-recent-meta">
+        <div class="nv-recent-name">${b.title}</div>
+        <div class="nv-recent-progress">${b.progress?b.progress+'%':'未开始'}</div>
+      </div>
+    </div>`).join('')
+  // 书架：全部
+  shelfEl.innerHTML=novelBooks.map(b=>`
+    <div class="nv-shelf-book" onclick="openBook(${b.id})">
+      <div class="nv-shelf-spine-wrap" style="background:${b.color}">
+        <div class="nv-shelf-spine-title">${b.title}</div>
+      </div>
+      <div class="nv-shelf-book-name">${b.title}</div>
+    </div>`).join('')
+}
+function openBook(id){
+  showToast('阅读功能即将上线 (´・ω・`)')
+}
+function bookMenu(id){
+  if(confirm('删除这本书？')){
+    novelBooks=novelBooks.filter(b=>b.id!==id)
+    localStorage.setItem('novel_books',JSON.stringify(novelBooks))
+    renderNovels()
+  }
+}
+function novelMore(){showToast('更多功能开发中')}
+
 function changeAvatar(e){
   const file=e.target.files[0]
   if(!file)return
