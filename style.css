@@ -144,6 +144,15 @@ body{color:#fff;font-family:-apple-system,'PingFang SC',sans-serif;display:flex;
 .mem-card-meta{font-size:11px;color:#555;margin-top:6px}
 .streaming-cursor{display:inline-block;width:2px;height:13px;background:#666;margin-left:1px;vertical-align:middle;animation:blink .8s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.nv-header{display:flex;align-items:center;padding:calc(env(safe-area-inset-top,0px) + 14px) 18px 12px;background:#fafafa;border-bottom:.5px solid #eee;flex-shrink:0}
+.nv-header-left{cursor:pointer;padding:2px;margin-right:12px}
+.nv-header-title{flex:1;font-size:17px;font-weight:700;color:#1a1a1a;letter-spacing:.2px}
+.nv-header-actions{display:flex;gap:4px}
+.nv-icon-btn{width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:50%;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.nv-icon-btn:active{background:#f0f0f0}
+.nv-body{flex:1;overflow-y:auto;background:#fafafa;padding:20px 18px 40px}
+.nv-body::-webkit-scrollbar{display:none}
+.nv-section-label{font-size:13px;font-weight:700;color:#1a1a1a;letter-spacing:.5px;margin-bottom:14px}
 
 /* ── Novel 一起读 ── */
 .nv-header{display:flex;align-items:center;padding:calc(env(safe-area-inset-top,0px)+14px) 18px 12px;background:#fafafa;border-bottom:.5px solid #eee;flex-shrink:0}
