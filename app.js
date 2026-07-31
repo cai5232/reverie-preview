@@ -943,15 +943,13 @@ function renderReaderPage(){
   if(!pg)return
   const el=document.getElementById('nvReaderContent')
   el.style.fontSize=r.fontSize+'px'
+  el.scrollTop=0
   const showTitle=pg.isFirst&&r.chapters.length>1&&r.chapters[pg.chIdx].title!=='正文'
   const titleHtml=showTitle?`<div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:18px">${escHtml(r.chapters[pg.chIdx].title)}</div>`:''
   el.innerHTML=titleHtml+`<div>${escHtml(pg.text).replace(/\n/g,'<br>')}</div>`
-  const total=r.allPages.length
-  const ind=document.getElementById('nvPageIndicator')
-  if(ind)ind.textContent=`${r.globalPage+1} / ${total}`
   r.chIdx=pg.chIdx
   r.b.lastChapter=r.chIdx
-  r.b.progress=Math.round(((r.globalPage+1)/total)*100)
+  r.b.progress=Math.round(((r.globalPage+1)/r.allPages.length)*100)
   const idx=novelBooks.findIndex(x=>x.id===r.b.id)
   if(idx>=0){novelBooks[idx]=r.b;localStorage.setItem('novel_books',JSON.stringify(novelBooks))}
 }
