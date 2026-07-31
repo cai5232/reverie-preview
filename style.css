@@ -185,17 +185,14 @@ body{color:#fff;font-family:-apple-system,'PingFang SC',sans-serif;display:flex;
 .nv-modal-title{font-size:16px;font-weight:700;color:#fff;margin-bottom:16px}
 .nv-modal-input{width:100%;background:#2a2a2a;border:none;border-radius:10px;padding:12px 14px;font-size:15px;color:#fff;outline:none;font-family:inherit;margin-bottom:10px;display:block}
 .nv-modal-input::placeholder{color:#555}
-.nv-modal-color-label{font-size:12px;color:#666;margin-bottom:10px;margin-top:2px}
-.nv-color-row{display:flex;gap:12px;margin-bottom:20px}
-.nv-color-dot{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2.5px solid transparent;transition:border-color .15s}
-.nv-color-dot.active{border-color:#fff}
-.nv-modal-btn{flex:1;padding:13px;border:none;border-radius:12px;font-size:15px;font-family:inherit;cursor:pointer;background:#fff;color:#111;font-weight:600}
-.nv-modal-btn.ghost{background:#2a2a2a;color:#aaa}
-.nv-shelf-empty{width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 0 40px;gap:20px}
-.nv-shelf-empty-book{position:relative;width:72px;height:96px}
-.nv-shelf-empty-book-front{position:absolute;inset:0;background:#2a2a2a;border-radius:3px 6px 6px 3px;box-shadow:inset -3px 0 6px rgba(0,0,0,.3)}
-.nv-shelf-empty-book-spine{position:absolute;left:0;top:4px;bottom:4px;width:10px;background:#222;border-radius:3px 0 0 3px;box-shadow:inset -2px 0 4px rgba(0,0,0,.4)}
-.nv-shelf-empty-book-shadow{position:absolute;right:-8px;top:6px;bottom:6px;width:8px;background:linear-gradient(to right,rgba(0,0,0,.3),transparent);border-radius:0 3px 3px 0}
-.nv-shelf-empty-book-line1{position:absolute;left:18px;right:10px;top:28px;height:2px;background:#333;border-radius:1px}
-.nv-shelf-empty-book-line2{position:absolute;left:18px;right:16px;top:36px;height:2px;background:#333;border-radius:1px}
-.nv-shelf-empty-text{font-size:13px;color:#444;text-align:center;line-height:1.7}
+.nv-cover-pick{width:100%;height:80px;background:#2a2a2a;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;margin-bottom:10px;border:1.5px dashed #3a3a3a;-webkit-tap-highlight-color:transparent;transition:background .15s}
+.nv-cover-pick:active{background:#333}
+.nv-cover-pick span{font-size:13px;color:#555}
+.nv-cover-pick img{width:100%;height:100%;object-fit:cover;border-radius:8px}
+.nv-modal-color-label{display:none}
+.nv-color-row{display:none}
+.nv-shelf-empty-book-front{position:absolute;inset:0;background:#333;border-radius:3px 6px 6px 3px;box-shadow:inset -4px 0 8px rgba(0,0,0,.5),0 4px 12px rgba(0,0,0,.4)}
+.nv-shelf-empty-book-spine{position:absolute;left:0;top:4px;bottom:4px;width:10px;background:#252525;border-radius:3px 0 0 3px;box-shadow:inset -2px 0 5px rgba(0,0,0,.6)}
+.nv-shelf-empty-book-shadow{position:absolute;right:-10px;top:8px;bottom:8px;width:10px;background:linear-gradient(to right,rgba(0,0,0,.35),transparent);border-radius:0 4px 4px 0}
+.nv-shelf-empty-book-line1{position:absolute;left:18px;right:10px;top:30px;height:2px;background:#3d3d3d;border-radius:1px}
+.nv-shelf-empty-book-line2{position:absolute;left:18px;right:18px;top:38px;height:2px;background:#3d3d3d;border-radius:1px}
