@@ -793,7 +793,7 @@ function handleTxtImport(e){
     const title=document.getElementById('nvBookTitle').value.trim()
     const author=document.getElementById('nvBookAuthor').value.trim()
     const content=ev.target.result
-    const book={id:Date.now(),title,author,color:novelSelectedColor,progress:0,addedAt:Date.now(),content}
+    const book={id:Date.now(),title,author,coverImg:novelCoverDataUrl||null,progress:0,addedAt:Date.now(),content}
     novelBooks.unshift(book)
     localStorage.setItem('novel_books',JSON.stringify(novelBooks))
     closeNovelModal()
