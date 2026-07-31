@@ -780,6 +780,29 @@ function pickColor(el){
   document.querySelectorAll('.nv-color-dot').forEach(d=>d.classList.remove('active'))
   el.classList.add('active')
 }
+function triggerTxtImport(){
+  const title=document.getElementById('nvBookTitle').value.trim()
+  if(!title){showToast('请先填写书名');return}
+  document.getElementById('nvTxtInput').click()
+}
+function handleTxtImport(e){
+  const file=e.target.files[0]
+  if(!file)return
+  const reader=new FileReader()
+  reader.onload=ev=>{
+    const title=document.getElementById('nvBookTitle').value.trim()
+    const author=document.getElementById('nvBookAuthor').value.trim()
+    const content=ev.target.result
+    const book={id:Date.now(),title,author,color:novelSelectedColor,progress:0,addedAt:Date.now(),content}
+    novelBooks.unshift(book)
+    localStorage.setItem('novel_books',JSON.stringify(novelBooks))
+    closeNovelModal()
+    renderNovels()
+    showToast('导入成功，共'+Math.ceil(content.length/500)+'页')
+    e.target.value=''
+  }
+  reader.readAsText(file,'utf-8')
+}
 function addBook(){
   const title=document.getElementById('nvBookTitle').value.trim()
   if(!title)return
