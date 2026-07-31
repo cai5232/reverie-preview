@@ -874,33 +874,61 @@ function startReading(id){
 
 function buildAllPages(){
   const r=window._nvReader
-  // 20px字体，内容区宽约382px，每行约19字，行高1.85即37px
-  // 内容区高约720px，约19-20行可见；目标22行上限，22×19=418，取390保守
-  const PAGE_SIZE=Math.round(390+((r.fontSize-20)*19))
+  // 每行字符数 = 内容区宽 / 字号，内容区宽 = 屏幕宽 - 左右padding各24px
+  const CHARS_PER_LINE=Math.floor((window.innerWidth-48)/r.fontSize)||19
+  const LINES_PER_PAGE=20
   r.allPages=[]
+
   r.chapters.forEach((ch,ci)=>{
     const raw=ch.lines.join('\n').trim()
     if(!raw){r.allPages.push({chIdx:ci,isFirst:true,text:''});return}
-    const paras=raw.split(/\n+/).filter(s=>s.trim())
-    let buf=''
-    let pageInCh=0
-    const flush=()=>{
-      if(buf.trim()){r.allPages.push({chIdx:ci,isFirst:pageInCh===0,text:buf.trim()});pageInCh++;buf=''}
-    }
-    for(const para of paras){
-      let pos=0
-      while(pos<para.length){
-        const used=buf.replace(/\n/g,'').length
-        const remain=PAGE_SIZE-used
-        if(remain<=0){flush();continue}
-        const chunk=para.slice(pos,pos+remain)
-        buf+=(buf?'\n':'')+chunk
-        pos+=chunk.length
-        if(buf.replace(/\n/g,'').length>=PAGE_SIZE)flush()
+
+    const paras=raw.split(/\n+/).map(s=>s.trim()).filter(Boolean)
+    let pageLines=0
+    let pageBuf=[]
+    let isFirstPage=true
+
+    // 章节标题第一页顶部占2行
+    const hasTitle=r.chapters.length>1&&ch.title!=='正文'
+    if(hasTitle)pageLines=2
+
+    const flushPage=()=>{
+      if(pageBuf.length>0||pageLines>0){
+        r.allPages.push({chIdx:ci,isFirst:isFirstPage,text:pageBuf.join('\n')})
+        isFirstPage=false
+        pageBuf=[]
+        pageLines=0
       }
     }
-    flush()
+
+    for(const para of paras){
+      const paraLines=Math.ceil(para.length/CHARS_PER_LINE)||1
+
+      if(paraLines>=LINES_PER_PAGE){
+        // 超长段落强制按行拆
+        if(pageBuf.length>0)flushPage()
+        let pos=0
+        while(pos<para.length){
+          const chunkChars=CHARS_PER_LINE*LINES_PER_PAGE
+          const chunk=para.slice(pos,pos+chunkChars)
+          pageBuf=[chunk]
+          pageLines=Math.ceil(chunk.length/CHARS_PER_LINE)
+          pos+=chunkChars
+          if(pos<para.length)flushPage()
+        }
+      }else if(pageLines+paraLines>LINES_PER_PAGE){
+        // 加上这段会超出，先换页
+        flushPage()
+        pageBuf=[para]
+        pageLines=paraLines
+      }else{
+        pageBuf.push(para)
+        pageLines+=paraLines
+      }
+    }
+    flushPage()
   })
+
   r.globalPage=r.allPages.findIndex(p=>p.chIdx===(r.b.lastChapter||0))
   if(r.globalPage<0)r.globalPage=0
   renderReaderPage()
