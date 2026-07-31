@@ -209,7 +209,7 @@ body{color:#fff;font-family:-apple-system,'PingFang SC',sans-serif;display:flex;
 .nv-reader-prev{display:none}
 .nv-reader-next{display:none}
 .nv-reader-toolbar{display:none}
-.nv-reader-page-indicator{position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);right:20px;font-size:11px;color:#6b6460;pointer-events:none;z-index:4}
+
 .nv-toc-panel{position:absolute;inset:0;background:#000;z-index:10;display:none;flex-direction:column}
 .nv-toc-panel.open{display:flex}
 .nv-rsettings-panel{position:absolute;bottom:0;left:0;right:0;background:#1c1c1e;border-radius:16px 16px 0 0;z-index:10;display:none;flex-direction:column;padding-bottom:env(safe-area-inset-bottom,0px)}
