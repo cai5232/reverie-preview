@@ -928,7 +928,11 @@ function renderReaderPage(){
   if(idx>=0){novelBooks[idx]=r.b;localStorage.setItem('novel_books',JSON.stringify(novelBooks))}
 }
 
-function hideReader(){document.getElementById('nvReaderOverlay').classList.remove('open');renderNovels()}
+function hideReader(){
+  document.getElementById('nvReaderOverlay').classList.remove('open')
+  document.body.style.background=''
+  renderNovels()
+}
 function openToc(){
   document.getElementById('nvTocPanel').classList.add('open')
   const r=window._nvReader
