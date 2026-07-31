@@ -822,7 +822,7 @@ function renderNovels(){
   recentEl.innerHTML=novelBooks.map(b=>`
     <div class="nv-recent-card" onclick="openBook(${b.id})">
       <div class="nv-recent-cover">
-        <div class="nv-recent-cover-top" style="background:${b.color}"></div>
+        <div class="nv-recent-cover-top" style="${b.coverImg?`background:url(${b.coverImg}) center/cover no-repeat`:'background:#2a2a2a'}"></div>
         <div class="nv-recent-cover-bottom">
           <div class="nv-recent-cover-title">${b.title}</div>
           ${b.author?`<div class="nv-recent-cover-author">${b.author}</div>`:''}
