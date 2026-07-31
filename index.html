@@ -177,9 +177,10 @@
         <div class="nv-color-dot" style="background:#d9b8f5" data-color="#d9b8f5" onclick="pickColor(this)"></div>
         <div class="nv-color-dot" style="background:#f5c8a0" data-color="#f5c8a0" onclick="pickColor(this)"></div>
       </div>
-      <div style="display:flex;gap:10px;margin-top:6px">
+      <input type="file" id="nvTxtInput" accept=".txt" style="display:none" onchange="handleTxtImport(event)">
+      <div style="display:flex;gap:10px;margin-top:4px">
         <button class="nv-modal-btn ghost" onclick="closeNovelModal()">取消</button>
-        <button class="nv-modal-btn" onclick="addBook()">添加</button>
+        <button class="nv-modal-btn" onclick="triggerTxtImport()">导入 txt</button>
       </div>
     </div>
   </div>
