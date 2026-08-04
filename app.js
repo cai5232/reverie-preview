@@ -699,6 +699,49 @@ function showToast(msg){
   t._t=setTimeout(()=>t.style.opacity='0',1800)
 }
 
+// ── WebPush 订阅 ──
+async function initPush(){
+  if(!('serviceWorker' in navigator)||!('PushManager' in window))return
+  try{
+    const reg=await navigator.serviceWorker.register('/service-worker.js')
+    await navigator.serviceWorker.ready
+    if(!cfg.notify)return
+    if(Notification.permission==='default'){
+      const p=await Notification.requestPermission()
+      if(p!=='granted')return
+    }
+    if(Notification.permission!=='granted')return
+    // 拉 VAPID 公钥
+    const kr=await fetch('https://yanvn.zeabur.app/internal/push/vapid-public-key',{
+      headers:{'Authorization':'Bearer xiaoke-cai-2026'}
+    })
+    if(!kr.ok)return
+    const {public_key}=await kr.json()
+    if(!public_key)return
+    // 订阅
+    const sub=await reg.pushManager.subscribe({
+      userVisibleOnly:true,
+      applicationServerKey:urlBase64ToUint8Array(public_key)
+    })
+    // 上报给服务器
+    await fetch('https://yanvn.zeabur.app/internal/push/subscribe',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer xiaoke-cai-2026'},
+      body:JSON.stringify({subscription:sub.toJSON(),session_id:'reverie-yy'})
+    })
+    console.log('[push] subscription registered')
+  }catch(e){
+    console.warn('[push] initPush failed',e)
+  }
+}
+
+function urlBase64ToUint8Array(base64String){
+  const padding='='.repeat((4-base64String.length%4)%4)
+  const base64=(base64String+padding).replace(/-/g,'+').replace(/_/g,'/')
+  const raw=atob(base64)
+  return Uint8Array.from([...raw].map(c=>c.charCodeAt(0)))
+}
+
 // Memory 页
 let memCurrentTab='记忆'
 function memTab(el,name){
