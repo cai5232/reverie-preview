@@ -990,9 +990,11 @@ function startReading(id){
   // 从持久化的 chapterNotes 恢复已生成的作者有话说
   const savedNotes=b.chapterNotes||{}
   chapters.forEach((ch,i)=>{if(savedNotes[i])ch.authorNote=savedNotes[i]})
-  // 恢复心声（必须在 _companionActive=false 之前赋值）
-  _companionComments=b.companionComments||[]
-  window._nvReader={b,chapters,chIdx:b.lastChapter||0,fontSize:20,globalPage:0,allPages:[]}
+  // 恢复心声：优先用新的按章结构，兼容旧结构
+  const byChap=b.companionCommentsByChapter||{}
+  const lastChIdx=b.lastChapter||0
+  _companionComments=byChap[lastChIdx]||(b.companionComments||[])
+  window._nvReader={b,chapters,chIdx:lastChIdx,fontSize:20,globalPage:0,allPages:[]}
   document.getElementById('nvReaderTopTitle').textContent=b.title
   document.getElementById('nvFontSizeLabel').textContent='20px'
   renderFullBook()
