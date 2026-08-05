@@ -997,15 +997,11 @@ function startReading(id){
   window._nvReader={b,chapters,chIdx:lastChIdx,fontSize:20,globalPage:0,allPages:[]}
   document.getElementById('nvReaderTopTitle').textContent=b.title
   document.getElementById('nvFontSizeLabel').textContent='20px'
-  renderFullBook()
-  document.getElementById('nvReaderOverlay').classList.add('open')
-  // 显示悬浮球
-  const ball=document.getElementById('nvFloatBall')
-  if(ball){ball.style.display='flex';ball.style.right='18px';ball.style.bottom='120px';ball.style.left='';ball.style.top=''}
   _companionActive=false
-  // _companionComments 已在上方从 b.companionComments 恢复，不能在这里清空
   const tip=document.getElementById('nvFloatTip')
   if(tip){tip.classList.remove('open');tip.textContent=''}
+  renderFullBook()
+  document.getElementById('nvReaderOverlay').classList.add('open')
   initFloatBall()
   const tc=document.querySelector('meta[name="theme-color"]')
   if(tc)tc.content='#faf8f4'
