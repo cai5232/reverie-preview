@@ -695,6 +695,13 @@ function saveCfg(){
   localStorage.setItem('cfg_img_key',document.getElementById('cfgImgKey').value.trim())
   localStorage.setItem('cfg_pos_prom',document.getElementById('cfgPosProm').value.trim())
   localStorage.setItem('cfg_neg_prom',document.getElementById('cfgNegProm').value.trim())
+  // 生成文章专属API
+  cfg.genApi=document.getElementById('cfgGenApi').value.trim()
+  cfg.genKey=document.getElementById('cfgGenKey').value.trim()
+  cfg.genModel=document.getElementById('cfgGenModel').value||''
+  localStorage.setItem('cfg_gen_api',cfg.genApi)
+  localStorage.setItem('cfg_gen_key',cfg.genKey)
+  localStorage.setItem('cfg_gen_model',cfg.genModel)
   const imgSel=document.getElementById('cfgImgModel')
   if(imgSel.value&&imgSel.value!=='未选择')localStorage.setItem('cfg_img_model',imgSel.value)
   applyKeepalive()
