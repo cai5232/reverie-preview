@@ -1057,7 +1057,7 @@ function renderChapter(idx){
     if(!paraId.startsWith(`c${idx}p`))return
     const p=el.querySelector(`p[data-para-id="${paraId}"]`)
     if(!p)return
-    if(ann.mark){p.classList.add('marked-'+ann.mark);p.dataset.markColor=ann.mark;addMarkIcon(p)}
+    if(ann.mark){p.dataset.markColor=ann.mark;addMarkIcon(p)}
     if(ann.comment){insertCommentEl(p,ann.comment)}
   })
   // 重新绑定长按
@@ -1566,16 +1566,17 @@ function openInlineCommentEditor(p){
   })
 }
 function applyMark(color){
-  // 兼容旧调用，现在只加图标
   closeMarkColor()
   if(!_paraTarget)return
   const p=_paraTarget
   const paraId=p.dataset.paraId
   if(!paraId)return
-  p.dataset.markColor='marked'
+  p.classList.remove('marked-yellow','marked-pink','marked-green','marked-blue')
+  p.classList.add('marked-'+color)
+  p.dataset.markColor=color
   addMarkIcon(p)
   const existing=getParaAnnotation(paraId)
-  saveParaAnnotation(paraId,'marked',existing?existing.comment:null)
+  saveParaAnnotation(paraId,color,existing?existing.comment:null)
   _paraTarget=null
 }
 
