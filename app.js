@@ -1110,6 +1110,48 @@ function openToc(){
   const r=window._nvReader
   const list=document.getElementById('nvTocList')
   list.innerHTML=r.chapters.map((ch,i)=>`<div class="nv-toc-item${i===r.chIdx?' active':''}" onclick="tocJump(${i})">${escHtml(ch.title)}</div>`).join('')
+  // 默认显示章节tab
+  switchTocTab('chap')
+}
+
+function switchTocTab(tab){
+  document.getElementById('nvTocTabChap').classList.toggle('active',tab==='chap')
+  document.getElementById('nvTocTabMark').classList.toggle('active',tab==='mark')
+  document.getElementById('nvTocList').style.display=tab==='chap'?'':'none'
+  document.getElementById('nvTocMarkList').style.display=tab==='mark'?'':'none'
+  if(tab==='mark')renderTocMarkList()
+}
+
+function renderTocMarkList(){
+  const r=window._nvReader
+  const el=document.getElementById('nvTocMarkList')
+  if(!r){el.innerHTML='<div style="padding:24px;color:#aaa;font-size:14px;text-align:center">暂无标记</div>';return}
+  const annots=r.b.paraAnnotations||{}
+  const items=[]
+  Object.entries(annots).forEach(([paraId,ann])=>{
+    if(!ann.mark)return
+    // paraId 格式 cNpN，解析章节编号
+    const m=paraId.match(/^c(\d+)p(\d+)$/)
+    if(!m)return
+    const chIdx=parseInt(m[1]),paraIdx=parseInt(m[2])
+    const ch=r.chapters[chIdx]
+    if(!ch)return
+    const paras=ch.lines.join('\n').split(/\n+/).map(s=>s.trim()).filter(Boolean)
+    const paraText=paras[paraIdx]||''
+    items.push({chIdx,chTitle:ch.title,paraText,comment:ann.comment||''})
+  })
+  if(!items.length){
+    el.innerHTML='<div style="padding:24px;color:#aaa;font-size:14px;text-align:center">还没有标记的段落</div>'
+    return
+  }
+  // 按章节排序
+  items.sort((a,b)=>a.chIdx-b.chIdx)
+  el.innerHTML=items.map(it=>`
+    <div class="nv-toc-mark-item" onclick="tocJump(${it.chIdx});closeToc()">
+      <div class="nv-toc-mark-chap">第${it.chIdx+1}章 · ${escHtml(it.chTitle)}</div>
+      <div class="nv-toc-mark-text">🏷️ ${escHtml(it.paraText.slice(0,60)+(it.paraText.length>60?'…':''))}</div>
+      ${it.comment?`<div class="nv-toc-mark-comment">${escHtml(it.comment)}</div>`:''}
+    </div>`).join('')
 }
 function closeToc(){document.getElementById('nvTocPanel').classList.remove('open')}
 function tocJump(i){
