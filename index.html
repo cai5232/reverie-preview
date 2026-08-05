@@ -272,7 +272,12 @@
         <span>目录</span>
         <div onclick="closeToc()" style="cursor:pointer;padding:4px 8px;color:#888">✕</div>
       </div>
+      <div class="nv-toc-tabs">
+        <div class="nv-toc-tab active" id="nvTocTabChap" onclick="switchTocTab('chap')">章节</div>
+        <div class="nv-toc-tab" id="nvTocTabMark" onclick="switchTocTab('mark')">标记</div>
+      </div>
       <div class="nv-toc-list" id="nvTocList"></div>
+      <div class="nv-toc-list" id="nvTocMarkList" style="display:none"></div>
     </div>
     <!-- 小克想说的话列表 -->
     <div class="nv-toc-panel" id="nvCompanionListPanel">
