@@ -1583,7 +1583,7 @@ function addMarkIcon(p){
   if(p.querySelector('.nv-para-mark-icon'))return
   const icon=document.createElement('span')
   icon.className='nv-para-mark-icon'
-  icon.textContent='🏷️'
+  icon.innerHTML=`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 1.5v10M2.5 1.5h7l-2 3 2 3H2.5" stroke="#c8a07a" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`
   p.insertBefore(icon,p.firstChild)
 }
 
