@@ -261,9 +261,15 @@ body{color:#111;font-family:-apple-system,'PingFang SC',sans-serif;display:flex;
 .nv-gen-slider{-webkit-appearance:none;width:100%;height:3px;border-radius:2px;background:#e0e0e0;outline:none;margin-top:6px}
 .nv-gen-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#007AFF;cursor:pointer;box-shadow:0 2px 6px rgba(0,122,255,.3)}
 .nv-gen-chapter-val{font-size:14px;font-weight:600;color:#007AFF}
-.nv-gen-submit{width:100%;padding:13px;background:#007AFF;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:6px}
+.nv-gen-submit{width:100%;padding:13px;background:#111;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:6px}
 .nv-gen-submit:active{opacity:.85}
 .nv-gen-submit:disabled{background:#ccc}
+.nv-gen-world-add{border:1.5px dashed #bbb!important;color:#aaa!important;background:#fff!important}
+.nv-gen-world-add:active{background:#f5f5f5!important}
+.nv-gen-tag{padding:5px 11px;background:#f5f5f5;border-radius:20px;font-size:12px;color:#555;cursor:pointer;border:1.5px solid transparent;-webkit-tap-highlight-color:transparent}
+.nv-gen-tag.active{background:#EAF4FF;color:#007AFF;border-color:#007AFF}
+.nv-gen-plot{width:100%;background:#f5f5f5;border:none;border-radius:10px;padding:10px 12px;font-size:13px;color:#111;outline:none;font-family:inherit;resize:none;line-height:1.6;min-height:72px;display:block}
+.nv-gen-plot::placeholder{color:#bbb}
 .nv-gen-progress{margin-top:12px}
 .nv-gen-progress-bar{width:100%;height:4px;background:#f0f0f0;border-radius:2px;overflow:hidden}
 .nv-gen-progress-fill{height:100%;background:#007AFF;border-radius:2px;width:0;transition:width .4s ease}
