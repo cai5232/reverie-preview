@@ -1441,7 +1441,155 @@ async function startCompanion(){
   },600)
 }
 
-// ── 作者有话说 ──
+// ── 段落长按菜单 ──
+let _paraTarget=null  // 当前长按的 <p> 元素
+
+function bindParaLongPress(){
+  const el=document.getElementById('nvReaderContent')
+  if(!el)return
+  let _lp=null,_moved=false,_lastTouch=null
+  el.addEventListener('touchstart',e=>{
+    const p=e.target.closest('p.nv-para')
+    if(!p)return
+    _moved=false
+    _lastTouch=e.touches[0]
+    _lp=setTimeout(()=>{
+      if(!_moved)showParaMenu(p,_lastTouch)
+    },500)
+  },{passive:true})
+  el.addEventListener('touchmove',()=>{_moved=true;clearTimeout(_lp)},{passive:true})
+  el.addEventListener('touchend',()=>clearTimeout(_lp),{passive:true})
+  el.addEventListener('touchcancel',()=>clearTimeout(_lp),{passive:true})
+}
+
+function showParaMenu(p,touch){
+  _paraTarget=p
+  const overlay=document.getElementById('nvParaMenuOverlay')
+  const menu=document.getElementById('nvParaMenu')
+  const markItem=document.getElementById('nvMarkMenuItem')
+  const clearItem=document.getElementById('nvClearMenuItem')
+  const isMarked=p.dataset.markColor
+  markItem.style.display=isMarked?'none':'flex'
+  clearItem.style.display=isMarked?'flex':'none'
+  overlay.classList.add('open')
+  // 定位：靠近触摸点
+  const parent=document.getElementById('nvReaderOverlay').getBoundingClientRect()
+  let x=(touch?touch.clientX:150)-parent.left
+  let y=(touch?touch.clientY:200)-parent.top
+  const mw=170,mh=90
+  if(x+mw>parent.width-8)x=parent.width-mw-8
+  if(y+mh>parent.height-8)y=parent.height-mh-8
+  if(x<8)x=8
+  if(y<8)y=8
+  menu.style.left=x+'px'
+  menu.style.top=y+'px'
+}
+function closeParaMenu(){
+  document.getElementById('nvParaMenuOverlay').classList.remove('open')
+  _paraTarget=null
+}
+function closeMarkColor(){
+  document.getElementById('nvMarkColorOverlay').classList.remove('open')
+}
+function paraAction(action){
+  closeParaMenu()
+  if(!_paraTarget)return
+  if(action==='comment'){
+    document.getElementById('nvCommentQuote').textContent=_paraTarget.textContent.slice(0,60)+(_paraTarget.textContent.length>60?'…':'')
+    document.getElementById('nvCommentTextarea').value=''
+    document.getElementById('nvCommentOverlay').classList.add('open')
+    setTimeout(()=>document.getElementById('nvCommentTextarea').focus(),100)
+  }else if(action==='mark'){
+    document.getElementById('nvMarkColorOverlay').classList.add('open')
+    const overlay=document.getElementById('nvMarkColorOverlay')
+    const panel=document.getElementById('nvMarkColorPanel')
+    const parent=document.getElementById('nvReaderOverlay').getBoundingClientRect()
+    panel.style.left=Math.round(parent.width/2-80)+'px'
+    panel.style.top=Math.round(parent.height/2-70)+'px'
+  }else if(action==='clear'){
+    const p=_paraTarget
+    const paraId=p.dataset.paraId
+    if(!paraId)return
+    // 清除标记
+    p.classList.remove('marked-yellow','marked-pink','marked-green','marked-blue')
+    delete p.dataset.markColor
+    // 清除段评
+    const next=p.nextElementSibling
+    if(next&&next.classList.contains('nv-para-comment'))next.remove()
+    saveParaAnnotation(paraId,null,null)
+    _paraTarget=null
+  }
+}
+function applyMark(color){
+  closeMarkColor()
+  if(!_paraTarget)return
+  const p=_paraTarget
+  const paraId=p.dataset.paraId
+  if(!paraId)return
+  p.classList.remove('marked-yellow','marked-pink','marked-green','marked-blue')
+  p.classList.add('marked-'+color)
+  p.dataset.markColor=color
+  const existing=getParaAnnotation(paraId)
+  saveParaAnnotation(paraId,color,existing?existing.comment:null)
+  _paraTarget=null
+}
+function closeCommentModal(){
+  document.getElementById('nvCommentOverlay').classList.remove('open')
+  _paraTarget=null
+}
+function submitComment(){
+  const text=document.getElementById('nvCommentTextarea').value.trim()
+  if(!text){closeCommentModal();return}
+  const p=_paraTarget||document.querySelector(`p.nv-para[data-para-id="${_pendingCommentParaId}"]`)
+  const paraId=p?.dataset?.paraId
+  if(!paraId){closeCommentModal();return}
+  // 更新或插入评论节点
+  let commentEl=p.nextElementSibling
+  if(commentEl&&commentEl.classList.contains('nv-para-comment')){
+    commentEl.textContent=text
+  }else{
+    commentEl=document.createElement('div')
+    commentEl.className='nv-para-comment'
+    commentEl.textContent=text
+    p.insertAdjacentElement('afterend',commentEl)
+  }
+  const existing=getParaAnnotation(paraId)
+  saveParaAnnotation(paraId,existing?existing.mark:null,text)
+  closeCommentModal()
+  _paraTarget=null
+}
+
+// 持久化段落注释（标记/段评）
+function getParaAnnotations(){
+  const r=window._nvReader
+  if(!r)return{}
+  return r.b.paraAnnotations||{}
+}
+function getParaAnnotation(paraId){
+  return getParaAnnotations()[paraId]||null
+}
+function saveParaAnnotation(paraId,mark,comment){
+  const r=window._nvReader
+  if(!r)return
+  if(!r.b.paraAnnotations)r.b.paraAnnotations={}
+  if(mark||comment){
+    r.b.paraAnnotations[paraId]={mark,comment}
+  }else{
+    delete r.b.paraAnnotations[paraId]
+  }
+  const idx=novelBooks.findIndex(x=>x.id===r.b.id)
+  if(idx>=0){novelBooks[idx].paraAnnotations=r.b.paraAnnotations;localStorage.setItem('novel_books',JSON.stringify(novelBooks))}
+}
+
+// 心声持久化
+function saveCompanionComments(){
+  const r=window._nvReader
+  if(!r)return
+  r.b.companionComments=_companionComments
+  const idx=novelBooks.findIndex(x=>x.id===r.b.id)
+  if(idx>=0){novelBooks[idx].companionComments=_companionComments;localStorage.setItem('novel_books',JSON.stringify(novelBooks))}
+}
+
 // 类型随机池：每次从里面随机一个风格
 const NOTE_STYLES=[
   '剧透型：透露一点下一章的关键剧情走向，不能太直白，像让读者猜的感觉',
