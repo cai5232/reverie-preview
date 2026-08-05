@@ -206,6 +206,23 @@
     </div>
     <!-- 正文 -->
     <div class="nv-reader-content" id="nvReaderContent"></div>
+    <!-- 催更弹窗 -->
+    <div class="nv-urge-overlay" id="nvUrgeOverlay" onclick="closeUrgeModal()">
+      <div class="nv-urge-modal" onclick="event.stopPropagation()">
+        <div class="nv-urge-title">继续生成</div>
+        <textarea class="nv-urge-textarea" id="nvUrgePlot" placeholder="剧情走向提示（可选，留空则AI自由发挥）" rows="3"></textarea>
+        <div class="nv-urge-chap-row">
+          <span>生成</span>
+          <input type="range" class="nv-urge-slider" id="nvUrgeChapSlider" min="1" max="10" value="3" oninput="document.getElementById('nvUrgeChapVal').textContent=this.value">
+          <span><b id="nvUrgeChapVal">3</b> 章</span>
+        </div>
+        <div class="nv-urge-btns">
+          <button class="nv-urge-btn cancel" onclick="closeUrgeModal()">取消</button>
+          <button class="nv-urge-btn confirm" id="nvUrgeConfirmBtn" onclick="submitUrge()">开始生成</button>
+        </div>
+        <div class="nv-urge-progress" id="nvUrgeProgress">后台生成中，完成后会通知你…</div>
+      </div>
+    </div>
     <!-- 悬浮球 -->
     <div class="nv-float-ball" id="nvFloatBall" ondblclick="startCompanion()">
       <img src="https://i.ibb.co/Q7Lcr1yw/IMG-6805.jpg" style="width:100%;height:100%;border-radius:50%;object-fit:cover;pointer-events:none">
