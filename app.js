@@ -1112,9 +1112,7 @@ function openToc(){
 function closeToc(){document.getElementById('nvTocPanel').classList.remove('open')}
 function tocJump(i){
   closeToc()
-  const el=document.getElementById('nv-ch-'+i)
-  if(el)el.scrollIntoView({behavior:'smooth'})
-  if(window._nvReader)window._nvReader.chIdx=i
+  renderChapter(i)
 }
 function openReaderSettings(){document.getElementById('nvRSettingsPanel').classList.add('open')}
 function closeReaderSettings(){document.getElementById('nvRSettingsPanel').classList.remove('open')}
