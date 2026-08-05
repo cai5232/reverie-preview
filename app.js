@@ -881,8 +881,7 @@ function handleCoverPick(e){
   e.target.value=''
 }
 function triggerTxtImport(){
-  const title=document.getElementById('nvBookTitle').value.trim()
-  if(!title){showToast('请先填写书名');return}
+  // 直接打开文件选择，书名可以用文件名自动填充
   document.getElementById('nvTxtInput').click()
 }
 function handleTxtImport(e){
@@ -890,15 +889,17 @@ function handleTxtImport(e){
   if(!file)return
   const reader=new FileReader()
   reader.onload=ev=>{
-    const title=document.getElementById('nvBookTitle').value.trim()
+    // 书名：优先用输入框内容，否则用文件名（去掉.txt）
+    const inputTitle=document.getElementById('nvBookTitle').value.trim()
+    const title=inputTitle||file.name.replace(/\.txt$/i,'')
     const author=document.getElementById('nvBookAuthor').value.trim()
     const content=ev.target.result
-    const book={id:Date.now(),title,author,coverImg:novelCoverDataUrl||null,progress:0,addedAt:Date.now(),content}
+    const book={id:Date.now(),title,author,intro:'',coverImg:novelCoverDataUrl||null,progress:0,addedAt:Date.now(),content}
     novelBooks.unshift(book)
     localStorage.setItem('novel_books',JSON.stringify(novelBooks))
     closeNovelModal()
     renderNovels()
-    showToast('导入成功，共'+Math.ceil(content.length/500)+'页')
+    showToast('《'+title+'》导入成功')
     e.target.value=''
   }
   reader.readAsText(file,'utf-8')
