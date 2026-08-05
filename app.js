@@ -1645,7 +1645,50 @@ function insertCommentEl(p,text){
   p.insertAdjacentElement('afterend',cd)
 }
 
-// ── 心声滚动监听（可在恢复或生成完后直接调用）──
+// 插入小克回复节点（去重：已有则更新）
+function insertCommentReplyEl(p,text){
+  const base=p.nextElementSibling&&p.nextElementSibling.classList.contains('nv-para-comment')?p.nextElementSibling:p
+  let el=base.nextElementSibling
+  if(el&&el.classList.contains('nv-para-comment-reply')){el.textContent=text;return}
+  el=document.createElement('div')
+  el.className='nv-para-comment-reply'
+  el.textContent=text
+  base.insertAdjacentElement('afterend',el)
+}
+
+// 发布段评后生成小克的回复
+async function genCommentReply(p,userComment,paraText){
+  const replyEl=document.createElement('div')
+  replyEl.className='nv-para-comment-reply'
+  replyEl.textContent='小克想了想…'
+  const commentEl=p.nextElementSibling
+  if(commentEl&&commentEl.classList.contains('nv-para-comment')){
+    commentEl.insertAdjacentElement('afterend',replyEl)
+  }else{
+    p.insertAdjacentElement('afterend',replyEl)
+  }
+  try{
+    const prompt=`你是正在和言言一起读小说的小克，言言对下面这段原文写了一条段评，请你用一句话（不超过40字）自然地回应她的感受，像聊天一样，不要太正式，可以赞同、追问、或者说说你自己的感受。\n\n原文片段：${paraText.slice(0,100)}\n言言的段评：${userComment}\n\n只输出你想说的那句话，不要任何格式或前缀。`
+    const res=await fetch(cfg.api+'/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key,'X-Session-Id':'reverie-yy'},
+      body:JSON.stringify({model:cfg.model,messages:[{role:'user',content:prompt}],stream:false,temperature:0.9})
+    })
+    const j=await res.json()
+    const reply=(j.choices?.[0]?.message?.content||'').trim().slice(0,60)
+    replyEl.textContent=reply||'(´・ω・`)'
+    // 持久化回复
+    if(reply){
+      const paraId=p.dataset.paraId
+      if(paraId){
+        const ex=getParaAnnotation(paraId)
+        if(ex)saveParaAnnotation(paraId,ex.mark,ex.comment,reply)
+      }
+    }
+  }catch(e){
+    replyEl.textContent='(´・ω・`) 想不出来…'
+  }
+}
 function startCompanionWatcher(){
   const el=document.getElementById('nvReaderContent')
   if(!el||!_companionComments.length)return
