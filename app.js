@@ -1492,31 +1492,76 @@ function closeMarkColor(){
 function paraAction(action){
   closeParaMenu()
   if(!_paraTarget)return
+  const p=_paraTarget
   if(action==='comment'){
-    document.getElementById('nvCommentQuote').textContent=_paraTarget.textContent.slice(0,60)+(_paraTarget.textContent.length>60?'…':'')
-    document.getElementById('nvCommentTextarea').value=''
-    document.getElementById('nvCommentOverlay').classList.add('open')
-    setTimeout(()=>document.getElementById('nvCommentTextarea').focus(),100)
+    openInlineCommentEditor(p)
   }else if(action==='mark'){
     document.getElementById('nvMarkColorOverlay').classList.add('open')
-    const overlay=document.getElementById('nvMarkColorOverlay')
     const panel=document.getElementById('nvMarkColorPanel')
     const parent=document.getElementById('nvReaderOverlay').getBoundingClientRect()
     panel.style.left=Math.round(parent.width/2-80)+'px'
     panel.style.top=Math.round(parent.height/2-70)+'px'
   }else if(action==='clear'){
-    const p=_paraTarget
     const paraId=p.dataset.paraId
     if(!paraId)return
-    // 清除标记
     p.classList.remove('marked-yellow','marked-pink','marked-green','marked-blue')
     delete p.dataset.markColor
-    // 清除段评
+    const icon=p.querySelector('.nv-para-mark-icon')
+    if(icon)icon.remove()
     const next=p.nextElementSibling
     if(next&&next.classList.contains('nv-para-comment'))next.remove()
     saveParaAnnotation(paraId,null,null)
     _paraTarget=null
   }
+}
+
+function openInlineCommentEditor(p){
+  // 移除旧的编辑器（如果有）
+  const old=document.querySelector('.nv-inline-editor')
+  if(old)old.remove()
+  const paraId=p.dataset.paraId
+  const existing=getParaAnnotation(paraId)
+  const wrap=document.createElement('div')
+  wrap.className='nv-inline-editor'
+  wrap.dataset.paraId=paraId
+  const ta=document.createElement('textarea')
+  ta.className='nv-inline-editor-ta'
+  ta.placeholder='写下你的感想…'
+  ta.value=existing?existing.comment||'':''
+  ta.rows=2
+  const btn=document.createElement('button')
+  btn.className='nv-inline-editor-btn'
+  btn.innerHTML=`<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8l4 4 8-8" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+  btn.onclick=()=>{
+    const text=ta.value.trim()
+    if(text){
+      insertCommentEl(p,text)
+      const ex=getParaAnnotation(paraId)
+      saveParaAnnotation(paraId,ex?ex.mark:null,text)
+    }
+    wrap.remove()
+    _paraTarget=null
+  }
+  wrap.appendChild(ta)
+  wrap.appendChild(btn)
+  // 插到段落后面（如果已有段评节点就插到它后面）
+  const next=p.nextElementSibling
+  if(next&&next.classList.contains('nv-para-comment')){
+    next.insertAdjacentElement('afterend',wrap)
+  }else{
+    p.insertAdjacentElement('afterend',wrap)
+  }
+  // 延迟聚焦，触发键盘
+  setTimeout(()=>{
+    ta.focus()
+    ta.setSelectionRange(ta.value.length,ta.value.length)
+    wrap.scrollIntoView({behavior:'smooth',block:'center'})
+  },80)
+  // input 时自动撑高
+  ta.addEventListener('input',()=>{
+    ta.style.height='auto'
+    ta.style.height=ta.scrollHeight+'px'
+  })
 }
 function applyMark(color){
   closeMarkColor()
