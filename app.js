@@ -1048,13 +1048,12 @@ function renderFullBook(){
   Object.entries(annots).forEach(([paraId,ann])=>{
     const p=el.querySelector(`p[data-para-id="${paraId}"]`)
     if(!p)return
-    if(ann.mark){
-      p.classList.add('marked-'+ann.mark)
-      p.dataset.markColor=ann.mark
-      addMarkIcon(p)
-    }
+    if(ann.mark){p.classList.add('marked-'+ann.mark);p.dataset.markColor=ann.mark}
     if(ann.comment){
-      insertCommentEl(p,ann.comment)
+      const cd=document.createElement('div')
+      cd.className='nv-para-comment'
+      cd.textContent=ann.comment
+      p.insertAdjacentElement('afterend',cd)
     }
   })
   // 绑定段落长按
@@ -1550,9 +1549,32 @@ function applyMark(color){
   p.classList.remove('marked-yellow','marked-pink','marked-green','marked-blue')
   p.classList.add('marked-'+color)
   p.dataset.markColor=color
+  addMarkIcon(p)
   const existing=getParaAnnotation(paraId)
   saveParaAnnotation(paraId,color,existing?existing.comment:null)
   _paraTarget=null
+}
+
+// 在段落前插入书签图标（去重：已有就不加）
+function addMarkIcon(p){
+  if(p.querySelector('.nv-para-mark-icon'))return
+  const icon=document.createElement('span')
+  icon.className='nv-para-mark-icon'
+  icon.innerHTML=`<svg width="11" height="14" viewBox="0 0 11 14" fill="none"><path d="M1 1h9v12l-4.5-3L1 13V1z" fill="#c8b89a" stroke="#c8b89a" stroke-width="1" stroke-linejoin="round"/></svg>`
+  p.insertBefore(icon,p.firstChild)
+}
+
+// 插入段评节点（去重：已有则更新文字）
+function insertCommentEl(p,text){
+  let cd=p.nextElementSibling
+  if(cd&&cd.classList.contains('nv-para-comment')){
+    cd.textContent=text
+    return
+  }
+  cd=document.createElement('div')
+  cd.className='nv-para-comment'
+  cd.textContent=text
+  p.insertAdjacentElement('afterend',cd)
 }
 function closeCommentModal(){
   document.getElementById('nvCommentOverlay').classList.remove('open')
