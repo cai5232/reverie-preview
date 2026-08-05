@@ -247,7 +247,19 @@ body{color:#111;font-family:-apple-system,'PingFang SC',sans-serif;display:flex;
 .nv-para-mark-icon{position:absolute;left:-18px;top:3px;line-height:1;display:flex;align-items:center;pointer-events:none}
 /* 段评：斜体细字，去掉横线 */
 .nv-para-comment{margin:0 0 18px 2em;font-size:13px;font-style:italic;font-weight:300;color:#aaa;line-height:1.7;letter-spacing:.2px;display:block}
-/* 内联段评编辑器 */
+/* 目录tab */
+.nv-toc-tabs{display:flex;border-bottom:1px solid #f0f0f0;padding:0 16px}
+.nv-toc-tab{flex:1;text-align:center;padding:10px 0;font-size:14px;color:#bbb;cursor:pointer;border-bottom:2px solid transparent;transition:color .2s,border-color .2s}
+.nv-toc-tab.active{color:#333;border-bottom-color:#c8a07a}
+/* 目录标记列表 */
+.nv-toc-mark-item{padding:14px 16px;border-bottom:1px solid #f5f5f5;cursor:pointer}
+.nv-toc-mark-item:active{background:#faf5f0}
+.nv-toc-mark-chap{font-size:11px;color:#c8a07a;margin-bottom:4px}
+.nv-toc-mark-text{font-size:14px;color:#444;line-height:1.6}
+.nv-toc-mark-comment{margin-top:5px;font-size:12px;font-style:italic;color:#aaa}
+/* 段评回复（小克） */
+.nv-para-comment-reply{margin:0 0 18px 2em;font-size:13px;font-style:italic;font-weight:300;color:#c8a07a;line-height:1.7;letter-spacing:.2px;display:block;padding-left:1em;position:relative}
+.nv-para-comment-reply::before{content:'';position:absolute;left:0;top:.35em;bottom:.35em;width:2px;background:#e8d4b8;border-radius:1px}
 .nv-inline-editor{display:flex;align-items:flex-end;gap:8px;margin:6px 0 18px 2em;padding:8px 10px;background:rgba(255,255,255,.85);border:1px solid rgba(200,184,154,.5);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
 .nv-inline-editor-ta{flex:1;background:transparent;border:none;outline:none;font-size:13px;font-style:italic;font-family:inherit;color:#555;line-height:1.65;resize:none;min-height:36px;padding:0;-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
 .nv-inline-editor-ta::placeholder{color:#ccc}
