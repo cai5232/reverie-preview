@@ -950,8 +950,8 @@ function showBookDetail(id){
       <div style="font-size:13px;color:#aaa;margin-top:6px">${b.author||'AI创作'}</div>
     </div>
     <div style="margin:0 20px 24px;padding:16px;background:#f7f7f7;border-radius:12px;font-size:14px;color:#444;line-height:1.7;white-space:pre-wrap">${b.intro||'暂无简介'}</div>
-    <div style="padding:0 20px calc(env(safe-area-inset-bottom,0px)+20px)">
-      <button onclick="startReadingFromDetail()" style="width:100%;padding:14px;background:#111;color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:600;font-family:inherit;cursor:pointer">开始阅读</button>
+    <div style="padding:0 20px calc(env(safe-area-inset-bottom,0px)+20px);display:flex;justify-content:center">
+      <button onclick="startReadingFromDetail()" style="width:134px;padding:12px 0;background:#111;color:#fff;border:none;border-radius:20px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;letter-spacing:.5px">开始阅读</button>
     </div>`
   document.getElementById('nvDetailOverlay').classList.add('open')
 }
