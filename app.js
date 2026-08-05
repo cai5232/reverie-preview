@@ -1577,9 +1577,12 @@ function openInlineCommentEditor(p){
   btn.onclick=()=>{
     const text=ta.value.trim()
     if(text){
+      const paraText=p.textContent||''
       insertCommentEl(p,text)
       const ex=getParaAnnotation(paraId)
       saveParaAnnotation(paraId,ex?ex.mark:null,text)
+      // 异步生成小克的回复
+      genCommentReply(p,text,paraText)
     }
     wrap.remove()
     _paraTarget=null
