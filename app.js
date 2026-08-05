@@ -1274,21 +1274,23 @@ let _companionChecking=null
 function initFloatBall(){
   const ball=document.getElementById('nvFloatBall')
   if(!ball)return
-  let isDragging=false,startX=0,startY=0,origX=0,origY=0,moved=false,lastTap=0
+  let isDragging=false,startX=0,startY=0,origX=0,origY=0,moved=false
+  let pressTimer=null,pressTriggered=false
   ball.addEventListener('touchstart',e=>{
     const t=e.touches[0]
     startX=t.clientX;startY=t.clientY
     const rect=ball.getBoundingClientRect()
     const parent=ball.parentElement.getBoundingClientRect()
     origX=rect.left-parent.left;origY=rect.top-parent.top
-    isDragging=true;moved=false
+    isDragging=true;moved=false;pressTriggered=false
+    pressTimer=setTimeout(()=>{pressTriggered=true;openCompanionList()},500)
     e.preventDefault()
   },{passive:false})
   ball.addEventListener('touchmove',e=>{
     if(!isDragging)return
     const t=e.touches[0]
     const dx=t.clientX-startX,dy=t.clientY-startY
-    if(Math.abs(dx)>4||Math.abs(dy)>4)moved=true
+    if(Math.abs(dx)>6||Math.abs(dy)>6){moved=true;clearTimeout(pressTimer)}
     if(moved){
       const parent=ball.parentElement.getBoundingClientRect()
       let nx=origX+dx,ny=origY+dy
@@ -1299,14 +1301,29 @@ function initFloatBall(){
     }
     e.preventDefault()
   },{passive:false})
-  ball.addEventListener('touchend',e=>{
+  ball.addEventListener('touchend',()=>{
+    clearTimeout(pressTimer)
     isDragging=false
-    if(!moved){
-      const now=Date.now()
-      if(now-lastTap<350)startCompanion()
-      lastTap=now
-    }
+    if(!moved&&!pressTriggered)startCompanion()
   })
+}
+
+function openCompanionList(){
+  const panel=document.getElementById('nvCompanionListPanel')
+  const list=document.getElementById('nvCompanionList')
+  if(!_companionComments.length){
+    list.innerHTML='<div style="padding:24px 20px;color:#aaa;font-size:14px;text-align:center">还没有心声，先开启伴读吧</div>'
+  }else{
+    list.innerHTML=_companionComments.map((c,i)=>`
+      <div style="padding:14px 20px;border-bottom:.5px solid #f5f5f5;font-size:14px;color:#333;line-height:1.6">
+        <div style="font-size:11px;color:#bbb;margin-bottom:4px">第${i+1}条</div>
+        ${escHtml(c.text)}
+      </div>`).join('')
+  }
+  panel.classList.add('open')
+}
+function closeCompanionList(){
+  document.getElementById('nvCompanionListPanel').classList.remove('open')
 }
 
 async function startCompanion(){
