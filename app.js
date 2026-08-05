@@ -1304,7 +1304,9 @@ function initFloatBall(){
   ball.addEventListener('touchend',()=>{
     clearTimeout(pressTimer)
     isDragging=false
-    if(!moved&&!pressTriggered)startCompanion()
+    // 长按后重置，防止双击失效
+    if(pressTriggered){setTimeout(()=>{pressTriggered=false},200);return}
+    if(!moved)startCompanion()
   })
 }
 
