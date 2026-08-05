@@ -1248,8 +1248,8 @@ async function startGenNovel(){
     novelBooks.unshift(book)
     localStorage.setItem('novel_books',JSON.stringify(novelBooks))
     renderNovels()
-    showToast('《'+title+'》生成完成！')
-    setTimeout(()=>{hideGenNovel();startReading(book.id)},800)
+    showToast('《'+parsedTitle+'》生成完成！')
+    setTimeout(()=>{hideGenNovel();showBookDetail(book.id)},800)
   }catch(err){
     clearInterval(fakeTimer)
     fill.style.width='0%';txt.textContent='生成失败：'+err.message
