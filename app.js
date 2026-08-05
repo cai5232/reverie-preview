@@ -44,7 +44,10 @@ let cfg={
   model:localStorage.getItem('cfg_model')||DEFAULT_MODEL,
   temp:parseFloat(localStorage.getItem('cfg_temp')||'0.9'),
   notify:localStorage.getItem('cfg_notify')==='true',
-  keepalive:localStorage.getItem('cfg_keepalive')==='true'
+  keepalive:localStorage.getItem('cfg_keepalive')==='true',
+  genApi:localStorage.getItem('cfg_gen_api')||'',
+  genKey:localStorage.getItem('cfg_gen_key')||'',
+  genModel:localStorage.getItem('cfg_gen_model')||''
 }
 
 let chatHistory=JSON.parse(localStorage.getItem('chat_history')||'[]')
