@@ -1418,77 +1418,14 @@ async function startCompanion(){
     }
     // 持久化心声
     saveCompanionComments()
-    // 生成完毕，隐藏"小克正在阅读中…"，等到段落进入视野才弹出
+    // 生成完毕，隐藏提示，启动监听
     tip.textContent=''
     tip.classList.remove('open')
   }catch(e){
     tip.textContent='连接失败了 (´・ω・`)'
     return
   }
-  // 开始监听滚动，当读者滚动到对应段落时弹出（可重复触发）
-  const el=document.getElementById('nvReaderContent')
-  // 每个锚点的上次弹出时间，防止同一段落连续刷屏
-  const lastShown={}
-  if(_companionChecking)clearInterval(_companionChecking)
-  _companionChecking=setInterval(()=>{
-    if(!_companionActive)return
-    const allParaEls=el.querySelectorAll('p.nv-para')
-    const midY=window.innerHeight/2
-    _companionComments.forEach((c,ci)=>{
-      const paraEl=allParaEls[c.paraIdx]
-      if(!paraEl)return
-      const rect=paraEl.getBoundingClientRect()
-      const inView=rect.top<=midY&&rect.bottom>=0
-      if(inView){
-        const now=Date.now()
-        // 同一条至少间隔8秒才再次弹出
-        if(!lastShown[ci]||now-lastShown[ci]>8000){
-          lastShown[ci]=now
-          tip.classList.add('open')
-          tip.textContent=c.text
-          setTimeout(()=>{
-            if(_companionActive&&tip.textContent===c.text){
-              tip.classList.remove('open')
-              tip.textContent=''
-            }
-          },4000)
-        }
-      }
-    })
-  },600)
-}
-
-// ── 心声滚动监听（独立函数，生成完或恢复后都可直接调用）──
-function startCompanionWatcher(){
-  const el=document.getElementById('nvReaderContent')
-  if(!el||!_companionComments.length)return
-  _companionActive=true
-  if(_companionChecking)clearInterval(_companionChecking)
-  const lastShown={}
-  _companionChecking=setInterval(()=>{
-    if(!_companionActive)return
-    const allParaEls=el.querySelectorAll('p.nv-para')
-    const midY=window.innerHeight/2
-    _companionComments.forEach((c,ci)=>{
-      const paraEl=allParaEls[c.paraIdx]
-      if(!paraEl)return
-      const rect=paraEl.getBoundingClientRect()
-      if(rect.top<=midY&&rect.bottom>=0){
-        const now=Date.now()
-        if(!lastShown[ci]||now-lastShown[ci]>8000){
-          lastShown[ci]=now
-          const tip=document.getElementById('nvFloatTip')
-          if(tip){
-            tip.classList.add('open')
-            tip.textContent=c.text
-            setTimeout(()=>{
-              if(tip.textContent===c.text){tip.classList.remove('open');tip.textContent=''}
-            },4000)
-          }
-        }
-      }
-    })
-  },600)
+  startCompanionWatcher()
 }
 
 // ── 段落长按菜单 ──
