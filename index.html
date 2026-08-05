@@ -192,10 +192,15 @@
   <div class="nv-detail-overlay" id="nvDetailOverlay">
     <div class="nv-detail-header">
       <div class="nv-detail-back" onclick="hideBookDetail()">
-        <svg width="10" height="18" viewBox="0 0 10 18" fill="none"><path d="M9 1L1 9l8 8" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg width="10" height="18" viewBox="0 0 10 18" fill="none"><path d="M9 1L1 9l8 8" stroke="#333" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
+      <div style="flex:1;font-size:15px;font-weight:600;color:#111;text-align:center"></div>
+      <div style="width:36px"></div>
     </div>
     <div class="nv-detail-body" id="nvDetailBody"></div>
+    <div style="padding:16px 20px calc(env(safe-area-inset-bottom,0px)+16px);flex-shrink:0;background:#fff;border-top:.5px solid #f0f0f0">
+      <button class="nv-detail-read-btn" id="nvDetailReadBtn" style="margin:0;width:100%" onclick="startReadingFromDetail()">开始阅读</button>
+    </div>
   </div>
 
   <!-- 阅读器页面 -->
