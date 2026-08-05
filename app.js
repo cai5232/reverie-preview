@@ -1197,10 +1197,13 @@ async function startGenNovel(){
   const fakeTimer=setInterval(()=>{if(fakePct<85){fakePct+=Math.random()*2;fill.style.width=fakePct+'%'}},1500)
   try{
     txt.textContent='AI 创作中，请稍等...'
-    const res=await fetch(cfg.api+'/chat/completions',{
+    const genApi=cfg.genApi||cfg.api
+    const genKey=cfg.genKey||cfg.key
+    const genModel=cfg.genModel||cfg.model
+    const res=await fetch(genApi+'/chat/completions',{
       method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key},
-      body:JSON.stringify({model:cfg.model,messages:[{role:'user',content:prompt}],stream:false,temperature:0.85,max_tokens:4000})
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+genKey},
+      body:JSON.stringify({model:genModel,messages:[{role:'user',content:prompt}],stream:false,temperature:0.85,max_tokens:4000})
     })
     if(!res.ok)throw new Error('HTTP '+res.status)
     const j=await res.json()
