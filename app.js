@@ -1443,18 +1443,20 @@ function bindParaLongPress(){
   el.addEventListener('touchstart',e=>{
     const p=e.target.closest('p.nv-para')
     if(!p)return
+    // 阻止iOS系统长按唤起选词菜单（必须在passive:false下才能生效）
+    e.preventDefault()
     _sx=e.touches[0].clientX;_sy=e.touches[0].clientY;_tp=p
     clearTimeout(_lp)
     _lp=setTimeout(()=>{
       _lp=null
       _paraTarget=_tp
       showParaMenu(_tp,{clientX:_sx,clientY:_sy})
-    },550)
-  },{passive:true})
+    },500)
+  },{passive:false})
   el.addEventListener('touchmove',e=>{
     if(!_lp)return
     const dx=e.touches[0].clientX-_sx,dy=e.touches[0].clientY-_sy
-    if(dx*dx+dy*dy>144){clearTimeout(_lp);_lp=null}
+    if(dx*dx+dy*dy>100){clearTimeout(_lp);_lp=null}
   },{passive:true})
   el.addEventListener('touchend',()=>{clearTimeout(_lp);_lp=null},{passive:true})
   el.addEventListener('touchcancel',()=>{clearTimeout(_lp);_lp=null},{passive:true})
