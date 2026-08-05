@@ -1042,6 +1042,21 @@ function renderFullBook(){
   el.innerHTML=html
   // 异步生成所有没有 authorNote 的章节的"作者有话说"
   r.chapters.forEach((ch,i)=>{if(!ch.authorNote)genAuthorNote(i)})
+  // 恢复段落标记和段评
+  const annots=r.b.paraAnnotations||{}
+  Object.entries(annots).forEach(([paraId,ann])=>{
+    const p=el.querySelector(`p[data-para-id="${paraId}"]`)
+    if(!p)return
+    if(ann.mark){p.classList.add('marked-'+ann.mark);p.dataset.markColor=ann.mark}
+    if(ann.comment){
+      const cd=document.createElement('div')
+      cd.className='nv-para-comment'
+      cd.textContent=ann.comment
+      p.insertAdjacentElement('afterend',cd)
+    }
+  })
+  // 绑定段落长按
+  bindParaLongPress()
   // 滚动到上次章节
   setTimeout(()=>{
     const target=document.getElementById('nv-ch-'+(r.chIdx||0))
