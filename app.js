@@ -205,6 +205,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   initMemory()
   initPush()
   renderNovels()
+  loadHeaderAvatar()
 })
 
 function renderChat(){
