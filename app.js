@@ -1005,7 +1005,22 @@ function changeReaderFont(d){
   // 字号变了段落行高不用重建，直接改 fontSize 即可
 }
 
-function changeAvatar(e){
+function changeHeaderAvatar(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    const img=document.getElementById('headerAvatar');
+    if(img)img.src=ev.target.result;
+    localStorage.setItem('headerAvatar',ev.target.result);
+  };
+  r.readAsDataURL(f);
+}
+
+function loadHeaderAvatar(){
+  const saved=localStorage.getItem('headerAvatar');
+  const img=document.getElementById('headerAvatar');
+  if(saved&&img)img.src=saved;
+}
   const file=e.target.files[0]
   if(!file)return
   const reader=new FileReader()
