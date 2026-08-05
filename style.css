@@ -196,10 +196,12 @@ body{color:#111;font-family:-apple-system,'PingFang SC',sans-serif;display:flex;
 .nv-author-note-label{font-size:11px;color:#a08060;font-weight:700;letter-spacing:1.5px;margin-bottom:8px}
 .nv-author-note-text{font-size:14px;color:#5a4a36;line-height:1.75}
 /* 章节导航 */
-.nv-chapter-nav{display:flex;gap:12px;margin:16px 0 48px;justify-content:center}
-.nv-chapter-nav-btn{flex:1;max-width:110px;padding:11px 0;border:1.5px solid #ddd;border-radius:22px;font-size:13px;font-family:inherit;cursor:pointer;background:#faf8f4;color:#555;font-weight:500;-webkit-tap-highlight-color:transparent;text-align:center}
+.nv-chapter-nav{display:flex;flex-direction:column;gap:10px;margin:20px 0 48px}
+.nv-chapter-nav-urge-row{display:flex;justify-content:center}
+.nv-chapter-nav-pages-row{display:flex;gap:12px;justify-content:center}
+.nv-chapter-nav-btn{flex:1;max-width:96px;padding:9px 0;border:1.5px solid #ddd;border-radius:20px;font-size:12px;font-family:inherit;cursor:pointer;background:#faf8f4;color:#555;font-weight:500;-webkit-tap-highlight-color:transparent;text-align:center}
 .nv-chapter-nav-btn:active{background:#ede9e0}
-.nv-chapter-nav-btn.urge{border-color:#c8b89a;color:#7a5c3a;font-weight:600}
+.nv-chapter-nav-btn.urge{border-color:#c8b89a;color:#7a5c3a;font-weight:600;max-width:80px;font-size:12px;padding:9px 22px;flex:none}
 .nv-chapter-nav-btn.urge:active{background:#ede0ce}
 .nv-chapter-nav-btn:disabled,.nv-chapter-nav-btn.disabled{opacity:.3;cursor:default;pointer-events:none}
 /* 催更弹窗 */
