@@ -1006,6 +1006,143 @@ function changeReaderFont(d){
   // 字号变了段落行高不用重建，直接改 fontSize 即可
 }
 
+// ── 生成小说 ──
+const WORLD_PROMPTS={
+  reality:'现代都市现实背景，贴近真实生活',
+  cyberpunk:'赛博朋克世界，高科技低生活，霓虹与黑暗并存',
+  beast:'兽世背景，强者为尊，兽人文明，原始而充满野性',
+  ancient:'中国古代背景，封建王朝，江湖庙堂，礼教风俗',
+  fantasy:'东方玄幻，灵气充盈，修炼等级体系，宗门争斗',
+  xianxia:'仙侠世界，修仙问道，飞剑御敌，长生不老',
+  esports:'现代电竞，职业选手，赛季荣耀，团队与个人成长',
+  campus:'校园青春，暗恋、社团、考试与成长',
+  apocalypse:'末世，文明崩溃，丧尸或天灾，人性挣扎',
+  scifi:'科幻星际，宇宙探索，外星文明，未来科技',
+  ceo:'都市豪门，商战，霸道总裁，豪门恩怨',
+  danmei:'耽美风格，男男情感，细腻情绪，虐恋或甜宠'
+}
+let nvGenCoverDataUrl=null
+let nvGenCharCount=0
+
+function showGenNovel(){
+  nvGenCoverDataUrl=null;nvGenCharCount=0
+  document.getElementById('nvGenChars').innerHTML=''
+  document.getElementById('nvGenTitle').value=''
+  document.getElementById('nvGenAuthor').value=''
+  document.getElementById('nvGenChapSlider').value=5
+  document.getElementById('nvGenChapVal').textContent='5章'
+  document.getElementById('nvGenProgress').style.display='none'
+  const btn=document.getElementById('nvGenSubmit')
+  btn.disabled=false;btn.textContent='✦ 生成文章'
+  const pick=document.getElementById('nvGenCoverPick')
+  pick.innerHTML=`<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" stroke="#bbb" stroke-width="1.5"/><circle cx="8.5" cy="8.5" r="2.2" stroke="#bbb" stroke-width="1.3"/><path d="M2 16l5-5 4 4 3-3 8 7" stroke="#bbb" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span>点击添加封面</span>`
+  document.querySelectorAll('.nv-gen-world-tag').forEach(t=>t.classList.remove('active'))
+  document.getElementById('nvGenOverlay').classList.add('open')
+}
+function hideGenNovel(){document.getElementById('nvGenOverlay').classList.remove('open')}
+function handleGenCover(e){
+  const f=e.target.files[0];if(!f)return
+  const r=new FileReader()
+  r.onload=ev=>{
+    nvGenCoverDataUrl=ev.target.result
+    document.getElementById('nvGenCoverPick').innerHTML=`<img src="${nvGenCoverDataUrl}" style="width:100%;height:100%;object-fit:cover">`
+  }
+  r.readAsDataURL(f);e.target.value=''
+}
+function addCharacter(){
+  const id=++nvGenCharCount
+  const div=document.createElement('div')
+  div.className='nv-gen-char-card';div.id='char-'+id
+  div.innerHTML=`<span class="nv-gen-char-del" onclick="document.getElementById('char-${id}').remove()">×</span><input class="nv-gen-char-input" placeholder="角色名字" id="char-name-${id}"><div class="nv-gen-char-sex"><button class="nv-gen-sex-btn active" id="char-sex-m-${id}" onclick="setSex(${id},'男')">男</button><button class="nv-gen-sex-btn" id="char-sex-f-${id}" onclick="setSex(${id},'女')">女</button><button class="nv-gen-sex-btn" id="char-sex-o-${id}" onclick="setSex(${id},'其他')">其他</button></div><textarea class="nv-gen-char-input" placeholder="人物背景、性格、特征..." rows="2" id="char-bg-${id}" style="resize:none;line-height:1.5"></textarea>`
+  document.getElementById('nvGenChars').appendChild(div)
+}
+function setSex(id,sex){
+  ['男','女','其他'].forEach(s=>{
+    const k=s==='男'?'m':s==='女'?'f':'o'
+    document.getElementById('char-sex-'+k+'-'+id).className='nv-gen-sex-btn'+(sex===s?' active':'')
+  })
+}
+function selectWorld(el){
+  document.querySelectorAll('.nv-gen-world-tag').forEach(t=>t.classList.remove('active'))
+  el.classList.add('active')
+}
+function addCustomWorld(){
+  document.getElementById('nvWorldName').value=''
+  document.getElementById('nvWorldDesc').value=''
+  document.getElementById('nvWorldModalOverlay').classList.add('open')
+}
+function closeWorldModal(){document.getElementById('nvWorldModalOverlay').classList.remove('open')}
+function confirmCustomWorld(){
+  const name=document.getElementById('nvWorldName').value.trim()
+  const desc=document.getElementById('nvWorldDesc').value.trim()
+  if(!name){showToast('请填写世界观名称');return}
+  closeWorldModal()
+  const tag=document.createElement('div')
+  tag.className='nv-gen-world-tag'
+  tag.dataset.key='custom_'+Date.now()
+  tag.dataset.desc=desc
+  tag.textContent=name
+  tag.onclick=function(){selectWorld(this)}
+  document.getElementById('nvGenWorlds').appendChild(tag)
+  selectWorld(tag)
+}
+async function startGenNovel(){
+  const title=document.getElementById('nvGenTitle').value.trim()
+  if(!title){showToast('请填写书名');return}
+  const selectedWorld=document.querySelector('.nv-gen-world-tag.active')
+  if(!selectedWorld){showToast('请选择世界观');return}
+  const author=document.getElementById('nvGenAuthor').value.trim()
+  const chapCount=parseInt(document.getElementById('nvGenChapSlider').value)
+  const chars=[]
+  document.querySelectorAll('[id^="char-name-"]').forEach(inp=>{
+    const id=inp.id.replace('char-name-','')
+    const name=inp.value.trim();if(!name)return
+    const sexBtns=[document.getElementById('char-sex-m-'+id),document.getElementById('char-sex-f-'+id),document.getElementById('char-sex-o-'+id)]
+    const sex=sexBtns.find(b=>b.classList.contains('active'))?.textContent||'未知'
+    const bg=document.getElementById('char-bg-'+id)?.value.trim()||''
+    chars.push({name,sex,bg})
+  })
+  const worldKey=selectedWorld.dataset.key
+  const worldName=selectedWorld.textContent
+  const worldDesc=selectedWorld.dataset.desc||WORLD_PROMPTS[worldKey]||worldName
+  const charDesc=chars.length?chars.map(c=>`- ${c.name}（${c.sex}）：${c.bg||'无背景说明'}`).join('\n'):'（作者自由发挥）'
+  const prompt=`请帮我生成一部小说。\n书名：《${title}》\n${author?'作者：'+author+'\n':''}世界观：${worldName} — ${worldDesc}\n人物设定：\n${charDesc}\n\n请生成${chapCount}章完整小说正文，每章不少于800字。每章以"第X章 章节标题"开头，段落之间空一行。风格细腻，情节流畅，人物鲜明。只输出小说正文。`
+  const btn=document.getElementById('nvGenSubmit')
+  btn.disabled=true;btn.textContent='生成中...'
+  const prog=document.getElementById('nvGenProgress')
+  prog.style.display='block'
+  const fill=document.getElementById('nvGenFill')
+  const txt=document.getElementById('nvGenProgressText')
+  fill.style.width='5%';txt.textContent='正在连接...'
+  let fakePct=5
+  const fakeTimer=setInterval(()=>{if(fakePct<85){fakePct+=Math.random()*2;fill.style.width=fakePct+'%'}},1500)
+  try{
+    txt.textContent='AI 创作中，请稍等...'
+    const res=await fetch(cfg.api+'/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key},
+      body:JSON.stringify({model:cfg.model,messages:[{role:'user',content:prompt}],stream:false,temperature:0.85,max_tokens:8000})
+    })
+    if(!res.ok)throw new Error('HTTP '+res.status)
+    const j=await res.json()
+    const content=j.choices?.[0]?.message?.content||''
+    if(!content)throw new Error('empty')
+    clearInterval(fakeTimer)
+    fill.style.width='100%';txt.textContent='生成完成，保存中...'
+    const book={id:Date.now(),title,author:author||'AI生成',coverImg:nvGenCoverDataUrl||null,progress:0,addedAt:Date.now(),content,isGenerated:true}
+    novelBooks.unshift(book)
+    localStorage.setItem('novel_books',JSON.stringify(novelBooks))
+    renderNovels()
+    showToast('《'+title+'》生成完成！')
+    setTimeout(()=>{hideGenNovel();startReading(book.id)},800)
+  }catch(err){
+    clearInterval(fakeTimer)
+    fill.style.width='0%';txt.textContent='生成失败：'+err.message
+    btn.disabled=false;btn.textContent='✦ 重新生成'
+    showToast('生成失败，请检查API设置')
+  }
+}
+
 function changeHeaderAvatar(e){
   const f=e.target.files[0];if(!f)return;
   const r=new FileReader();
