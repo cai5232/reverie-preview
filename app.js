@@ -1492,20 +1492,18 @@ function closeMarkColor(){
   document.getElementById('nvMarkColorOverlay').classList.remove('open')
 }
 function paraAction(action){
+  const p=_paraTarget  // 先存起来，closeParaMenu会把_paraTarget清空
   closeParaMenu()
-  if(!_paraTarget)return
-  const p=_paraTarget
+  if(!p)return
   if(action==='comment'){
     openInlineCommentEditor(p)
   }else if(action==='mark'){
-    // 直接加🏷️标记，不需要颜色选择
     const paraId=p.dataset.paraId
     if(!paraId)return
     p.dataset.markColor='marked'
     addMarkIcon(p)
     const ex=getParaAnnotation(paraId)
     saveParaAnnotation(paraId,'marked',ex?ex.comment:null)
-    _paraTarget=null
   }else if(action==='clear'){
     const paraId=p.dataset.paraId
     if(!paraId)return
@@ -1515,7 +1513,6 @@ function paraAction(action){
     const next=p.nextElementSibling
     if(next&&next.classList.contains('nv-para-comment'))next.remove()
     saveParaAnnotation(paraId,null,null)
-    _paraTarget=null
   }
 }
 
