@@ -990,7 +990,7 @@ function startReading(id){
   // 从持久化的 chapterNotes 恢复已生成的作者有话说
   const savedNotes=b.chapterNotes||{}
   chapters.forEach((ch,i)=>{if(savedNotes[i])ch.authorNote=savedNotes[i]})
-  // 恢复心声
+  // 恢复心声（必须在 _companionActive=false 之前赋值）
   _companionComments=b.companionComments||[]
   window._nvReader={b,chapters,chIdx:b.lastChapter||0,fontSize:20,globalPage:0,allPages:[]}
   document.getElementById('nvReaderTopTitle').textContent=b.title
@@ -1419,7 +1419,7 @@ async function startCompanion(){
     if(!_companionComments.length&&raw.trim()){
       _companionComments.push({paraIdx:Math.floor(paras.length/3),text:raw.trim().slice(0,100)})
     }
-    // 持久化心声到 novelBooks
+    // 持久化心声
     saveCompanionComments()
     // 生成完毕，隐藏"小克正在阅读中…"，等到段落进入视野才弹出
     tip.textContent=''
