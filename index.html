@@ -257,20 +257,19 @@
   </div>
   <div class="nv-gen-body">
     <div class="nv-gen-section">
-      <div class="nv-gen-label">封面</div>
       <input type="file" id="nvGenCoverInput" accept="image/*" style="display:none" onchange="handleGenCover(event)">
-      <div class="nv-gen-cover-pick" id="nvGenCoverPick" onclick="document.getElementById('nvGenCoverInput').click()">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" stroke="#bbb" stroke-width="1.5"/><circle cx="8.5" cy="8.5" r="2.2" stroke="#bbb" stroke-width="1.3"/><path d="M2 16l5-5 4 4 3-3 8 7" stroke="#bbb" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span>点击添加封面</span>
+      <div class="nv-gen-meta-row">
+        <div class="nv-gen-cover-pick" id="nvGenCoverPick" onclick="document.getElementById('nvGenCoverInput').click()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" stroke="#bbb" stroke-width="1.5"/><circle cx="8.5" cy="8.5" r="2.2" stroke="#bbb" stroke-width="1.3"/><path d="M2 16l5-5 4 4 3-3 8 7" stroke="#bbb" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>封面</span>
+        </div>
+        <div class="nv-gen-meta-inputs">
+          <div class="nv-gen-label">书名</div>
+          <input class="nv-gen-input" id="nvGenTitle" placeholder="输入书名" style="margin-bottom:10px">
+          <div class="nv-gen-label">作者</div>
+          <input class="nv-gen-input" id="nvGenAuthor" placeholder="输入作者名（可选）">
+        </div>
       </div>
-    </div>
-    <div class="nv-gen-section">
-      <div class="nv-gen-label">书名</div>
-      <input class="nv-gen-input" id="nvGenTitle" placeholder="输入书名">
-    </div>
-    <div class="nv-gen-section">
-      <div class="nv-gen-label">作者</div>
-      <input class="nv-gen-input" id="nvGenAuthor" placeholder="输入作者名（可选）">
     </div>
     <div class="nv-gen-section">
       <div class="nv-gen-label-row">
