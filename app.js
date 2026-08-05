@@ -1704,7 +1704,8 @@ async function submitUrge(){
     r.b.content+=(r.b.content.endsWith('\n')?'':'\n')+newContent
     const idx=novelBooks.findIndex(x=>x.id===r.b.id)
     if(idx>=0){novelBooks[idx]=r.b;localStorage.setItem('novel_books',JSON.stringify(novelBooks))}
-    renderFullBook()
+    // 切换到新增的第一章
+    renderChapter(r.chapters.length-newChs.length)
     if(cfg.notify&&Notification.permission==='granted'&&document.hidden){
       new Notification('《'+r.b.title+'》续写完成',{body:`新增${newChs.length}章，快来看看！`,icon:'https://i.ibb.co/Q7Lcr1yw/IMG-6805.jpg'})
     }else showToast(`续写完成，新增${newChs.length}章`)
