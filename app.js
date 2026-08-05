@@ -1458,6 +1458,39 @@ async function startCompanion(){
   },600)
 }
 
+// ── 心声滚动监听（独立函数，生成完或恢复后都可直接调用）──
+function startCompanionWatcher(){
+  const el=document.getElementById('nvReaderContent')
+  if(!el||!_companionComments.length)return
+  _companionActive=true
+  if(_companionChecking)clearInterval(_companionChecking)
+  const lastShown={}
+  _companionChecking=setInterval(()=>{
+    if(!_companionActive)return
+    const allParaEls=el.querySelectorAll('p.nv-para')
+    const midY=window.innerHeight/2
+    _companionComments.forEach((c,ci)=>{
+      const paraEl=allParaEls[c.paraIdx]
+      if(!paraEl)return
+      const rect=paraEl.getBoundingClientRect()
+      if(rect.top<=midY&&rect.bottom>=0){
+        const now=Date.now()
+        if(!lastShown[ci]||now-lastShown[ci]>8000){
+          lastShown[ci]=now
+          const tip=document.getElementById('nvFloatTip')
+          if(tip){
+            tip.classList.add('open')
+            tip.textContent=c.text
+            setTimeout(()=>{
+              if(tip.textContent===c.text){tip.classList.remove('open');tip.textContent=''}
+            },4000)
+          }
+        }
+      }
+    })
+  },600)
+}
+
 // ── 段落长按菜单 ──
 let _paraTarget=null  // 当前长按的 <p> 元素
 
