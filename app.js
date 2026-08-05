@@ -1022,11 +1022,15 @@ function renderFullBook(){
       <div class="nv-author-note-label">作者有话说</div>
       <div class="nv-author-note-text" id="nv-note-text-${i}">${note?escHtml(note):'<span style="color:#c8b89a;font-style:italic">生成中…</span>'}</div>
     </div>`
-    // 章节导航
+    // 章节导航 — 双行：上一行催更居中，下一行上一章/下一章
     html+=`<div class="nv-chapter-nav">
-      <button class="nv-chapter-nav-btn${i===0?' disabled':''}" onclick="navChapter(${i-1})" ${i===0?'disabled':''}>上一章</button>
-      <button class="nv-chapter-nav-btn urge" onclick="openUrgeModal(${i})">催更</button>
-      <button class="nv-chapter-nav-btn${i===totalCh-1?' disabled':''}" onclick="navChapter(${i+1})" ${i===totalCh-1?'disabled':''}>下一章</button>
+      <div class="nv-chapter-nav-urge-row">
+        <button class="nv-chapter-nav-btn urge" onclick="openUrgeModal(${i})">催更</button>
+      </div>
+      <div class="nv-chapter-nav-pages-row">
+        <button class="nv-chapter-nav-btn${i===0?' disabled':''}" onclick="navChapter(${i-1})" ${i===0?'disabled':''}>上一章</button>
+        <button class="nv-chapter-nav-btn${i===totalCh-1?' disabled':''}" onclick="navChapter(${i+1})" ${i===totalCh-1?'disabled':''}>下一章</button>
+      </div>
     </div>`
     html+='</div>'
   })
