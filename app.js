@@ -1496,15 +1496,17 @@ function paraAction(action){
   if(action==='comment'){
     openInlineCommentEditor(p)
   }else if(action==='mark'){
-    document.getElementById('nvMarkColorOverlay').classList.add('open')
-    const panel=document.getElementById('nvMarkColorPanel')
-    const parent=document.getElementById('nvReaderOverlay').getBoundingClientRect()
-    panel.style.left=Math.round(parent.width/2-80)+'px'
-    panel.style.top=Math.round(parent.height/2-70)+'px'
+    // 直接加🏷️标记，不需要颜色选择
+    const paraId=p.dataset.paraId
+    if(!paraId)return
+    p.dataset.markColor='marked'
+    addMarkIcon(p)
+    const ex=getParaAnnotation(paraId)
+    saveParaAnnotation(paraId,'marked',ex?ex.comment:null)
+    _paraTarget=null
   }else if(action==='clear'){
     const paraId=p.dataset.paraId
     if(!paraId)return
-    p.classList.remove('marked-yellow','marked-pink','marked-green','marked-blue')
     delete p.dataset.markColor
     const icon=p.querySelector('.nv-para-mark-icon')
     if(icon)icon.remove()
