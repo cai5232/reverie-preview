@@ -581,6 +581,18 @@ function renderSetting(){
   document.getElementById('cfgImgKey').value=localStorage.getItem('cfg_img_key')||''
   document.getElementById('cfgPosProm').value=localStorage.getItem('cfg_pos_prom')||''
   document.getElementById('cfgNegProm').value=localStorage.getItem('cfg_neg_prom')||''
+  // 生成文章专属API
+  document.getElementById('cfgGenApi').value=cfg.genApi
+  document.getElementById('cfgGenKey').value=cfg.genKey
+  const genSel=document.getElementById('cfgGenModel')
+  const genModels=JSON.parse(localStorage.getItem('gen_model_list')||'[]')
+  genSel.innerHTML='<option value="">同聊天模型</option>'
+  genModels.forEach(m=>{
+    const o=document.createElement('option')
+    o.value=m;o.textContent=m
+    if(m===cfg.genModel)o.selected=true
+    genSel.appendChild(o)
+  })
   const imgSel=document.getElementById('cfgImgModel')
   const imgModels=JSON.parse(localStorage.getItem('img_model_list')||'[]')
   imgSel.innerHTML=''
