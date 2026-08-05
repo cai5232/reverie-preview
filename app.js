@@ -1139,18 +1139,6 @@ function selectWorld(el){
   el.classList.add('active')
 }
 function addCustomTag(){
-  const name=prompt('自定义标签名称')
-  if(!name||!name.trim())return
-  const tag=document.createElement('div')
-  tag.className='nv-gen-tag active'
-  tag.textContent=name.trim()
-  tag.onclick=function(){this.classList.toggle('active')}
-  // 插到自定义按钮前面
-  const addBtn=document.querySelector('#nvGenTags .nv-gen-world-add')
-  if(addBtn)addBtn.parentNode.insertBefore(tag,addBtn)
-  else document.getElementById('nvGenTags').appendChild(tag)
-}
-function addCustomTag(){
   const name=prompt('输入自定义标签')
   if(!name||!name.trim())return
   const tag=document.createElement('div')
