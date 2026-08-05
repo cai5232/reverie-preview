@@ -125,6 +125,12 @@
       <div class="setting-row"><span class="setting-label">获取模型</span><button class="setting-fetch-btn" id="fetchModelsBtn" onclick="fetchModels()">获取模型</button></div>
       <div class="setting-row"><span class="setting-label">温度</span><div class="slider-wrap"><input type="range" class="slider" id="cfgTemp" min="0" max="2" step="0.1" oninput="document.getElementById('cfgTempVal').textContent=this.value"><span class="slider-val" id="cfgTempVal">0.9</span></div></div>
     </div></div>
+    <div class="setting-group"><div class="setting-group-label">生成文章专属 API</div><div class="setting-card">
+      <div class="setting-row"><span class="setting-label">接口地址</span><input class="setting-input" id="cfgGenApi" placeholder="留空则用聊天API"></div>
+      <div class="setting-row"><span class="setting-label">API 密钥</span><input class="setting-input secret" id="cfgGenKey" placeholder="留空则用聊天Key"></div>
+      <div class="setting-row"><span class="setting-label">模型</span><select class="model-select" id="cfgGenModel"><option value="">同聊天模型</option></select></div>
+      <div class="setting-row"><span class="setting-label">获取模型</span><button class="setting-fetch-btn" id="fetchGenModelsBtn" onclick="fetchGenModels()">获取模型</button></div>
+    </div></div>
     <div class="setting-group"><div class="setting-group-label">生图 API</div><div class="setting-card">
       <div class="setting-row"><span class="setting-label">接口地址</span><input class="setting-input" id="cfgImgApi" placeholder="https://..."></div>
       <div class="setting-row"><span class="setting-label">API 密钥</span><input class="setting-input secret" id="cfgImgKey" placeholder="sk-..."></div>
