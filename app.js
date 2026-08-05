@@ -1048,12 +1048,13 @@ function renderFullBook(){
   Object.entries(annots).forEach(([paraId,ann])=>{
     const p=el.querySelector(`p[data-para-id="${paraId}"]`)
     if(!p)return
-    if(ann.mark){p.classList.add('marked-'+ann.mark);p.dataset.markColor=ann.mark}
+    if(ann.mark){
+      p.classList.add('marked-'+ann.mark)
+      p.dataset.markColor=ann.mark
+      addMarkIcon(p)
+    }
     if(ann.comment){
-      const cd=document.createElement('div')
-      cd.className='nv-para-comment'
-      cd.textContent=ann.comment
-      p.insertAdjacentElement('afterend',cd)
+      insertCommentEl(p,ann.comment)
     }
   })
   // 绑定段落长按
