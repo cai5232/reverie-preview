@@ -1589,13 +1589,18 @@ function saveParaAnnotation(paraId,mark,comment){
   if(idx>=0){novelBooks[idx].paraAnnotations=r.b.paraAnnotations;localStorage.setItem('novel_books',JSON.stringify(novelBooks))}
 }
 
-// 心声持久化
+// 心声持久化（按章节）
 function saveCompanionComments(){
   const r=window._nvReader
   if(!r)return
-  r.b.companionComments=_companionComments
+  if(!r.b.companionCommentsByChapter)r.b.companionCommentsByChapter={}
+  r.b.companionCommentsByChapter[r.chIdx]=_companionComments
   const idx=novelBooks.findIndex(x=>x.id===r.b.id)
-  if(idx>=0){novelBooks[idx].companionComments=_companionComments;localStorage.setItem('novel_books',JSON.stringify(novelBooks))}
+  if(idx>=0){
+    if(!novelBooks[idx].companionCommentsByChapter)novelBooks[idx].companionCommentsByChapter={}
+    novelBooks[idx].companionCommentsByChapter[r.chIdx]=_companionComments
+    localStorage.setItem('novel_books',JSON.stringify(novelBooks))
+  }
 }
 
 // 类型随机池：每次从里面随机一个风格
