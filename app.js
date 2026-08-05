@@ -1419,7 +1419,7 @@ async function startCompanion(){
     if(!_companionComments.length&&raw.trim()){
       _companionComments.push({paraIdx:Math.floor(paras.length/3),text:raw.trim().slice(0,100)})
     }
-    // 持久化心声
+    // 持久化心声到 novelBooks
     saveCompanionComments()
     // 生成完毕，隐藏"小克正在阅读中…"，等到段落进入视野才弹出
     tip.textContent=''
