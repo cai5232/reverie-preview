@@ -1021,6 +1021,8 @@ function loadHeaderAvatar(){
   const img=document.getElementById('headerAvatar');
   if(saved&&img)img.src=saved;
 }
+
+function changeAvatar(e){
   const file=e.target.files[0]
   if(!file)return
   const reader=new FileReader()
