@@ -1578,104 +1578,56 @@ function applyMark(color){
   _paraTarget=null
 }
 
-// 在段落前插入书签图标（去重：已有就不加）
+// 在段落前插入🏷️图标（去重）
 function addMarkIcon(p){
   if(p.querySelector('.nv-para-mark-icon'))return
   const icon=document.createElement('span')
   icon.className='nv-para-mark-icon'
-  icon.innerHTML=`<svg width="11" height="14" viewBox="0 0 11 14" fill="none"><path d="M1 1h9v12l-4.5-3L1 13V1z" fill="#c8b89a" stroke="#c8b89a" stroke-width="1" stroke-linejoin="round"/></svg>`
+  icon.textContent='🏷️'
   p.insertBefore(icon,p.firstChild)
 }
 
 // 插入段评节点（去重：已有则更新文字）
 function insertCommentEl(p,text){
   let cd=p.nextElementSibling
-  if(cd&&cd.classList.contains('nv-para-comment')){
-    cd.textContent=text
-    return
-  }
+  if(cd&&cd.classList.contains('nv-para-comment')){cd.textContent=text;return}
   cd=document.createElement('div')
   cd.className='nv-para-comment'
   cd.textContent=text
   p.insertAdjacentElement('afterend',cd)
 }
-function paraAction(action){
-  closeParaMenu()
-  if(!_paraTarget)return
-  const p=_paraTarget
-  if(action==='comment'){
-    openInlineCommentEditor(p)
-  }else if(action==='mark'){
-    document.getElementById('nvMarkColorOverlay').classList.add('open')
-    const panel=document.getElementById('nvMarkColorPanel')
-    const parent=document.getElementById('nvReaderOverlay').getBoundingClientRect()
-    panel.style.left=Math.round(parent.width/2-80)+'px'
-    panel.style.top=Math.round(parent.height/2-70)+'px'
-  }else if(action==='clear'){
-    const paraId=p.dataset.paraId
-    if(!paraId)return
-    p.classList.remove('marked-yellow','marked-pink','marked-green','marked-blue')
-    delete p.dataset.markColor
-    const icon=p.querySelector('.nv-para-mark-icon')
-    if(icon)icon.remove()
-    const next=p.nextElementSibling
-    if(next&&next.classList.contains('nv-para-comment'))next.remove()
-    saveParaAnnotation(paraId,null,null)
-    _paraTarget=null
-  }
-}
 
-function openInlineCommentEditor(p){
-  const old=document.querySelector('.nv-inline-editor')
-  if(old)old.remove()
-  const paraId=p.dataset.paraId
-  const existing=getParaAnnotation(paraId)
-  const wrap=document.createElement('div')
-  wrap.className='nv-inline-editor'
-  wrap.dataset.paraId=paraId
-  const ta=document.createElement('textarea')
-  ta.className='nv-inline-editor-ta'
-  ta.placeholder='写下你的感想…'
-  ta.value=existing?existing.comment||'':''
-  ta.rows=2
-  const btn=document.createElement('button')
-  btn.className='nv-inline-editor-btn'
-  btn.innerHTML=`<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8l4 4 8-8" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`
-  btn.onclick=()=>{
-    const text=ta.value.trim()
-    if(text){
-      insertCommentEl(p,text)
-      const ex=getParaAnnotation(paraId)
-      saveParaAnnotation(paraId,ex?ex.mark:null,text)
-    }
-    wrap.remove()
-    _paraTarget=null
-  }
-  wrap.appendChild(ta)
-  wrap.appendChild(btn)
-  const next=p.nextElementSibling
-  if(next&&next.classList.contains('nv-para-comment')){
-    next.insertAdjacentElement('afterend',wrap)
-  }else{
-    p.insertAdjacentElement('afterend',wrap)
-  }
-  setTimeout(()=>{
-    ta.focus()
-    ta.setSelectionRange(ta.value.length,ta.value.length)
-    wrap.scrollIntoView({behavior:'smooth',block:'center'})
-  },80)
-  ta.addEventListener('input',()=>{ta.style.height='auto';ta.style.height=ta.scrollHeight+'px'})
-}
-  const text=document.getElementById('nvCommentTextarea').value.trim()
-  if(!text){closeCommentModal();return}
-  const p=_paraTarget||document.querySelector(`p.nv-para[data-para-id="${_pendingCommentParaId}"]`)
-  const paraId=p?.dataset?.paraId
-  if(!paraId){closeCommentModal();return}
-  insertCommentEl(p,text)
-  const existing=getParaAnnotation(paraId)
-  saveParaAnnotation(paraId,existing?existing.mark:null,text)
-  closeCommentModal()
-  _paraTarget=null
+// ── 心声滚动监听（可在恢复或生成完后直接调用）──
+function startCompanionWatcher(){
+  const el=document.getElementById('nvReaderContent')
+  if(!el||!_companionComments.length)return
+  _companionActive=true
+  if(_companionChecking)clearInterval(_companionChecking)
+  const lastShown={}
+  _companionChecking=setInterval(()=>{
+    if(!_companionActive)return
+    const allParaEls=el.querySelectorAll('p.nv-para')
+    const midY=window.innerHeight/2
+    _companionComments.forEach((c,ci)=>{
+      const paraEl=allParaEls[c.paraIdx]
+      if(!paraEl)return
+      const rect=paraEl.getBoundingClientRect()
+      if(rect.top<=midY&&rect.bottom>=0){
+        const now=Date.now()
+        if(!lastShown[ci]||now-lastShown[ci]>8000){
+          lastShown[ci]=now
+          const tip=document.getElementById('nvFloatTip')
+          if(tip){
+            tip.classList.add('open')
+            tip.textContent=c.text
+            setTimeout(()=>{
+              if(tip.textContent===c.text){tip.classList.remove('open');tip.textContent=''}
+            },4000)
+          }
+        }
+      }
+    })
+  },600)
 }
 
 // 持久化段落注释（标记/段评）
