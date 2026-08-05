@@ -1435,7 +1435,6 @@ async function startCompanion(){
 }
 
 function hideFloatBall(){
-  _companionActive=false
   if(_companionChecking)clearInterval(_companionChecking)
   const ball=document.getElementById('nvFloatBall')
   const tip=document.getElementById('nvFloatTip')
