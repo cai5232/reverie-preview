@@ -987,6 +987,9 @@ function startReading(id){
   }
   if(curCh)chapters.push(curCh)
   if(!chapters.length)chapters.push({title:'正文',lines})
+  // 从持久化的 chapterNotes 恢复已生成的作者有话说
+  const savedNotes=b.chapterNotes||{}
+  chapters.forEach((ch,i)=>{if(savedNotes[i])ch.authorNote=savedNotes[i]})
   window._nvReader={b,chapters,chIdx:b.lastChapter||0,fontSize:20,globalPage:0,allPages:[]}
   document.getElementById('nvReaderTopTitle').textContent=b.title
   document.getElementById('nvFontSizeLabel').textContent='20px'
