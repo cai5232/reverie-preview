@@ -1002,6 +1002,8 @@ function startReading(id){
   if(tip){tip.classList.remove('open');tip.textContent=''}
   renderFullBook()
   document.getElementById('nvReaderOverlay').classList.add('open')
+  const ball=document.getElementById('nvFloatBall')
+  if(ball){ball.style.display='flex';ball.style.right='18px';ball.style.bottom='120px';ball.style.left='';ball.style.top=''}
   initFloatBall()
   const tc=document.querySelector('meta[name="theme-color"]')
   if(tc)tc.content='#faf8f4'
