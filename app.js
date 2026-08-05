@@ -1652,8 +1652,7 @@ function navChapter(idx){
   const r=window._nvReader
   if(!r)return
   if(idx<0||idx>=r.chapters.length)return
-  const el=document.getElementById('nv-ch-'+idx)
-  if(el){el.scrollIntoView({behavior:'smooth'});r.chIdx=idx;r.b.lastChapter=idx}
+  renderChapter(idx)
 }
 let _urgeFromChIdx=0
 function openUrgeModal(fromChIdx){
