@@ -1001,6 +1001,13 @@ function startReading(id){
   document.getElementById('nvFontSizeLabel').textContent='20px'
   renderFullBook()
   document.getElementById('nvReaderOverlay').classList.add('open')
+  // 悬浮球初始化
+  const ball=document.getElementById('nvFloatBall')
+  if(ball){ball.style.display='flex';ball.style.left='';ball.style.top='';ball.style.right='18px';ball.style.bottom='120px'}
+  _companionActive=false;_companionComments=[]
+  const tip=document.getElementById('nvFloatTip')
+  if(tip){tip.classList.remove('open');tip.textContent=''}
+  initFloatBall()
   // 状态栏跟阅读器米色
   const tc=document.querySelector('meta[name="theme-color"]')
   if(tc)tc.content='#faf8f4'
