@@ -1058,7 +1058,10 @@ function renderChapter(idx){
     const p=el.querySelector(`p[data-para-id="${paraId}"]`)
     if(!p)return
     if(ann.mark){p.dataset.markColor=ann.mark;addMarkIcon(p)}
-    if(ann.comment){insertCommentEl(p,ann.comment)}
+    if(ann.comment){
+      insertCommentEl(p,ann.comment)
+      if(ann.reply)insertCommentReplyEl(p,ann.reply)
+    }
   })
   // 重新绑定长按
   el._lpBound=false
