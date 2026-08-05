@@ -654,6 +654,30 @@ async function fetchModels(){
   setTimeout(()=>{btn.textContent='获取模型';btn.disabled=false},3000)
 }
 
+async function fetchGenModels(){
+  const api=document.getElementById('cfgGenApi').value.trim()
+  const key=document.getElementById('cfgGenKey').value.trim()
+  if(!api){showToast('请先填写生成文章接口地址');return}
+  const btn=document.getElementById('fetchGenModelsBtn')
+  btn.textContent='获取中…';btn.disabled=true
+  try{
+    const res=await fetch(api+'/models',{headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'}})
+    if(!res.ok)throw new Error('HTTP '+res.status)
+    const j=await res.json()
+    const list=(j.data||[]).map(m=>m.id).filter(Boolean)
+    if(!list.length)throw new Error('empty')
+    localStorage.setItem('gen_model_list',JSON.stringify(list))
+    const sel=document.getElementById('cfgGenModel')
+    sel.innerHTML='<option value="">同聊天模型</option>'
+    list.forEach(m=>{const o=document.createElement('option');o.value=m;o.textContent=m;sel.appendChild(o)})
+    btn.textContent='已更新 ✓'
+  }catch(e){
+    btn.textContent='失败 '+e.message
+    showToast('拉取失败：'+e.message)
+  }
+  setTimeout(()=>{btn.textContent='获取模型';btn.disabled=false},3000)
+}
+
 async function fetchImgModels(){
   const api=document.getElementById('cfgImgApi').value.trim()
   const key=document.getElementById('cfgImgKey').value.trim()
