@@ -242,15 +242,11 @@ body{color:#111;font-family:-apple-system,'PingFang SC',sans-serif;display:flex;
 .nv-comment-btn{flex:1;padding:12px 0;border:none;border-radius:12px;font-size:14px;font-family:inherit;font-weight:600;cursor:pointer}
 .nv-comment-btn.cancel{background:#ede9e0;color:#666}
 .nv-comment-btn.confirm{background:#2a1f14;color:#faf8f4}
-/* 段落标记/评论渲染 */
-.nv-para.marked-yellow{background:rgba(255,230,100,.28);border-radius:4px;box-shadow:inset 0 0 0 1.5px rgba(255,210,0,.5)}
-.nv-para.marked-pink{background:rgba(255,180,200,.28);border-radius:4px;box-shadow:inset 0 0 0 1.5px rgba(255,140,170,.5)}
-.nv-para.marked-green{background:rgba(160,220,180,.28);border-radius:4px;box-shadow:inset 0 0 0 1.5px rgba(80,180,120,.45)}
-.nv-para.marked-blue{background:rgba(160,200,255,.28);border-radius:4px;box-shadow:inset 0 0 0 1.5px rgba(80,150,255,.45)}
-/* 书签图标 */
-.nv-para-mark-icon{display:inline-block;margin-right:4px;vertical-align:middle;line-height:1;flex-shrink:0;position:relative;top:-1px}
-/* 段评已有文字 */
-.nv-para-comment{margin:-8px 0 18px 2em;font-size:13px;font-style:italic;font-weight:300;color:#999;line-height:1.7;letter-spacing:.2px;border-bottom:1.5px solid rgba(255,182,193,.7);padding-bottom:6px;display:block}
+/* 段落标记图标：悬在正文左侧不占位 */
+.nv-para{margin:0 0 16px;text-indent:2em;position:relative;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.nv-para-mark-icon{position:absolute;left:-18px;top:3px;line-height:1;display:flex;align-items:center;pointer-events:none}
+/* 段评：斜体细字，去掉横线 */
+.nv-para-comment{margin:0 0 18px 2em;font-size:13px;font-style:italic;font-weight:300;color:#aaa;line-height:1.7;letter-spacing:.2px;display:block}
 /* 内联段评编辑器 */
 .nv-inline-editor{display:flex;align-items:flex-end;gap:8px;margin:6px 0 18px 2em;padding:8px 10px;background:rgba(255,255,255,.85);border:1px solid rgba(200,184,154,.5);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
 .nv-inline-editor-ta{flex:1;background:transparent;border:none;outline:none;font-size:13px;font-style:italic;font-family:inherit;color:#555;line-height:1.65;resize:none;min-height:36px;padding:0;-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
