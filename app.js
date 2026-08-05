@@ -913,6 +913,9 @@ function startReading(id){
   document.getElementById('nvFontSizeLabel').textContent='20px'
   renderFullBook()
   document.getElementById('nvReaderOverlay').classList.add('open')
+  // 状态栏跟阅读器米色
+  const tc=document.querySelector('meta[name="theme-color"]')
+  if(tc)tc.content='#faf8f4'
 }
 
 function renderFullBook(){
