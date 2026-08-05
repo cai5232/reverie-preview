@@ -1105,6 +1105,9 @@ async function startGenNovel(){
   const tags=[]
   document.querySelectorAll('#nvGenTags .nv-gen-tag.active').forEach(t=>tags.push(t.textContent))
   const plot=document.getElementById('nvGenPlot').value.trim()
+  const tags=[]
+  document.querySelectorAll('#nvGenTags .nv-gen-tag.active').forEach(t=>tags.push(t.textContent))
+  const plot=document.getElementById('nvGenPlot').value.trim()
   const worldKey=selectedWorld.dataset.key
   const worldName=selectedWorld.textContent
   const worldDesc=selectedWorld.dataset.desc||WORLD_PROMPTS[worldKey]||worldName
