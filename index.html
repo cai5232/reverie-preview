@@ -206,6 +206,44 @@
     </div>
     <!-- 正文 -->
     <div class="nv-reader-content" id="nvReaderContent"></div>
+    <!-- 段落长按菜单 -->
+    <div class="nv-para-menu-overlay" id="nvParaMenuOverlay" onclick="closeParaMenu()">
+      <div class="nv-para-menu" id="nvParaMenu" onclick="event.stopPropagation()">
+        <div class="nv-para-menu-item" onclick="paraAction('comment')">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2 2h11a1 1 0 011 1v7a1 1 0 01-1 1H5l-3 2.5V3a1 1 0 011-1z" stroke="#555" stroke-width="1.3" stroke-linejoin="round"/></svg>段评
+        </div>
+        <div class="nv-para-menu-item" id="nvMarkMenuItem" onclick="paraAction('mark')">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 13V5l4-3 4 3v8l-4-2-4 2z" stroke="#555" stroke-width="1.3" stroke-linejoin="round"/></svg>标记
+        </div>
+        <div class="nv-para-menu-item danger" id="nvClearMenuItem" onclick="paraAction('clear')" style="display:none">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 3l9 9M12 3l-9 9" stroke="#ff3b30" stroke-width="1.3" stroke-linecap="round"/></svg>清除
+        </div>
+      </div>
+    </div>
+    <!-- 标记颜色选择 -->
+    <div class="nv-para-menu-overlay" id="nvMarkColorOverlay" onclick="closeMarkColor()">
+      <div class="nv-para-menu" id="nvMarkColorPanel" onclick="event.stopPropagation()" style="padding:14px 18px 4px">
+        <div style="font-size:13px;color:#888;margin-bottom:10px;text-align:center">选择颜色</div>
+        <div class="nv-mark-color-row">
+          <button class="nv-mark-color-btn" style="background:#ffe664" onclick="applyMark('yellow')"></button>
+          <button class="nv-mark-color-btn" style="background:#ffb4c8" onclick="applyMark('pink')"></button>
+          <button class="nv-mark-color-btn" style="background:#a0dcb4" onclick="applyMark('green')"></button>
+          <button class="nv-mark-color-btn" style="background:#a0c8ff" onclick="applyMark('blue')"></button>
+        </div>
+      </div>
+    </div>
+    <!-- 段评弹窗 -->
+    <div class="nv-comment-overlay" id="nvCommentOverlay" onclick="closeCommentModal()">
+      <div class="nv-comment-modal" onclick="event.stopPropagation()">
+        <div style="font-size:15px;font-weight:700;color:#111;margin-bottom:12px">写段评</div>
+        <div class="nv-comment-quote" id="nvCommentQuote"></div>
+        <textarea class="nv-comment-textarea" id="nvCommentTextarea" placeholder="写下你的想法…"></textarea>
+        <div class="nv-comment-btns">
+          <button class="nv-comment-btn cancel" onclick="closeCommentModal()">取消</button>
+          <button class="nv-comment-btn confirm" onclick="submitComment()">保存</button>
+        </div>
+      </div>
+    </div>
     <!-- 催更弹窗 -->
     <div class="nv-urge-overlay" id="nvUrgeOverlay" onclick="closeUrgeModal()">
       <div class="nv-urge-modal" onclick="event.stopPropagation()">
