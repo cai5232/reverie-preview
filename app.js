@@ -927,7 +927,13 @@ function renderNovels(){
       </div>
     </div>`).join('')
 }
-function openBook(id){showBookDetail(id)}
+function openBook(id){
+  const b=novelBooks.find(x=>x.id===id)
+  if(!b)return
+  // 生成的书有简介，先进详情页；导入的直接进阅读器
+  if(b.isGenerated)showBookDetail(id)
+  else startReading(id)
+}
 
 let _detailBookId=null
 function showBookDetail(id){
