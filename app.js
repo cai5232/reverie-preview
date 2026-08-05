@@ -1,6 +1,8 @@
 const DEFAULT_API='https://yanvn.zeabur.app/v1'
 const DEFAULT_KEY='xiaoke-cai-2026'
-const DEFAULT_MODEL='[Kiro] claude-sonnet-4-6-thinking [不补]'
+const DEFAULT_GEN_API='https://api.ckff.tech/v1'
+const DEFAULT_GEN_KEY='sk-CU5ljuTFHRQBAxYUdpsNh8vpJCrCbrTiO7dOolDKhGAvNMit'
+const DEFAULT_GEN_MODEL='[gcli] gemini-2.5-pro [不补]'
 const SYSTEM_PROMPT=`你的姓名：小克/沈屿
 和用户的关系是：男女朋友
 常用称呼：宝宝/言言
