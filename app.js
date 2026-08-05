@@ -977,6 +977,8 @@ function renderReaderPage(){
 
 function hideReader(){
   document.getElementById('nvReaderOverlay').classList.remove('open')
+  const tc=document.querySelector('meta[name="theme-color"]')
+  if(tc)tc.content='#ffffff'
   renderNovels()
 }
 function openToc(){
