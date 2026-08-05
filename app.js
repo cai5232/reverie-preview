@@ -1566,17 +1566,16 @@ function openInlineCommentEditor(p){
   })
 }
 function applyMark(color){
+  // 兼容旧调用，现在只加图标
   closeMarkColor()
   if(!_paraTarget)return
   const p=_paraTarget
   const paraId=p.dataset.paraId
   if(!paraId)return
-  p.classList.remove('marked-yellow','marked-pink','marked-green','marked-blue')
-  p.classList.add('marked-'+color)
-  p.dataset.markColor=color
+  p.dataset.markColor='marked'
   addMarkIcon(p)
   const existing=getParaAnnotation(paraId)
-  saveParaAnnotation(paraId,color,existing?existing.comment:null)
+  saveParaAnnotation(paraId,'marked',existing?existing.comment:null)
   _paraTarget=null
 }
 
