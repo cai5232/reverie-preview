@@ -207,15 +207,16 @@ body{color:#111;font-family:-apple-system,'PingFang SC',sans-serif;display:flex;
 /* 催更弹窗 */
 .nv-urge-overlay{position:absolute;inset:0;background:rgba(0,0,0,.35);z-index:40;display:none;align-items:flex-end;justify-content:center}
 .nv-urge-overlay.open{display:flex}
-.nv-urge-modal{background:#faf8f4;border-radius:20px 20px 0 0;padding:24px 20px calc(env(safe-area-inset-bottom,0px)+20px);width:100%;max-width:480px}
-.nv-urge-title{font-size:16px;font-weight:700;color:#111;margin-bottom:16px}
-.nv-urge-textarea{width:100%;padding:12px;background:#f0ece4;border:none;border-radius:10px;font-size:14px;font-family:inherit;color:#333;resize:none;line-height:1.6;outline:none;box-sizing:border-box;margin-bottom:14px}
+.nv-urge-modal{background:#faf8f4;border-radius:20px 20px 0 0;padding:24px 20px calc(env(safe-area-inset-bottom,0px)+24px);width:100%;max-width:480px;box-sizing:border-box}
+.nv-urge-title{font-size:16px;font-weight:700;color:#111;margin-bottom:16px;line-height:1}
+.nv-urge-textarea{width:100%;padding:12px 14px;background:#f0ece4;border:none;border-radius:10px;font-size:14px;font-family:inherit;color:#333;resize:none;line-height:1.65;outline:none;box-sizing:border-box;margin-bottom:16px;display:block;min-height:72px}
 .nv-urge-textarea::placeholder{color:#bbb}
-.nv-urge-chap-row{display:flex;align-items:center;gap:10px;margin-bottom:18px;font-size:13px;color:#666}
-.nv-urge-slider{flex:1;-webkit-appearance:none;height:4px;border-radius:2px;background:#c8b89a;outline:none}
-.nv-urge-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#7a5c3a;cursor:pointer}
-.nv-urge-btns{display:flex;gap:10px}
-.nv-urge-btn{flex:1;padding:13px 0;border:none;border-radius:14px;font-size:15px;font-family:inherit;font-weight:600;cursor:pointer}
+.nv-urge-chap-row{display:flex;align-items:center;gap:10px;margin-bottom:20px;font-size:13px;color:#666;flex-wrap:nowrap}
+.nv-urge-chap-row span{white-space:nowrap;flex-shrink:0}
+.nv-urge-slider{flex:1;min-width:0;-webkit-appearance:none;height:4px;border-radius:2px;background:#c8b89a;outline:none}
+.nv-urge-slider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#7a5c3a;cursor:pointer}
+.nv-urge-btns{display:flex;gap:10px;margin-top:0}
+.nv-urge-btn{flex:1;padding:14px 0;border:none;border-radius:14px;font-size:15px;font-family:inherit;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .nv-urge-btn.cancel{background:#ede9e0;color:#666}
 .nv-urge-btn.confirm{background:#2a1f14;color:#faf8f4}
 .nv-urge-progress{margin-top:12px;font-size:12px;color:#a08060;text-align:center;display:none}
