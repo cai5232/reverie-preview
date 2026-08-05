@@ -1112,7 +1112,7 @@ async function startGenNovel(){
   const worldName=selectedWorld.textContent
   const worldDesc=selectedWorld.dataset.desc||WORLD_PROMPTS[worldKey]||worldName
   const charDesc=chars.length?chars.map(c=>`- ${c.name}（${c.sex}）：${c.bg||'无背景说明'}`).join('\n'):'（作者自由发挥）'
-  const prompt=`请帮我生成一部小说。\n书名：《${title}》\n${author?'作者：'+author+'\n':''}世界观：${worldName} — ${worldDesc}\n人物设定：\n${charDesc}\n\n请生成${chapCount}章完整小说正文，每章不少于800字。每章以"第X章 章节标题"开头，段落之间空一行。风格细腻，情节流畅，人物鲜明。只输出小说正文。`
+  const prompt=`请帮我生成一部小说。\n书名：《${title}》\n${author?'作者：'+author+'\n':''}世界观：${worldName} — ${worldDesc}\n人物设定：\n${charDesc}\n${tags.length?'标签：'+tags.join('、')+'\n':''}${plot?'剧情走向：'+plot+'\n':''}\n请生成${chapCount}章完整小说正文，每章不少于800字。每章以"第X章 章节标题"开头，段落之间空一行。风格细腻，情节流畅，人物鲜明。只输出小说正文。`
   const btn=document.getElementById('nvGenSubmit')
   btn.disabled=true;btn.textContent='生成中...'
   const prog=document.getElementById('nvGenProgress')
