@@ -997,6 +997,9 @@ function startReading(id){
   document.getElementById('nvFontSizeLabel').textContent='20px'
   renderFullBook()
   document.getElementById('nvReaderOverlay').classList.add('open')
+  // 重置长按绑定标记，每次打开都重新绑
+  const _rc=document.getElementById('nvReaderContent')
+  if(_rc)_rc._lpBound=false
   // 显示悬浮球
   const ball=document.getElementById('nvFloatBall')
   if(ball){ball.style.display='flex';ball.style.right='18px';ball.style.bottom='120px';ball.style.left='';ball.style.top=''}
