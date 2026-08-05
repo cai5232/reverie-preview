@@ -221,7 +221,7 @@ body{color:#111;font-family:-apple-system,'PingFang SC',sans-serif;display:flex;
 .nv-reader-prev{display:none}
 .nv-reader-next{display:none}
 .nv-reader-toolbar{display:none}
-.nv-toc-panel{position:absolute;inset:0;background:#fff;z-index:10;display:none;flex-direction:column}
+.nv-toc-panel{position:absolute;inset:0;background:#faf8f4;z-index:10;display:none;flex-direction:column}
 .nv-toc-panel.open{display:flex}
 .nv-rsettings-panel{position:absolute;bottom:0;left:0;right:0;background:#fff;border-radius:16px 16px 0 0;z-index:10;display:none;flex-direction:column;padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:0 -4px 20px rgba(0,0,0,.08)}
 .nv-rsettings-panel.open{display:flex}
