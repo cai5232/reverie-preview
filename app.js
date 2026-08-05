@@ -1440,11 +1440,10 @@ function bindParaLongPress(){
   if(!el||el._lpBound)return
   el._lpBound=true
   let _lp=null,_sx=0,_sy=0,_tp=null
+  // passive:true 保证滚动不被阻断；CSS层面-webkit-user-select:none已阻止系统选词
   el.addEventListener('touchstart',e=>{
     const p=e.target.closest('p.nv-para')
     if(!p)return
-    // 阻止iOS系统长按唤起选词菜单（必须在passive:false下才能生效）
-    e.preventDefault()
     _sx=e.touches[0].clientX;_sy=e.touches[0].clientY;_tp=p
     clearTimeout(_lp)
     _lp=setTimeout(()=>{
@@ -1452,7 +1451,7 @@ function bindParaLongPress(){
       _paraTarget=_tp
       showParaMenu(_tp,{clientX:_sx,clientY:_sy})
     },500)
-  },{passive:false})
+  },{passive:true})
   el.addEventListener('touchmove',e=>{
     if(!_lp)return
     const dx=e.touches[0].clientX-_sx,dy=e.touches[0].clientY-_sy
