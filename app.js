@@ -1304,7 +1304,8 @@ function initFloatBall(){
   ball.addEventListener('touchend',()=>{
     clearTimeout(pressTimer)
     isDragging=false
-    if(!moved&&!pressTriggered)startCompanion()
+    if(pressTriggered){pressTriggered=false;return}
+    if(!moved)startCompanion()
   })
 }
 
