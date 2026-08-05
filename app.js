@@ -1687,12 +1687,12 @@ function getParaAnnotations(){
 function getParaAnnotation(paraId){
   return getParaAnnotations()[paraId]||null
 }
-function saveParaAnnotation(paraId,mark,comment){
+function saveParaAnnotation(paraId,mark,comment,reply){
   const r=window._nvReader
   if(!r)return
   if(!r.b.paraAnnotations)r.b.paraAnnotations={}
-  if(mark||comment){
-    r.b.paraAnnotations[paraId]={mark,comment}
+  if(mark||comment||reply){
+    r.b.paraAnnotations[paraId]={mark,comment,reply:reply||null}
   }else{
     delete r.b.paraAnnotations[paraId]
   }
