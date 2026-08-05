@@ -1035,7 +1035,7 @@ function showGenNovel(){
   const btn=document.getElementById('nvGenSubmit')
   btn.disabled=false;btn.textContent='✦ 生成文章'
   const pick=document.getElementById('nvGenCoverPick')
-  pick.innerHTML=`<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" stroke="#bbb" stroke-width="1.5"/><circle cx="8.5" cy="8.5" r="2.2" stroke="#bbb" stroke-width="1.3"/><path d="M2 16l5-5 4 4 3-3 8 7" stroke="#bbb" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span>点击添加封面</span>`
+  pick.innerHTML=`<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" stroke="#bbb" stroke-width="1.5"/><circle cx="8.5" cy="8.5" r="2.2" stroke="#bbb" stroke-width="1.3"/><path d="M2 16l5-5 4 4 3-3 8 7" stroke="#bbb" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span>封面</span>`
   document.querySelectorAll('.nv-gen-world-tag').forEach(t=>t.classList.remove('active'))
   document.getElementById('nvGenOverlay').classList.add('open')
 }
