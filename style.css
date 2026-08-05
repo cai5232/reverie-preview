@@ -19,7 +19,7 @@ body{color:#111;font-family:-apple-system,'PingFang SC',sans-serif;display:flex;
 .sb-item svg{flex-shrink:0;width:17px;height:17px;opacity:.45}
 .sb-item svg path,.sb-item svg circle,.sb-item svg rect{stroke:#333}
 .sb-item span{flex:1}
-.header-chat{padding:calc(env(safe-area-inset-top,0px) + 14px) 16px 10px;display:flex;align-items:center;justify-content:space-between;background:#000;flex-shrink:0;position:fixed;top:0;left:0;right:0;z-index:20;max-width:430px;margin:0 auto}
+.header-chat{padding:calc(env(safe-area-inset-top,0px) + 14px) 16px 10px;display:flex;align-items:center;justify-content:space-between;background:#fff;border-bottom:.5px solid #e8e8e8;flex-shrink:0;position:fixed;top:0;left:0;right:0;z-index:20;max-width:430px;margin:0 auto}
 @media (min-width:430px){.header-chat{left:50%;right:auto;transform:translateX(-50%);width:430px}}
 .header-chat-left{display:flex;align-items:center;gap:10px;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .header-chat-name{font-size:16px;font-weight:600;color:#fff}
