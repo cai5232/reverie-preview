@@ -1102,6 +1102,9 @@ async function startGenNovel(){
     const bg=document.getElementById('char-bg-'+id)?.value.trim()||''
     chars.push({name,sex,bg})
   })
+  const tags=[]
+  document.querySelectorAll('#nvGenTags .nv-gen-tag.active').forEach(t=>tags.push(t.textContent))
+  const plot=document.getElementById('nvGenPlot').value.trim()
   const worldKey=selectedWorld.dataset.key
   const worldName=selectedWorld.textContent
   const worldDesc=selectedWorld.dataset.desc||WORLD_PROMPTS[worldKey]||worldName
