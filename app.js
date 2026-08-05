@@ -1381,29 +1381,33 @@ async function startCompanion(){
     tip.textContent='连接失败了 (´・ω・`)'
     return
   }
-  // 开始监听滚动，当读者滚动到对应段落时弹出
+  // 开始监听滚动，当读者滚动到对应段落时弹出（可重复触发）
   const el=document.getElementById('nvReaderContent')
-  let shown=new Set()
+  // 每个锚点的上次弹出时间，防止同一段落连续刷屏
+  const lastShown={}
   if(_companionChecking)clearInterval(_companionChecking)
   _companionChecking=setInterval(()=>{
     if(!_companionActive)return
     const allParaEls=el.querySelectorAll('p.nv-para')
     const midY=window.innerHeight/2
     _companionComments.forEach((c,ci)=>{
-      if(shown.has(ci))return
       const paraEl=allParaEls[c.paraIdx]
       if(!paraEl)return
       const rect=paraEl.getBoundingClientRect()
-      if(rect.top<=midY&&rect.bottom>=0){
-        shown.add(ci)
-        tip.classList.add('open')
-        tip.textContent=c.text
-        // 3秒后收起，等下一条
-        setTimeout(()=>{
-          if(_companionActive&&tip.textContent===c.text){
-            tip.textContent='小克正在阅读中…'
-          }
-        },4000)
+      const inView=rect.top<=midY&&rect.bottom>=0
+      if(inView){
+        const now=Date.now()
+        // 同一条至少间隔8秒才再次弹出
+        if(!lastShown[ci]||now-lastShown[ci]>8000){
+          lastShown[ci]=now
+          tip.classList.add('open')
+          tip.textContent=c.text
+          setTimeout(()=>{
+            if(_companionActive&&tip.textContent===c.text){
+              tip.textContent='小克正在阅读中…'
+            }
+          },4000)
+        }
       }
     })
   },600)
