@@ -1248,7 +1248,25 @@ async function startGenNovel(){
     if(!content)throw new Error('empty')
     clearInterval(fakeTimer)
     fill.style.width='100%';txt.textContent='生成完成，保存中...'
-    const book={id:Date.now(),title,author:author||'AI生成',coverImg:nvGenCoverDataUrl||null,progress:0,addedAt:Date.now(),content,isGenerated:true}
+    // 解析格式：书名/作者/简介/正文
+    let parsedTitle=title||'未命名'
+    let parsedAuthor=author||'AI生成'
+    let parsedIntro=''
+    let parsedContent=content
+    const titleM=content.match(/书名：《(.+?)》/)
+    const authorM=content.match(/作者：(.+?)[\n\r]/)
+    const introM=content.match(/简介：([\s\S]+?)(?=正文开始|第[一二三四五六七八九十百千\d]+章)/)
+    const bodyM=content.match(/正文开始\s*([\s\S]+)/)
+    if(titleM&&!title)parsedTitle=titleM[1].trim()
+    if(authorM&&!author)parsedAuthor=authorM[1].trim()
+    if(introM)parsedIntro=introM[1].trim()
+    if(bodyM)parsedContent=bodyM[1].trim()
+    else{
+      // 找到第一章作为正文起始
+      const chapStart=content.search(/第[一二三四五六七八九十百千\d]+章/)
+      if(chapStart>0)parsedContent=content.slice(chapStart)
+    }
+    const book={id:Date.now(),title:parsedTitle,author:parsedAuthor,intro:parsedIntro,coverImg:nvGenCoverDataUrl||null,progress:0,addedAt:Date.now(),content:parsedContent,isGenerated:true}
     novelBooks.unshift(book)
     localStorage.setItem('novel_books',JSON.stringify(novelBooks))
     renderNovels()
