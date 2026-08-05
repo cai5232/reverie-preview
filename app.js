@@ -1434,6 +1434,95 @@ async function startCompanion(){
   },600)
 }
 
+// ── 作者有话说 ──
+async function genAuthorNote(chIdx){
+  const r=window._nvReader
+  if(!r)return
+  const ch=r.chapters[chIdx]
+  if(!ch||ch.authorNote)return
+  const excerpt=ch.lines.join('\n').slice(0,300)
+  try{
+    const res=await fetch(cfg.api+'/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key,'X-Session-Id':'reverie-yy'},
+      body:JSON.stringify({model:cfg.model,messages:[{role:'user',content:`你是小说《${r.b.title||''}》的作者，请为第${chIdx+1}章末尾写一段"作者有话说"（80～160字），像作者跟读者说话一样，可以透露一点创作心情、对本章内容的感想、或者对下一章的小小预告。语气亲切随意。只输出正文，不要标题。\n\n本章节选：\n${excerpt}`}],stream:false,temperature:0.9,max_tokens:200})
+    })
+    if(!res.ok)return
+    const j=await res.json()
+    const note=(j.choices?.[0]?.message?.content||'').trim()
+    if(note){
+      ch.authorNote=note
+      const idx=novelBooks.findIndex(x=>x.id===r.b.id)
+      if(idx>=0){novelBooks[idx]=r.b;localStorage.setItem('novel_books',JSON.stringify(novelBooks))}
+      const noteEl=document.getElementById('nv-note-text-'+chIdx)
+      if(noteEl)noteEl.innerHTML=escHtml(note)
+    }
+  }catch(e){
+    const noteEl=document.getElementById('nv-note-text-'+chIdx)
+    if(noteEl)noteEl.innerHTML='<span style="color:#c8b89a;font-style:italic">暂时生成不了，下次再来~</span>'
+  }
+}
+function navChapter(idx){
+  const r=window._nvReader
+  if(!r)return
+  if(idx<0||idx>=r.chapters.length)return
+  const el=document.getElementById('nv-ch-'+idx)
+  if(el){el.scrollIntoView({behavior:'smooth'});r.chIdx=idx;r.b.lastChapter=idx}
+}
+let _urgeFromChIdx=0
+function openUrgeModal(fromChIdx){
+  _urgeFromChIdx=fromChIdx
+  document.getElementById('nvUrgePlot').value=''
+  document.getElementById('nvUrgeChapSlider').value=3
+  document.getElementById('nvUrgeChapVal').textContent='3'
+  document.getElementById('nvUrgeProgress').style.display='none'
+  const btn=document.getElementById('nvUrgeConfirmBtn')
+  btn.disabled=false;btn.textContent='开始生成'
+  document.getElementById('nvUrgeOverlay').classList.add('open')
+}
+function closeUrgeModal(){document.getElementById('nvUrgeOverlay').classList.remove('open')}
+async function submitUrge(){
+  const r=window._nvReader
+  if(!r)return
+  const plot=document.getElementById('nvUrgePlot').value.trim()
+  const chapCount=parseInt(document.getElementById('nvUrgeChapSlider').value)
+  const btn=document.getElementById('nvUrgeConfirmBtn')
+  const prog=document.getElementById('nvUrgeProgress')
+  btn.disabled=true;btn.textContent='生成中…'
+  prog.style.display='block';prog.textContent='后台生成中，完成后会通知你…'
+  closeUrgeModal()
+  const existingEnd=r.chapters.slice(-3).map(ch=>`${ch.title}\n${ch.lines.join('\n')}`).join('\n\n').slice(-1200)
+  const startChNum=r.chapters.length+1
+  const prompt=`继续小说《${r.b.title||''}》，从第${startChNum}章开始，再写${chapCount}章。每章不少于800字，每章以"第X章 章节标题"开头。${plot?'剧情提示：'+plot:''}\n\n已有内容末尾（续写时保持衔接）：\n${existingEnd}\n\n只输出新章节内容，不要多余文字。`
+  try{
+    const res=await fetch((cfg.genApi||cfg.api)+'/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+(cfg.genKey||cfg.key)},
+      body:JSON.stringify({model:cfg.genModel||cfg.model,messages:[{role:'user',content:prompt}],stream:false,temperature:0.85,max_tokens:4000})
+    })
+    if(!res.ok)throw new Error('HTTP '+res.status)
+    const j=await res.json()
+    const newContent=(j.choices?.[0]?.message?.content||'').trim()
+    if(!newContent)throw new Error('empty')
+    const newLines=newContent.split('\n')
+    let curCh=null
+    const newChs=[]
+    const chReg=/^[第【\[]([\d一二三四五六七八九十百千]+)[章节卷话]/
+    for(const l of newLines){
+      if(chReg.test(l.trim())){if(curCh)newChs.push(curCh);curCh={title:l.trim(),lines:[]}}
+      else{if(!curCh)curCh={title:`第${startChNum}章`,lines:[]};curCh.lines.push(l)}
+    }
+    if(curCh)newChs.push(curCh)
+    r.chapters.push(...newChs)
+    r.b.content+=(r.b.content.endsWith('\n')?'':'\n')+newContent
+    const idx=novelBooks.findIndex(x=>x.id===r.b.id)
+    if(idx>=0){novelBooks[idx]=r.b;localStorage.setItem('novel_books',JSON.stringify(novelBooks))}
+    renderFullBook()
+    if(cfg.notify&&Notification.permission==='granted'&&document.hidden){
+      new Notification('《'+r.b.title+'》续写完成',{body:`新增${newChs.length}章，快来看看！`,icon:'https://i.ibb.co/Q7Lcr1yw/IMG-6805.jpg'})
+    }else showToast(`续写完成，新增${newChs.length}章`)
+  }catch(e){showToast('续写失败：'+(e.message||'未知错误'))}
+}
 function hideFloatBall(){
   if(_companionChecking)clearInterval(_companionChecking)
   const ball=document.getElementById('nvFloatBall')
