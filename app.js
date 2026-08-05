@@ -1466,20 +1466,27 @@ let _paraTarget=null  // 当前长按的 <p> 元素
 
 function bindParaLongPress(){
   const el=document.getElementById('nvReaderContent')
-  if(!el)return
-  let _lp=null,_moved=false,_lastTouch=null
+  if(!el||el._lpBound)return
+  el._lpBound=true
+  let _lp=null,_sx=0,_sy=0,_tp=null
   el.addEventListener('touchstart',e=>{
     const p=e.target.closest('p.nv-para')
     if(!p)return
-    _moved=false
-    _lastTouch=e.touches[0]
+    _sx=e.touches[0].clientX;_sy=e.touches[0].clientY;_tp=p
+    clearTimeout(_lp)
     _lp=setTimeout(()=>{
-      if(!_moved)showParaMenu(p,_lastTouch)
-    },500)
+      _lp=null
+      _paraTarget=_tp
+      showParaMenu(_tp,{clientX:_sx,clientY:_sy})
+    },550)
   },{passive:true})
-  el.addEventListener('touchmove',()=>{_moved=true;clearTimeout(_lp)},{passive:true})
-  el.addEventListener('touchend',()=>clearTimeout(_lp),{passive:true})
-  el.addEventListener('touchcancel',()=>clearTimeout(_lp),{passive:true})
+  el.addEventListener('touchmove',e=>{
+    if(!_lp)return
+    const dx=e.touches[0].clientX-_sx,dy=e.touches[0].clientY-_sy
+    if(dx*dx+dy*dy>144){clearTimeout(_lp);_lp=null}
+  },{passive:true})
+  el.addEventListener('touchend',()=>{clearTimeout(_lp);_lp=null},{passive:true})
+  el.addEventListener('touchcancel',()=>{clearTimeout(_lp);_lp=null},{passive:true})
 }
 
 function showParaMenu(p,touch){
