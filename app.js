@@ -1382,10 +1382,12 @@ async function startCompanion(){
   _companionActive=true
   tip.classList.add('open')
   tip.textContent='小克正在阅读中…'
-  // 拿全部正文，让AI一次性生成所有段落的想法
+  // 拿当前章节正文，让AI生成这章的心声
   const r=window._nvReader
   if(!r)return
-  const allText=r.chapters.map(ch=>ch.lines.join('\n')).join('\n')
+  const ch=r.chapters[r.chIdx]
+  if(!ch)return
+  const allText=ch.lines.join('\n')
   const paras=allText.split(/\n+/).map(s=>s.trim()).filter(s=>s.length>20)
   if(!paras.length)return
   // 每隔~5段取一个锚定段
@@ -1589,18 +1591,13 @@ function saveParaAnnotation(paraId,mark,comment){
   if(idx>=0){novelBooks[idx].paraAnnotations=r.b.paraAnnotations;localStorage.setItem('novel_books',JSON.stringify(novelBooks))}
 }
 
-// 心声持久化（按章节）
+// 心声持久化
 function saveCompanionComments(){
   const r=window._nvReader
   if(!r)return
-  if(!r.b.companionCommentsByChapter)r.b.companionCommentsByChapter={}
-  r.b.companionCommentsByChapter[r.chIdx]=_companionComments
+  r.b.companionComments=_companionComments
   const idx=novelBooks.findIndex(x=>x.id===r.b.id)
-  if(idx>=0){
-    if(!novelBooks[idx].companionCommentsByChapter)novelBooks[idx].companionCommentsByChapter={}
-    novelBooks[idx].companionCommentsByChapter[r.chIdx]=_companionComments
-    localStorage.setItem('novel_books',JSON.stringify(novelBooks))
-  }
+  if(idx>=0){novelBooks[idx].companionComments=_companionComments;localStorage.setItem('novel_books',JSON.stringify(novelBooks))}
 }
 
 // 类型随机池：每次从里面随机一个风格
