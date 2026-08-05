@@ -1379,10 +1379,11 @@ async function startCompanion(){
       }
     })
     if(!_companionComments.length&&raw.trim()){
-      // fallback：把整段作为一条
       _companionComments.push({paraIdx:Math.floor(paras.length/3),text:raw.trim().slice(0,100)})
     }
-    tip.textContent='小克正在阅读中…'
+    // 生成完毕，隐藏"小克正在阅读中…"，等到段落进入视野才弹出
+    tip.textContent=''
+    tip.classList.remove('open')
   }catch(e){
     tip.textContent='连接失败了 (´・ω・`)'
     return
