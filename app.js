@@ -1415,6 +1415,7 @@ function hideFloatBall(){
   if(ball)ball.style.display='none'
   if(tip){tip.classList.remove('open');tip.textContent=''}
 }
+function changeHeaderAvatar(e){
   const f=e.target.files[0];if(!f)return;
   const r=new FileReader();
   r.onload=ev=>{
