@@ -1,3 +1,10 @@
+self.addEventListener('fetch', function(event) {
+  const url = new URL(event.request.url)
+  if (url.pathname.endsWith('.html') || url.pathname.endsWith('.js') || url.pathname.endsWith('.css') || url.pathname === '/') {
+    event.respondWith(fetch(event.request, {cache: 'no-store'}))
+  }
+})
+
 // reverie service worker — web push handler
 self.addEventListener('push', function(event) {
   const data = event.data ? event.data.json() : {}
