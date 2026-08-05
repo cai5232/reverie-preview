@@ -1411,7 +1411,8 @@ async function startCompanion(){
           tip.textContent=c.text
           setTimeout(()=>{
             if(_companionActive&&tip.textContent===c.text){
-              tip.textContent='小克正在阅读中…'
+              tip.classList.remove('open')
+              tip.textContent=''
             }
           },4000)
         }
