@@ -1304,23 +1304,27 @@ function initFloatBall(){
   ball.addEventListener('touchend',()=>{
     clearTimeout(pressTimer)
     isDragging=false
-    // 长按后重置，防止双击失效
-    if(pressTriggered){setTimeout(()=>{pressTriggered=false},200);return}
-    if(!moved)startCompanion()
+    if(!moved&&!pressTriggered)startCompanion()
   })
 }
 
 function openCompanionList(){
   const panel=document.getElementById('nvCompanionListPanel')
   const list=document.getElementById('nvCompanionList')
+  // 拿原文段落（用于显示来源）
+  const paras=window._nvReader?window._nvReader.chapters.map(ch=>ch.lines.join('\n')).join('\n').split(/\n+/).map(s=>s.trim()).filter(s=>s.length>20):[]
   if(!_companionComments.length){
     list.innerHTML='<div style="padding:24px 20px;color:#aaa;font-size:14px;text-align:center">还没有心声，先开启伴读吧</div>'
   }else{
-    list.innerHTML=_companionComments.map((c,i)=>`
-      <div style="padding:14px 20px;border-bottom:.5px solid #f5f5f5;font-size:14px;color:#333;line-height:1.6">
+    list.innerHTML=_companionComments.map((c,i)=>{
+      const srcText=paras[c.paraIdx]||''
+      const snippet=srcText.slice(0,40)+(srcText.length>40?'…':'')
+      return`<div style="padding:14px 20px;border-bottom:.5px solid #f5f5f5">
         <div style="font-size:11px;color:#bbb;margin-bottom:4px">第${i+1}条</div>
-        ${escHtml(c.text)}
-      </div>`).join('')
+        <div style="font-size:14px;color:#333;line-height:1.6;margin-bottom:8px">${escHtml(c.text)}</div>
+        ${snippet?`<div style="font-size:11px;color:#aaa;background:#f5f5f5;border-radius:6px;padding:5px 9px;line-height:1.5">${escHtml(snippet)}</div>`:''}
+      </div>`
+    }).join('')
   }
   panel.classList.add('open')
 }
