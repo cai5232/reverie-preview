@@ -331,6 +331,90 @@
   </div>
 </div>
 
+<!-- 生成小说页面 -->
+<div class="nv-gen-overlay" id="nvGenOverlay">
+  <div class="nv-gen-header">
+    <div class="nv-gen-back" onclick="hideGenNovel()">
+      <svg width="10" height="18" viewBox="0 0 10 18" fill="none"><path d="M9 1L1 9l8 8" stroke="#333" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="nv-gen-title">生成小说</div>
+  </div>
+  <div class="nv-gen-body">
+    <div class="nv-gen-section">
+      <div class="nv-gen-label">封面</div>
+      <input type="file" id="nvGenCoverInput" accept="image/*" style="display:none" onchange="handleGenCover(event)">
+      <div class="nv-gen-cover-pick" id="nvGenCoverPick" onclick="document.getElementById('nvGenCoverInput').click()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" stroke="#bbb" stroke-width="1.5"/><circle cx="8.5" cy="8.5" r="2.2" stroke="#bbb" stroke-width="1.3"/><path d="M2 16l5-5 4 4 3-3 8 7" stroke="#bbb" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>点击添加封面</span>
+      </div>
+    </div>
+    <div class="nv-gen-section">
+      <div class="nv-gen-label">书名</div>
+      <input class="nv-gen-input" id="nvGenTitle" placeholder="输入书名">
+    </div>
+    <div class="nv-gen-section">
+      <div class="nv-gen-label">作者</div>
+      <input class="nv-gen-input" id="nvGenAuthor" placeholder="输入作者名（可选）">
+    </div>
+    <div class="nv-gen-section">
+      <div class="nv-gen-label-row">
+        <span class="nv-gen-label">人物</span>
+        <div class="nv-gen-add-btn" onclick="addCharacter()">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="#007AFF" stroke-width="1.8" stroke-linecap="round"/></svg>添加人物
+        </div>
+      </div>
+      <div id="nvGenChars"></div>
+    </div>
+    <div class="nv-gen-section">
+      <div class="nv-gen-label-row">
+        <span class="nv-gen-label">世界观</span>
+        <div class="nv-gen-add-btn" onclick="addCustomWorld()">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="#007AFF" stroke-width="1.8" stroke-linecap="round"/></svg>自定义
+        </div>
+      </div>
+      <div class="nv-gen-world-wrap" id="nvGenWorlds">
+        <div class="nv-gen-world-tag" data-key="reality" onclick="selectWorld(this)">现实世界</div>
+        <div class="nv-gen-world-tag" data-key="cyberpunk" onclick="selectWorld(this)">赛博朋克</div>
+        <div class="nv-gen-world-tag" data-key="beast" onclick="selectWorld(this)">兽世</div>
+        <div class="nv-gen-world-tag" data-key="ancient" onclick="selectWorld(this)">古代</div>
+        <div class="nv-gen-world-tag" data-key="fantasy" onclick="selectWorld(this)">玄幻</div>
+        <div class="nv-gen-world-tag" data-key="xianxia" onclick="selectWorld(this)">仙侠</div>
+        <div class="nv-gen-world-tag" data-key="esports" onclick="selectWorld(this)">电竞</div>
+        <div class="nv-gen-world-tag" data-key="campus" onclick="selectWorld(this)">校园</div>
+        <div class="nv-gen-world-tag" data-key="apocalypse" onclick="selectWorld(this)">末世</div>
+        <div class="nv-gen-world-tag" data-key="scifi" onclick="selectWorld(this)">科幻星际</div>
+        <div class="nv-gen-world-tag" data-key="ceo" onclick="selectWorld(this)">都市豪门</div>
+        <div class="nv-gen-world-tag" data-key="danmei" onclick="selectWorld(this)">耽美</div>
+      </div>
+    </div>
+    <div class="nv-gen-section">
+      <div class="nv-gen-label-row">
+        <span class="nv-gen-label">章节数</span>
+        <span class="nv-gen-chapter-val" id="nvGenChapVal">5章</span>
+      </div>
+      <input type="range" class="nv-gen-slider" id="nvGenChapSlider" min="1" max="15" value="5" oninput="document.getElementById('nvGenChapVal').textContent=this.value+'章'">
+    </div>
+    <button class="nv-gen-submit" id="nvGenSubmit" onclick="startGenNovel()">✦ 生成文章</button>
+    <div class="nv-gen-progress" id="nvGenProgress" style="display:none">
+      <div class="nv-gen-progress-bar"><div class="nv-gen-progress-fill" id="nvGenFill"></div></div>
+      <div class="nv-gen-progress-text" id="nvGenProgressText">准备中...</div>
+    </div>
+  </div>
+</div>
+
+<!-- 自定义世界观弹窗 -->
+<div class="nv-modal-overlay" id="nvWorldModalOverlay" onclick="closeWorldModal()">
+  <div class="nv-modal" onclick="event.stopPropagation()">
+    <div class="nv-modal-title">自定义世界观</div>
+    <input class="nv-modal-input" id="nvWorldName" placeholder="世界观名称，如：修真末世">
+    <textarea class="nv-modal-input" id="nvWorldDesc" placeholder="描述这个世界观的背景、规则和氛围..." style="height:80px;resize:none;line-height:1.5"></textarea>
+    <div style="display:flex;gap:10px;margin-top:4px">
+      <button class="nv-modal-btn ghost" onclick="closeWorldModal()">取消</button>
+      <button class="nv-modal-btn" onclick="confirmCustomWorld()">确认</button>
+    </div>
+  </div>
+</div>
+
 <div class="page" id="page-game"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Game</div><div class="sub-desc">一起玩</div><div class="card">待开发</div></div></div>
 <div class="page" id="page-shop"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Shop</div><div class="sub-desc">小克的小店</div><div class="card">待开发</div></div></div>
 <div class="page" id="page-diary"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Diary</div><div class="sub-desc">日记</div><div class="card">待开发</div></div></div>
