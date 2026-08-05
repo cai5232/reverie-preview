@@ -731,21 +731,8 @@ function saveCfg(){
   localStorage.setItem('cfg_gen_api',cfg.genApi)
   localStorage.setItem('cfg_gen_key',cfg.genKey)
   localStorage.setItem('cfg_gen_model',cfg.genModel)
-  // 生成文章专属API
-  cfg.genApi=document.getElementById('cfgGenApi').value.trim()
-  cfg.genKey=document.getElementById('cfgGenKey').value.trim()
-  cfg.genModel=document.getElementById('cfgGenModel').value||''
-  localStorage.setItem('cfg_gen_api',cfg.genApi)
-  localStorage.setItem('cfg_gen_key',cfg.genKey)
-  localStorage.setItem('cfg_gen_model',cfg.genModel)
   const imgSel=document.getElementById('cfgImgModel')
   if(imgSel.value&&imgSel.value!=='未选择')localStorage.setItem('cfg_img_model',imgSel.value)
-  cfg.genApi=document.getElementById('cfgGenApi').value.trim()
-  cfg.genKey=document.getElementById('cfgGenKey').value.trim()
-  cfg.genModel=document.getElementById('cfgGenModel').value||''
-  localStorage.setItem('cfg_gen_api',cfg.genApi)
-  localStorage.setItem('cfg_gen_key',cfg.genKey)
-  localStorage.setItem('cfg_gen_model',cfg.genModel)
   applyKeepalive()
   showToast('已保存')
 }
