@@ -997,9 +997,6 @@ function startReading(id){
   document.getElementById('nvFontSizeLabel').textContent='20px'
   renderFullBook()
   document.getElementById('nvReaderOverlay').classList.add('open')
-  // 重置长按绑定标记，每次打开都重新绑
-  const _rc=document.getElementById('nvReaderContent')
-  if(_rc)_rc._lpBound=false
   // 显示悬浮球
   const ball=document.getElementById('nvFloatBall')
   if(ball){ball.style.display='flex';ball.style.right='18px';ball.style.bottom='120px';ball.style.left='';ball.style.top=''}
@@ -1051,16 +1048,13 @@ function renderFullBook(){
   Object.entries(annots).forEach(([paraId,ann])=>{
     const p=el.querySelector(`p[data-para-id="${paraId}"]`)
     if(!p)return
-    if(ann.mark){p.classList.add('marked-'+ann.mark);p.dataset.markColor=ann.mark}
-    if(ann.comment){
-      const cd=document.createElement('div')
-      cd.className='nv-para-comment'
-      cd.textContent=ann.comment
-      p.insertAdjacentElement('afterend',cd)
-    }
+    if(ann.mark){p.classList.add('marked-'+ann.mark);p.dataset.markColor=ann.mark;addMarkIcon(p)}
+    if(ann.comment){insertCommentEl(p,ann.comment)}
   })
   // 绑定段落长按
   bindParaLongPress()
+  // 有已恢复心声则直接启动滚动监听，不需要重新生成
+  if(_companionComments.length)startCompanionWatcher()
   // 滚动到上次章节
   setTimeout(()=>{
     const target=document.getElementById('nv-ch-'+(r.chIdx||0))
