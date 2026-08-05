@@ -1439,25 +1439,46 @@ async function startCompanion(){
 }
 
 // ── 作者有话说 ──
+// 类型随机池：每次从里面随机一个风格
+const NOTE_STYLES=[
+  '剧透型：透露一点下一章的关键剧情走向，不能太直白，像让读者猜的感觉',
+  '创作感受型：分享这一章写起来最难或最喜欢的地方，用作者的口吻说',
+  '关心读者型：关心一下读者最近怎么样，顺带说说自己写这章的心情',
+  '随感型：随便聊一件最近发生的小事，或者某个角色让自己感到意外的地方',
+  '节日/季节型：如果当前月份接近节日或季节更替，自然地带一句祝福或应景的话，然后聊聊这章',
+  '互动型：抛出一个关于这章剧情的小问题，让读者在评论区回答',
+  '角色解析型：聊聊这章某个角色行为背后作者真正想表达的动机',
+  '摸鱼型：轻松搞笑地说说自己更新辛苦或者摸鱼被抓的日常，放松一下'
+]
 async function genAuthorNote(chIdx){
   const r=window._nvReader
   if(!r)return
   const ch=r.chapters[chIdx]
   if(!ch||ch.authorNote)return
-  const excerpt=ch.lines.join('\n').slice(0,300)
+  const style=NOTE_STYLES[Math.floor(Math.random()*NOTE_STYLES.length)]
+  const excerpt=ch.lines.join('\n').slice(0,400)
+  const genApi=cfg.genApi||cfg.api
+  const genKey=cfg.genKey||cfg.key
+  const genModel=cfg.genModel||cfg.model
   try{
-    const res=await fetch(cfg.api+'/chat/completions',{
+    const res=await fetch(genApi+'/chat/completions',{
       method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key,'X-Session-Id':'reverie-yy'},
-      body:JSON.stringify({model:cfg.model,messages:[{role:'user',content:`你是小说《${r.b.title||''}》的作者，请为第${chIdx+1}章末尾写一段"作者有话说"（80～160字），像作者跟读者说话一样，可以透露一点创作心情、对本章内容的感想、或者对下一章的小小预告。语气亲切随意。只输出正文，不要标题。\n\n本章节选：\n${excerpt}`}],stream:false,temperature:0.9,max_tokens:200})
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+genKey},
+      body:JSON.stringify({model:genModel,messages:[{role:'user',content:`你是小说《${r.b.title||'无题'}》的作者，请为第${chIdx+1}章末尾写一段"作者有话说"。\n\n风格要求：${style}\n\n字数要求：30～150字之间，不要标题，只输出正文，语气亲切随意，像真实作者在和读者说话。\n\n本章节选（供参考，不需要复述）：\n${excerpt}`}],stream:false,temperature:0.95,max_tokens:250})
     })
     if(!res.ok)return
     const j=await res.json()
     const note=(j.choices?.[0]?.message?.content||'').trim()
     if(note){
       ch.authorNote=note
+      // 持久化到 novelBooks
       const idx=novelBooks.findIndex(x=>x.id===r.b.id)
-      if(idx>=0){novelBooks[idx]=r.b;localStorage.setItem('novel_books',JSON.stringify(novelBooks))}
+      if(idx>=0){
+        if(!novelBooks[idx].chapterNotes)novelBooks[idx].chapterNotes={}
+        novelBooks[idx].chapterNotes[chIdx]=note
+        // 同步回 chapters 对象（下次打开时从 chapterNotes 恢复）
+        localStorage.setItem('novel_books',JSON.stringify(novelBooks))
+      }
       const noteEl=document.getElementById('nv-note-text-'+chIdx)
       if(noteEl)noteEl.innerHTML=escHtml(note)
     }
