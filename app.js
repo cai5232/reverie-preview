@@ -1007,17 +1007,32 @@ function renderFullBook(){
   const r=window._nvReader
   const el=document.getElementById('nvReaderContent')
   el.style.fontSize=r.fontSize+'px'
+  const totalCh=r.chapters.length
   let html=''
   r.chapters.forEach((ch,i)=>{
     html+=`<div id="nv-ch-${i}" class="nv-chapter-block">`
-    if(r.chapters.length>1&&ch.title!=='正文'){
+    if(totalCh>1&&ch.title!=='正文'){
       html+=`<div class="nv-chapter-title">${escHtml(ch.title)}</div>`
     }
     const paras=ch.lines.join('\n').split(/\n+/).map(s=>s.trim()).filter(Boolean)
     html+=paras.map(p=>`<p class="nv-para">${escHtml(p)}</p>`).join('')
+    // 作者有话说
+    const note=ch.authorNote||''
+    html+=`<div class="nv-author-note" id="nv-note-${i}">
+      <div class="nv-author-note-label">作者有话说</div>
+      <div class="nv-author-note-text" id="nv-note-text-${i}">${note?escHtml(note):'<span style="color:#c8b89a;font-style:italic">生成中…</span>'}</div>
+    </div>`
+    // 章节导航
+    html+=`<div class="nv-chapter-nav">
+      <button class="nv-chapter-nav-btn${i===0?' disabled':''}" onclick="navChapter(${i-1})" ${i===0?'disabled':''}>上一章</button>
+      <button class="nv-chapter-nav-btn urge" onclick="openUrgeModal(${i})">催更</button>
+      <button class="nv-chapter-nav-btn${i===totalCh-1?' disabled':''}" onclick="navChapter(${i+1})" ${i===totalCh-1?'disabled':''}>下一章</button>
+    </div>`
     html+='</div>'
   })
   el.innerHTML=html
+  // 异步生成所有没有 authorNote 的章节的"作者有话说"
+  r.chapters.forEach((ch,i)=>{if(!ch.authorNote)genAuthorNote(i)})
   // 滚动到上次章节
   setTimeout(()=>{
     const target=document.getElementById('nv-ch-'+(r.chIdx||0))
@@ -1029,10 +1044,7 @@ function renderFullBook(){
     for(let i=chs.length-1;i>=0;i--){
       const chEl=document.getElementById('nv-ch-'+i)
       if(chEl&&chEl.getBoundingClientRect().top<=120){
-        if(r.chIdx!==i){
-          r.chIdx=i
-          r.b.lastChapter=i
-        }
+        if(r.chIdx!==i){r.chIdx=i;r.b.lastChapter=i}
         break
       }
     }
