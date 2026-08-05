@@ -1020,7 +1020,7 @@ function renderFullBook(){
       html+=`<div class="nv-chapter-title">${escHtml(ch.title)}</div>`
     }
     const paras=ch.lines.join('\n').split(/\n+/).map(s=>s.trim()).filter(Boolean)
-    html+=paras.map(p=>`<p class="nv-para">${escHtml(p)}</p>`).join('')
+    html+=paras.map((p,pi)=>`<p class="nv-para" data-para-id="c${i}p${pi}">${escHtml(p)}</p>`).join('')
     // 作者有话说
     const note=ch.authorNote||''
     html+=`<div class="nv-author-note" id="nv-note-${i}">
