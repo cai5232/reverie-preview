@@ -944,7 +944,30 @@ function renderNovels(){
       </div>
     </div>`).join('')
 }
-function openBook(id){startReading(id)}
+function openBook(id){showBookDetail(id)}
+
+let _detailBookId=null
+function showBookDetail(id){
+  const b=novelBooks.find(x=>x.id===id)
+  if(!b)return
+  _detailBookId=id
+  const body=document.getElementById('nvDetailBody')
+  const coverBg=b.coverImg?`<img src="${b.coverImg}" style="width:120px;height:168px;border-radius:12px;object-fit:cover;box-shadow:0 6px 20px rgba(0,0,0,.15);display:block;margin:0 auto">`
+    :`<div style="width:120px;height:168px;border-radius:12px;background:#222;display:flex;align-items:center;justify-content:center;margin:0 auto"><svg width="36" height="36" viewBox="0 0 36 36" fill="none"><rect x="4" y="2" width="18" height="26" rx="2" stroke="#888" stroke-width="1.4"/><rect x="14" y="4" width="16" height="26" rx="2" stroke="#888" stroke-width="1.4"/></svg></div>`
+  body.innerHTML=`
+    <div style="padding:32px 24px 16px;text-align:center">
+      ${coverBg}
+      <div style="font-size:20px;font-weight:700;color:#111;margin-top:20px;line-height:1.4">${b.title}</div>
+      <div style="font-size:13px;color:#aaa;margin-top:6px">${b.author||'AI创作'}</div>
+    </div>
+    <div style="margin:0 20px;padding:16px;background:#f7f7f7;border-radius:12px;font-size:14px;color:#444;line-height:1.7;white-space:pre-wrap">${b.intro||'暂无简介'}</div>
+    <div style="height:20px"></div>`
+  document.getElementById('nvDetailOverlay').classList.add('open')
+}
+
+function startReadingFromDetail(){
+  if(_detailBookId!=null)startReading(_detailBookId)
+}
 function hideBookDetail(){document.getElementById('nvDetailOverlay').classList.remove('open')}
 function bookMenu(id){
   if(confirm('删除这本书？')){
