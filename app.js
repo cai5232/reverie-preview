@@ -1137,7 +1137,7 @@ async function startGenNovel(){
     const res=await fetch(cfg.api+'/chat/completions',{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key},
-      body:JSON.stringify({model:cfg.model,messages:[{role:'user',content:prompt}],stream:false,temperature:0.85,max_tokens:8000})
+      body:JSON.stringify({model:cfg.model,messages:[{role:'user',content:prompt}],stream:false,temperature:0.85,max_tokens:4000})
     })
     if(!res.ok)throw new Error('HTTP '+res.status)
     const j=await res.json()
