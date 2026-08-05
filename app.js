@@ -1208,7 +1208,7 @@ async function startGenNovel(){
   // 书名/作者为空时让AI补充
   const finalTitle=title||'（AI自定）'
   const finalAuthor=author||'（AI自定）'
-  const prompt=`请帮我生成一部小说，输出格式如下（严格按格式，不要多余文字）：\n书名：《xxx》\n作者：xxx\n简介：（100字以内的精简简介）\n正文开始\n\n（然后是正文内容）\n---\n书名提示：${finalTitle==='（AI自定）'?'请自拟合适的书名':finalTitle}\n作者提示：${finalAuthor==='（AI自定）'?'请自拟笔名':finalAuthor}\n世界观：${worldName} — ${worldDesc}\n人物设定：\n${charDesc}\n${tags.length?'标签：'+tags.join('、')+'\n':''}${plot?'剧情走向：'+plot+'\n':''}${styleText?'文风偏好：'+styleText+'\n':''}\n请生成${chapCount}章完整正文，每章不少于800字，每章以"第X章 章节标题"开头。只输出上述格式内容。`
+  const prompt=`请帮我生成一部小说，输出格式如下（严格按格式，不要多余文字）：\n书名：《xxx》\n作者：xxx\n简介：（188字以上的精彩简介，要足够吸引人）\n正文开始\n\n（然后是正文内容）\n---\n书名提示：${finalTitle==='（AI自定）'?'请自拟合适的书名':finalTitle}\n作者提示：${finalAuthor==='（AI自定）'?'请自拟笔名':finalAuthor}\n世界观：${worldName} — ${worldDesc}\n人物设定：\n${charDesc}\n${tags.length?'标签：'+tags.join('、')+'\n':''}${plot?'剧情走向：'+plot+'\n':''}${styleText?'文风偏好：'+styleText+'\n':''}\n请生成${chapCount}章完整正文，每章不少于800字，每章以"第X章 章节标题"开头。只输出上述格式内容。`
   const btn=document.getElementById('nvGenSubmit')
   btn.disabled=true;btn.textContent='生成中...'
   const prog=document.getElementById('nvGenProgress')
