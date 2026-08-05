@@ -1009,73 +1009,75 @@ function startReading(id){
   if(tc)tc.content='#faf8f4'
 }
 
-function renderFullBook(){
+// ── 渲染单章（每章一页，上下滑动）──
+function renderChapter(idx){
   const r=window._nvReader
+  if(!r)return
+  if(idx<0||idx>=r.chapters.length)return
+  // 停掉上一章的心声监听
+  if(_companionChecking){clearInterval(_companionChecking);_companionChecking=null}
+  _companionActive=false
+  r.chIdx=idx
+  r.b.lastChapter=idx
   const el=document.getElementById('nvReaderContent')
   el.style.fontSize=r.fontSize+'px'
+  const ch=r.chapters[idx]
   const totalCh=r.chapters.length
-  let html=''
-  r.chapters.forEach((ch,i)=>{
-    html+=`<div id="nv-ch-${i}" class="nv-chapter-block">`
-    if(totalCh>1&&ch.title!=='正文'){
-      html+=`<div class="nv-chapter-title">${escHtml(ch.title)}</div>`
-    }
-    const paras=ch.lines.join('\n').split(/\n+/).map(s=>s.trim()).filter(Boolean)
-    html+=paras.map((p,pi)=>`<p class="nv-para" data-para-id="c${i}p${pi}">${escHtml(p)}</p>`).join('')
-    // 作者有话说
-    const note=ch.authorNote||''
-    html+=`<div class="nv-author-note" id="nv-note-${i}">
-      <div class="nv-author-note-label">作者有话说</div>
-      <div class="nv-author-note-text" id="nv-note-text-${i}">${note?escHtml(note):'<span style="color:#c8b89a;font-style:italic">生成中…</span>'}</div>
-    </div>`
-    // 章节导航 — 双行：上一行催更居中，下一行上一章/下一章
-    html+=`<div class="nv-chapter-nav">
-      <div class="nv-chapter-nav-urge-row">
-        <button class="nv-chapter-nav-btn urge" onclick="openUrgeModal(${i})">催更</button>
-      </div>
-      <div class="nv-chapter-nav-pages-row">
-        <button class="nv-chapter-nav-btn${i===0?' disabled':''}" onclick="navChapter(${i-1})" ${i===0?'disabled':''}>上一章</button>
-        <button class="nv-chapter-nav-btn${i===totalCh-1?' disabled':''}" onclick="navChapter(${i+1})" ${i===totalCh-1?'disabled':''}>下一章</button>
-      </div>
-    </div>`
-    html+='</div>'
-  })
+  let html=`<div id="nv-ch-${idx}" class="nv-chapter-block">`
+  if(totalCh>1&&ch.title!=='正文'){
+    html+=`<div class="nv-chapter-title">${escHtml(ch.title)}</div>`
+  }
+  const paras=ch.lines.join('\n').split(/\n+/).map(s=>s.trim()).filter(Boolean)
+  html+=paras.map((p,pi)=>`<p class="nv-para" data-para-id="c${idx}p${pi}">${escHtml(p)}</p>`).join('')
+  // 作者有话说
+  const note=ch.authorNote||''
+  html+=`<div class="nv-author-note" id="nv-note-${idx}">
+    <div class="nv-author-note-label">作者有话说</div>
+    <div class="nv-author-note-text" id="nv-note-text-${idx}">${note?escHtml(note):'<span style="color:#c8b89a;font-style:italic">生成中…</span>'}</div>
+  </div>`
+  // 章节导航
+  html+=`<div class="nv-chapter-nav">
+    <div class="nv-chapter-nav-urge-row">
+      <button class="nv-chapter-nav-btn urge" onclick="openUrgeModal(${idx})">催更</button>
+    </div>
+    <div class="nv-chapter-nav-pages-row">
+      <button class="nv-chapter-nav-btn${idx===0?' disabled':''}" onclick="navChapter(${idx-1})" ${idx===0?'disabled':''}>上一章</button>
+      <button class="nv-chapter-nav-btn${idx===totalCh-1?' disabled':''}" onclick="navChapter(${idx+1})" ${idx===totalCh-1?'disabled':''}>下一章</button>
+    </div>
+  </div></div>`
   el.innerHTML=html
-  // 异步生成所有没有 authorNote 的章节的"作者有话说"
-  r.chapters.forEach((ch,i)=>{if(!ch.authorNote)genAuthorNote(i)})
-  // 恢复段落标记和段评
+  el.scrollTop=0
+  // 只生成本章作者有话说
+  if(!ch.authorNote)genAuthorNote(idx)
+  // 恢复本章段落标记/段评
   const annots=r.b.paraAnnotations||{}
   Object.entries(annots).forEach(([paraId,ann])=>{
+    if(!paraId.startsWith(`c${idx}p`))return
     const p=el.querySelector(`p[data-para-id="${paraId}"]`)
     if(!p)return
     if(ann.mark){p.classList.add('marked-'+ann.mark);p.dataset.markColor=ann.mark;addMarkIcon(p)}
     if(ann.comment){insertCommentEl(p,ann.comment)}
   })
-  // 绑定段落长按
+  // 重新绑定长按
+  el._lpBound=false
   bindParaLongPress()
-  // 有已恢复心声则直接启动滚动监听，不需要重新生成
+  // 加载本章心声
+  const byChap=r.b.companionCommentsByChapter||{}
+  _companionComments=byChap[idx]||[]
   if(_companionComments.length)startCompanionWatcher()
-  // 滚动到上次章节
-  setTimeout(()=>{
-    const target=document.getElementById('nv-ch-'+(r.chIdx||0))
-    if(target)target.scrollIntoView()
-  },50)
-  // 监听滚动，更新当前章节和进度
+  // 进度更新
   el.onscroll=()=>{
-    const chs=r.chapters
-    for(let i=chs.length-1;i>=0;i--){
-      const chEl=document.getElementById('nv-ch-'+i)
-      if(chEl&&chEl.getBoundingClientRect().top<=120){
-        if(r.chIdx!==i){r.chIdx=i;r.b.lastChapter=i}
-        break
-      }
-    }
     const pct=el.scrollHeight>el.clientHeight?Math.round(el.scrollTop/(el.scrollHeight-el.clientHeight)*100):0
-    r.b.progress=pct
-    const idx=novelBooks.findIndex(x=>x.id===r.b.id)
-    if(idx>=0){novelBooks[idx]=r.b;localStorage.setItem('novel_books',JSON.stringify(novelBooks))}
+    r.b.progress=Math.round((idx/totalCh+pct/100/totalCh)*100)
+    const ni=novelBooks.findIndex(x=>x.id===r.b.id)
+    if(ni>=0){novelBooks[ni]=r.b;localStorage.setItem('novel_books',JSON.stringify(novelBooks))}
   }
+  // 保存进度到localStorage
+  const ni=novelBooks.findIndex(x=>x.id===r.b.id)
+  if(ni>=0){novelBooks[ni]=r.b;localStorage.setItem('novel_books',JSON.stringify(novelBooks))}
 }
+
+function renderFullBook(){renderChapter(window._nvReader?.chIdx||0)}
 
 function renderReaderPage(){
   const r=window._nvReader
