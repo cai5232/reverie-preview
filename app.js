@@ -1586,16 +1586,7 @@ function submitComment(){
   const p=_paraTarget||document.querySelector(`p.nv-para[data-para-id="${_pendingCommentParaId}"]`)
   const paraId=p?.dataset?.paraId
   if(!paraId){closeCommentModal();return}
-  // 更新或插入评论节点
-  let commentEl=p.nextElementSibling
-  if(commentEl&&commentEl.classList.contains('nv-para-comment')){
-    commentEl.textContent=text
-  }else{
-    commentEl=document.createElement('div')
-    commentEl.className='nv-para-comment'
-    commentEl.textContent=text
-    p.insertAdjacentElement('afterend',commentEl)
-  }
+  insertCommentEl(p,text)
   const existing=getParaAnnotation(paraId)
   saveParaAnnotation(paraId,existing?existing.mark:null,text)
   closeCommentModal()
