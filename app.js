@@ -1280,7 +1280,140 @@ async function startGenNovel(){
   }
 }
 
-function changeHeaderAvatar(e){
+// ── 悬浮球伴读 ──
+let _companionComments=[]  // 每段小克想说的话
+let _companionActive=false
+let _companionChecking=null
+
+function initFloatBall(){
+  const ball=document.getElementById('nvFloatBall')
+  if(!ball)return
+  let isDragging=false,startX=0,startY=0,origX=0,origY=0,moved=false,lastTap=0
+  ball.addEventListener('touchstart',e=>{
+    const t=e.touches[0]
+    startX=t.clientX;startY=t.clientY
+    const rect=ball.getBoundingClientRect()
+    const parent=ball.parentElement.getBoundingClientRect()
+    origX=rect.left-parent.left;origY=rect.top-parent.top
+    isDragging=true;moved=false
+    e.preventDefault()
+  },{passive:false})
+  ball.addEventListener('touchmove',e=>{
+    if(!isDragging)return
+    const t=e.touches[0]
+    const dx=t.clientX-startX,dy=t.clientY-startY
+    if(Math.abs(dx)>4||Math.abs(dy)>4)moved=true
+    if(moved){
+      const parent=ball.parentElement.getBoundingClientRect()
+      let nx=origX+dx,ny=origY+dy
+      const maxX=parent.width-ball.offsetWidth,maxY=parent.height-ball.offsetHeight
+      nx=Math.max(0,Math.min(nx,maxX));ny=Math.max(0,Math.min(ny,maxY))
+      ball.style.right='auto';ball.style.bottom='auto'
+      ball.style.left=nx+'px';ball.style.top=ny+'px'
+    }
+    e.preventDefault()
+  },{passive:false})
+  ball.addEventListener('touchend',e=>{
+    isDragging=false
+    if(!moved){
+      const now=Date.now()
+      if(now-lastTap<350)startCompanion()
+      lastTap=now
+    }
+  })
+}
+
+async function startCompanion(){
+  const ball=document.getElementById('nvFloatBall')
+  const tip=document.getElementById('nvFloatTip')
+  if(!ball||!tip)return
+  if(_companionActive){
+    // 关闭
+    _companionActive=false
+    if(_companionChecking)clearInterval(_companionChecking)
+    tip.classList.remove('open')
+    tip.textContent=''
+    return
+  }
+  _companionActive=true
+  tip.classList.add('open')
+  tip.textContent='小克正在阅读中…'
+  // 拿全部正文，让AI一次性生成所有段落的想法
+  const r=window._nvReader
+  if(!r)return
+  const allText=r.chapters.map(ch=>ch.lines.join('\n')).join('\n')
+  const paras=allText.split(/\n+/).map(s=>s.trim()).filter(s=>s.length>20)
+  if(!paras.length)return
+  // 每隔~5段取一个锚定段
+  const anchors=[]
+  for(let i=2;i<paras.length;i+=5){
+    anchors.push({para:paras[i],idx:i})
+  }
+  if(!anchors.length)anchors.push({para:paras[Math.floor(paras.length/2)]||paras[0],idx:0})
+  const prompt=`你是正在陪人读小说的小克，请阅读以下小说片段，针对每一个[锚点]生成一句你想说的话（可以是感想/猜测剧情/角色点评/情绪反应，自然轻松，像朋友在旁边小声说话）。\n\n格式（严格遵守，每行一条）：\n[锚点编号]|[你想说的话]\n\n锚点列表：\n${anchors.map((a,i)=>`[${i}] ...${a.para.slice(0,80)}...`).join('\n')}\n\n只输出格式内容，不要多余文字。`
+  try{
+    const res=await fetch(cfg.api+'/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key,'X-Session-Id':'reverie-yy'},
+      body:JSON.stringify({model:cfg.model,messages:[{role:'user',content:prompt}],stream:false,temperature:0.9})
+    })
+    const j=await res.json()
+    const raw=(j.choices?.[0]?.message?.content)||''
+    _companionComments=[]
+    raw.split('\n').forEach(line=>{
+      const m=line.match(/^\[(\d+)\]\|(.+)$/)
+      if(m){
+        const ai=parseInt(m[1])
+        if(anchors[ai]){
+          _companionComments.push({paraIdx:anchors[ai].idx,text:m[2].trim()})
+        }
+      }
+    })
+    if(!_companionComments.length&&raw.trim()){
+      // fallback：把整段作为一条
+      _companionComments.push({paraIdx:Math.floor(paras.length/3),text:raw.trim().slice(0,100)})
+    }
+    tip.textContent='小克正在阅读中…'
+  }catch(e){
+    tip.textContent='连接失败了 (´・ω・`)'
+    return
+  }
+  // 开始监听滚动，当读者滚动到对应段落时弹出
+  const el=document.getElementById('nvReaderContent')
+  let shown=new Set()
+  if(_companionChecking)clearInterval(_companionChecking)
+  _companionChecking=setInterval(()=>{
+    if(!_companionActive)return
+    const allParaEls=el.querySelectorAll('p.nv-para')
+    const midY=window.innerHeight/2
+    _companionComments.forEach((c,ci)=>{
+      if(shown.has(ci))return
+      const paraEl=allParaEls[c.paraIdx]
+      if(!paraEl)return
+      const rect=paraEl.getBoundingClientRect()
+      if(rect.top<=midY&&rect.bottom>=0){
+        shown.add(ci)
+        tip.classList.add('open')
+        tip.textContent=c.text
+        // 3秒后收起，等下一条
+        setTimeout(()=>{
+          if(_companionActive&&tip.textContent===c.text){
+            tip.textContent='小克正在阅读中…'
+          }
+        },4000)
+      }
+    })
+  },600)
+}
+
+function hideFloatBall(){
+  _companionActive=false
+  if(_companionChecking)clearInterval(_companionChecking)
+  const ball=document.getElementById('nvFloatBall')
+  const tip=document.getElementById('nvFloatTip')
+  if(ball)ball.style.display='none'
+  if(tip){tip.classList.remove('open');tip.textContent=''}
+}
   const f=e.target.files[0];if(!f)return;
   const r=new FileReader();
   r.onload=ev=>{
