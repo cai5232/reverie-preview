@@ -870,9 +870,6 @@ function novelImport(){
 function closeNovelModal(){
   document.getElementById('nvModalOverlay').classList.remove('open')
 }
-function closeNovelModal(){
-  document.getElementById('nvModalOverlay').classList.remove('open')
-}
 function handleCoverPick(e){
   const file=e.target.files[0]
   if(!file)return
