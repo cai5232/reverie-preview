@@ -1000,7 +1000,8 @@ function startReading(id){
   // 显示悬浮球
   const ball=document.getElementById('nvFloatBall')
   if(ball){ball.style.display='flex';ball.style.right='18px';ball.style.bottom='120px';ball.style.left='';ball.style.top=''}
-  _companionActive=false;_companionComments=[]
+  _companionActive=false
+  // _companionComments 已在上方从 b.companionComments 恢复，不能在这里清空
   const tip=document.getElementById('nvFloatTip')
   if(tip){tip.classList.remove('open');tip.textContent=''}
   initFloatBall()
