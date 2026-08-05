@@ -974,7 +974,6 @@ function renderReaderPage(){
 
 function hideReader(){
   document.getElementById('nvReaderOverlay').classList.remove('open')
-  document.body.style.background=''
   renderNovels()
 }
 function openToc(){
