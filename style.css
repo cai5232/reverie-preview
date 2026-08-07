@@ -274,48 +274,47 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 .xk-think-btn:active{opacity:.5}
 .xk-think-btn svg{flex-shrink:0}
 
-/* Thinking 弹窗：居中 modal，内容可滚动 */
+/* Thinking 弹窗：底部弹出，最高到屏幕中间 */
 .xk-think-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;
+  position:fixed;inset:0;background:rgba(0,0,0,.38);z-index:200;
   opacity:0;pointer-events:none;
   transition:opacity .22s;
-  display:flex;align-items:center;justify-content:center;
-  padding:32px 20px;
-  box-sizing:border-box;
 }
 .xk-think-overlay.open{opacity:1;pointer-events:auto}
 .xk-think-sheet{
+  position:fixed;bottom:0;left:0;right:0;
+  max-width:430px;margin:0 auto;
   background:#FAF8F4;
-  border-radius:18px;
-  width:100%;max-width:400px;
-  max-height:70vh;
+  border-radius:20px 20px 0 0;
+  padding-bottom:calc(env(safe-area-inset-bottom,0px) + 8px);
+  max-height:50vh;
   display:flex;flex-direction:column;
-  box-shadow:0 8px 40px rgba(0,0,0,.18);
-  transform:scale(.94);
-  transition:transform .25s cubic-bezier(.34,1.16,.64,1);
+  transform:translateY(100%);
+  transition:transform .3s cubic-bezier(.34,1.1,.64,1);
+  box-shadow:0 -4px 32px rgba(0,0,0,.12);
   overflow:hidden;
 }
-.xk-think-overlay.open .xk-think-sheet{transform:scale(1)}
-.xk-think-handle{display:none}
+.xk-think-overlay.open .xk-think-sheet{transform:translateY(0)}
+.xk-think-handle{width:36px;height:4px;background:#DDD9D0;border-radius:2px;margin:12px auto 4px;flex-shrink:0}
 .xk-think-head{
   display:flex;align-items:center;gap:8px;
-  padding:16px 18px 12px;flex-shrink:0;
+  padding:10px 18px 10px;flex-shrink:0;
   font-size:14px;font-weight:600;color:#1F1E1D;
   font-family:-apple-system,'PingFang SC',sans-serif;
   border-bottom:.5px solid #EBE8DF;
 }
 .xk-think-head svg{flex-shrink:0;opacity:.6}
 .xk-think-close{
-  margin-left:auto;width:28px;height:28px;
+  margin-left:auto;width:26px;height:26px;
   display:flex;align-items:center;justify-content:center;
   border-radius:50%;background:#EBE8DF;
-  cursor:pointer;font-size:14px;color:#666;
+  cursor:pointer;font-size:13px;color:#666;
   -webkit-tap-highlight-color:transparent;flex-shrink:0;
 }
 .xk-think-close:active{background:#DEDAD3}
 .xk-think-body{
   flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
-  padding:16px 18px 20px;
+  padding:14px 18px 16px;
   font-size:13.5px;color:#6E6D66;font-weight:400;
   font-family:-apple-system,'PingFang SC',sans-serif;
   line-height:1.85;white-space:pre-wrap;word-break:break-word;
