@@ -7,6 +7,14 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#F5F2EA">
 <link rel="stylesheet" href="style.css?v=119">
+<style>
+/* 强制覆盖：topbar和bar不用fixed，融入flex文档流 */
+#page-xiaoke{display:flex!important;flex-direction:column!important;overflow:hidden!important}
+.xk-topbar{position:static!important;flex-shrink:0!important;background:#F5F2EA!important;display:flex!important;align-items:center!important;padding:calc(env(safe-area-inset-top,0px) + 8px) 14px 8px!important;touch-action:manipulation!important;z-index:auto!important}
+.xk-menu-btn{position:static!important;touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important;z-index:auto!important}
+.xk-stream{position:static!important;flex:1!important;overflow-y:auto!important;padding:8px 22px!important;display:flex!important;flex-direction:column!important;-webkit-overflow-scrolling:touch!important}
+.xk-bar{position:static!important;flex-shrink:0!important;background:#F5F2EA!important;padding:10px 14px calc(14px + env(safe-area-inset-bottom,0px)) 14px!important;z-index:auto!important}
+</style>
 </head>
 <body>
 
