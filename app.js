@@ -2277,16 +2277,13 @@ function xkMaybeTime(box){
   xkLastTime=now
 }
 
-function xkAppendMe(text){
+function xkAppendUser(text){
   const box=document.getElementById('xkStream')
   xkMaybeTime(box)
-  const row=document.createElement('div')
-  row.className='xk-row me'
-  const bubble=document.createElement('div')
-  bubble.className='xk-bubble'
-  bubble.textContent=text
-  row.appendChild(bubble)
-  box.appendChild(row)
+  const el=document.createElement('div')
+  el.className='xk-user-msg'
+  el.textContent=text
+  box.appendChild(el)
   box.scrollTop=box.scrollHeight
 }
 
