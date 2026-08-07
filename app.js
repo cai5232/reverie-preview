@@ -2393,6 +2393,9 @@ async function xkCallAI(){
 document.addEventListener('DOMContentLoaded',()=>{
   loadHeaderAvatar()
 
+  mcpInitDefaults()
+  mcpRenderList()
+
   const mcpTa=document.getElementById('mcpCustomInput')
   if(mcpTa){
     mcpTa.addEventListener('input',function(){
