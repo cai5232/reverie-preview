@@ -492,7 +492,7 @@ function navTo(name){
   <!-- 服务器列表 -->
   <div id="mcpPageList" style="height:100%;overflow-y:auto">
     <div class="mcp-topbar">
-      <div class="mcp-topbar-left" onclick="openSidebar()">
+      <div class="mcp-topbar-left" ontouchend="event.preventDefault();openSidebar()" onclick="openSidebar()">
         <svg width="20" height="14" viewBox="0 0 20 14" fill="none"><path d="M1 1h18M1 7h12M1 13h8" stroke="#1F1E1D" stroke-width="1.8" stroke-linecap="round"/></svg>
       </div>
       <div class="mcp-topbar-title">MCP 服务器</div>
