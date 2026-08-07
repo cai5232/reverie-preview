@@ -2325,7 +2325,7 @@ async function xkSend(){
   if(!text)return
   ta.value=''
   ta.style.height='auto'
-  xkAppendMe(text)
+  xkAppendUser(text)
   xkHistory.push({role:'user',content:text})
   if(xkHistory.length>60)xkHistory=xkHistory.slice(-60)
   localStorage.setItem('xk_history',JSON.stringify(xkHistory))
