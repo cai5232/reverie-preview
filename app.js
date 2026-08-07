@@ -2045,13 +2045,17 @@ function xkStartStreamBlock(thinkText){
   return block
 }
 
-// 简单 markdown 渲染：**bold** → <strong>，# 标题 → 去掉#，其余纯文本
-function xkMdToHtml(text){
-  return text
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g,'<em>$1</em>')
-    .replace(/^#{1,6}\s+(.+)$/gm,'$1')
+// 流式完成后对 block 做一次 markdown 渲染
+function xkApplyMarkdown(block){
+  block.querySelectorAll('.xk-ai-para').forEach(p=>{
+    const raw=p.textContent||''
+    const html=raw
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/^#{1,6}\s+(.+)$/gm,'$1')
+      .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+      .replace(/\*([^*\n]+?)\*/g,'<em>$1</em>')
+    p.innerHTML=html
+  })
 }
 
 function xkStreamAppend(block, chunk){
@@ -2059,10 +2063,9 @@ function xkStreamAppend(block, chunk){
   const cursor=block._cursor
   let curPara=block._curPara
 
-  // 过滤多余的 markdown 标记（# 开头的标题行去掉 #）
+  // 去掉 # 标题标记，双换行新起一段，其余纯文本追加（不做 innerHTML，保证流式轻量）
   const clean=chunk.replace(/^#+\s*/gm,'')
 
-  // 双换行新起一段
   const parts=clean.split(/\n\n/)
   parts.forEach((part,i)=>{
     if(i>0){
@@ -2075,17 +2078,7 @@ function xkStreamAppend(block, chunk){
       newPara.appendChild(cursor)
     }
     if(part){
-      // 用 innerHTML 支持 **bold**
-      const html=part
-        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-        .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-        .replace(/\*([^*\n]+?)\*/g,'<em>$1</em>')
-      // 插到 cursor 前面
-      const tmp=document.createElement('span')
-      tmp.innerHTML=html
-      while(tmp.firstChild){
-        curPara.insertBefore(tmp.firstChild,cursor)
-      }
+      curPara.insertBefore(document.createTextNode(part),cursor)
     }
   })
   box.scrollTop=box.scrollHeight
@@ -2093,6 +2086,8 @@ function xkStreamAppend(block, chunk){
 
 function xkStreamDone(block){
   if(block._cursor)block._cursor.remove()
+  // 完成后一次性渲染 markdown
+  xkApplyMarkdown(block)
 }
 
 async function xkSend(){
