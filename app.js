@@ -466,9 +466,19 @@ async function callAI(){
     let thinkDone=false
     let thinkInserted=false
     let firstRow=null
-    // placeholderRow 先用来流式追加正文
     const textNode=document.createElement('div')
     placeholderBubble.insertBefore(textNode,cursor)
+
+    // RAF批量写入，避免每个token触发reflow
+    let pendingText=''
+    let rafId=null
+    const flushText=()=>{
+      if(pendingText){textNode.textContent+=pendingText;pendingText=''}
+      const box=document.getElementById('messages')
+      if(box)box.scrollTop=box.scrollHeight
+      rafId=null
+    }
+    const scheduleFlush=()=>{if(!rafId)rafId=requestAnimationFrame(flushText)}
 
     while(true){
       const {done,value}=await reader.read()
@@ -482,13 +492,11 @@ async function callAI(){
         try{j=JSON.parse(data)}catch{continue}
         const delta=j.choices?.[0]?.delta
         if(!delta)continue
-        // thinking 字段
         if(delta.thinking!==undefined){thinkBuf+=delta.thinking||'';continue}
         if(delta.reasoning_content!==undefined){thinkBuf+=delta.reasoning_content||'';continue}
         const tok=delta.content||''
         if(!tok)continue
         fullRaw+=tok
-        // 解析 <think> 标签
         if(!thinkDone){
           let t=tok
           if(!inThink&&t.includes('<think>')){inThink=true;t=t.slice(t.indexOf('<think>')+7)}
@@ -497,18 +505,15 @@ async function callAI(){
               thinkBuf+=t.slice(0,t.indexOf('</think>'))
               const after=t.slice(t.indexOf('</think>')+8)
               inThink=false;thinkDone=true
-              bodyBuf+=after
-              textNode.textContent+=after
+              bodyBuf+=after;pendingText+=after;scheduleFlush()
             }else{thinkBuf+=t}
             continue
           }else{thinkDone=true}
         }
-        bodyBuf+=tok
-        textNode.textContent+=tok
-        const box=document.getElementById('messages')
-        if(box)box.scrollTop=box.scrollHeight
+        bodyBuf+=tok;pendingText+=tok;scheduleFlush()
       }
     }
+    if(rafId){cancelAnimationFrame(rafId);flushText()}
     cursor.remove()
     // thinking 注入
     if(thinkBuf&&!thinkInserted){
