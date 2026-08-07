@@ -2209,10 +2209,12 @@ async function xkCallAI(){
         let j
         try{j=JSON.parse(data)}catch{continue}
         const delta=j.choices?.[0]?.delta
+        // usage（在最后一个chunk里）
+        if(j.usage){
+          if(!xkCallAI._lastUsage)xkCallAI._lastUsage={}
+          xkCallAI._lastUsage=j.usage
+        }
         if(!delta)continue
-
-        // thinking content
-        if(delta.thinking!==undefined){
           const tok=delta.thinking||''
           if(tok){thinkBuf+=tok;ensureThinkLive();pendingThink+=tok;scheduleThinkFlush()}
           continue
