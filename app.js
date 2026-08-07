@@ -2416,7 +2416,8 @@ document.addEventListener('DOMContentLoaded',()=>{
     xkMenuBtn.addEventListener('click',function(){openSidebar()})
   }
 
-  const xkta=document.getElementById('xkInput')  if(xkta){
+  const xkta=document.getElementById('xkInput')
+  if(xkta){
     xkta.addEventListener('input',function(){
       this.style.height='auto'
       this.style.height=Math.min(this.scrollHeight,140)+'px'
