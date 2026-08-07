@@ -95,15 +95,15 @@
 <!-- CHAT -->
 <div class="page active" id="page-xiaoke">
 
-  <div class="xk-topbar">
-    <button class="xk-menu-btn" id="xkMenuBtn">
+  <div class="xk-topbar" style="position:relative!important;z-index:50!important;flex-shrink:0!important;display:flex!important;background:#F5F2EA!important;padding:calc(env(safe-area-inset-top,0px) + 8px) 14px 8px!important;touch-action:manipulation!important">
+    <button class="xk-menu-btn" id="xkMenuBtn" ontouchend="event.preventDefault();openSidebar()" onclick="openSidebar()" style="position:relative!important;z-index:51!important;width:44px!important;height:44px!important;background:none!important;border:none!important;touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important;cursor:pointer!important;display:flex!important;align-items:center!important;justify-content:center!important">
       <svg width="20" height="14" viewBox="0 0 20 14" fill="none">
         <path d="M1 1h18M1 7h12M1 13h8" stroke="#1F1E1D" stroke-width="1.8" stroke-linecap="round"/>
       </svg>
     </button>
   </div>
 
-  <div class="xk-stream" id="xkStream"></div>
+  <div class="xk-stream" id="xkStream" style="position:static!important;flex:1!important;overflow-y:auto!important"></div>
 
   <div class="xk-bar">
     <div class="xk-composer-card">
