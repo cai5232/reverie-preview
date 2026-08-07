@@ -2179,32 +2179,238 @@ async function xkSend(){
   xkHistory.push({role:'user',content:text})
   if(xkHistory.length>60)xkHistory=xkHistory.slice(-60)
   localStorage.setItem('xk_history',JSON.stringify(xkHistory))
-  // 重置：新消息发出去，自动跟底
   const box=document.getElementById('xkStream')
   if(box)box._userScrolled=false
   await xkCallAI()
 }
 
+// 前端 agentic loop：流式输出 + 检测tool_call + 调MCP + 继续
 async function xkCallAI(){
   xkBusy=true
   const btn=document.getElementById('xkSendBtn')
   if(btn)btn.disabled=true
 
-  const typing=xkTypingEl()
+  const {mcp_tools, mcp_servers} = buildActivatedToolsPayload()
+  // 去掉前端不需要传给模型的key
+  const sendOptions = {}
+  if(mcp_tools) sendOptions.tools = mcp_tools
+
+  await xkAgenticLoop(sendOptions, mcp_servers, 0)
+
+  xkBusy=false
+  if(btn)btn.disabled=false
+}
+
+// 单轮：流式拿模型输出，检测tool_calls，调工具，递归下一轮
+async function xkAgenticLoop(sendOptions, mcpServerMap, round){
+  if(round > 8) return
+
+  const typing = xkTypingEl()
 
   try{
-    const res=await fetch(cfg.api+'/chat/completions',{
+    const body = {
+      model: cfg.model,
+      messages: [{role:'system',content:SYSTEM_PROMPT},...xkHistory],
+      stream: true,
+      stream_options: {include_usage: true},
+      temperature: cfg.temp,
+      ...sendOptions
+    }
+
+    const res = await fetch(cfg.api+'/chat/completions',{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key,'X-Session-Id':'reverie-yy'},
-      body:JSON.stringify({
-        model:cfg.model,
-        messages:[{role:'system',content:SYSTEM_PROMPT},...xkHistory],
-        stream:true,
-        stream_options:{include_usage:true},
-        temperature:cfg.temp,
-        ...buildActivatedToolsPayload()
-      })
+      body: JSON.stringify(body)
     })
+    if(!res.ok) throw new Error('HTTP '+res.status)
+
+    const reader = res.body.getReader()
+    const decoder = new TextDecoder()
+
+    let thinkBuf=''
+    let bodyBuf=''
+    let inThink=false
+    let thinkDone=false
+    let streamBlock=null
+    let thinkLiveEl=null
+    let thinkLivePara=null
+    let toolCallsAccum={}  // id -> {name, arguments}
+    let finishReason=''
+
+    typing.remove()
+
+    function ensureThinkLive(){
+      if(thinkLiveEl)return
+      const box=document.getElementById('xkStream')
+      thinkLiveEl=document.createElement('div')
+      thinkLiveEl.className='xk-think-live'
+      const hd=document.createElement('div')
+      hd.className='xk-think-live-head'
+      hd.innerHTML=`<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#A6A39A" stroke-width="1.1"/><path d="M6 3.2v2.8l1.4 1.4" stroke="#A6A39A" stroke-width="1.1" stroke-linecap="round"/></svg><span>Thinking</span><span class="xk-think-live-dot"></span>`
+      thinkLivePara=document.createElement('div')
+      thinkLivePara.className='xk-think-live-body'
+      thinkLiveEl.appendChild(hd)
+      thinkLiveEl.appendChild(thinkLivePara)
+      box.appendChild(thinkLiveEl)
+      box.scrollTop=box.scrollHeight
+    }
+    function collapseThinkLive(){
+      if(!thinkLiveEl)return
+      thinkLiveEl.classList.add('collapsing')
+      setTimeout(()=>{if(thinkLiveEl&&thinkLiveEl.parentNode)thinkLiveEl.parentNode.removeChild(thinkLiveEl);thinkLiveEl=null;thinkLivePara=null},300)
+    }
+
+    let pendingThink='',thinkRafId=null
+    const flushThink=()=>{if(pendingThink&&thinkLivePara){thinkLivePara.textContent+=pendingThink;pendingThink='';const b=document.getElementById('xkStream');if(b&&!b._userScrolled)b.scrollTop=b.scrollHeight}thinkRafId=null}
+    const scheduleThinkFlush=()=>{if(!thinkRafId)thinkRafId=requestAnimationFrame(flushThink)}
+    let pendingBody='',bodyRafId=null
+    const flushBody=()=>{if(pendingBody&&streamBlock){xkStreamAppend(streamBlock,pendingBody);pendingBody=''}bodyRafId=null}
+    const scheduleBodyFlush=()=>{flushBody()}
+
+    while(true){
+      const {done,value}=await reader.read()
+      if(done)break
+      const chunk=decoder.decode(value,{stream:true})
+      for(const line of chunk.split('\n')){
+        if(!line.startsWith('data:'))continue
+        const data=line.slice(5).trim()
+        if(data==='[DONE]')break
+        let j;try{j=JSON.parse(data)}catch{continue}
+        if(j.usage&&!xkCallAI._lastUsage)xkCallAI._lastUsage=j.usage
+        if(j.usage)xkCallAI._lastUsage=j.usage
+        const choice=j.choices?.[0]
+        if(!choice)continue
+        finishReason=choice.finish_reason||finishReason
+        const delta=choice.delta||{}
+
+        // thinking
+        if(delta.thinking!==undefined){const tok=delta.thinking||'';if(tok){thinkBuf+=tok;ensureThinkLive();pendingThink+=tok;scheduleThinkFlush()};continue}
+        if(delta.reasoning_content!==undefined){const tok=delta.reasoning_content||'';if(tok){thinkBuf+=tok;ensureThinkLive();pendingThink+=tok;scheduleThinkFlush()};continue}
+
+        // tool_calls 累积
+        if(delta.tool_calls){
+          for(const tc of delta.tool_calls){
+            const idx=tc.index??0
+            if(!toolCallsAccum[idx])toolCallsAccum[idx]={id:'',name:'',arguments:''}
+            if(tc.id)toolCallsAccum[idx].id=tc.id
+            if(tc.function?.name)toolCallsAccum[idx].name+=tc.function.name
+            if(tc.function?.arguments)toolCallsAccum[idx].arguments+=tc.function.arguments
+          }
+          continue
+        }
+
+        // 正文
+        const text=delta.content||''
+        if(!text)continue
+        if(!thinkDone){
+          let t=text
+          if(!inThink&&t.includes('<think>')){inThink=true;t=t.slice(t.indexOf('<think>')+7)}
+          if(inThink){
+            if(t.includes('</think>')){thinkBuf+=t.slice(0,t.indexOf('</think>'));const ap=t.slice(t.indexOf('</think>')+8);inThink=false;thinkDone=true;if(thinkRafId){cancelAnimationFrame(thinkRafId);flushThink()}collapseThinkLive();if(ap){bodyBuf+=ap;if(!streamBlock)streamBlock=xkStartStreamBlock(null);pendingBody+=ap;scheduleBodyFlush()}}
+            else{thinkBuf+=t;ensureThinkLive();pendingThink+=t;scheduleThinkFlush()}
+            continue
+          }else{thinkDone=true}
+        }
+        if(!streamBlock){if(thinkRafId){cancelAnimationFrame(thinkRafId);flushThink()}collapseThinkLive();streamBlock=xkStartStreamBlock(null)}
+        bodyBuf+=text;pendingBody+=text;scheduleBodyFlush()
+      }
+    }
+    if(bodyRafId){cancelAnimationFrame(bodyRafId);flushBody()}
+    if(thinkRafId){cancelAnimationFrame(thinkRafId);flushThink()}
+    if(thinkLiveEl)collapseThinkLive()
+    if(streamBlock)xkStreamDone(streamBlock)
+
+    // 有 tool_calls → 调工具，继续下一轮
+    const toolCallsList = Object.values(toolCallsAccum).filter(tc=>tc.name)
+    if(toolCallsList.length && finishReason !== 'stop'){
+      // assistant message 存进历史（带tool_calls）
+      const assistantMsg = {
+        role:'assistant',
+        content: bodyBuf||null,
+        tool_calls: toolCallsList.map(tc=>({id:tc.id||('call_'+Date.now()),type:'function',function:{name:tc.name,arguments:tc.arguments}}))
+      }
+      xkHistory.push(assistantMsg)
+
+      // 逐个调工具，显示状态
+      for(const tc of assistantMsg.tool_calls){
+        const toolName=tc.function.name
+        const toolArgs=JSON.parse(tc.function.arguments||'{}')
+        const serverInfo=mcpServerMap?.[toolName]
+
+        // 显示"正在调用 xxx"
+        const statusEl=xkShowToolStatus(toolName,'loading')
+
+        let toolResult=''
+        if(serverInfo){
+          try{
+            const mcpRes=await mcpProxyFetch(serverInfo.url,{jsonrpc:'2.0',id:Date.now(),method:'tools/call',params:{name:toolName,arguments:toolArgs}},serverInfo.extraHeaders||{})
+            const content=mcpRes?.data?.result?.content||mcpRes?.result?.content||[]
+            if(Array.isArray(content)){toolResult=content.map(c=>c.text||JSON.stringify(c)).join('\n')}
+            else{toolResult=JSON.stringify(mcpRes?.data?.result||mcpRes)}
+            xkUpdateToolStatus(statusEl,toolName,'done')
+          }catch(e){
+            toolResult='工具调用失败: '+e.message
+            xkUpdateToolStatus(statusEl,toolName,'error')
+          }
+        }else{
+          toolResult='找不到工具 '+toolName+' 对应的服务器'
+          xkUpdateToolStatus(statusEl,toolName,'error')
+        }
+
+        xkHistory.push({role:'tool',tool_call_id:tc.id,content:toolResult})
+      }
+
+      localStorage.setItem('xk_history',JSON.stringify(xkHistory))
+      // 继续下一轮（不带 tools，让模型直接输出最终回复）
+      await xkAgenticLoop({}, mcpServerMap, round+1)
+      return
+    }
+
+    // 正常结束，存历史
+    const usage=xkCallAI._lastUsage||{}
+    const totalTokens=usage.total_tokens||usage.completion_tokens||0
+    if(streamBlock){
+      xkAddActions(streamBlock,totalTokens)
+      if(thinkBuf){
+        const tw=document.createElement('div');tw.className='xk-thinking'
+        const btn2=document.createElement('div');btn2.className='xk-think-btn'
+        btn2.innerHTML=`<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.7" stroke="#A6A39A" stroke-width="1.1"/><path d="M6.5 3.8v3l1.7 1.7" stroke="#A6A39A" stroke-width="1.1" stroke-linecap="round"/></svg>Thinking`
+        const t=thinkBuf;btn2.onclick=()=>xkOpenThink(t);tw.appendChild(btn2);streamBlock.insertBefore(tw,streamBlock.firstChild)
+      }
+    }
+    if(!streamBlock&&(thinkBuf||bodyBuf)){xkRenderAI(bodyBuf||'(´・ω・`)',thinkBuf||null)}
+    const reconstructed=streamBlock?Array.from(streamBlock.querySelectorAll('.xk-ai-para')).map(p=>p.textContent).join('\n\n'):bodyBuf
+    const histContent=thinkBuf?`[THINK]${thinkBuf}[/THINK]${reconstructed}`:reconstructed
+    xkHistory.push({role:'assistant',content:histContent,tokens:totalTokens||0})
+    if(xkHistory.length>60)xkHistory=xkHistory.slice(-60)
+    localStorage.setItem('xk_history',JSON.stringify(xkHistory))
+
+  }catch(err){
+    if(typing.parentNode)typing.remove()
+    const box=document.getElementById('xkStream')
+    const el=document.createElement('p');el.className='xk-ai-para';el.style.color='#ff453a'
+    el.textContent='连接失败：'+(err.message||'unknown');box.appendChild(el);box.scrollTop=box.scrollHeight
+  }
+}
+
+// 显示工具调用状态卡片
+function xkShowToolStatus(toolName, state){
+  const box=document.getElementById('xkStream')
+  const el=document.createElement('div')
+  el.style.cssText='display:flex;align-items:center;gap:8px;padding:8px 12px;margin:4px 0;background:#F5F2EA;border-radius:10px;font-size:13px;color:#888;font-family:-apple-system,"PingFang SC",sans-serif'
+  el.innerHTML=xkToolStatusHTML(toolName,state)
+  box.appendChild(el)
+  box.scrollTop=box.scrollHeight
+  return el
+}
+function xkToolStatusHTML(toolName,state){
+  const icon=state==='loading'?`<svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="animation:xkdot 1s infinite"><circle cx="7" cy="7" r="6" stroke="#A6A39A" stroke-width="1.2"/><path d="M7 4v3l2 2" stroke="#A6A39A" stroke-width="1.2" stroke-linecap="round"/></svg>`:state==='done'?`<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="#E9F8ED"/><path d="M4 7l2.5 2.5 4-4" stroke="#34C759" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>`:`<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="#FFF0F0"/><path d="M5 5l4 4M9 5l-4 4" stroke="#FF3B30" stroke-width="1.3" stroke-linecap="round"/></svg>`
+  const label=state==='loading'?`正在调用 <b style="color:#555">${escHtml(toolName)}</b>…`:state==='done'?`已调用 <b style="color:#555">${escHtml(toolName)}</b>`:` <b style="color:#555">${escHtml(toolName)}</b> 调用失败`
+  return icon+`<span>${label}</span>`
+}
+function xkUpdateToolStatus(el,toolName,state){
+  if(el)el.innerHTML=xkToolStatusHTML(toolName,state)
+}
     if(!res.ok)throw new Error('HTTP '+res.status)
 
     const reader=res.body.getReader()
