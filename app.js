@@ -2613,7 +2613,92 @@ function _xkBtn(svgStr, label, cls='xk-action-btn'){
   btn.innerHTML=svgStr
   return btn
 }
-function xkRenderThem(text, thinking){
+// ── MCP 工具调用 ──
+let _mcpTool=''
+let _mcpFields=[]
+
+function mcpShowResult(title,text){
+  const wrap=document.getElementById('mcpResult')
+  document.getElementById('mcpResultTitle').textContent=title
+  document.getElementById('mcpResultBody').textContent=text
+  wrap.style.display='block'
+  wrap.scrollIntoView({behavior:'smooth',block:'nearest'})
+}
+
+async function mcpRun(tool){
+  mcpShowResult(tool,'请求中…')
+  const msg=`请现在调用 ${tool} 工具，把结果原文返回给我，不要总结。`
+  try{
+    const res=await fetch(cfg.api+'/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key,'X-Session-Id':'reverie-yy'},
+      body:JSON.stringify({model:cfg.model,messages:[{role:'system',content:SYSTEM_PROMPT},{role:'user',content:msg}],stream:false,temperature:0.1})
+    })
+    const j=await res.json()
+    mcpShowResult(tool,(j.choices?.[0]?.message?.content||'').trim()||'（无结果）')
+  }catch(e){mcpShowResult(tool,'失败：'+e.message)}
+}
+
+async function mcpFish(cmd){
+  mcpShowResult('fishing: '+cmd,'请求中…')
+  const msg=`请帮我在钓鱼游戏里执行指令：${cmd}，把结果原文返回给我。`
+  try{
+    const res=await fetch(cfg.api+'/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key,'X-Session-Id':'reverie-yy'},
+      body:JSON.stringify({model:cfg.model,messages:[{role:'system',content:SYSTEM_PROMPT},{role:'user',content:msg}],stream:false,temperature:0.1})
+    })
+    const j=await res.json()
+    mcpShowResult('fishing: '+cmd,(j.choices?.[0]?.message?.content||'').trim()||'（无结果）')
+  }catch(e){mcpShowResult('fishing: '+cmd,'失败：'+e.message)}
+}
+
+function mcpShowInput(tool,fieldsStr,desc){
+  _mcpTool=tool
+  _mcpFields=fieldsStr.split(',').map(s=>s.trim()).filter(Boolean)
+  document.getElementById('mcpModalTitle').textContent=tool
+  const container=document.getElementById('mcpModalFields')
+  container.innerHTML=_mcpFields.map(f=>`<div class="mcp-modal-field"><label>${f}</label>${f==='body'||f==='content'?`<textarea id="mcpField_${f}" placeholder="${f}"></textarea>`:`<input id="mcpField_${f}" placeholder="${f}">`}</div>`).join('')
+  document.getElementById('mcpModalOverlay').classList.add('open')
+  setTimeout(()=>{const el=container.querySelector('input,textarea');if(el)el.focus()},150)
+}
+
+function closeMcpModal(){document.getElementById('mcpModalOverlay').classList.remove('open')}
+
+async function mcpSubmitModal(){
+  const params={}
+  _mcpFields.forEach(f=>{const el=document.getElementById('mcpField_'+f);if(el)params[f]=el.value.trim()})
+  closeMcpModal()
+  const paramsDesc=Object.entries(params).map(([k,v])=>`${k}="${v}"`).join('，')
+  const msg=`请帮我调用 ${_mcpTool} 工具，参数：${paramsDesc}。把结果原文返回给我。`
+  mcpShowResult(_mcpTool,'请求中…')
+  try{
+    const res=await fetch(cfg.api+'/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key,'X-Session-Id':'reverie-yy'},
+      body:JSON.stringify({model:cfg.model,messages:[{role:'system',content:SYSTEM_PROMPT},{role:'user',content:msg}],stream:false,temperature:0.1})
+    })
+    const j=await res.json()
+    mcpShowResult(_mcpTool,(j.choices?.[0]?.message?.content||'').trim()||'（无结果）')
+  }catch(e){mcpShowResult(_mcpTool,'失败：'+e.message)}
+}
+
+async function mcpRunCustom(){
+  const ta=document.getElementById('mcpCustomInput')
+  const cmd=ta.value.trim()
+  if(!cmd)return
+  ta.value='';ta.style.height='auto'
+  mcpShowResult('自定义指令','请求中…')
+  try{
+    const res=await fetch(cfg.api+'/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key,'X-Session-Id':'reverie-yy'},
+      body:JSON.stringify({model:cfg.model,messages:[{role:'system',content:SYSTEM_PROMPT},{role:'user',content:cmd}],stream:false,temperature:0.5})
+    })
+    const j=await res.json()
+    mcpShowResult('自定义指令',(j.choices?.[0]?.message?.content||'').trim()||'（无结果）')
+  }catch(e){mcpShowResult('自定义指令','失败：'+e.message)}
+}
   xkRenderAI(text||'', thinking||null)
 }
 const xkAppendMe=xkAppendUser
