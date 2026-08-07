@@ -2246,7 +2246,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(ml){
     const m=(cfg.model||'').replace(/-thinking/gi,'').replace(/-latest/gi,'')
     const match=m.match(/(sonnet|opus|haiku|flash|gemini|gpt)([-\w]*)/i)
-    ml.textContent=match?match[1]+match[2]:m.slice(0,14)
+    ml.textContent=match?match[1]+match[2]:m.replace(/-thinking/gi,'').slice(0,14)
   }
 
   applyKeepalive()
