@@ -2078,6 +2078,20 @@ function xkStreamDone(block){
 }
 
 async function xkSend(){
+  if(xkBusy)return
+  const ta=document.getElementById('xkInput')
+  const text=ta.value.trim()
+  if(!text)return
+  ta.value=''
+  ta.style.height='auto'
+  xkAppendUser(text)
+  xkHistory.push({role:'user',content:text})
+  if(xkHistory.length>60)xkHistory=xkHistory.slice(-60)
+  localStorage.setItem('xk_history',JSON.stringify(xkHistory))
+  await xkCallAI()
+}
+
+async function xkCallAI(){
   xkBusy=true
   const btn=document.getElementById('xkSendBtn')
   if(btn)btn.disabled=true
