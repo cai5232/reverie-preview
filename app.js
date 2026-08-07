@@ -2079,8 +2079,11 @@ function xkStreamAppend(block, chunk){
       curPara.insertBefore(document.createTextNode(part),cursor)
     }
   })
-  // 用 cursor 自身 scrollIntoView，iOS 上比 scrollTop=scrollHeight 更可靠
-  cursor.scrollIntoView({block:'nearest',inline:'nearest'})
+
+  const box=document.getElementById('xkStream')
+  if(box&&!box._userScrolled){
+    box.scrollTop=box.scrollHeight
+  }
 }
 
 function xkStreamDone(block){
