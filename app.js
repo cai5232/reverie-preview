@@ -2922,13 +2922,15 @@ function mcpSaveServer(){
 function mcpSaveServer(){
   const name = document.getElementById('mcpAddName').value.trim()
   const url = document.getElementById('mcpAddUrl').value.trim()
-  const auth = document.getElementById('mcpAddAuth').value.trim()
   if(!url){ showToast('请填写服务器地址'); return }
+  const extraHeaders = parseHeadersInput()
+  // 如果自定义请求头里有Authorization，提取出来作为auth字段
+  const auth = extraHeaders['Authorization'] || extraHeaders['authorization'] || ''
   if(_mcpEditMode){
     const s = _mcpServers.find(x=>x.id===_mcpCurrentServerId)
-    if(s){ s.name=name||url; s.url=url; s.auth=auth; s.type=_mcpAddType; s.status='unknown'; s.extraHeaders=parseHeadersInput() }
+    if(s){ s.name=name||url; s.url=url; s.auth=auth; s.type=_mcpAddType; s.status='unknown'; s.extraHeaders=extraHeaders }
   }else{
-    _mcpServers.push({id:'s'+Date.now(), name:name||url, url, auth, type:_mcpAddType, status:'unknown', tools:[], extraHeaders:parseHeadersInput()})
+    _mcpServers.push({id:'s'+Date.now(), name:name||url, url, auth, type:_mcpAddType, status:'unknown', tools:[], extraHeaders})
   }
   mcpSave()
   closeMcpAdd()
