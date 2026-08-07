@@ -2494,7 +2494,7 @@ function xkAddActions(block, tokens){
   }
 
   // 删除
-  const btnDel=_xkBtn(`<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2.5 4h10M5 4V2.5h5V4M6 7v4M9 7v4M3 4l.8 8.5a1 1 0 001 .9h5.4a1 1 0 001-.9L12 4" stroke="#ff6b6b" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,'删除','xk-action-btn danger')
+  const btnDel=_xkBtn(`<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2.5 4h10M5 4V2.5h5V4M6 7v4M9 7v4M3 4l.8 8.5a1 1 0 001 .9h5.4a1 1 0 001-.9L12 4" stroke="#A6A39A" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,'删除')
   btnDel.onclick=()=>{
     for(let i=xkHistory.length-1;i>=0;i--){
       if(xkHistory[i].role==='assistant'){xkHistory.splice(i,1);break}
