@@ -2315,8 +2315,34 @@ document.addEventListener('DOMContentLoaded',()=>{
     },{passive:false})
   }
 
-  // 键盘推bar
-  const bar=document.querySelector('#page-xiaoke .xk-bar')
+  // xkStream：检测用户是否主动往上翻，翻了就停止自动跟底
+  const xkBox=document.getElementById('xkStream')
+  if(xkBox){
+    let _touchStartY=0
+    xkBox.addEventListener('touchstart',e=>{
+      _touchStartY=e.touches[0].clientY
+    },{passive:true})
+    xkBox.addEventListener('touchmove',e=>{
+      const dy=e.touches[0].clientY-_touchStartY
+      if(dy>10){
+        // 手指往下移（即往上翻页面）
+        xkBox._userScrolled=true
+      }
+    },{passive:true})
+    xkBox.addEventListener('touchend',()=>{
+      // 如果已经滑到底了，恢复自动跟底
+      const atBottom=xkBox.scrollHeight-xkBox.scrollTop-xkBox.clientHeight<40
+      if(atBottom)xkBox._userScrolled=false
+    },{passive:true})
+    // 鼠标滚轮（桌面端）
+    xkBox.addEventListener('wheel',e=>{
+      if(e.deltaY<0)xkBox._userScrolled=true
+      else{
+        const atBottom=xkBox.scrollHeight-xkBox.scrollTop-xkBox.clientHeight<40
+        if(atBottom)xkBox._userScrolled=false
+      }
+    },{passive:true})
+  }
   function onVP(){
     const vp=window.visualViewport
     if(!vp||!bar)return
