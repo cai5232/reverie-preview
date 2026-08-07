@@ -549,7 +549,9 @@ async function callAI(){
       const row=appendMsg('them',segs[i],null,null,null,false,!isLast)
       await sleep(280+Math.random()*160)
     }
-    saveChatHistory('assistant',fullRaw||finalBody)
+    // 存历史时把心声包进标签，renderChat 解析时才能找到
+    const saveContent=thinkBuf?`[心声]${thinkBuf}[/心声]${finalBody}`:(fullRaw||finalBody)
+    saveChatHistory('assistant',saveContent)
     if(cfg.notify&&document.hidden&&Notification.permission==='granted'){
       new Notification('小克回复了',{body:segs[0].replace(/\*[^*]+\*/g,'').slice(0,50)})
     }
