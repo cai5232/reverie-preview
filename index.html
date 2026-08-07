@@ -461,126 +461,88 @@
 <div class="page" id="page-letter"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Letter</div><div class="sub-desc">情书</div><div class="card">待开发</div></div></div>
 <div class="page" id="page-couple"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Couple Space</div><div class="sub-desc">我们的空间</div><div class="card">待开发</div></div></div>
 <div class="page" id="page-mcp">
-  <div class="header-sub">
-    <div class="header-sub-menu" onclick="openSidebar()">
-      <svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg>
+  <!-- 服务器列表 -->
+  <div id="mcpPageList" style="height:100%;overflow-y:auto">
+    <div class="mcp-topbar">
+      <div class="mcp-topbar-left" onclick="openSidebar()">
+        <svg width="20" height="14" viewBox="0 0 20 14" fill="none"><path d="M1 1h18M1 7h12M1 13h8" stroke="#1F1E1D" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </div>
+      <div class="mcp-topbar-title">MCP 服务器</div>
+      <div class="mcp-topbar-actions">
+        <div class="mcp-topbar-btn" onclick="mcpPingAll()" title="测试连接">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="#555" stroke-width="1.3"/><path d="M8 4.5v3.5l2 2" stroke="#555" stroke-width="1.3" stroke-linecap="round"/></svg>
+        </div>
+        <div class="mcp-topbar-btn" onclick="mcpShowAdd()" title="添加服务器">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="#555" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+      </div>
     </div>
-    <div style="font-size:15px;font-weight:600;color:#111;flex:1;text-align:center">MCP 工具</div>
-    <div style="width:36px"></div>
+    <div class="mcp-server-list" id="mcpServerList"></div>
   </div>
-  <div class="sub-page" style="padding:0">
 
-    <!-- OB记忆 -->
-    <div class="mcp-section">
-      <div class="mcp-section-label">OB 记忆</div>
-      <div class="mcp-tool-row" onclick="mcpRun('breath')">
-        <div class="mcp-tool-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="#555" stroke-width="1.3"/><path d="M8 4.5v3.5l2 2" stroke="#555" stroke-width="1.3" stroke-linecap="round"/></svg></div>
-        <div class="mcp-tool-info"><div class="mcp-tool-name">breath</div><div class="mcp-tool-desc">浮现高权重记忆</div></div>
-        <div class="mcp-tool-arrow">›</div>
+  <!-- 工具列表（二级页） -->
+  <div id="mcpPageTools" style="display:none;height:100%;overflow-y:auto">
+    <div class="mcp-topbar">
+      <div class="mcp-topbar-left" onclick="mcpBackToList()">
+        <svg width="10" height="16" viewBox="0 0 10 16" fill="none"><path d="M8 1L2 8l6 7" stroke="#1F1E1D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
-      <div class="mcp-tool-row" onclick="mcpShowInput('hold','content,tags,importance','写入一条记忆')">
-        <div class="mcp-tool-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="#555" stroke-width="1.5" stroke-linecap="round"/></svg></div>
-        <div class="mcp-tool-info"><div class="mcp-tool-name">hold</div><div class="mcp-tool-desc">写入一条新记忆</div></div>
-        <div class="mcp-tool-arrow">›</div>
-      </div>
-      <div class="mcp-tool-row" onclick="mcpShowInput('breath_search','query','关键词检索记忆')">
-        <div class="mcp-tool-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.5" stroke="#555" stroke-width="1.3"/><path d="M10.5 10.5l3 3" stroke="#555" stroke-width="1.4" stroke-linecap="round"/></svg></div>
-        <div class="mcp-tool-info"><div class="mcp-tool-name">breath_search</div><div class="mcp-tool-desc">关键词检索记忆</div></div>
-        <div class="mcp-tool-arrow">›</div>
-      </div>
-      <div class="mcp-tool-row" onclick="mcpRun('dream')">
-        <div class="mcp-tool-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13 8A5 5 0 015 3a6 6 0 100 10 5 5 0 008-5z" stroke="#555" stroke-width="1.3"/></svg></div>
-        <div class="mcp-tool-info"><div class="mcp-tool-name">dream</div><div class="mcp-tool-desc">消化近期记忆</div></div>
-        <div class="mcp-tool-arrow">›</div>
-      </div>
-      <div class="mcp-tool-row" onclick="mcpRun('pulse')">
-        <div class="mcp-tool-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1 8h3l2-5 3 9 2-6 2 2h2" stroke="#555" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="mcp-tool-info"><div class="mcp-tool-name">pulse</div><div class="mcp-tool-desc">记忆系统状态</div></div>
-        <div class="mcp-tool-arrow">›</div>
+      <div class="mcp-topbar-title" id="mcpToolsTitle">工具</div>
+      <div class="mcp-topbar-actions">
+        <div class="mcp-topbar-btn" id="mcpEditServerBtn" onclick="mcpShowEdit()">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2 11.5l2-2 6.5-6.5a1.414 1.414 0 012 2L6 11.5H2z" stroke="#555" stroke-width="1.2" stroke-linejoin="round"/><path d="M10 3.5l1.5 1.5" stroke="#555" stroke-width="1.2" stroke-linecap="round"/></svg>
+        </div>
       </div>
     </div>
-
-    <!-- 花园 -->
-    <div class="mcp-section">
-      <div class="mcp-section-label">花园社区</div>
-      <div class="mcp-tool-row" onclick="mcpRun('list_threads')">
-        <div class="mcp-tool-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="10" rx="2" stroke="#555" stroke-width="1.3"/><path d="M5 7h6M5 10h4" stroke="#555" stroke-width="1.2" stroke-linecap="round"/></svg></div>
-        <div class="mcp-tool-info"><div class="mcp-tool-name">list_threads</div><div class="mcp-tool-desc">查看热门帖子</div></div>
-        <div class="mcp-tool-arrow">›</div>
-      </div>
-      <div class="mcp-tool-row" onclick="mcpShowInput('create_thread','title,body,tags','发一篇帖子')">
-        <div class="mcp-tool-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="#555" stroke-width="1.5" stroke-linecap="round"/></svg></div>
-        <div class="mcp-tool-info"><div class="mcp-tool-name">create_thread</div><div class="mcp-tool-desc">发一篇帖子</div></div>
-        <div class="mcp-tool-arrow">›</div>
-      </div>
-      <div class="mcp-tool-row" onclick="mcpRun('list_notifications')">
-        <div class="mcp-tool-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2a4 4 0 014 4v3l1.5 2h-11L4 9V6a4 4 0 014-4z" stroke="#555" stroke-width="1.3"/><path d="M6.5 13.5a1.5 1.5 0 003 0" stroke="#555" stroke-width="1.2"/></svg></div>
-        <div class="mcp-tool-info"><div class="mcp-tool-name">list_notifications</div><div class="mcp-tool-desc">查看通知</div></div>
-        <div class="mcp-tool-arrow">›</div>
-      </div>
-      <div class="mcp-tool-row" onclick="mcpRun('get_self')">
-        <div class="mcp-tool-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="6" r="3" stroke="#555" stroke-width="1.3"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="#555" stroke-width="1.3" stroke-linecap="round"/></svg></div>
-        <div class="mcp-tool-info"><div class="mcp-tool-name">get_self</div><div class="mcp-tool-desc">查看我的账号</div></div>
-        <div class="mcp-tool-arrow">›</div>
-      </div>
-    </div>
-
-    <!-- 钓鱼 -->
-    <div class="mcp-section">
-      <div class="mcp-section-label">钓鱼小游戏</div>
-      <div class="mcp-tool-row" onclick="mcpFish('cast')">
-        <div class="mcp-tool-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 2c0 4 8 4 8 8a4 4 0 01-8 0" stroke="#555" stroke-width="1.3" stroke-linecap="round"/><circle cx="8" cy="13" r="1.2" fill="#555"/></svg></div>
-        <div class="mcp-tool-info"><div class="mcp-tool-name">cast</div><div class="mcp-tool-desc">钓一竿</div></div>
-        <div class="mcp-tool-arrow">›</div>
-      </div>
-      <div class="mcp-tool-row" onclick="mcpFish('status')">
-        <div class="mcp-tool-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="4" width="12" height="9" rx="1.5" stroke="#555" stroke-width="1.3"/><path d="M5 4V3M8 4V2M11 4V3" stroke="#555" stroke-width="1.2" stroke-linecap="round"/></svg></div>
-        <div class="mcp-tool-info"><div class="mcp-tool-name">status</div><div class="mcp-tool-desc">查看状态</div></div>
-        <div class="mcp-tool-arrow">›</div>
-      </div>
-      <div class="mcp-tool-row" onclick="mcpFish('inventory')">
-        <div class="mcp-tool-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="2" width="10" height="12" rx="1.5" stroke="#555" stroke-width="1.3"/><path d="M6 6h4M6 9h3" stroke="#555" stroke-width="1.2" stroke-linecap="round"/></svg></div>
-        <div class="mcp-tool-info"><div class="mcp-tool-name">inventory</div><div class="mcp-tool-desc">查看鱼篓</div></div>
-        <div class="mcp-tool-arrow">›</div>
-      </div>
-      <div class="mcp-tool-row" onclick="mcpFish('sell all')">
-        <div class="mcp-tool-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4h12l-1.5 7H3.5L2 4z" stroke="#555" stroke-width="1.3" stroke-linejoin="round"/><path d="M6 4V3a2 2 0 014 0v1" stroke="#555" stroke-width="1.2"/><circle cx="6.5" cy="12.5" r="1" fill="#555"/><circle cx="10.5" cy="12.5" r="1" fill="#555"/></svg></div>
-        <div class="mcp-tool-info"><div class="mcp-tool-name">sell all</div><div class="mcp-tool-desc">卖出全部</div></div>
-        <div class="mcp-tool-arrow">›</div>
-      </div>
-    </div>
-
-    <!-- 自定义 -->
-    <div class="mcp-section">
-      <div class="mcp-section-label">自定义指令</div>
-      <div class="mcp-custom-wrap">
-        <textarea id="mcpCustomInput" class="mcp-custom-ta" placeholder="输入任意指令，小克来执行..."></textarea>
-        <button class="mcp-custom-btn" onclick="mcpRunCustom()">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M7 2l5 5-5 5" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-      </div>
-    </div>
-
-    <!-- 结果展示 -->
-    <div class="mcp-result-wrap" id="mcpResult" style="display:none">
-      <div class="mcp-result-head">
-        <span id="mcpResultTitle">结果</span>
-        <div onclick="document.getElementById('mcpResult').style.display='none'" style="cursor:pointer;padding:4px 8px;color:#aaa">✕</div>
-      </div>
-      <div class="mcp-result-body" id="mcpResultBody"></div>
-    </div>
-
+    <div class="mcp-tool-list" id="mcpToolList"></div>
   </div>
 </div>
 
-<!-- MCP 参数输入弹窗 -->
-<div class="mcp-modal-overlay" id="mcpModalOverlay" onclick="closeMcpModal()">
+<!-- 添加/编辑服务器弹窗 -->
+<div class="mcp-modal-overlay" id="mcpAddOverlay" onclick="closeMcpAdd()">
   <div class="mcp-modal" onclick="event.stopPropagation()">
-    <div class="mcp-modal-title" id="mcpModalTitle">参数</div>
-    <div id="mcpModalFields"></div>
+    <div class="mcp-modal-title" id="mcpAddTitle">添加 MCP</div>
+    <div class="mcp-modal-field">
+      <label>名称</label>
+      <input id="mcpAddName" placeholder="My MCP">
+    </div>
+    <div class="mcp-modal-field">
+      <label>传输类型</label>
+      <div class="mcp-type-row">
+        <div class="mcp-type-btn active" id="mcpTypeHttp" onclick="mcpSelectType('http')">Streamable HTTP</div>
+        <div class="mcp-type-btn" id="mcpTypeSse" onclick="mcpSelectType('sse')">SSE</div>
+      </div>
+    </div>
+    <div class="mcp-modal-field">
+      <label>服务器地址</label>
+      <input id="mcpAddUrl" placeholder="https://...">
+    </div>
+    <div class="mcp-modal-field">
+      <label>Authorization（可选）</label>
+      <input id="mcpAddAuth" placeholder="Bearer sk-...">
+    </div>
     <div style="display:flex;gap:10px;margin-top:14px">
-      <button class="mcp-modal-btn ghost" onclick="closeMcpModal()">取消</button>
-      <button class="mcp-modal-btn" onclick="mcpSubmitModal()">执行</button>
+      <button class="mcp-modal-btn ghost" onclick="closeMcpAdd()">取消</button>
+      <button class="mcp-modal-btn" onclick="mcpSaveServer()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 工具调用弹窗 -->
+<div class="mcp-modal-overlay" id="mcpCallOverlay" onclick="closeMcpCall()">
+  <div class="mcp-modal" onclick="event.stopPropagation()" style="max-height:80vh">
+    <div class="mcp-modal-title" id="mcpCallTitle">调用工具</div>
+    <div class="mcp-call-desc" id="mcpCallDesc"></div>
+    <div id="mcpCallFields"></div>
+    <div style="display:flex;gap:10px;margin-top:14px">
+      <button class="mcp-modal-btn ghost" onclick="closeMcpCall()">取消</button>
+      <button class="mcp-modal-btn" id="mcpCallSubmit" onclick="mcpDoCall()">调用</button>
+    </div>
+    <div class="mcp-call-result" id="mcpCallResult" style="display:none">
+      <div class="mcp-call-result-head">
+        <span>返回结果</span>
+        <div onclick="document.getElementById('mcpCallResult').style.display='none'" style="cursor:pointer">✕</div>
+      </div>
+      <pre class="mcp-call-result-body" id="mcpCallResultBody"></pre>
     </div>
   </div>
 </div>
