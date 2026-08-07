@@ -314,27 +314,7 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 }
 .xk-send-btn:active{opacity:.7}
 .xk-send-btn:disabled{opacity:.3}
-.xk-icon-btn{
-  width:34px;height:34px;border:none;background:none;
-  display:flex;align-items:center;justify-content:center;
-  border-radius:50%;cursor:pointer;flex-shrink:0;
-  -webkit-tap-highlight-color:transparent;
-}
-.xk-icon-btn:active{background:#ECEAE4}
-.xk-model-label{
-  font-size:13px;color:#6E6D66;
-  background:#ECEAE4;border-radius:20px;
-  padding:4px 12px;cursor:pointer;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px;
-}
-.xk-send-btn{
-  width:36px;height:36px;border:none;background:none;
-  display:flex;align-items:center;justify-content:center;
-  border-radius:50%;cursor:pointer;flex-shrink:0;
-  -webkit-tap-highlight-color:transparent;transition:opacity .15s;
-}
-.xk-send-btn:active{opacity:.6}
-.xk-send-btn:disabled{opacity:.35}
+/* end xk styles */
 .nv-header{display:flex;align-items:center;padding:calc(env(safe-area-inset-top,0px) + 14px) 18px 12px;background:#fff;border-bottom:.5px solid #e8e8e8;flex-shrink:0}
 .nv-header-left{cursor:pointer;padding:2px;margin-right:12px}
 .nv-header-title{flex:1;font-size:17px;font-weight:700;color:#111;letter-spacing:.2px}
