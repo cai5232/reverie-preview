@@ -235,30 +235,7 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
   margin:14px 0 8px;user-select:none;
 }
 
-/* ── 底部输入区 ── */
-.xk-bar{
-  position:fixed;bottom:0;left:0;right:0;max-width:430px;margin:0 auto;z-index:20;
-  background:#F5F4F0;
-  padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px)) 16px;
-}
-.xk-bar-top{
-  background:#fff;border-radius:18px;
-  padding:10px 16px;
-  box-shadow:0 1px 6px rgba(31,30,29,.07);
-  margin-bottom:8px;
-}
-.xk-textarea{
-  width:100%;border:none;background:transparent;outline:none;
-  font-family:ui-serif,Georgia,'PingFang SC',sans-serif;
-  font-size:16px;color:#1F1E1D;line-height:1.55;
-  resize:none;max-height:140px;
-  -webkit-user-select:text;user-select:text;-webkit-appearance:none;
-}
-.xk-textarea::placeholder{color:#B8B6AE}
-.xk-bar-bottom{
-  display:flex;align-items:center;gap:10px;
-  padding:0 4px;
-}
+/* ── 底部输入区 ── (composer-card above)
 .xk-icon-btn{
   width:34px;height:34px;border:none;background:none;
   display:flex;align-items:center;justify-content:center;
