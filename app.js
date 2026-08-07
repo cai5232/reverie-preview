@@ -2352,52 +2352,6 @@ async function xkSend(){
   await xkCallAI()
 }
 
-async function xkCallAI(){
-  xkBusy=true
-  const btn=document.getElementById('xkSendBtn')
-  if(btn)btn.disabled=true
-  const typing=xkTypingRow()
-  try{
-    const res=await fetch(cfg.api+'/chat/completions',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key,'X-Session-Id':'reverie-yy'},
-      body:JSON.stringify({
-        model:cfg.model,
-        messages:[{role:'system',content:SYSTEM_PROMPT},...xkHistory],
-        stream:false,
-        temperature:cfg.temp
-      })
-    })
-    if(!res.ok)throw new Error('HTTP '+res.status)
-    const j=await res.json()
-    const full=(j.choices?.[0]?.message?.content)||''
-    typing.remove()
-    if(!full)throw new Error('empty')
-    // 解析心声
-    let heart='',body=full
-    const hm=full.match(/\[心声\]([\s\S]*?)\[\/心声\]/)
-    if(hm){heart=hm[1].trim();body=full.slice(hm.index+hm[0].length).trim()}
-    xkRenderThem(body,heart)
-    xkHistory.push({role:'assistant',content:full})
-    if(xkHistory.length>60)xkHistory=xkHistory.slice(-60)
-    localStorage.setItem('xk_history',JSON.stringify(xkHistory))
-  }catch(err){
-    typing.remove()
-    const box=document.getElementById('xkStream')
-    const row=document.createElement('div')
-    row.className='xk-row them'
-    const b=document.createElement('div')
-    b.className='xk-bubble'
-    b.style.color='#ff453a'
-    b.textContent='连接失败：'+(err.message||'unknown')
-    row.appendChild(b)
-    box.appendChild(row)
-    box.scrollTop=box.scrollHeight
-  }
-  xkBusy=false
-  if(btn)btn.disabled=false
-}
-
 document.addEventListener('DOMContentLoaded',()=>{
   loadHeaderAvatar()
   // xk input 自动撑高
