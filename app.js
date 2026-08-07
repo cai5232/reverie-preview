@@ -1888,6 +1888,193 @@ function loadHeaderAvatar(){
   if(saved&&img)img.src=saved;
 }
 
+// ── XK Chat ──
+let xkHistory=JSON.parse(localStorage.getItem('xk_history')||'[]')
+let xkBusy=false
+let xkLastTime=0
+
+function xkNewChat(){
+  xkHistory=[]
+  localStorage.setItem('xk_history',JSON.stringify(xkHistory))
+  const s=document.getElementById('xkStream')
+  if(s)s.innerHTML=''
+  xkLastTime=0
+}
+
+function xkEsc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+}
+
+function xkMaybeTime(box){
+  const now=Date.now()
+  if(now-xkLastTime>5*60*1000){
+    const d=new Date()
+    const h=String(d.getHours()).padStart(2,'0')
+    const m=String(d.getMinutes()).padStart(2,'0')
+    const lbl=document.createElement('div')
+    lbl.className='xk-timelabel'
+    lbl.textContent=`${d.getMonth()+1}月${d.getDate()}日 ${h}:${m}`
+    box.appendChild(lbl)
+  }
+  xkLastTime=now
+}
+
+function xkAppendMe(text){
+  const box=document.getElementById('xkStream')
+  xkMaybeTime(box)
+  const row=document.createElement('div')
+  row.className='xk-row me'
+  const bubble=document.createElement('div')
+  bubble.className='xk-bubble'
+  bubble.textContent=text
+  row.appendChild(bubble)
+  box.appendChild(row)
+  box.scrollTop=box.scrollHeight
+}
+
+function xkTypingRow(){
+  const box=document.getElementById('xkStream')
+  const row=document.createElement('div')
+  row.className='xk-row them xk-typing'
+  row.innerHTML='<div class="xk-bubble"><div class="xk-dot"></div><div class="xk-dot"></div><div class="xk-dot"></div></div>'
+  box.appendChild(row)
+  box.scrollTop=box.scrollHeight
+  return row
+}
+
+function xkRenderThem(text,thinking){
+  const box=document.getElementById('xkStream')
+  // 拆段，每段一个气泡
+  const segs=text.split(/\n\n+/).map(s=>s.trim()).filter(Boolean)
+  segs.forEach((seg,i)=>{
+    const row=document.createElement('div')
+    row.className='xk-row them'
+    // 第一段前加thinking折叠
+    if(i===0&&thinking){
+      const tw=document.createElement('div')
+      tw.className='xk-thinking'
+      tw.innerHTML=`<div class="xk-thinking-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')"><svg width="8" height="12" viewBox="0 0 8 12" fill="none"><path d="M1 1l5 5-5 5" stroke="#A6A39A" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>心声</div><div class="xk-thinking-body">${xkEsc(thinking)}</div>`
+      row.appendChild(tw)
+    }
+    const bubble=document.createElement('div')
+    bubble.className='xk-bubble'
+    bubble.textContent=seg
+    row.appendChild(bubble)
+    box.appendChild(row)
+  })
+  box.scrollTop=box.scrollHeight
+}
+
+async function xkSend(){
+  if(xkBusy)return
+  const ta=document.getElementById('xkInput')
+  const text=ta.value.trim()
+  if(!text)return
+  ta.value=''
+  ta.style.height='auto'
+  xkAppendMe(text)
+  xkHistory.push({role:'user',content:text})
+  if(xkHistory.length>60)xkHistory=xkHistory.slice(-60)
+  localStorage.setItem('xk_history',JSON.stringify(xkHistory))
+  await xkCallAI()
+}
+
+async function xkCallAI(){
+  xkBusy=true
+  const btn=document.getElementById('xkSendBtn')
+  if(btn)btn.disabled=true
+  const typing=xkTypingRow()
+  try{
+    const res=await fetch(cfg.api+'/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key,'X-Session-Id':'reverie-yy'},
+      body:JSON.stringify({
+        model:cfg.model,
+        messages:[{role:'system',content:SYSTEM_PROMPT},...xkHistory],
+        stream:false,
+        temperature:cfg.temp
+      })
+    })
+    if(!res.ok)throw new Error('HTTP '+res.status)
+    const j=await res.json()
+    const full=(j.choices?.[0]?.message?.content)||''
+    typing.remove()
+    if(!full)throw new Error('empty')
+    // 解析心声
+    let heart='',body=full
+    const hm=full.match(/\[心声\]([\s\S]*?)\[\/心声\]/)
+    if(hm){heart=hm[1].trim();body=full.slice(hm.index+hm[0].length).trim()}
+    xkRenderThem(body,heart)
+    xkHistory.push({role:'assistant',content:full})
+    if(xkHistory.length>60)xkHistory=xkHistory.slice(-60)
+    localStorage.setItem('xk_history',JSON.stringify(xkHistory))
+  }catch(err){
+    typing.remove()
+    const box=document.getElementById('xkStream')
+    const row=document.createElement('div')
+    row.className='xk-row them'
+    const b=document.createElement('div')
+    b.className='xk-bubble'
+    b.style.color='#ff453a'
+    b.textContent='连接失败：'+(err.message||'unknown')
+    row.appendChild(b)
+    box.appendChild(row)
+    box.scrollTop=box.scrollHeight
+  }
+  xkBusy=false
+  if(btn)btn.disabled=false
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  loadHeaderAvatar()
+  // xk input 自动撑高
+  const xkta=document.getElementById('xkInput')
+  if(xkta){
+    xkta.addEventListener('input',function(){
+      this.style.height='auto'
+      this.style.height=Math.min(this.scrollHeight,120)+'px'
+    })
+    xkta.addEventListener('keydown',function(e){
+      if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();xkSend()}
+    })
+    xkta.addEventListener('touchend',function(e){
+      e.preventDefault();this.focus()
+    },{passive:false})
+  }
+  // 键盘推bar
+  const bar=document.querySelector('#page-xiaoke .xk-bar')
+  function onVP(){
+    const vp=window.visualViewport
+    if(!vp||!bar)return
+    const kh=Math.max(0,window.innerHeight-vp.height-vp.offsetTop)
+    bar.style.transform=kh>0?`translateY(-${kh}px)`:''
+    const s=document.getElementById('xkStream')
+    if(s)setTimeout(()=>s.scrollTop=s.scrollHeight,50)
+  }
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize',onVP)
+    window.visualViewport.addEventListener('scroll',onVP)
+  }
+  // 恢复历史
+  if(xkHistory.length){
+    let lastTime=0
+    const box=document.getElementById('xkStream')
+    xkHistory.forEach(m=>{
+      if(m.role==='user'){xkAppendMe(m.content)}
+      else{
+        let heart='',body=m.content
+        const hm=m.content.match(/\[心声\]([\s\S]*?)\[\/心声\]/)
+        if(hm){heart=hm[1].trim();body=m.content.slice(hm.index+hm[0].length).trim()}
+        xkRenderThem(body,heart)
+      }
+    })
+  }
+  applyKeepalive()
+  initMemory()
+  initPush()
+  renderNovels()
+})
+
 function changeAvatar(e){
   const file=e.target.files[0]
   if(!file)return
