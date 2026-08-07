@@ -2258,6 +2258,10 @@ async function xkCallAI(){
       collapseThinkLive()
     }
     if(streamBlock)xkStreamDone(streamBlock)
+    // ── 操作栏 ──
+    const usage=xkCallAI._lastUsage||{}
+    const totalTokens=usage.total_tokens||usage.completion_tokens||0
+    if(streamBlock)xkAddActions(streamBlock, totalTokens)
     // thinking 按钮挂到 block
     if(thinkBuf&&streamBlock){
       const tw=document.createElement('div')
