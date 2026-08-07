@@ -2663,10 +2663,25 @@ async function mcpProxyFetch(targetUrl, body, extraHeaders={}){
   return j
 }
 
+function parseHeadersInput(){
+  const raw = (document.getElementById('mcpAddHeaders')||{}).value || ''
+  const headers = {}
+  raw.split('\n').forEach(line=>{
+    const idx = line.indexOf(':')
+    if(idx<1) return
+    const k = line.slice(0,idx).trim()
+    const v = line.slice(idx+1).trim()
+    if(k) headers[k] = v
+  })
+  return headers
+}
+
 // 发送 JSON-RPC 2.0
 async function mcpRPC(server, method, params={}){
   const headers = {}
   if(server.auth) headers['Authorization'] = server.auth
+  // 合并自定义请求头
+  if(server.extraHeaders) Object.assign(headers, server.extraHeaders)
   const payload = {jsonrpc:'2.0', id: Date.now(), method, params}
   const j = await mcpProxyFetch(server.url, payload, headers)
   if(j.data && j.data.error) throw new Error(JSON.stringify(j.data.error))
