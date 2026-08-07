@@ -235,16 +235,22 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
   margin:14px 0 8px;user-select:none;
 }
 
+.xk-bar{
+  position:fixed;bottom:0;left:0;right:0;max-width:430px;margin:0 auto;z-index:20;
+  background:#F5F4F0;
+  padding:10px 14px calc(14px + env(safe-area-inset-bottom,0px)) 14px;
+}
 .xk-composer-card{
-  background:#fff;border-radius:22px;
-  box-shadow:0 1px 10px rgba(31,30,29,.09);
+  background:#fff;
+  border:1.5px solid #E2DED8;
+  border-radius:22px;
+  box-shadow:0 2px 12px rgba(31,30,29,.06);
   padding:12px 12px 10px 16px;
   display:flex;flex-direction:column;gap:10px;
 }
 .xk-composer-top{display:flex;align-items:flex-start}
 .xk-composer-bottom{display:flex;align-items:center;gap:8px}
 
-/* textarea撑满上半 */
 .xk-textarea{
   flex:1;width:100%;
   border:none;background:transparent;outline:none;
@@ -256,7 +262,6 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 }
 .xk-textarea::placeholder{color:#B8B6AE}
 
-/* 下行按钮 */
 .xk-cb-icon{
   width:32px;height:32px;border:none;background:none;
   display:flex;align-items:center;justify-content:center;
