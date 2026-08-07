@@ -608,7 +608,36 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
   padding:6px 4px;white-space:nowrap;flex-shrink:0;
 }
 
-/* thinking 流式展示区（生成中展开，完成后收起） */
+/* MCP 工具面板 */
+.mcp-section{margin:16px 16px 0}
+.mcp-section-label{font-size:11px;color:#A6A39A;letter-spacing:.08em;font-weight:600;text-transform:uppercase;margin-bottom:6px;padding-left:2px}
+.mcp-tool-row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:#fff;border-radius:12px;margin-bottom:6px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .12s}
+.mcp-tool-row:active{background:#EBE8DF}
+.mcp-tool-icon{width:32px;height:32px;border-radius:9px;background:#F5F2EA;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mcp-tool-info{flex:1;min-width:0}
+.mcp-tool-name{font-size:14px;font-weight:500;color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif}
+.mcp-tool-desc{font-size:12px;color:#A6A39A;margin-top:1px}
+.mcp-tool-arrow{font-size:18px;color:#CCC;flex-shrink:0}
+.mcp-custom-wrap{display:flex;gap:8px;align-items:flex-end}
+.mcp-custom-ta{flex:1;background:#fff;border:none;border-radius:12px;padding:12px 14px;font-size:14px;font-family:-apple-system,'PingFang SC',sans-serif;color:#111;line-height:1.55;resize:none;outline:none;min-height:48px;max-height:140px}
+.mcp-custom-btn{width:40px;height:40px;border-radius:12px;background:#1F1E1D;border:none;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.mcp-custom-btn:active{opacity:.75}
+.mcp-result-wrap{margin:16px 16px 32px;border-radius:12px;overflow:hidden;background:#fff}
+.mcp-result-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:.5px solid #F0EDE6;font-size:13px;font-weight:600;color:#555}
+.mcp-result-body{padding:12px 14px;font-size:13px;color:#444;line-height:1.7;white-space:pre-wrap;max-height:320px;overflow-y:auto;font-family:-apple-system,'PingFang SC',monospace}
+/* MCP 弹窗 */
+.mcp-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.mcp-modal-overlay.open{opacity:1;pointer-events:auto}
+.mcp-modal{background:#F5F2EA;border-radius:20px 20px 0 0;padding:24px 20px calc(env(safe-area-inset-bottom,0px)+24px);width:100%;max-width:480px;max-height:70vh;overflow-y:auto}
+.mcp-modal-title{font-size:16px;font-weight:700;color:#111;margin-bottom:16px}
+.mcp-modal-field{margin-bottom:12px}
+.mcp-modal-field label{display:block;font-size:12px;color:#888;margin-bottom:4px}
+.mcp-modal-field input,.mcp-modal-field textarea{width:100%;background:#fff;border:none;border-radius:10px;padding:10px 12px;font-size:14px;font-family:-apple-system,'PingFang SC',sans-serif;color:#111;outline:none;box-sizing:border-box}
+.mcp-modal-field textarea{resize:none;min-height:72px;line-height:1.55}
+.mcp-modal-btn{flex:1;padding:12px 0;border-radius:12px;border:none;font-size:15px;font-weight:600;font-family:-apple-system,'PingFang SC',sans-serif;cursor:pointer}
+.mcp-modal-btn:not(.ghost){background:#1F1E1D;color:#fff}
+.mcp-modal-btn.ghost{background:#E8E5DC;color:#555}
+
 .xk-think-live{
   margin:0 0 8px;
   border-radius:12px;
