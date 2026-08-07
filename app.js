@@ -450,61 +450,93 @@ async function callAI(){
     const res=await fetch(cfg.api+'/chat/completions',{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key,'X-Session-Id':'reverie-yy'},
-      body:JSON.stringify({model:cfg.model,messages,stream:false,temperature:cfg.temp})
+      body:JSON.stringify({model:cfg.model,messages,stream:true,temperature:cfg.temp})
     })
     if(!res.ok)throw new Error('HTTP '+res.status)
 
-    const j=await res.json()
-    const full=(j.choices?.[0]?.message?.content)||''
-    cursor.remove()
-    if(!full)throw new Error('empty response')
-    // thinking：优先从 message.thinking 字段取（非流式 extended thinking），其次找 [心声] 标签，最后找 <think> 标签
-    let heartText=j.choices?.[0]?.message?.thinking||''
-    let bodyText=full
-    if(!heartText){
-      const thinkMatch=full.match(/\[心声\]([\s\S]*?)\[\/心声\]/)
-      if(thinkMatch){
-        heartText=thinkMatch[1].trim()
-        bodyText=full.slice(thinkMatch.index+thinkMatch[0].length).trim()
-      } else {
-        const thinkTag=full.match(/<think>([\s\S]*?)<\/think>/)
-        if(thinkTag){
-          heartText=thinkTag[1].trim()
-          bodyText=full.slice(thinkTag.index+thinkTag[0].length).trim()
-        }
-      }
-    }
-    // 分段，保证至少5条
-    let segments=bodyText.split(/\n\n/).map(s=>s.trim()).filter(Boolean)
-    if(segments.length<5){
-      segments=bodyText.split(/\n/).map(s=>s.trim()).filter(Boolean)
-    }
-    const prevSibling=placeholderRow.previousElementSibling
-    if(prevSibling&&prevSibling.classList.contains('time-label')){
-      prevSibling.remove()
-    }
-    placeholderRow.remove()
+    const reader=res.body.getReader()
+    const decoder=new TextDecoder()
+    let thinkBuf=''
+    let bodyBuf=''
+    let fullRaw=''
+    let inThink=false
+    let thinkDone=false
     let thinkInserted=false
     let firstRow=null
-    for(let i=0;i<segments.length;i++){
-      const seg=segments[i].trim()
-      if(!seg)continue
-      const isLast=i===segments.length-1
-      const row=appendMsg('them',seg,null,null,null,false,!isLast)
-      if(!firstRow)firstRow=row
-      if(!thinkInserted&&heartText){
-        const tw=document.createElement('div')
-        tw.className='thinking-wrap'
-        tw.innerHTML=`<div class="thinking-toggle" onclick="toggleThinking(this)"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3 2l4 3-4 3" stroke="#555" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>心声</div><div class="thinking-body">${escHtml(heartText)}</div>`
-        row.insertBefore(tw,row.firstChild)
-        thinkInserted=true
+    // placeholderRow 先用来流式追加正文
+    const textNode=document.createElement('div')
+    placeholderBubble.insertBefore(textNode,cursor)
+
+    while(true){
+      const {done,value}=await reader.read()
+      if(done)break
+      const chunk=decoder.decode(value,{stream:true})
+      for(const line of chunk.split('\n')){
+        if(!line.startsWith('data:'))continue
+        const data=line.slice(5).trim()
+        if(data==='[DONE]')break
+        let j
+        try{j=JSON.parse(data)}catch{continue}
+        const delta=j.choices?.[0]?.delta
+        if(!delta)continue
+        // thinking 字段
+        if(delta.thinking!==undefined){thinkBuf+=delta.thinking||'';continue}
+        if(delta.reasoning_content!==undefined){thinkBuf+=delta.reasoning_content||'';continue}
+        const tok=delta.content||''
+        if(!tok)continue
+        fullRaw+=tok
+        // 解析 <think> 标签
+        if(!thinkDone){
+          let t=tok
+          if(!inThink&&t.includes('<think>')){inThink=true;t=t.slice(t.indexOf('<think>')+7)}
+          if(inThink){
+            if(t.includes('</think>')){
+              thinkBuf+=t.slice(0,t.indexOf('</think>'))
+              const after=t.slice(t.indexOf('</think>')+8)
+              inThink=false;thinkDone=true
+              bodyBuf+=after
+              textNode.textContent+=after
+            }else{thinkBuf+=t}
+            continue
+          }else{thinkDone=true}
+        }
+        bodyBuf+=tok
+        textNode.textContent+=tok
+        const box=document.getElementById('messages')
+        if(box)box.scrollTop=box.scrollHeight
       }
-      if(!isLast)await sleep(320+Math.random()*200)
     }
-    lastAssistantRow=firstRow
-    saveChatHistory('assistant',full)
+    cursor.remove()
+    // thinking 注入
+    if(thinkBuf&&!thinkInserted){
+      const tw=document.createElement('div')
+      tw.className='thinking-wrap'
+      tw.innerHTML=`<div class="thinking-toggle" onclick="toggleThinking(this)"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3 2l4 3-4 3" stroke="#555" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>心声</div><div class="thinking-body">${escHtml(thinkBuf)}</div>`
+      placeholderRow.insertBefore(tw,placeholderRow.firstChild)
+      thinkInserted=true
+    }
+    lastAssistantRow=placeholderRow
+    // 用最终正文替换 textNode，换行转多气泡
+    const finalBody=bodyBuf.trim()
+    if(!finalBody){placeholderBubble.innerHTML='(´・ω・`)';isGenerating=false;return}
+    // 分段拆成多个气泡
+    let segs=finalBody.split(/\n\n/).map(s=>s.trim()).filter(Boolean)
+    if(segs.length<2)segs=finalBody.split(/\n/).map(s=>s.trim()).filter(Boolean)
+    if(!segs.length)segs=[finalBody]
+    // 第一段替换 placeholder 气泡
+    textNode.textContent=segs[0]
+    placeholderRow.classList.remove('no-tail')
+    if(segs.length>1)placeholderRow.classList.add('no-tail')
+    firstRow=placeholderRow
+    // 后续段追加新气泡
+    for(let i=1;i<segs.length;i++){
+      const isLast=i===segs.length-1
+      const row=appendMsg('them',segs[i],null,null,null,false,!isLast)
+      await sleep(280+Math.random()*160)
+    }
+    saveChatHistory('assistant',fullRaw||finalBody)
     if(cfg.notify&&document.hidden&&Notification.permission==='granted'){
-      new Notification('小克回复了',{body:segments[0].replace(/\*[^*]+\*/g,'').slice(0,50)})
+      new Notification('小克回复了',{body:segs[0].replace(/\*[^*]+\*/g,'').slice(0,50)})
     }
   }catch(err){
     cursor.remove()
