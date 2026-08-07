@@ -2367,6 +2367,10 @@ async function xkCallAI(){
     const histContent=thinkBuf?`[THINK]${thinkBuf}[/THINK]${reconstructed}`:reconstructed
     xkHistory.push({role:'assistant',content:histContent,tokens:totalTokens||0})
     if(xkHistory.length>60)xkHistory=xkHistory.slice(-60)
+    // tokens存一下
+    if(xkHistory.length&&xkHistory[xkHistory.length-1].role==='assistant'){
+      xkHistory[xkHistory.length-1].tokens=totalTokens||0
+    }
     localStorage.setItem('xk_history',JSON.stringify(xkHistory))
 
   }catch(err){
