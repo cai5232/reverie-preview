@@ -2663,15 +2663,28 @@ async function mcpProxyFetch(targetUrl, body, extraHeaders={}){
   return j
 }
 
+function mcpAddHeaderRow(key, val){
+  const rows = document.getElementById('mcpHeaderRows')
+  if(!rows) return
+  const row = document.createElement('div')
+  row.className = 'mcp-header-row'
+  row.innerHTML = `<div class="mcp-header-kv-wrap">
+    <div class="mcp-header-label">请求头名称</div>
+    <input class="mcp-header-key" placeholder="Authorization" value="${escHtml(key||'')}">
+    <div class="mcp-header-label" style="margin-top:6px">请求头值</div>
+    <input class="mcp-header-val" placeholder="Bearer sk-..." value="${escHtml(val||'')}">
+  </div>
+  <div class="mcp-header-row-del" onclick="this.parentNode.remove()">🗑</div>`
+  rows.appendChild(row)
+}
+
 function parseHeadersInput(){
-  const raw = (document.getElementById('mcpAddHeaders')||{}).value || ''
+  const rows = document.querySelectorAll('#mcpHeaderRows .mcp-header-row')
   const headers = {}
-  raw.split('\n').forEach(line=>{
-    const idx = line.indexOf(':')
-    if(idx<1) return
-    const k = line.slice(0,idx).trim()
-    const v = line.slice(idx+1).trim()
-    if(k) headers[k] = v
+  rows.forEach(row=>{
+    const k = (row.querySelector('.mcp-header-key')||{}).value||''
+    const v = (row.querySelector('.mcp-header-val')||{}).value||''
+    if(k.trim()) headers[k.trim()] = v.trim()
   })
   return headers
 }
