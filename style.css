@@ -575,7 +575,19 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 .nv-gen-progress-fill{height:100%;background:#111;border-radius:2px;width:0;transition:width .4s ease}
 .nv-gen-progress-text{font-size:11px;color:#aaa;margin-top:6px;text-align:center}
 
-/* 操作栏 */
+.xk-user-wrap{
+  display:flex;flex-direction:column;align-items:flex-end;
+  margin:8px 0 4px;
+}
+.xk-user-wrap .xk-user-msg{
+  margin:0;
+}
+.xk-user-action-bar{
+  justify-content:flex-end;
+  margin-top:4px;
+}
+
+
 .xk-action-bar{
   display:flex;align-items:center;gap:0;
   margin-top:10px;
