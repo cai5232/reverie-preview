@@ -471,7 +471,10 @@ async function callAI(){
     let thinkInserted=false
     let firstRow=null
     const textNode=document.createElement('div')
-    placeholderBubble.insertBefore(textNode,cursor)
+    // textNode 先放进去，cursor 在 textNode 内部，避免第一个字被遮挡
+    placeholderBubble.removeChild(cursor)
+    placeholderBubble.appendChild(textNode)
+    textNode.appendChild(cursor)
 
     // RAF批量写入，避免每个token触发reflow
     let pendingText=''
