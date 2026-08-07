@@ -1919,6 +1919,364 @@ function xkMaybeTime(box){
   xkLastTime=now
 }
 
+function xkAppendUser(text){
+  const box=document.getElementById('xkStream')
+  xkMaybeTime(box)
+  const el=document.createElement('div')
+  el.className='xk-user-msg'
+  el.textContent=text
+  box.appendChild(el)
+  box.scrollTop=box.scrollHeight
+}
+
+// 打字动画占位
+function xkTypingEl(){
+  const box=document.getElementById('xkStream')
+  const el=document.createElement('div')
+  el.className='xk-typing-dots'
+  el.innerHTML='<div class="xk-dot"></div><div class="xk-dot"></div><div class="xk-dot"></div>'
+  box.appendChild(el)
+  box.scrollTop=box.scrollHeight
+  return el
+}
+
+// 渲染一整个AI回复块（带thinking）
+function xkRenderAI(bodyText, thinkText){
+  const box=document.getElementById('xkStream')
+  const block=document.createElement('div')
+  block.className='xk-ai-block'
+
+  if(thinkText){
+    const tw=document.createElement('div')
+    tw.className='xk-thinking'
+    const toggle=document.createElement('div')
+    toggle.className='xk-thinking-toggle'
+    toggle.innerHTML=`<svg width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1l4.5 4.5L1 10" stroke="#A6A39A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>思考过程`
+    const body=document.createElement('div')
+    body.className='xk-thinking-body'
+    body.textContent=thinkText
+    toggle.onclick=()=>{toggle.classList.toggle('open');body.classList.toggle('open')}
+    tw.appendChild(toggle)
+    tw.appendChild(body)
+    block.appendChild(tw)
+  }
+
+  // 文字按段落拆开，每段一个 xk-ai-para
+  const paras=bodyText.split(/\n\n+/).map(s=>s.trim()).filter(Boolean)
+  if(!paras.length)paras.push(bodyText)
+  paras.forEach(p=>{
+    const el=document.createElement('p')
+    el.className='xk-ai-para'
+    el.textContent=p
+    block.appendChild(el)
+  })
+
+  box.appendChild(block)
+  box.scrollTop=box.scrollHeight
+  return block
+}
+
+// 流式渲染：先建空block，再逐字追加
+function xkStartStreamBlock(thinkText){
+  const box=document.getElementById('xkStream')
+  const block=document.createElement('div')
+  block.className='xk-ai-block'
+
+  if(thinkText){
+    const tw=document.createElement('div')
+    tw.className='xk-thinking'
+    const toggle=document.createElement('div')
+    toggle.className='xk-thinking-toggle'
+    toggle.innerHTML=`<svg width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1l4.5 4.5L1 10" stroke="#A6A39A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>思考过程`
+    const tbody=document.createElement('div')
+    tbody.className='xk-thinking-body'
+    tbody.textContent=thinkText
+    toggle.onclick=()=>{toggle.classList.toggle('open');tbody.classList.toggle('open')}
+    tw.appendChild(toggle)
+    tw.appendChild(tbody)
+    block.appendChild(tw)
+  }
+
+  // 当前流式段落
+  const curPara=document.createElement('p')
+  curPara.className='xk-ai-para'
+  block.appendChild(curPara)
+  block._curPara=curPara
+
+  // 光标
+  const cursor=document.createElement('span')
+  cursor.className='streaming-cursor'
+  curPara.appendChild(cursor)
+  block._cursor=cursor
+
+  box.appendChild(block)
+  return block
+}
+
+function xkStreamAppend(block, chunk){
+  const box=document.getElementById('xkStream')
+  const cursor=block._cursor
+  let curPara=block._curPara
+
+  // 处理换行：遇到双换行新起一段
+  const parts=chunk.split(/\n\n/)
+  parts.forEach((part,i)=>{
+    if(i>0){
+      // 新段落
+      cursor.remove()
+      const newPara=document.createElement('p')
+      newPara.className='xk-ai-para'
+      block.appendChild(newPara)
+      block._curPara=newPara
+      curPara=newPara
+      newPara.appendChild(cursor)
+    }
+    // 单换行转空格
+    const text=part.replace(/\n/g,' ')
+    if(text){
+      const t=document.createTextNode(text)
+      curPara.insertBefore(t,cursor)
+    }
+  })
+  box.scrollTop=box.scrollHeight
+}
+
+function xkStreamDone(block){
+  if(block._cursor)block._cursor.remove()
+}
+
+async function xkSend(){
+  if(xkBusy)return
+  const ta=document.getElementById('xkInput')
+  const text=ta.value.trim()
+  if(!text)return
+  ta.value=''
+  ta.style.height='auto'
+  xkAppendUser(text)
+  xkHistory.push({role:'user',content:text})
+  if(xkHistory.length>60)xkHistory=xkHistory.slice(-60)
+  localStorage.setItem('xk_history',JSON.stringify(xkHistory))
+  await xkCallAI()
+}
+
+async function xkCallAI(){
+  xkBusy=true
+  const btn=document.getElementById('xkSendBtn')
+  if(btn)btn.disabled=true
+
+  const typing=xkTypingEl()
+
+  try{
+    const res=await fetch(cfg.api+'/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key,'X-Session-Id':'reverie-yy'},
+      body:JSON.stringify({
+        model:cfg.model,
+        messages:[{role:'system',content:SYSTEM_PROMPT},...xkHistory],
+        stream:true,
+        temperature:cfg.temp
+      })
+    })
+    if(!res.ok)throw new Error('HTTP '+res.status)
+
+    const reader=res.body.getReader()
+    const decoder=new TextDecoder()
+
+    let thinkBuf=''
+    let bodyBuf=''
+    let inThink=false
+    let streamBlock=null
+    let thinkDone=false
+
+    typing.remove()
+
+    const flush=()=>{
+      // 从bodyBuf往block写
+    }
+
+    while(true){
+      const {done,value}=await reader.read()
+      if(done)break
+      const chunk=decoder.decode(value,{stream:true})
+      const lines=chunk.split('\n')
+      for(const line of lines){
+        if(!line.startsWith('data:'))continue
+        const data=line.slice(5).trim()
+        if(data==='[DONE]')break
+        let j
+        try{j=JSON.parse(data)}catch{continue}
+        const delta=j.choices?.[0]?.delta
+        if(!delta)continue
+
+        // thinking content（extended thinking）
+        if(delta.thinking!==undefined){
+          thinkBuf+=delta.thinking||''
+          continue
+        }
+
+        // reasoning_content（某些模型）
+        if(delta.reasoning_content!==undefined){
+          thinkBuf+=delta.reasoning_content||''
+          continue
+        }
+
+        // 正文
+        const text=delta.content||''
+        if(!text)continue
+
+        // 解析 <think> 标签
+        if(!thinkDone){
+          let t=text
+          if(!inThink&&t.includes('<think>')){
+            inThink=true
+            t=t.slice(t.indexOf('<think>')+7)
+          }
+          if(inThink){
+            if(t.includes('</think>')){
+              thinkBuf+=t.slice(0,t.indexOf('</think>'))
+              bodyBuf+=t.slice(t.indexOf('</think>')+8)
+              inThink=false
+              thinkDone=true
+            }else{
+              thinkBuf+=t
+              continue
+            }
+          }else{
+            thinkDone=true
+            bodyBuf+=t
+          }
+        }else{
+          bodyBuf+=text
+        }
+
+        // 建block（第一次有body文字时）
+        if(bodyBuf&&!streamBlock){
+          streamBlock=xkStartStreamBlock(thinkBuf||null)
+        }
+        if(streamBlock&&bodyBuf){
+          // 追加新增的chunk
+          xkStreamAppend(streamBlock,text.replace(/<\/think>/g,''))
+          bodyBuf=''
+        }
+      }
+    }
+
+    if(streamBlock)xkStreamDone(streamBlock)
+
+    // 如果没有流到block（全是thinking，没有body）
+    if(!streamBlock&&(thinkBuf||bodyBuf)){
+      xkRenderAI(bodyBuf||'(´・ω・`)',thinkBuf||null)
+    }
+
+    // 存历史（存完整内容，含thinking标记）
+    const fullContent=(thinkBuf?`<think>${thinkBuf}</think>`:'')+(bodyBuf)
+    // bodyBuf可能为空（追加模式下内容已流出），存reconstructed
+    const reconstructed=streamBlock
+      ?Array.from(streamBlock.querySelectorAll('.xk-ai-para')).map(p=>p.textContent).join('\n\n')
+      :bodyBuf
+    xkHistory.push({role:'assistant',content:(thinkBuf?`[心声]${thinkBuf}[/心声]\n\n`:'')+reconstructed})
+    if(xkHistory.length>60)xkHistory=xkHistory.slice(-60)
+    localStorage.setItem('xk_history',JSON.stringify(xkHistory))
+
+  }catch(err){
+    if(typing.parentNode)typing.remove()
+    const box=document.getElementById('xkStream')
+    const el=document.createElement('p')
+    el.className='xk-ai-para'
+    el.style.color='#ff453a'
+    el.textContent='连接失败：'+(err.message||'unknown')
+    box.appendChild(el)
+    box.scrollTop=box.scrollHeight
+  }
+
+  xkBusy=false
+  if(btn)btn.disabled=false
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  loadHeaderAvatar()
+
+  const xkta=document.getElementById('xkInput')
+  if(xkta){
+    xkta.addEventListener('input',function(){
+      this.style.height='auto'
+      this.style.height=Math.min(this.scrollHeight,140)+'px'
+    })
+    xkta.addEventListener('keydown',function(e){
+      if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();xkSend()}
+    })
+    xkta.addEventListener('touchend',function(e){
+      e.preventDefault();this.focus()
+    },{passive:false})
+  }
+
+  // 键盘推bar
+  const bar=document.querySelector('#page-xiaoke .xk-bar')
+  function onVP(){
+    const vp=window.visualViewport
+    if(!vp||!bar)return
+    const kh=Math.max(0,window.innerHeight-vp.height-vp.offsetTop)
+    bar.style.transform=kh>0?`translateY(-${kh}px)`:''
+    const s=document.getElementById('xkStream')
+    if(s)setTimeout(()=>s.scrollTop=s.scrollHeight,50)
+  }
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize',onVP)
+    window.visualViewport.addEventListener('scroll',onVP)
+  }
+
+  // 恢复历史
+  if(xkHistory.length){
+    const box=document.getElementById('xkStream')
+    xkHistory.forEach(m=>{
+      if(m.role==='user'){
+        xkAppendUser(m.content)
+      }else{
+        let heart='',body=m.content
+        const hm=m.content.match(/\[心声\]([\s\S]*?)\[\/心声\]/)
+        if(hm){heart=hm[1].trim();body=m.content.slice(hm.index+hm[0].length).trim()}
+        xkRenderAI(body||'',heart||null)
+      }
+    })
+    box.scrollTop=box.scrollHeight
+  }
+
+  // 更新model标签
+  const ml=document.getElementById('xkModelLabel')
+  if(ml)ml.textContent=cfg.model.replace(/\[.*?\]\s*/g,'').slice(0,22)
+
+  applyKeepalive()
+  initMemory()
+  initPush()
+  renderNovels()
+})
+
+function xkNewChat(){
+  xkHistory=[]
+  localStorage.setItem('xk_history',JSON.stringify(xkHistory))
+  const s=document.getElementById('xkStream')
+  if(s)s.innerHTML=''
+  xkLastTime=0
+}
+
+function xkEsc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+}
+
+function xkMaybeTime(box){
+  const now=Date.now()
+  if(now-xkLastTime>5*60*1000){
+    const d=new Date()
+    const h=String(d.getHours()).padStart(2,'0')
+    const m=String(d.getMinutes()).padStart(2,'0')
+    const lbl=document.createElement('div')
+    lbl.className='xk-timelabel'
+    lbl.textContent=`${d.getMonth()+1}月${d.getDate()}日 ${h}:${m}`
+    box.appendChild(lbl)
+  }
+  xkLastTime=now
+}
+
 function xkAppendMe(text){
   const box=document.getElementById('xkStream')
   xkMaybeTime(box)
