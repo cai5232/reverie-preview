@@ -2877,7 +2877,6 @@ function mcpShowAdd(){
   document.getElementById('mcpAddTitle').textContent = '添加 MCP'
   document.getElementById('mcpAddName').value = ''
   document.getElementById('mcpAddUrl').value = ''
-  document.getElementById('mcpAddAuth').value = ''
   const rows = document.getElementById('mcpHeaderRows')
   if(rows) rows.innerHTML = ''
   mcpSelectType('http')
@@ -2892,12 +2891,13 @@ function mcpShowEdit(){
   document.getElementById('mcpAddTitle').textContent = '编辑服务器'
   document.getElementById('mcpAddName').value = s.name||''
   document.getElementById('mcpAddUrl').value = s.url||''
-  document.getElementById('mcpAddAuth').value = s.auth||''
   const rows = document.getElementById('mcpHeaderRows')
   if(rows){
     rows.innerHTML = ''
     if(s.extraHeaders){
       Object.entries(s.extraHeaders).forEach(([k,v])=>mcpAddHeaderRow(k,v))
+    }else if(s.auth){
+      mcpAddHeaderRow('Authorization', s.auth)
     }
   }
   mcpSelectType(s.type||'http')
@@ -2911,20 +2911,8 @@ function closeMcpAdd(){
 function mcpSaveServer(){
   const name = document.getElementById('mcpAddName').value.trim()
   const url = document.getElementById('mcpAddUrl').value.trim()
-  const auth = document.getElementById('mcpAddAuth').value.trim()
-  if(!url){ showToast('请填写服务器地址'); return }
-  if(_mcpEditMode){
-    const s = _mcpServers.find(x=>x.id===_mcpCurrentServerId)
-    if(s){ s.name=name||url; s.url=url; s.auth=auth; s.type=_mcpAddType; s.status='unknown'; s.extraHeaders=parseHeadersInput() }
-  }else{
-    _mcpServers.push({id:'s'+Date.now(), name:name||url, url, auth, type:_mcpAddType, status:'unknown', tools:[], extraHeaders:parseHeadersInput()})
-  }
-function mcpSaveServer(){
-  const name = document.getElementById('mcpAddName').value.trim()
-  const url = document.getElementById('mcpAddUrl').value.trim()
   if(!url){ showToast('请填写服务器地址'); return }
   const extraHeaders = parseHeadersInput()
-  // 如果自定义请求头里有Authorization，提取出来作为auth字段
   const auth = extraHeaders['Authorization'] || extraHeaders['authorization'] || ''
   if(_mcpEditMode){
     const s = _mcpServers.find(x=>x.id===_mcpCurrentServerId)
