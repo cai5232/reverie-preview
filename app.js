@@ -2741,15 +2741,26 @@ async function mcpPingServer(s){
   mcpRenderList()
   try{
     const res = await mcpRPC(s, 'tools/list', {})
-    const tools = (res && res.result && res.result.tools) || []
+    // 兼容多种返回格式
+    const tools =
+      (res && res.result && Array.isArray(res.result.tools) && res.result.tools) ||
+      (res && Array.isArray(res.result) && res.result) ||
+      (res && Array.isArray(res.tools) && res.tools) ||
+      (res && res.result && Array.isArray(res.result) && res.result) ||
+      []
     s.tools = tools
-    s.status = 'ok'
+    s.status = tools.length ? 'ok' : 'ok'
   }catch(e){
     s.status = 'err'
     s.tools = s.tools || []
+    console.error('[mcpPingServer]', s.name, e)
   }
   mcpSave()
   mcpRenderList()
+  // 同步更新工具列表页面（如果当前在这个服务器的工具页）
+  if(_mcpCurrentServerId === s.id){
+    mcpRenderTools(s)
+  }
 }
 
 // 打开服务器（拉工具列表）
