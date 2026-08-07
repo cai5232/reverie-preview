@@ -213,44 +213,81 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 /* 用户消息 */
 .xk-user-msg{
   align-self:flex-end;
-  font-size:14px;color:#6E6D66;
-  background:#EBE8DF;border-radius:14px 14px 4px 14px;
-  padding:8px 14px;max-width:72%;
-  margin:16px 0 4px;
-  word-break:break-word;line-height:1.6;
+  font-size:15px;color:#1F1E1D;font-weight:500;
+  background:#EBE8DF;border-radius:18px 18px 4px 18px;
+  padding:10px 16px;max-width:75%;
+  margin:16px 0 6px;
+  word-break:break-word;line-height:1.65;
+  font-family:-apple-system,'PingFang SC',sans-serif;
 }
 
-/* AI回复：无框，大字铺满 */
+/* AI回复：无框，铺满背景 */
 .xk-ai-block{
   align-self:stretch;
-  margin:8px 0 20px;
+  margin:6px 0 24px;
   display:flex;flex-direction:column;gap:0;
 }
 .xk-ai-para{
-  font-size:17px;color:#1F1E1D;
-  font-family:ui-serif,Georgia,'PingFang SC',sans-serif;
+  font-size:15px;color:#1F1E1D;
+  font-family:-apple-system,'PingFang SC',sans-serif;
+  font-weight:590;
   line-height:1.85;
   word-break:break-word;
-  margin-bottom:1.2em;
+  margin-bottom:1.4em;
+  letter-spacing:.01em;
 }
 .xk-ai-para:last-child{margin-bottom:0}
 
-/* thinking折叠 */
-.xk-thinking{margin-bottom:14px}
-.xk-thinking-toggle{
-  font-size:12px;color:#A6A39A;
-  cursor:pointer;display:inline-flex;align-items:center;gap:5px;
-  padding:4px 10px;background:#EBE8DF;border-radius:20px;
-  user-select:none;-webkit-tap-highlight-color:transparent;
+/* Thinking 触发按钮（时钟图标 + 文字） */
+.xk-thinking{margin-bottom:12px}
+.xk-think-btn{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:12px;color:#A6A39A;font-weight:500;
+  font-family:-apple-system,'PingFang SC',sans-serif;
+  cursor:pointer;user-select:none;
+  -webkit-tap-highlight-color:transparent;
+  padding:3px 0;
 }
-.xk-thinking-toggle svg{transition:transform .2s;flex-shrink:0}
-.xk-thinking-toggle.open svg{transform:rotate(90deg)}
-.xk-thinking-body{
-  font-size:13px;color:#6E6D66;background:#EBE8DF;
-  padding:10px 14px;margin-top:6px;
-  line-height:1.7;display:none;white-space:pre-wrap;
+.xk-think-btn:active{opacity:.5}
+.xk-think-btn svg{flex-shrink:0}
+
+/* Thinking 底部弹窗 */
+.xk-think-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.28);z-index:200;
+  opacity:0;pointer-events:none;
+  transition:opacity .22s;
 }
-.xk-thinking-body.open{display:block}
+.xk-think-overlay.open{opacity:1;pointer-events:auto}
+.xk-think-sheet{
+  position:fixed;bottom:0;left:0;right:0;
+  max-width:430px;margin:0 auto;
+  background:#FAF8F4;
+  border-radius:20px 20px 0 0;
+  padding:0 0 calc(env(safe-area-inset-bottom,0px) + 8px);
+  max-height:62vh;
+  display:flex;flex-direction:column;
+  transform:translateY(100%);
+  transition:transform .28s cubic-bezier(.34,1.16,.64,1);
+  box-shadow:0 -4px 32px rgba(0,0,0,.10);
+}
+.xk-think-overlay.open .xk-think-sheet{transform:translateY(0)}
+.xk-think-handle{width:36px;height:4px;background:#DDD9D0;border-radius:2px;margin:12px auto 0;flex-shrink:0}
+.xk-think-head{
+  display:flex;align-items:center;gap:8px;
+  padding:14px 20px 10px;flex-shrink:0;
+  font-size:14px;font-weight:600;color:#1F1E1D;
+  font-family:-apple-system,'PingFang SC',sans-serif;
+  border-bottom:.5px solid #EBE8DF;
+}
+.xk-think-head svg{flex-shrink:0;opacity:.6}
+.xk-think-body{
+  flex:1;overflow-y:auto;
+  padding:16px 20px;
+  font-size:13px;color:#6E6D66;font-weight:450;
+  font-family:-apple-system,'PingFang SC',sans-serif;
+  line-height:1.8;white-space:pre-wrap;word-break:break-word;
+}
+.xk-think-body::-webkit-scrollbar{display:none}
 
 /* 打字动画 */
 .xk-typing-dots{display:flex;gap:5px;padding:12px 0 4px}
