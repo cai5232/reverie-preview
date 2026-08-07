@@ -608,7 +608,45 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
   padding:6px 4px;white-space:nowrap;flex-shrink:0;
 }
 
-/* MCP 工具面板 */
+/* MCP 客户端 */
+.mcp-topbar{display:flex;align-items:center;padding:12px 16px;background:#F5F2EA;position:sticky;top:0;z-index:10}
+.mcp-topbar-left{width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.mcp-topbar-title{flex:1;text-align:center;font-size:15px;font-weight:600;color:#111;font-family:-apple-system,'PingFang SC',sans-serif}
+.mcp-topbar-actions{width:72px;display:flex;align-items:center;justify-content:flex-end;gap:4px}
+.mcp-topbar-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent;border-radius:8px}
+.mcp-topbar-btn:active{background:#EBE8DF}
+.mcp-server-list{padding:12px 16px 40px}
+.mcp-server-card{background:#fff;border-radius:16px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .12s}
+.mcp-server-card:active{background:#F5F2EA}
+.mcp-server-icon{width:44px;height:44px;border-radius:12px;background:#EFF0F8;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative}
+.mcp-server-icon svg{opacity:.6}
+.mcp-server-dot{width:9px;height:9px;border-radius:50%;background:#9E9E9E;border:1.5px solid #fff;position:absolute;bottom:2px;right:2px}
+.mcp-server-dot.ok{background:#34C759}
+.mcp-server-dot.err{background:#FF3B30}
+.mcp-server-dot.loading{background:#FF9500}
+.mcp-server-info{flex:1;min-width:0}
+.mcp-server-name{font-size:15px;font-weight:500;color:#111;font-family:-apple-system,'PingFang SC',sans-serif}
+.mcp-server-tags{display:flex;gap:5px;margin-top:4px;flex-wrap:wrap}
+.mcp-server-tag{font-size:11px;padding:2px 7px;border-radius:6px;font-family:-apple-system,'PingFang SC',sans-serif}
+.mcp-server-tag.ok{background:#E9F8ED;color:#34C759}
+.mcp-server-tag.type{background:#EEF0FA;color:#5C6BC0}
+.mcp-server-tag.tools{background:#F5F2EA;color:#888}
+.mcp-server-arrow{color:#C8C5BC;font-size:18px;flex-shrink:0}
+/* 工具列表 */
+.mcp-tool-list{padding:10px 16px 40px}
+.mcp-tool-card{background:#fff;border-radius:14px;padding:13px 15px;margin-bottom:8px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .12s}
+.mcp-tool-card:active{background:#F0EDE6}
+.mcp-tool-card-name{font-size:14px;font-weight:600;color:#1F1E1D;font-family:-apple-system,'PingFang SC',monospace;margin-bottom:3px}
+.mcp-tool-card-desc{font-size:12px;color:#888;line-height:1.5;font-family:-apple-system,'PingFang SC',sans-serif}
+/* 弹窗增强 */
+.mcp-type-row{display:flex;background:#EEECEA;border-radius:10px;padding:2px;gap:2px}
+.mcp-type-btn{flex:1;padding:7px 0;text-align:center;font-size:13px;border-radius:8px;cursor:pointer;color:#888;font-family:-apple-system,'PingFang SC',sans-serif;-webkit-tap-highlight-color:transparent;transition:all .15s}
+.mcp-type-btn.active{background:#fff;color:#3D6FE5;font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.mcp-call-desc{font-size:13px;color:#888;margin-bottom:14px;line-height:1.5;font-family:-apple-system,'PingFang SC',sans-serif}
+.mcp-call-result{margin-top:14px;border-radius:10px;overflow:hidden;background:#F7F4ED}
+.mcp-call-result-head{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;font-size:12px;font-weight:600;color:#888;border-bottom:.5px solid #EBE8DF}
+.mcp-call-result-body{padding:10px 12px;font-size:12px;color:#333;line-height:1.6;white-space:pre-wrap;max-height:260px;overflow-y:auto;margin:0;font-family:monospace}
+
 .mcp-section{margin:16px 16px 0}
 .mcp-section-label{font-size:11px;color:#A6A39A;letter-spacing:.08em;font-weight:600;text-transform:uppercase;margin-bottom:6px;padding-left:2px}
 .mcp-tool-row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:#fff;border-radius:12px;margin-bottom:6px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .12s}
