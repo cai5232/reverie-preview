@@ -2878,6 +2878,8 @@ function mcpShowAdd(){
   document.getElementById('mcpAddName').value = ''
   document.getElementById('mcpAddUrl').value = ''
   document.getElementById('mcpAddAuth').value = ''
+  const rows = document.getElementById('mcpHeaderRows')
+  if(rows) rows.innerHTML = ''
   mcpSelectType('http')
   document.getElementById('mcpAddOverlay').classList.add('open')
   setTimeout(()=>document.getElementById('mcpAddName').focus(), 150)
@@ -2891,11 +2893,12 @@ function mcpShowEdit(){
   document.getElementById('mcpAddName').value = s.name||''
   document.getElementById('mcpAddUrl').value = s.url||''
   document.getElementById('mcpAddAuth').value = s.auth||''
-  const headersEl = document.getElementById('mcpAddHeaders')
-  if(headersEl && s.extraHeaders){
-    headersEl.value = Object.entries(s.extraHeaders).map(([k,v])=>`${k}: ${v}`).join('\n')
-  }else if(headersEl){
-    headersEl.value = ''
+  const rows = document.getElementById('mcpHeaderRows')
+  if(rows){
+    rows.innerHTML = ''
+    if(s.extraHeaders){
+      Object.entries(s.extraHeaders).forEach(([k,v])=>mcpAddHeaderRow(k,v))
+    }
   }
   mcpSelectType(s.type||'http')
   document.getElementById('mcpAddOverlay').classList.add('open')
