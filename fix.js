@@ -1,97 +1,131 @@
-// fix.js v6 - 统一思考过程和工具行为小字浅灰样式，去重，连接竖线
+// fix.js v7
 
-// 将 .xk-thinking 节点变形为工具行风格的小字浅灰行
 function _makeThinkRow(node){
-  node.className = 'xk-tool-row'
+  node.className = 'xk-thinking'
   node.setAttribute('data-think','1')
-  // 拿到原来的 onclick
   const origBtn = node.querySelector('.xk-think-btn')
   const origOnclick = origBtn ? origBtn.onclick : null
-  node.innerHTML = `<div class="xk-tool-row-inner"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#A6A39A" stroke-width="1.1"/><path d="M6 3.2v2.8l1.4 1.4" stroke="#A6A39A" stroke-width="1.1" stroke-linecap="round"/></svg><span class="xk-tool-row-label">Thought process</span><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3 2l3 3-3 3" stroke="#C8C4BC" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`
+  node.innerHTML = `<div class="xk-think-btn" style="pointer-events:none"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.7" stroke="#A6A39A" stroke-width="1.1"/><path d="M6.5 3.8v3l1.7 1.7" stroke="#A6A39A" stroke-width="1.1" stroke-linecap="round"/></svg>Thought process</div>`
+  node.style.cursor = 'pointer'
   node.onclick = function(){
     if(origOnclick) try{ origOnclick() }catch(e){}
     else {
-      // 备用：从历史拖 thinking 内容
       const hist = window.xkHistory || []
       for(let i=hist.length-1;i>=0;i--){
-        const m = hist[i] && hist[i].content && hist[i].content.match(/\[THINK\]([\s\S]*?)\[\/THINK\]/)
-        if(m){ window.xkOpenThink && xkOpenThink(m[1]); return }
+        const m = hist[i]&&hist[i].content&&hist[i].content.match(/\[THINK\]([\s\S]*?)\[\/THINK\]/)
+        if(m){ window.xkOpenThink&&xkOpenThink(m[1]); return }
       }
     }
   }
 }
 
-// 不重复插入竖线
+// 将工具行改成和 think-btn 完全相同样式
+function _fixToolRow(row){
+  if(row._fixedStyle) return
+  row._fixedStyle = true
+  // 拿到工具名
+  const label = row.querySelector('.xk-tool-row-label')
+  const toolName = label ? label.textContent.replace('调用工具: ','').trim() : ''
+  const state = row._state || 'done'
+  const loadingDot = state==='loading' ? '<span class="xk-tool-loading-dot"></span>' : ''
+  const origOnclick = row.onclick
+  row.className = 'xk-thinking'
+  row.setAttribute('data-toolrow','1')
+  row.style.cursor = 'pointer'
+  row.innerHTML = `<div class="xk-think-btn" style="pointer-events:none"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M8.5 1.5a3 3 0 00-2.9 3.7L1.5 9.3a1.3 1.3 0 001.8 1.8l4.1-4.1a3 3 0 003.7-3.5l-1.7 1.7-1.3-1.3 1.7-1.7A3 3 0 008.5 1.5z" stroke="#A6A39A" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>调用工具: ${toolName}${loadingDot}</div>`
+  row.onclick = origOnclick
+}
+
+function _isToolLike(el){
+  return el && el.nodeType===1 && (
+    el.getAttribute('data-think') || el.getAttribute('data-toolrow') ||
+    el.classList.contains('xk-thinking')
+  )
+}
+
 function _addConn(parent, before){
   const p = before.previousElementSibling
   if(p && p.classList.contains('xk-tool-connector')) return
   const c = document.createElement('div')
   c.className = 'xk-tool-connector'
+  c.style.cssText = 'width:1px;background:#E0DDD8;height:10px;margin:0 0 0 6px'
   parent.insertBefore(c, before)
 }
 
-function _isToolLike(el){
-  return el && el.nodeType===1 && (
-    el.classList.contains('xk-tool-group') ||
-    el.classList.contains('xk-tool-row')
-  )
-}
-
-// 扫描 xkStream 直接子节点
 function _scan(){
   const stream = document.getElementById('xkStream')
   if(!stream) return
 
-  // 1. 将所有连续 .xk-thinking 块：只保第一个，删除其他，变形
+  // 1. 将 .xk-tool-row 和 .xk-tool-group 里的行改小样式
+  stream.querySelectorAll('.xk-tool-group').forEach(group=>{
+    group.querySelectorAll('.xk-tool-row').forEach(row=>{
+      _fixToolRow(row)
+    })
+    // 移除内部竖线
+    group.querySelectorAll('.xk-tool-connector').forEach(c=>c.remove())
+  })
+
+  // 2. 将 xkStream 直接子的 .xk-thinking 处理
   let nodes = Array.from(stream.children)
-  let i = 0
-  while(i < nodes.length){
+  let firstThinkIdx = -1
+  for(let i=0;i<nodes.length;i++){
     const n = nodes[i]
-    if(n.classList && n.classList.contains('xk-thinking')){
+    if(n.classList.contains('xk-thinking') && !n.getAttribute('data-think') && !n.getAttribute('data-toolrow')){
       _makeThinkRow(n)
-      // 删除后续连续的
-      let j = i+1
-      while(j < nodes.length && nodes[j].classList && (nodes[j].classList.contains('xk-thinking') || (nodes[j].getAttribute && nodes[j].getAttribute('data-think')))){
-        nodes[j].remove()
-        j++
-      }
-      nodes = Array.from(stream.children)
-      i = 0
-      continue
     }
-    i++
   }
 
-  // 2. 去除多余 data-think 节点（连续的只保第一个）
+  // 3. 去重：连续多个 data-think 只保第一个
   nodes = Array.from(stream.children)
-  let lastWasThink = false
+  let lastThink = false
   nodes.forEach(n=>{
-    if(n.getAttribute && n.getAttribute('data-think')){
-      if(lastWasThink) n.remove()
-      else lastWasThink = true
-    } else if(n.classList && n.classList.contains('xk-tool-group')){
-      lastWasThink = false  // tool group 不重置
+    if(n.getAttribute('data-think')){
+      if(lastThink) n.remove()
+      else lastThink = true
     } else if(!n.classList.contains('xk-tool-connector')){
-      lastWasThink = false
+      if(n.classList.contains('xk-tool-group') || n.getAttribute('data-toolrow')){
+        // 工具组不重置
+      } else {
+        lastThink = false
+      }
     }
   })
 
-  // 3. 插入竖线
+  // 4. 插入竖线
   nodes = Array.from(stream.children).filter(n=>!n.classList.contains('xk-tool-connector'))
   nodes.forEach((n,idx)=>{
-    if(_isToolLike(n) && idx > 0 && _isToolLike(nodes[idx-1])){
+    if(_isToolLike(n) && idx>0 && _isToolLike(nodes[idx-1])){
       _addConn(stream, n)
+    }
+    // tool-group 内部也连
+    if(n.classList.contains('xk-tool-group')){
+      const rows = Array.from(n.children).filter(c=>!c.classList.contains('xk-tool-connector'))
+      rows.forEach((r,ri)=>{
+        if(ri>0) _addConn(n, r)
+      })
     }
   })
 }
 
 document.addEventListener('DOMContentLoaded', function(){
+  // 拦截 xkUpdateToolStatus 䯿更新后也能重置样式
+  const _origUpdate = window.xkUpdateToolStatus
+  window.xkUpdateToolStatus = function(el, toolName, state, result){
+    if(el){
+      el._state = state
+      if(result!==undefined) el._result = result
+      el._fixedStyle = false  // 让 _scan 重新应用
+    }
+    if(_origUpdate) _origUpdate.apply(this, arguments)
+    setTimeout(_scan, 30)
+  }
+
   const stream = document.getElementById('xkStream')
   if(stream){
     new MutationObserver(()=>{
       clearTimeout(stream._ft)
-      stream._ft = setTimeout(_scan, 100)
-    }).observe(stream, {childList:true, subtree:false})
+      stream._ft = setTimeout(_scan, 80)
+    }).observe(stream, {childList:true, subtree:true})
   }
 
   // 弹窗拖动关闭
