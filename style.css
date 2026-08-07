@@ -715,4 +715,12 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 #page-xiaoke.active{display:flex!important}
 #page-xiaoke .xk-topbar{position:relative!important;top:auto!important;left:auto!important;right:auto!important;bottom:auto!important;transform:none!important;flex-shrink:0!important;z-index:2!important;touch-action:manipulation!important}
 #page-xiaoke .xk-stream{position:relative!important;top:auto!important;left:auto!important;right:auto!important;bottom:auto!important;flex:1!important;min-height:0!important;z-index:1!important;overflow-y:auto!important;padding:12px 22px!important}
+
 #page-xiaoke .xk-bar{position:relative!important;top:auto!important;left:auto!important;right:auto!important;bottom:auto!important;transform:none!important;flex-shrink:0!important;z-index:2!important}
+
+/* 去掉MCP弹窗input描边 */
+.mcp-modal input,.mcp-modal textarea,.mcp-header-row input{outline:none!important;border:none!important;-webkit-appearance:none!important;box-shadow:none!important}
+.mcp-modal input:focus,.mcp-modal textarea:focus,.mcp-header-row input:focus{outline:none!important;border:none!important;box-shadow:none!important}
+.mcp-header-row input{background:transparent;font-size:14px;font-family:-apple-system,'PingFang SC',sans-serif;color:#1F1E1D;padding:0;min-width:0;flex:1;width:100%}
+.mcp-header-row-del{width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:#CCC;cursor:pointer;flex-shrink:0;margin-top:2px;-webkit-tap-highlight-color:transparent}
+.mcp-add-header-btn{display:flex;align-items:center;gap:6px;font-size:13px;color:#BBB;padding:8px 2px;cursor:pointer;-webkit-tap-highlight-color:transparent}
