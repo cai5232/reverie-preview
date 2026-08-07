@@ -154,15 +154,19 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 #page-xiaoke{background:#F5F2EA;display:flex;flex-direction:column}
 
 .xk-topbar{
-  position:fixed;top:0;left:0;right:0;max-width:430px;margin:0 auto;z-index:20;
+  flex-shrink:0;
   background:#F5F2EA;
   display:flex;align-items:center;
   padding:calc(env(safe-area-inset-top,0px) + 8px) 14px 8px;
+  touch-action:manipulation;
 }
 .xk-menu-btn{
   width:38px;height:38px;border:none;background:none;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent;padding:0;
+  cursor:pointer;flex-shrink:0;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+  padding:0;
 }
 .xk-menu-btn:active{background:#DEDAD3}
 /* 加号胶囊 */
