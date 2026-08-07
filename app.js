@@ -2121,6 +2121,7 @@ async function xkCallAI(){
         model:cfg.model,
         messages:[{role:'system',content:SYSTEM_PROMPT},...xkHistory],
         stream:true,
+        stream_options:{include_usage:true},
         temperature:cfg.temp
       })
     })
