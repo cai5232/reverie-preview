@@ -2242,7 +2242,25 @@ async function xkCallAI(){
       }
     }
 
+    if(bodyRafId){cancelAnimationFrame(bodyRafId);flushBody()}
+    if(thinkRafId){cancelAnimationFrame(thinkRafId);flushThink()}
+    // thinking还没收起的话，收起并把按钮挂到block上
+    if(thinkLiveEl){
+      collapseThinkLive()
+    }
     if(streamBlock)xkStreamDone(streamBlock)
+    // thinking 按钮挂到 block
+    if(thinkBuf&&streamBlock){
+      const tw=document.createElement('div')
+      tw.className='xk-thinking'
+      const btn=document.createElement('div')
+      btn.className='xk-think-btn'
+      btn.innerHTML=`<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.7" stroke="#A6A39A" stroke-width="1.1"/><path d="M6.5 3.8v3l1.7 1.7" stroke="#A6A39A" stroke-width="1.1" stroke-linecap="round"/></svg>心声`
+      const t=thinkBuf
+      btn.onclick=()=>xkOpenThink(t)
+      tw.appendChild(btn)
+      streamBlock.insertBefore(tw,streamBlock.firstChild)
+    }
 
     // 如果没有流到block（全是thinking，没有body）
     if(!streamBlock&&(thinkBuf||bodyBuf)){
