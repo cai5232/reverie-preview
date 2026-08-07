@@ -577,27 +577,24 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 
 /* 操作栏 */
 .xk-action-bar{
-  display:flex;align-items:center;gap:2px;
+  display:flex;align-items:center;gap:0;
   margin-top:10px;
-  flex-wrap:nowrap;
 }
 .xk-action-btn{
-  display:inline-flex;align-items:center;gap:3px;
+  display:inline-flex;align-items:center;justify-content:center;
   background:none;border:none;
-  padding:5px 6px;border-radius:8px;
-  font-size:11px;color:#A6A39A;
-  font-family:-apple-system,'PingFang SC',sans-serif;
+  padding:6px 8px;border-radius:8px;
   cursor:pointer;-webkit-tap-highlight-color:transparent;
-  flex-shrink:0;white-space:nowrap;
+  flex-shrink:0;
 }
 .xk-action-btn:active{background:#EBE8DF}
-.xk-action-btn svg{flex-shrink:0}
-.xk-action-btn span{font-size:11px;color:#A6A39A}
-.xk-action-btn.danger span{color:#ff6b6b}
+.xk-action-btn svg{flex-shrink:0;opacity:.55}
+.xk-action-btn:active svg{opacity:.85}
+.xk-action-btn.danger svg{opacity:1}
 .xk-token-count{
   margin-left:auto;
   font-size:11px;color:#C8C5BC;
-  padding:5px 4px;white-space:nowrap;flex-shrink:0;
+  padding:6px 4px;white-space:nowrap;flex-shrink:0;
 }
 
 /* thinking 流式展示区（生成中展开，完成后收起） */
