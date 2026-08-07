@@ -2690,16 +2690,67 @@ function parseHeadersInput(){
   return headers
 }
 
-// 发送 JSON-RPC 2.0
+// 发送 JSON-RPC 2.0（HTTP类型）
 async function mcpRPC(server, method, params={}){
   const headers = {}
   if(server.auth) headers['Authorization'] = server.auth
-  // 合并自定义请求头
   if(server.extraHeaders) Object.assign(headers, server.extraHeaders)
   const payload = {jsonrpc:'2.0', id: Date.now(), method, params}
+  if(server.type === 'sse'){
+    return mcpSSERPC(server, method, params)
+  }
   const j = await mcpProxyFetch(server.url, payload, headers)
   if(j.data && j.data.error) throw new Error(JSON.stringify(j.data.error))
   return j.data
+}
+
+// SSE类型MCP：握手→发消息→等响应
+async function mcpSSERPC(server, method, params={}){
+  return new Promise((resolve, reject)=>{
+    const timeout = setTimeout(()=>{ es.close(); reject(new Error('SSE timeout')) }, 12000)
+    let msgEndpoint = null
+    const id = Date.now()
+
+    const headers = {}
+    if(server.auth) headers['Authorization'] = server.auth
+    if(server.extraHeaders) Object.assign(headers, server.extraHeaders)
+
+    // 建立SSE连接
+    const es = new EventSource(server.url)
+
+    es.addEventListener('endpoint', async e=>{
+      msgEndpoint = e.data.startsWith('http') ? e.data : new URL(e.data, server.url).href
+      // 发JSON-RPC到endpoint
+      try{
+        const body = {jsonrpc:'2.0', id, method, params}
+        await fetch(msgEndpoint, {
+          method:'POST',
+          headers:{'Content-Type':'application/json', ...headers},
+          body: JSON.stringify(body)
+        })
+      }catch(err){
+        clearTimeout(timeout); es.close(); reject(err)
+      }
+    })
+
+    es.addEventListener('message', e=>{
+      try{
+        const j = JSON.parse(e.data)
+        if(j.id === id || j.result || j.error){
+          clearTimeout(timeout)
+          es.close()
+          if(j.error) reject(new Error(JSON.stringify(j.error)))
+          else resolve(j)
+        }
+      }catch(err){}
+    })
+
+    es.onerror = err=>{
+      clearTimeout(timeout)
+      es.close()
+      reject(new Error('SSE连接失败'))
+    }
+  })
 }
 
 // 渲染服务器列表
