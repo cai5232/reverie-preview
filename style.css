@@ -169,12 +169,12 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 /* 加号胶囊 */
 .xk-pill-btn{
   display:inline-flex;align-items:center;justify-content:center;
-  background:#ECEAE4;border-radius:20px;
+  background:#EBE8DF;border-radius:20px;
   width:32px;height:30px;
   cursor:pointer;flex-shrink:0;border:none;
   -webkit-tap-highlight-color:transparent;
 }
-.xk-pill-btn:active{background:#DEDAD3}
+.xk-pill-btn:active{background:#DEDAD0}
 /* 语音按钮 */
 .xk-cb-icon{
   width:26px;height:26px;border:none;background:none;
@@ -182,7 +182,12 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
   border-radius:50%;cursor:pointer;flex-shrink:0;
   -webkit-tap-highlight-color:transparent;padding:0;
 }
-.xk-cb-icon:active{background:#F0EEE8}
+.xk-cb-icon:active{background:rgba(0,0,0,.05)}
+/* 模型名纯文字 */
+.xk-model-label{
+  font-size:13px;color:#8A8880;cursor:pointer;flex-shrink:0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px;
+}
 /* 发送键黑色圆形 */
 .xk-send-btn{
   width:38px;height:38px;border:none;
