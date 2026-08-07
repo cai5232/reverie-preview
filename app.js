@@ -1942,17 +1942,7 @@ function xkEsc(s){
 }
 
 function xkMaybeTime(box){
-  const now=Date.now()
-  if(now-xkLastTime>5*60*1000){
-    const d=new Date()
-    const h=String(d.getHours()).padStart(2,'0')
-    const m=String(d.getMinutes()).padStart(2,'0')
-    const lbl=document.createElement('div')
-    lbl.className='xk-timelabel'
-    lbl.textContent=`${d.getMonth()+1}月${d.getDate()}日 ${h}:${m}`
-    box.appendChild(lbl)
-  }
-  xkLastTime=now
+  xkLastTime=Date.now()
 }
 
 function xkAppendUser(text){
