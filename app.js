@@ -2412,17 +2412,15 @@ document.addEventListener('DOMContentLoaded',()=>{
   }
   // 恢复历史
   if(xkHistory.length){
-    let lastTime=0
     const box=document.getElementById('xkStream')
     xkHistory.forEach(m=>{
-      if(m.role==='user'){xkAppendMe(m.content)}
+      if(m.role==='user'){xkAppendUser(m.content)}
       else{
-        let heart='',body=m.content
-        const hm=m.content.match(/\[心声\]([\s\S]*?)\[\/心声\]/)
-        if(hm){heart=hm[1].trim();body=m.content.slice(hm.index+hm[0].length).trim()}
-        xkRenderThem(body,heart)
+        // 仅用模型自带 thinking，不解析心声标签
+        xkRenderAI(m.content||'',null)
       }
     })
+    box.scrollTop=box.scrollHeight
   }
   applyKeepalive()
   initMemory()
