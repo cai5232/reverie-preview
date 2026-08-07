@@ -2416,7 +2416,7 @@ function xkAddActions(block, tokens){
   bar.className='xk-action-bar'
 
   // 复制
-  const btnCopy=_xkBtn(`<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="5" y="1" width="9" height="11" rx="1.5" stroke="#A6A39A" stroke-width="1.2"/><rect x="1" y="4" width="9" height="10" rx="1.5" stroke="#A6A39A" stroke-width="1.2"/></svg>`,'复制')
+  const btnCopy=_xkBtn(`<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="5" y="1" width="9" height="11" rx="1.5" fill="#F5F2EA" stroke="#A6A39A" stroke-width="1.2"/><rect x="1" y="4" width="9" height="10" rx="1.5" fill="#F5F2EA" stroke="#A6A39A" stroke-width="1.2"/></svg>`,'复制')
   btnCopy.onclick=()=>{
     navigator.clipboard&&navigator.clipboard.writeText(getText())
     btnCopy.querySelector('span').textContent='✓'
