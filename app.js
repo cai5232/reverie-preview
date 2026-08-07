@@ -2196,9 +2196,8 @@ async function xkCallAI(){
       }
       bodyRafId=null
     }
-    const scheduleBodyFlush=()=>{
-      if(!bodyRafId)bodyRafId=requestAnimationFrame(flushBody)
-    }
+    // 立即flush，不攒批，保证每个token都触发scrollTop更新
+    const scheduleBodyFlush=()=>{flushBody()}
 
     while(true){
       const {done,value}=await reader.read()
