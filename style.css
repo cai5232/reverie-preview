@@ -575,6 +575,31 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 .nv-gen-progress-fill{height:100%;background:#111;border-radius:2px;width:0;transition:width .4s ease}
 .nv-gen-progress-text{font-size:11px;color:#aaa;margin-top:6px;text-align:center}
 
+/* 操作栏 */
+.xk-action-bar{
+  display:flex;align-items:center;gap:2px;
+  margin-top:10px;
+  flex-wrap:nowrap;
+}
+.xk-action-btn{
+  display:inline-flex;align-items:center;gap:3px;
+  background:none;border:none;
+  padding:5px 6px;border-radius:8px;
+  font-size:11px;color:#A6A39A;
+  font-family:-apple-system,'PingFang SC',sans-serif;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+  flex-shrink:0;white-space:nowrap;
+}
+.xk-action-btn:active{background:#EBE8DF}
+.xk-action-btn svg{flex-shrink:0}
+.xk-action-btn span{font-size:11px;color:#A6A39A}
+.xk-action-btn.danger span{color:#ff6b6b}
+.xk-token-count{
+  margin-left:auto;
+  font-size:11px;color:#C8C5BC;
+  padding:5px 4px;white-space:nowrap;flex-shrink:0;
+}
+
 /* thinking 流式展示区（生成中展开，完成后收起） */
 .xk-think-live{
   margin:0 0 8px;
