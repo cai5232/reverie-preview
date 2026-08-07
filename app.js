@@ -2393,7 +2393,16 @@ async function xkCallAI(){
 document.addEventListener('DOMContentLoaded',()=>{
   loadHeaderAvatar()
 
-  const xkta=document.getElementById('xkInput')
+  const mcpTa=document.getElementById('mcpCustomInput')
+  if(mcpTa){
+    mcpTa.addEventListener('input',function(){
+      this.style.height='auto'
+      this.style.height=Math.min(this.scrollHeight,140)+'px'
+    })
+    mcpTa.addEventListener('keydown',function(e){
+      if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();mcpRunCustom()}
+    })
+  }
   if(xkta){
     xkta.addEventListener('input',function(){
       this.style.height='auto'
