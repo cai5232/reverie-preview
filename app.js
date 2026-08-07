@@ -2295,28 +2295,8 @@ function xkTypingRow(){
   return row
 }
 
-function xkRenderThem(text,thinking){
-  const box=document.getElementById('xkStream')
-  // 拆段，每段一个气泡
-  const segs=text.split(/\n\n+/).map(s=>s.trim()).filter(Boolean)
-  segs.forEach((seg,i)=>{
-    const row=document.createElement('div')
-    row.className='xk-row them'
-    // 第一段前加thinking折叠
-    if(i===0&&thinking){
-      const tw=document.createElement('div')
-      tw.className='xk-thinking'
-      tw.innerHTML=`<div class="xk-thinking-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')"><svg width="8" height="12" viewBox="0 0 8 12" fill="none"><path d="M1 1l5 5-5 5" stroke="#A6A39A" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>心声</div><div class="xk-thinking-body">${xkEsc(thinking)}</div>`
-      row.appendChild(tw)
-    }
-    const bubble=document.createElement('div')
-    bubble.className='xk-bubble'
-    bubble.textContent=seg
-    row.appendChild(bubble)
-    box.appendChild(row)
-  })
-  box.scrollTop=box.scrollHeight
-}
+// xkTypingEl: 타이핑 점 애니메이션
+
 
 async function xkSend(){
   if(xkBusy)return
