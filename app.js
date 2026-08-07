@@ -2302,41 +2302,6 @@ function xkEsc(s){
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
 }
 
-function xkMaybeTime(box){
-  const now=Date.now()
-  if(now-xkLastTime>5*60*1000){
-    const d=new Date()
-    const h=String(d.getHours()).padStart(2,'0')
-    const m=String(d.getMinutes()).padStart(2,'0')
-    const lbl=document.createElement('div')
-    lbl.className='xk-timelabel'
-    lbl.textContent=`${d.getMonth()+1}月${d.getDate()}日 ${h}:${m}`
-    box.appendChild(lbl)
-  }
-  xkLastTime=now
-}
-
-function xkAppendUser(text){
-  const box=document.getElementById('xkStream')
-  xkMaybeTime(box)
-  const el=document.createElement('div')
-  el.className='xk-user-msg'
-  el.textContent=text
-  box.appendChild(el)
-  box.scrollTop=box.scrollHeight
-}
-
-function xkTypingRow(){
-  const box=document.getElementById('xkStream')
-  const row=document.createElement('div')
-  row.className='xk-row them xk-typing'
-  row.style.cssText='display:flex;align-items:center;gap:5px;padding:10px 14px'
-  row.innerHTML='<span style="width:7px;height:7px;border-radius:50%;background:#bbb;display:inline-block;animation:dot-fade 1.2s ease-in-out infinite 0s"></span><span style="width:7px;height:7px;border-radius:50%;background:#bbb;display:inline-block;animation:dot-fade 1.2s ease-in-out infinite 0.4s"></span><span style="width:7px;height:7px;border-radius:50%;background:#bbb;display:inline-block;animation:dot-fade 1.2s ease-in-out infinite 0.8s"></span>'
-  box.appendChild(row)
-  box.scrollTop=box.scrollHeight
-  return row
-}
-
 // xkRenderThem alias: for history restore compatibility
 function xkRenderThem(text, thinking){
   xkRenderAI(text||'', thinking||null)
