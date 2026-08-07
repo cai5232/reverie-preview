@@ -2342,18 +2342,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   renderNovels()
 })
 
-function xkNewChat(){
-  xkHistory=[]
-  localStorage.setItem('xk_history',JSON.stringify(xkHistory))
-  const s=document.getElementById('xkStream')
-  if(s)s.innerHTML=''
-  xkLastTime=0
-}
-
-function xkEsc(s){
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-}
-
 // xkRenderThem alias
 function xkRenderThem(text, thinking){
   xkRenderAI(text||'', thinking||null)
