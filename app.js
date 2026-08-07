@@ -2164,13 +2164,11 @@ async function xkCallAI(){
       xkRenderAI(bodyBuf||'(´・ω・`)',thinkBuf||null)
     }
 
-    // 存历史（存完整内容，含thinking标记）
-    const fullContent=(thinkBuf?`<think>${thinkBuf}</think>`:'')+(bodyBuf)
-    // bodyBuf可能为空（追加模式下内容已流出），存reconstructed
+    // 存历史（正文内容）
     const reconstructed=streamBlock
       ?Array.from(streamBlock.querySelectorAll('.xk-ai-para')).map(p=>p.textContent).join('\n\n')
       :bodyBuf
-    xkHistory.push({role:'assistant',content:(thinkBuf?`[心声]${thinkBuf}[/心声]\n\n`:'')+reconstructed})
+    xkHistory.push({role:'assistant',content:reconstructed})
     if(xkHistory.length>60)xkHistory=xkHistory.slice(-60)
     localStorage.setItem('xk_history',JSON.stringify(xkHistory))
 
