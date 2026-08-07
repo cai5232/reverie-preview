@@ -2331,14 +2331,14 @@ async function xkAgenticLoop(sendOptions, mcpServerMap, round){
       }
       xkHistory.push(assistantMsg)
 
-      // 逐个调工具，显示状态
+      xkToolGroupStart()
       for(const tc of assistantMsg.tool_calls){
         const toolName=tc.function.name
-        const toolArgs=JSON.parse(tc.function.arguments||'{}')
+        let toolArgs={}
+        try{toolArgs=JSON.parse(tc.function.arguments||'{}')}catch{}
         const serverInfo=mcpServerMap?.[toolName]
 
-        // 显示"正在调用 xxx"
-        const statusEl=xkShowToolStatus(toolName,'loading')
+        const statusEl=xkShowToolStatus(toolName,'loading',toolArgs)
 
         let toolResult=''
         if(serverInfo){
@@ -2347,18 +2347,19 @@ async function xkAgenticLoop(sendOptions, mcpServerMap, round){
             const content=mcpRes?.data?.result?.content||mcpRes?.result?.content||[]
             if(Array.isArray(content)){toolResult=content.map(c=>c.text||JSON.stringify(c)).join('\n')}
             else{toolResult=JSON.stringify(mcpRes?.data?.result||mcpRes)}
-            xkUpdateToolStatus(statusEl,toolName,'done')
+            xkUpdateToolStatus(statusEl,toolName,'done',toolResult)
           }catch(e){
             toolResult='工具调用失败: '+e.message
-            xkUpdateToolStatus(statusEl,toolName,'error')
+            xkUpdateToolStatus(statusEl,toolName,'error',toolResult)
           }
         }else{
           toolResult='找不到工具 '+toolName+' 对应的服务器'
-          xkUpdateToolStatus(statusEl,toolName,'error')
+          xkUpdateToolStatus(statusEl,toolName,'error',toolResult)
         }
 
         xkHistory.push({role:'tool',tool_call_id:tc.id,content:toolResult})
       }
+      xkToolGroupEnd()
 
       localStorage.setItem('xk_history',JSON.stringify(xkHistory))
       // 继续下一轮（不带 tools，让模型直接输出最终回复）
