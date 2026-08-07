@@ -2100,6 +2100,9 @@ async function xkSend(){
   xkHistory.push({role:'user',content:text})
   if(xkHistory.length>60)xkHistory=xkHistory.slice(-60)
   localStorage.setItem('xk_history',JSON.stringify(xkHistory))
+  // 重置：新消息发出去，自动跟底
+  const box=document.getElementById('xkStream')
+  if(box)box._userScrolled=false
   await xkCallAI()
 }
 
