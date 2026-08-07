@@ -2171,8 +2171,7 @@ async function xkCallAI(){
       if(pendingThink&&thinkLivePara){
         thinkLivePara.textContent+=pendingThink
         pendingThink=''
-        const box=document.getElementById('xkStream')
-        if(box)box.scrollTop=box.scrollHeight
+        thinkLivePara.scrollIntoView({block:'nearest'})
       }
       thinkRafId=null
     }
