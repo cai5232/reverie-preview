@@ -1922,7 +1922,8 @@ function xkTypingEl(){
   const box=document.getElementById('xkStream')
   const el=document.createElement('div')
   el.className='xk-typing-dots'
-  el.innerHTML='<div class="xk-dot"></div><div class="xk-dot"></div><div class="xk-dot"></div>'
+  el.style.cssText='display:flex;align-items:center;gap:5px;padding:10px 14px'
+  el.innerHTML='<span style="width:7px;height:7px;border-radius:50%;background:#bbb;display:inline-block;animation:dot-fade 1.2s ease-in-out infinite 0s"></span><span style="width:7px;height:7px;border-radius:50%;background:#bbb;display:inline-block;animation:dot-fade 1.2s ease-in-out infinite 0.4s"></span><span style="width:7px;height:7px;border-radius:50%;background:#bbb;display:inline-block;animation:dot-fade 1.2s ease-in-out infinite 0.8s"></span>'
   box.appendChild(el)
   box.scrollTop=box.scrollHeight
   return el
