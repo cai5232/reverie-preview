@@ -2059,11 +2059,9 @@ function xkApplyMarkdown(block){
 }
 
 function xkStreamAppend(block, chunk){
-  const box=document.getElementById('xkStream')
   const cursor=block._cursor
   let curPara=block._curPara
 
-  // 去掉 # 标题标记，双换行新起一段，其余纯文本追加（不做 innerHTML，保证流式轻量）
   const clean=chunk.replace(/^#+\s*/gm,'')
 
   const parts=clean.split(/\n\n/)
@@ -2081,7 +2079,8 @@ function xkStreamAppend(block, chunk){
       curPara.insertBefore(document.createTextNode(part),cursor)
     }
   })
-  box.scrollTop=box.scrollHeight
+  // 用 cursor 自身 scrollIntoView，iOS 上比 scrollTop=scrollHeight 更可靠
+  cursor.scrollIntoView({block:'nearest',inline:'nearest'})
 }
 
 function xkStreamDone(block){
