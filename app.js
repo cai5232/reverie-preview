@@ -2243,7 +2243,12 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   // 更新model标签
   const ml=document.getElementById('xkModelLabel')
-  if(ml)ml.textContent=cfg.model.replace(/\[.*?\]\s*/g,'').slice(0,22)
+  if(ml){
+    const m=cfg.model||''
+    // 取 sonnet/opus/haiku 之后的部分，或直接截短
+    const match=m.match(/(sonnet|opus|haiku|flash|gemini|gpt)([-\w]*)/i)
+    ml.textContent=match?match[1]+match[2]:m.slice(0,14)
+  }
 
   applyKeepalive()
   initMemory()
