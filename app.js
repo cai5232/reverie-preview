@@ -2353,6 +2353,8 @@ document.addEventListener('DOMContentLoaded',()=>{
       }
     },{passive:true})
   }
+  // 键盘推bar
+  const bar=document.querySelector('#page-xiaoke .xk-bar')
   function onVP(){
     const vp=window.visualViewport
     if(!vp||!bar)return
