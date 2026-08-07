@@ -689,6 +689,17 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 .mcp-type-btn{flex:1;padding:7px 0;text-align:center;font-size:13px;border-radius:8px;cursor:pointer;color:#888;font-family:-apple-system,'PingFang SC',sans-serif;-webkit-tap-highlight-color:transparent;transition:all .15s}
 .mcp-type-btn.active{background:#fff;color:#1F1E1D;font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,.08)}
 
+/* ── 工具调用组 ── */
+.xk-tool-group{margin:6px 0 4px;display:flex;flex-direction:column}
+.xk-tool-row{display:flex;align-items:stretch;cursor:pointer;-webkit-tap-highlight-color:transparent;border-radius:12px;transition:background .15s}
+.xk-tool-row:active{background:rgba(0,0,0,.04)}
+.xk-tool-row-inner{display:flex;align-items:center;gap:10px;padding:9px 12px 9px 4px;flex:1}
+.xk-tool-row-label{flex:1;font-size:14px;color:#555;font-family:-apple-system,'PingFang SC',sans-serif;line-height:1.4}
+.xk-tool-row-label b{font-weight:500;color:#333}
+.xk-tool-connector{width:1px;background:#E0DDD8;height:12px;margin:0 0 0 20px}
+.xk-tool-loading-dot{display:inline-block;width:5px;height:5px;background:#A6A39A;border-radius:50%;margin-left:5px;vertical-align:middle;animation:xkdotpulse 1s ease-in-out infinite}
+@keyframes xkdotpulse{0%,100%{opacity:.3}50%{opacity:1}}
+
 .xk-think-live{
   margin:0 0 8px;
   border-radius:12px;
