@@ -242,8 +242,7 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 .xk-thinking-toggle svg{transition:transform .2s;flex-shrink:0}
 .xk-thinking-toggle.open svg{transform:rotate(90deg)}
 .xk-thinking-body{
-  font-size:13px;color:#6E6D66;
-  background:#ECEAE4;border-radius:0 12px 12px 12px;
+  font-size:13px;color:#6E6D66;background:#EBE8DF;
   padding:10px 14px;margin-top:6px;
   line-height:1.7;display:none;white-space:pre-wrap;
 }
