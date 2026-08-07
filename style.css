@@ -156,9 +156,8 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 .xk-topbar{
   position:fixed;top:0;left:0;right:0;max-width:430px;margin:0 auto;z-index:20;
   background:#F5F2EA;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:calc(env(safe-area-inset-top,0px) + 10px) 16px 10px;
-  gap:8px;
+  display:flex;align-items:center;
+  padding:calc(env(safe-area-inset-top,0px) + 8px) 14px 8px;
 }
 .xk-menu-btn{
   width:38px;height:38px;border:none;background:none;border-radius:50%;
