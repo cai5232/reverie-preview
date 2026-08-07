@@ -2393,23 +2393,115 @@ async function xkAgenticLoop(sendOptions, mcpServerMap, round){
   }
 }
 
-// 显示工具调用状态卡片
-function xkShowToolStatus(toolName, state){
-  const box=document.getElementById('xkStream')
-  const el=document.createElement('div')
-  el.style.cssText='display:flex;align-items:center;gap:8px;padding:8px 12px;margin:4px 0;background:#F5F2EA;border-radius:10px;font-size:13px;color:#888;font-family:-apple-system,"PingFang SC",sans-serif'
-  el.innerHTML=xkToolStatusHTML(toolName,state)
-  box.appendChild(el)
-  box.scrollTop=box.scrollHeight
-  return el
+// ── 工具调用显示（Kiro风格：无色块，融入背景，连续竖线，可点开弹窗）──
+
+// 工具调用容器：连续的工具行用一个wrapper包起来，中间竖线连接
+let _xkToolGroup = null   // 当前正在追加的工具组容器
+let _xkToolGroupItems = []  // 工具组内的行元素（用于连线）
+
+function xkToolGroupStart(){
+  const box = document.getElementById('xkStream')
+  _xkToolGroup = document.createElement('div')
+  _xkToolGroup.className = 'xk-tool-group'
+  _xkToolGroupItems = []
+  box.appendChild(_xkToolGroup)
 }
-function xkToolStatusHTML(toolName,state){
-  const icon=state==='loading'?`<svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="animation:xkdot 1s infinite"><circle cx="7" cy="7" r="6" stroke="#A6A39A" stroke-width="1.2"/><path d="M7 4v3l2 2" stroke="#A6A39A" stroke-width="1.2" stroke-linecap="round"/></svg>`:state==='done'?`<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="#E9F8ED"/><path d="M4 7l2.5 2.5 4-4" stroke="#34C759" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>`:`<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="#FFF0F0"/><path d="M5 5l4 4M9 5l-4 4" stroke="#FF3B30" stroke-width="1.3" stroke-linecap="round"/></svg>`
-  const label=state==='loading'?`正在调用 <b style="color:#555">${escHtml(toolName)}</b>…`:state==='done'?`已调用 <b style="color:#555">${escHtml(toolName)}</b>`:` <b style="color:#555">${escHtml(toolName)}</b> 调用失败`
-  return icon+`<span>${label}</span>`
+
+function xkToolGroupEnd(){
+  _xkToolGroup = null
+  _xkToolGroupItems = []
 }
-function xkUpdateToolStatus(el,toolName,state){
-  if(el)el.innerHTML=xkToolStatusHTML(toolName,state)
+
+function xkShowToolStatus(toolName, state, args){
+  const box = document.getElementById('xkStream')
+  // 还没有工具组，新建一个
+  if(!_xkToolGroup){
+    xkToolGroupStart()
+  }
+  // 行元素
+  const row = document.createElement('div')
+  row.className = 'xk-tool-row'
+  row._toolName = toolName
+  row._args = args || {}
+  row._result = ''
+  row._state = state
+
+  row.innerHTML = xkToolRowHTML(toolName, state)
+  row.onclick = () => xkOpenToolDetail(row)
+
+  // 如果组里已有元素，在上一个元素后面加竖线
+  if(_xkToolGroupItems.length > 0){
+    const connector = document.createElement('div')
+    connector.className = 'xk-tool-connector'
+    _xkToolGroup.appendChild(connector)
+  }
+
+  _xkToolGroup.appendChild(row)
+  _xkToolGroupItems.push(row)
+  box.scrollTop = box.scrollHeight
+  return row
+}
+
+function xkToolRowHTML(toolName, state){
+  const wrenchSvg = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10.5 2.5a3.5 3.5 0 00-3.4 4.3L2.2 11.7a1.5 1.5 0 002.1 2.1l4.9-4.9a3.5 3.5 0 004.3-4.1l-2 2-1.5-1.5 2-2A3.5 3.5 0 0010.5 2.5z" stroke="#A6A39A" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+  const arrowSvg = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4 2l4 4-4 4" stroke="#C8C4BC" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+  const loadingDot = state==='loading' ? `<span class="xk-tool-loading-dot"></span>` : ''
+  const label = state==='loading' ? `调用工具: <b>${escHtml(toolName)}</b>${loadingDot}` :
+                state==='done'    ? `调用工具: <b>${escHtml(toolName)}</b>` :
+                                    `调用工具: <b>${escHtml(toolName)}</b> <span style="color:#FF3B30;font-size:11px">失败</span>`
+  return `<div class="xk-tool-row-inner">${wrenchSvg}<span class="xk-tool-row-label">${label}</span>${arrowSvg}</div>`
+}
+
+function xkUpdateToolStatus(el, toolName, state, result){
+  if(!el) return
+  el._state = state
+  if(result !== undefined) el._result = result
+  el.innerHTML = xkToolRowHTML(toolName, state)
+  el.onclick = () => xkOpenToolDetail(el)
+}
+
+// 点击工具行，从底部弹出详情
+function xkOpenToolDetail(row){
+  const name = row._toolName || ''
+  const args = row._args || {}
+  const result = row._result || ''
+  const state = row._state || 'done'
+
+  // 创建遮罩+弹窗
+  const overlay = document.createElement('div')
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.3);display:flex;align-items:flex-end'
+  overlay.onclick = e => { if(e.target===overlay) overlay.remove() }
+
+  const sheet = document.createElement('div')
+  sheet.style.cssText = 'background:#fff;border-radius:20px 20px 0 0;width:100%;max-height:75vh;overflow-y:auto;padding:0 0 calc(env(safe-area-inset-bottom,0px)+20px)'
+
+  const handle = document.createElement('div')
+  handle.style.cssText = 'width:36px;height:4px;background:#E0DDD8;border-radius:2px;margin:12px auto 0'
+  sheet.appendChild(handle)
+
+  const header = document.createElement('div')
+  header.style.cssText = 'display:flex;align-items:center;gap:10px;padding:16px 20px 12px'
+  header.innerHTML = `<svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M10.5 2.5a3.5 3.5 0 00-3.4 4.3L2.2 11.7a1.5 1.5 0 002.1 2.1l4.9-4.9a3.5 3.5 0 004.3-4.1l-2 2-1.5-1.5 2-2A3.5 3.5 0 0010.5 2.5z" stroke="#5C6BC0" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span style="font-size:16px;font-weight:600;color:#111;font-family:-apple-system,'PingFang SC',sans-serif">调用工具: ${escHtml(name)}</span>`
+  sheet.appendChild(header)
+
+  const body = document.createElement('div')
+  body.style.cssText = 'padding:0 20px'
+
+  const argsStr = typeof args === 'object' ? JSON.stringify(args, null, 2) : String(args)
+  body.innerHTML = `
+    <div style="font-size:12px;color:#AAA;margin-bottom:8px;font-family:-apple-system,'PingFang SC',sans-serif">参数</div>
+    <pre style="background:#F7F6F3;border-radius:10px;padding:12px 14px;font-size:13px;color:#333;overflow-x:auto;white-space:pre-wrap;word-break:break-all;line-height:1.6;margin:0 0 16px;font-family:ui-monospace,'SF Mono',monospace">${escHtml(argsStr)}</pre>
+    ${result ? `<div style="font-size:12px;color:#AAA;margin-bottom:8px;font-family:-apple-system,'PingFang SC',sans-serif">结果</div>
+    <pre style="background:#F7F6F3;border-radius:10px;padding:12px 14px;font-size:13px;color:#333;overflow-x:auto;white-space:pre-wrap;word-break:break-all;line-height:1.6;margin:0;font-family:ui-monospace,'SF Mono',monospace">${escHtml(result.slice(0,3000)+(result.length>3000?'\n…(截断)':''))}</pre>` : ''}
+  `
+  sheet.appendChild(body)
+  overlay.appendChild(sheet)
+  document.body.appendChild(overlay)
+
+  // 弹入动画
+  sheet.style.transform = 'translateY(100%)'
+  sheet.style.transition = 'transform .3s cubic-bezier(.32,1,.28,1)'
+  requestAnimationFrame(()=>{ sheet.style.transform = 'translateY(0)' })
 }
 
 document.addEventListener('DOMContentLoaded',()=>{
