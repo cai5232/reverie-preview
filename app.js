@@ -2376,9 +2376,16 @@ document.addEventListener('DOMContentLoaded',()=>{
         xkAppendUser(m.content)
       }else{
         let heart='',body=m.content
-        const hm=m.content.match(/\[心声\]([\s\S]*?)\[\/心声\]/)
+        // 新格式 [THINK]...[/THINK]正文
+        const hm=m.content.match(/\[THINK\]([\s\S]*?)\[\/THINK\]/)
         if(hm){heart=hm[1].trim();body=m.content.slice(hm.index+hm[0].length).trim()}
-        xkRenderAI(body||'',heart||null)
+        else{
+          // 兼容旧格式 [心声]...[/心声]
+          const hm2=m.content.match(/\[心声\]([\s\S]*?)\[\/心声\]/)
+          if(hm2){heart=hm2[1].trim();body=m.content.slice(hm2.index+hm2[0].length).trim()}
+        }
+        const block=xkRenderAI(body||'',heart||null)
+        if(block)xkAddActions(block,0)
       }
     })
     box.scrollTop=box.scrollHeight
