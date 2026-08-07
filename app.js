@@ -2350,6 +2350,15 @@ async function xkAgenticLoop(sendOptions, mcpServerMap, round){
         const box=document.getElementById('xkStream')
         box.appendChild(tw)
       }
+      // 这一轮有thinking，先插思考过程块（在工具组前）
+      if(thinkBuf){
+        const tw=document.createElement('div');tw.className='xk-thinking'
+        const tbtn=document.createElement('div');tbtn.className='xk-think-btn'
+        tbtn.innerHTML=`<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.7" stroke="#A6A39A" stroke-width="1.1"/><path d="M6.5 3.8v3l1.7 1.7" stroke="#A6A39A" stroke-width="1.1" stroke-linecap="round"/></svg>思考过程`
+        const _t=thinkBuf;tbtn.onclick=()=>xkOpenThink(_t);tw.appendChild(tbtn)
+        const box=document.getElementById('xkStream')
+        box.appendChild(tw)
+      }
       // assistant message 存进历史（带tool_calls）
       const assistantMsg = {
         role:'assistant',
