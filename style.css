@@ -160,12 +160,39 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
   padding:calc(env(safe-area-inset-top,0px) + 10px) 16px 10px;
   gap:8px;
 }
-.xk-menu-btn,.xk-new-btn{
-  width:38px;height:38px;border:none;background:#ECEAE4;border-radius:50%;
+.xk-menu-btn{
+  width:38px;height:38px;border:none;background:none;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent
+  cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent;padding:0;
 }
-.xk-menu-btn:active,.xk-new-btn:active{background:#DEDAD3}
+.xk-menu-btn:active{background:#DEDAD3}
+/* 加号胶囊 */
+.xk-pill-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  background:#ECEAE4;border-radius:20px;
+  width:32px;height:30px;
+  cursor:pointer;flex-shrink:0;border:none;
+  -webkit-tap-highlight-color:transparent;
+}
+.xk-pill-btn:active{background:#DEDAD3}
+/* 语音按钮 */
+.xk-cb-icon{
+  width:26px;height:26px;border:none;background:none;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:50%;cursor:pointer;flex-shrink:0;
+  -webkit-tap-highlight-color:transparent;padding:0;
+}
+.xk-cb-icon:active{background:#F0EEE8}
+/* 发送键黑色圆形 */
+.xk-send-btn{
+  width:38px;height:38px;border:none;
+  background:#1F1E1D;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;flex-shrink:0;
+  -webkit-tap-highlight-color:transparent;transition:opacity .15s;
+}
+.xk-send-btn:active{opacity:.7}
+.xk-send-btn:disabled{opacity:.3}
 .xk-topbar-mid{display:flex;align-items:center;gap:10px;flex:1;justify-content:center}
 .xk-topbar-name{font-size:15px;font-weight:600;color:#1F1E1D;line-height:1.3}
 .xk-topbar-sub{font-size:11px;color:#6E6D66;line-height:1.3}
