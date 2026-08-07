@@ -235,25 +235,53 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
   margin:14px 0 8px;user-select:none;
 }
 
-/* ── 底部输入区 ── (composer-card above)
-   textarea在composer-card内 */
+.xk-composer-card{
+  background:#fff;border-radius:22px;
+  box-shadow:0 1px 10px rgba(31,30,29,.09);
+  padding:12px 12px 10px 16px;
+  display:flex;flex-direction:column;gap:10px;
+}
+.xk-composer-top{display:flex;align-items:flex-start}
+.xk-composer-bottom{display:flex;align-items:center;gap:8px}
+
+/* textarea撑满上半 */
 .xk-textarea{
-  flex:1;min-width:0;
+  flex:1;width:100%;
   border:none;background:transparent;outline:none;
   font-family:ui-serif,Georgia,'PingFang SC',sans-serif;
   font-size:16px;color:#1F1E1D;line-height:1.55;
-  resize:none;max-height:120px;
+  resize:none;max-height:120px;min-height:24px;
   -webkit-user-select:text;user-select:text;-webkit-appearance:none;
   padding:0;
 }
 .xk-textarea::placeholder{color:#B8B6AE}
 
-.xk-composer-card{
-  background:#fff;border-radius:24px;
-  box-shadow:0 1px 8px rgba(31,30,29,.08);
-  padding:10px 10px 10px 14px;
-  display:flex;align-items:center;gap:8px;
+/* 下行按钮 */
+.xk-cb-icon{
+  width:32px;height:32px;border:none;background:none;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:50%;cursor:pointer;flex-shrink:0;
+  -webkit-tap-highlight-color:transparent;
 }
+.xk-cb-icon:active{background:#F0EEE8}
+
+.xk-model-label{
+  font-size:13px;color:#4A4A42;
+  background:#ECEAE4;border-radius:20px;
+  padding:5px 13px;cursor:pointer;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;
+  flex-shrink:0;
+}
+
+.xk-send-btn{
+  width:38px;height:38px;border:none;
+  background:#1F1E1D;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;flex-shrink:0;
+  -webkit-tap-highlight-color:transparent;transition:opacity .15s;
+}
+.xk-send-btn:active{opacity:.7}
+.xk-send-btn:disabled{opacity:.3}
 .xk-icon-btn{
   width:34px;height:34px;border:none;background:none;
   display:flex;align-items:center;justify-content:center;
