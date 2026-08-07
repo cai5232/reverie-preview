@@ -680,8 +680,12 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 .mcp-modal-btn{flex:1;padding:12px 0;border-radius:12px;border:none;font-size:15px;font-weight:600;font-family:-apple-system,'PingFang SC',sans-serif;cursor:pointer}
 .mcp-modal-btn:not(.ghost){background:#1F1E1D;color:#fff}
 .mcp-modal-btn.ghost{background:#E8E5DC;color:#555}
-.mcp-type-btn{flex:1;padding:7px 0;text-align:center;font-size:13px;border-radius:8px;cursor:pointer;color:#888;font-family:-apple-system,'PingFang SC',sans-serif;-webkit-tap-highlight-color:transparent;transition:all .15s}
-.mcp-type-btn.active{background:#fff;color:#1F1E1D;font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.mcp-header-row{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;background:#fff;border-radius:12px;padding:10px 12px}
+.mcp-header-row input{flex:1;background:transparent;border:none;outline:none;font-size:14px;font-family:-apple-system,'PingFang SC',sans-serif;color:#1F1E1D;padding:0;min-width:0}
+.mcp-header-row-del{width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:#ff453a;cursor:pointer;flex-shrink:0;font-size:18px;line-height:1;margin-top:1px}
+.mcp-header-kv-wrap{display:flex;flex-direction:column;gap:4px;flex:1;min-width:0}
+.mcp-header-kv-wrap .mcp-header-label{font-size:11px;color:#aaa}
+.mcp-add-header-btn{text-align:center;font-size:13px;color:#888;padding:8px 0;cursor:pointer;border:1.5px dashed #DDD;border-radius:10px;margin-top:2px;-webkit-tap-highlight-color:transparent}
 
 .xk-think-live{
   margin:0 0 8px;
