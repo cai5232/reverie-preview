@@ -2407,6 +2407,15 @@ document.addEventListener('DOMContentLoaded',()=>{
     })
   }
 
+  const xkMenuBtn=document.getElementById('xkMenuBtn')
+  if(xkMenuBtn){
+    xkMenuBtn.addEventListener('touchend',function(e){
+      e.preventDefault()
+      openSidebar()
+    },{passive:false})
+    xkMenuBtn.addEventListener('click',function(){openSidebar()})
+  }
+
   const xkta=document.getElementById('xkInput')  if(xkta){
     xkta.addEventListener('input',function(){
       this.style.height='auto'
