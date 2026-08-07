@@ -2773,7 +2773,7 @@ async function mcpOpenServer(id){
   document.getElementById('mcpPageTools').style.display = ''
   mcpRenderTools(s)
   // 刷新工具列表
-  mcpPingServer(s).then(()=>mcpRenderTools(s))
+  mcpPingServer(s)
 }
 
 function mcpRenderTools(s){
