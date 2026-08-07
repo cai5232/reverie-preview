@@ -2391,7 +2391,122 @@ document.addEventListener('DOMContentLoaded',()=>{
   renderNovels()
 })
 
-// xkRenderThem alias
+// 操作栏：复制、重新生成、收藏、编辑、删除 + token 数
+function xkAddActions(block, tokens){
+  // 获取正文文本
+  const getText=()=>Array.from(block.querySelectorAll('.xk-ai-para')).map(p=>p.textContent).join('\n\n')
+
+  const bar=document.createElement('div')
+  bar.className='xk-action-bar'
+
+  // 复制
+  const btnCopy=_xkBtn(`<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="5" y="1" width="9" height="11" rx="1.5" stroke="#A6A39A" stroke-width="1.2"/><rect x="1" y="4" width="9" height="10" rx="1.5" stroke="#A6A39A" stroke-width="1.2"/></svg>`,'复制')
+  btnCopy.onclick=()=>{
+    navigator.clipboard&&navigator.clipboard.writeText(getText())
+    btnCopy.querySelector('span').textContent='✓'
+    setTimeout(()=>btnCopy.querySelector('span').textContent='复制',1500)
+  }
+
+  // 重新生成
+  const btnRegen=_xkBtn(`<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2.5 7.5A5 5 0 0112.5 5M12.5 7.5A5 5 0 012.5 10" stroke="#A6A39A" stroke-width="1.2" stroke-linecap="round"/><path d="M11 3l1.5 2-2 1" stroke="#A6A39A" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 12l-1.5-2 2-1" stroke="#A6A39A" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,'重新生成')
+  btnRegen.onclick=()=>{
+    // 删掉最后一条assistant历史，删掉DOM里这个block，重新生成
+    for(let i=xkHistory.length-1;i>=0;i--){
+      if(xkHistory[i].role==='assistant'){xkHistory.splice(i,1);break}
+    }
+    localStorage.setItem('xk_history',JSON.stringify(xkHistory))
+    block.remove()
+    const box=document.getElementById('xkStream')
+    if(box)box._userScrolled=false
+    xkCallAI()
+  }
+
+  // 收藏
+  const btnFav=_xkBtn(`<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 1.5l1.7 3.5 3.8.55-2.75 2.68.65 3.78L7.5 10.2l-3.4 1.81.65-3.78L2 5.55l3.8-.55z" stroke="#A6A39A" stroke-width="1.2" stroke-linejoin="round"/></svg>`,'收藏')
+  btnFav._faved=false
+  btnFav.onclick=()=>{
+    btnFav._faved=!btnFav._faved
+    const svg=btnFav.querySelector('svg path')
+    if(btnFav._faved){
+      svg.setAttribute('fill','#f5c842')
+      svg.setAttribute('stroke','#f5c842')
+      btnFav.querySelector('span').textContent='已收藏'
+    }else{
+      svg.setAttribute('fill','none')
+      svg.setAttribute('stroke','#A6A39A')
+      btnFav.querySelector('span').textContent='收藏'
+    }
+    // 存到 localStorage
+    const favs=JSON.parse(localStorage.getItem('xk_favs')||'[]')
+    const text=getText()
+    if(btnFav._faved){
+      favs.push({text,time:Date.now()})
+    }else{
+      const idx=favs.findIndex(f=>f.text===text)
+      if(idx>=0)favs.splice(idx,1)
+    }
+    localStorage.setItem('xk_favs',JSON.stringify(favs))
+  }
+
+  // 编辑（把最后一段变成 textarea）
+  const btnEdit=_xkBtn(`<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2 11.5l2-2 6.5-6.5a1.414 1.414 0 012 2L6 11.5H2z" stroke="#A6A39A" stroke-width="1.2" stroke-linejoin="round"/><path d="M10 3.5l1.5 1.5" stroke="#A6A39A" stroke-width="1.2" stroke-linecap="round"/></svg>`,'编辑')
+  btnEdit.onclick=()=>{
+    const paras=block.querySelectorAll('.xk-ai-para')
+    const lastPara=paras[paras.length-1]
+    if(!lastPara||lastPara._editing)return
+    lastPara._editing=true
+    const old=lastPara.textContent
+    const ta=document.createElement('textarea')
+    ta.value=old
+    ta.style.cssText='width:100%;background:#F0EDE6;border:none;border-radius:8px;padding:6px 8px;font-size:14px;font-family:-apple-system,"PingFang SC",sans-serif;color:#111;line-height:1.65;resize:none;outline:none;min-height:60px;-webkit-user-select:text;user-select:text'
+    ta.rows=Math.max(2,old.split('\n').length)
+    lastPara.replaceWith(ta)
+    ta.focus()
+    ta.addEventListener('blur',()=>{
+      const newP=document.createElement('p')
+      newP.className='xk-ai-para'
+      newP.textContent=ta.value.trim()||old
+      ta.replaceWith(newP)
+      // 同步历史
+      for(let i=xkHistory.length-1;i>=0;i--){
+        if(xkHistory[i].role==='assistant'){
+          xkHistory[i].content=getText();break
+        }
+      }
+      localStorage.setItem('xk_history',JSON.stringify(xkHistory))
+    })
+  }
+
+  // 删除
+  const btnDel=_xkBtn(`<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2.5 4h10M5 4V2.5h5V4M6 7v4M9 7v4M3 4l.8 8.5a1 1 0 001 .9h5.4a1 1 0 001-.9L12 4" stroke="#ff6b6b" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,'删除','xk-action-btn danger')
+  btnDel.onclick=()=>{
+    for(let i=xkHistory.length-1;i>=0;i--){
+      if(xkHistory[i].role==='assistant'){xkHistory.splice(i,1);break}
+    }
+    localStorage.setItem('xk_history',JSON.stringify(xkHistory))
+    block.remove()
+  }
+
+  // token 数
+  const tokenEl=document.createElement('div')
+  tokenEl.className='xk-token-count'
+  tokenEl.textContent=tokens?tokens+' tokens':''
+
+  bar.appendChild(btnCopy)
+  bar.appendChild(btnRegen)
+  bar.appendChild(btnFav)
+  bar.appendChild(btnEdit)
+  bar.appendChild(btnDel)
+  bar.appendChild(tokenEl)
+  block.appendChild(bar)
+}
+
+function _xkBtn(svgStr, label, cls='xk-action-btn'){
+  const btn=document.createElement('button')
+  btn.className=cls
+  btn.innerHTML=svgStr+`<span>${label}</span>`
+  return btn
+}
 function xkRenderThem(text, thinking){
   xkRenderAI(text||'', thinking||null)
 }
