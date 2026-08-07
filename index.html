@@ -96,28 +96,25 @@
 
   <div class="xk-bar">
     <div class="xk-composer-card">
+      <button class="xk-icon-btn" onclick="void 0">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <path d="M9 2v14M2 9h14" stroke="#6E6D66" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </button>
       <textarea class="xk-textarea" id="xkInput" rows="1" placeholder="和小克说点什么……"></textarea>
-      <div class="xk-card-bottom">
-        <button class="xk-icon-btn" onclick="void 0">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-            <path d="M9 2v14M2 9h14" stroke="#6E6D66" stroke-width="1.6" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span class="xk-model-label" id="xkModelLabel">claude-sonnet-4-6</span>
-        <div style="flex:1"></div>
-        <button class="xk-icon-btn" onclick="void 0">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-            <rect x="6" y="1" width="6" height="10" rx="3" stroke="#6E6D66" stroke-width="1.5"/>
-            <path d="M2 9a7 7 0 0014 0M9 16v2" stroke="#6E6D66" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <button class="xk-send-btn" id="xkSendBtn" onclick="xkSend()">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <circle cx="10" cy="10" r="9" fill="#1F1E1D"/>
-            <path d="M6.5 10.5l2.5 2.5 4.5-5" stroke="#F8F8F6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
-      </div>
+      <span class="xk-model-label" id="xkModelLabel">claude-sonnet-4-6</span>
+      <button class="xk-icon-btn" onclick="void 0">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <rect x="6" y="1" width="6" height="10" rx="3" stroke="#6E6D66" stroke-width="1.5"/>
+          <path d="M2 9a7 7 0 0014 0M9 16v2" stroke="#6E6D66" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <button class="xk-send-btn" id="xkSendBtn" onclick="xkSend()">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <circle cx="10" cy="10" r="9" fill="#1F1E1D"/>
+          <path d="M6.5 10.5l2.5 2.5 4.5-5" stroke="#F8F8F6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
     </div>
   </div>
 
