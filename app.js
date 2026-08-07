@@ -2919,19 +2919,25 @@ function mcpSaveServer(){
   }else{
     _mcpServers.push({id:'s'+Date.now(), name:name||url, url, auth, type:_mcpAddType, status:'unknown', tools:[], extraHeaders:parseHeadersInput()})
   }
+function mcpSaveServer(){
+  const name = document.getElementById('mcpAddName').value.trim()
+  const url = document.getElementById('mcpAddUrl').value.trim()
+  const auth = document.getElementById('mcpAddAuth').value.trim()
+  if(!url){ showToast('请填写服务器地址'); return }
+  if(_mcpEditMode){
+    const s = _mcpServers.find(x=>x.id===_mcpCurrentServerId)
+    if(s){ s.name=name||url; s.url=url; s.auth=auth; s.type=_mcpAddType; s.status='unknown'; s.extraHeaders=parseHeadersInput() }
+  }else{
+    _mcpServers.push({id:'s'+Date.now(), name:name||url, url, auth, type:_mcpAddType, status:'unknown', tools:[], extraHeaders:parseHeadersInput()})
+  }
   mcpSave()
   closeMcpAdd()
-  if(_mcpEditMode){
-    const s2 = _mcpServers.find(x=>x.id===_mcpCurrentServerId)
-    if(s2) mcpPingServer(s2).then(()=>{
-      if(document.getElementById('mcpPageTools').style.display!=='none') mcpRenderTools(s2)
-    })
-    mcpOpenServer(_mcpCurrentServerId)
-  }else{
+  const targetId = _mcpEditMode ? _mcpCurrentServerId : _mcpServers[_mcpServers.length-1].id
+  const s2 = _mcpServers.find(x=>x.id===targetId)
+  if(!s2) return
+  mcpOpenServer(targetId)
+  mcpPingServer(s2).then(()=>{
+    mcpRenderTools(s2)
     mcpRenderList()
-    const s2 = _mcpServers[_mcpServers.length-1]
-    mcpPingServer(s2).then(()=>mcpRenderList())
-    // 自动跳进服务器页展示工具
-    setTimeout(()=>mcpOpenServer(s2.id), 200)
-  }
+  })
 }
