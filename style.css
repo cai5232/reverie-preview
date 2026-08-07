@@ -251,12 +251,12 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
   display:flex;flex-direction:column;gap:0;
 }
 .xk-ai-para{
-  font-size:15px;color:#111;
+  font-size:13.5px;color:#111;
   font-family:-apple-system,'PingFang SC',sans-serif;
-  font-weight:400;
-  line-height:1.85;
+  font-weight:300;
+  line-height:1.7;
   word-break:break-word;
-  margin-bottom:1.4em;
+  margin-bottom:1.1em;
   letter-spacing:.01em;
 }
 .xk-ai-para:last-child{margin-bottom:0}
