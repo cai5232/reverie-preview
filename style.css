@@ -151,11 +151,11 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 
 /* ── xk chat (chatnest style) ── */
-#page-xiaoke{background:#F5F2EA;display:flex;flex-direction:column}
+#page-xiaoke{background:#F5F4F0;display:flex;flex-direction:column}
 
 .xk-topbar{
   position:fixed;top:0;left:0;right:0;max-width:430px;margin:0 auto;z-index:20;
-  background:#F5F4F0;
+  background:#F5F2EA;
   display:flex;align-items:center;justify-content:space-between;
   padding:calc(env(safe-area-inset-top,0px) + 10px) 16px 10px;
   gap:8px;
