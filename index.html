@@ -7,7 +7,6 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#F5F2EA">
 <script>
-// 内联核心函数，不依赖app.js是否加载成功
 function openSidebar(){
   var s=document.getElementById('sidebar');
   var o=document.getElementById('overlay');
@@ -25,8 +24,18 @@ function navTo(name){
   var t=document.getElementById('page-'+name);
   if(t)t.classList.add('active');
   closeSidebar();
+  if(name==='setting'&&typeof renderSetting==='function')renderSetting();
 }
 </script>
+<style>
+.page{display:none!important}
+.page.active{display:flex!important;flex-direction:column!important;overflow:hidden!important;flex:1!important;min-height:0!important}
+#page-xiaoke.active{display:flex!important}
+.xk-topbar{position:relative!important;z-index:10!important;flex-shrink:0!important;display:flex!important;align-items:center!important;background:#F5F2EA!important;padding:calc(env(safe-area-inset-top,0px) + 8px) 14px 8px!important;touch-action:manipulation!important}
+.xk-menu-btn{position:relative!important;z-index:11!important;pointer-events:auto!important;touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important;width:44px!important;height:44px!important;display:flex!important;align-items:center!important;justify-content:center!important;background:none!important;border:none!important;padding:0!important;cursor:pointer!important}
+.xk-stream{position:static!important;flex:1!important;overflow-y:auto!important;padding:12px 22px!important;display:flex!important;flex-direction:column!important;background:#F5F2EA!important;z-index:1!important}
+.xk-bar{position:static!important;flex-shrink:0!important;z-index:10!important;background:#F5F2EA!important;padding:10px 14px calc(14px + env(safe-area-inset-bottom,0px)) 14px!important}
+</style>
 <link rel="stylesheet" href="style.css?v=119">
 <style>
 /* 强制覆盖：topbar和bar不用fixed，融入flex文档流 */
