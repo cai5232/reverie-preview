@@ -2184,7 +2184,7 @@ async function xkCallAI(){
     }
     const scheduleThinkFlush=()=>{if(!thinkRafId)thinkRafId=requestAnimationFrame(flushThink)}
 
-    // RAF批量写body
+    // RAF批量写body — 改为立即flush保证逐字感
     let pendingBody=''
     let bodyRafId=null
     const flushBody=()=>{
@@ -2194,7 +2194,8 @@ async function xkCallAI(){
       }
       bodyRafId=null
     }
-    const scheduleBodyFlush=()=>{if(!bodyRafId)bodyRafId=requestAnimationFrame(flushBody)}
+    // 立即写，不等RAF
+    const scheduleBodyFlush=()=>{flushBody()}
 
     while(true){
       const {done,value}=await reader.read()
