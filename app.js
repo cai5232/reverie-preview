@@ -2360,12 +2360,12 @@ async function xkCallAI(){
       xkRenderAI(bodyBuf||'(´・ω・`)',thinkBuf||null)
     }
 
-    // 存历史（正文 + thinking 一起存，重开后能还原）
+    // 存历史（正文 + thinking + tokens 一起存，重开后能还原）
     const reconstructed=streamBlock
       ?Array.from(streamBlock.querySelectorAll('.xk-ai-para')).map(p=>p.textContent).join('\n\n')
       :bodyBuf
     const histContent=thinkBuf?`[THINK]${thinkBuf}[/THINK]${reconstructed}`:reconstructed
-    xkHistory.push({role:'assistant',content:histContent})
+    xkHistory.push({role:'assistant',content:histContent,tokens:totalTokens||0})
     if(xkHistory.length>60)xkHistory=xkHistory.slice(-60)
     localStorage.setItem('xk_history',JSON.stringify(xkHistory))
 
