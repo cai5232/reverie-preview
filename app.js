@@ -2192,61 +2192,19 @@ async function xkCallAI(){
         const delta=j.choices?.[0]?.delta
         if(!delta)continue
 
-        // thinking content（extended thinking）
+        // thinking content
         if(delta.thinking!==undefined){
-          thinkBuf+=delta.thinking||''
-          continue
-        }
-
-        // reasoning_content（某些模型）
-        if(delta.reasoning_content!==undefined){
-          thinkBuf+=delta.reasoning_content||''
-          continue
-        }
-
-        // 正文
-        const text=delta.content||''
-        if(!text)continue
-
-        // 解析 <think> 标签
-        if(!thinkDone){
-          let t=text
-          if(!inThink&&t.includes('<think>')){
-            inThink=true
-            t=t.slice(t.indexOf('<think>')+7)
-          }
-          if(inThink){
-            if(t.includes('</think>')){
-              thinkBuf+=t.slice(0,t.indexOf('</think>'))
-              bodyBuf+=t.slice(t.indexOf('</think>')+8)
-              inThink=false
-              thinkDone=true
-            }else{
-              thinkBuf+=t
-              continue
-            }
-          }else{
-            thinkDone=true
-            bodyBuf+=t
-          }
-        }else{
-          bodyBuf+=text
-        }
-
-        // 建block（第一次有body文字时）
-        if(bodyBuf&&!streamBlock){
-          streamBlock=xkStartStreamBlock(thinkBuf||null)
-        }
-        if(streamBlock&&bodyBuf){
-          // 追加新增的chunk
+          const tok=delta.thinking||''
           if(tok){thinkBuf+=tok;ensureThinkLive();pendingThink+=tok;scheduleThinkFlush()}
           continue
         }
+        // reasoning_content
         if(delta.reasoning_content!==undefined){
           const tok=delta.reasoning_content||''
           if(tok){thinkBuf+=tok;ensureThinkLive();pendingThink+=tok;scheduleThinkFlush()}
           continue
         }
+        // 正文
         const text=delta.content||''
         if(!text)continue
         if(!thinkDone){
