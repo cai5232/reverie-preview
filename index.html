@@ -71,45 +71,37 @@
   <div class="sb-item" onclick="navTo('prettify')"><svg viewBox="0 0 18 18" fill="none"><path d="M9 2l1.5 4H15l-3.5 2.5 1.3 4L9 10l-3.8 2.5 1.3-4L3 6h4.5L9 2z" stroke="#ccc" stroke-width="1.3" stroke-linejoin="round"/></svg><span>Prettify</span></div>
   <div class="sb-item" onclick="navTo('mcp')" style="padding-bottom:36px"><svg viewBox="0 0 18 18" fill="none"><rect x="2" y="4" width="14" height="10" rx="2" stroke="#ccc" stroke-width="1.3"/><path d="M6 9h6M9 6v6" stroke="#ccc" stroke-width="1.3" stroke-linecap="round"/></svg><span>MCP</span></div>
 </div>
-<!-- CHAT -->
-<div class="page active" id="page-chat">
-  <div class="header-chat">
-    <div class="header-chat-left">
-      <div onclick="openSidebar()" style="padding:4px;cursor:pointer;-webkit-tap-highlight-color:transparent">
-        <svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#1d6fe5" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#1d6fe5" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#1d6fe5" stroke-width="2" stroke-linecap="round"/></svg>
-      </div>
-      <label for="headerAvatarInput" onclick="event.stopPropagation()" style="flex-shrink:0;cursor:pointer;border-radius:50%;overflow:hidden;width:34px;height:34px;display:block">
-        <img src="https://i.ibb.co/Q7Lcr1yw/IMG-6805.jpg" class="header-chat-avatar" id="headerAvatar" style="pointer-events:none">
+<!-- CHAT (xiaoke) -->
+<div class="page active" id="page-xiaoke">
+  <!-- 顶栏 -->
+  <div class="xk-topbar">
+    <button class="xk-topbar-menu" onclick="openSidebar()">
+      <svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#DA7756" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#DA7756" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#DA7756" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <div class="xk-topbar-center">
+      <label for="headerAvatarInput" style="cursor:pointer;border-radius:50%;overflow:hidden;width:32px;height:32px;display:block;flex-shrink:0">
+        <img src="https://i.ibb.co/Q7Lcr1yw/IMG-6805.jpg" id="headerAvatar" style="width:32px;height:32px;border-radius:50%;object-fit:cover;pointer-events:none">
       </label>
-      <div class="header-chat-name-wrap">
-        <span class="header-chat-name">小克</span>
-        <span class="header-chat-subtitle">sonnet-4-6</span>
+      <div class="xk-topbar-name-wrap">
+        <span class="xk-topbar-name">小克</span>
+        <span class="xk-topbar-sub" id="xkModelLabel">sonnet-4-6</span>
       </div>
     </div>
-    <div class="header-chat-dots" onclick="openDotsMenu()">
-      <svg width="20" height="6" viewBox="0 0 20 6" fill="none"><circle cx="2" cy="3" r="2" fill="#1d6fe5"/><circle cx="10" cy="3" r="2" fill="#1d6fe5"/><circle cx="18" cy="3" r="2" fill="#1d6fe5"/></svg>
-    </div>
-  </div>
-  <div class="messages" id="messages"></div>
-  <div class="input-bar">
-    <div class="input-plus-btn" onclick="togglePlus()">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="#aaa" stroke-width="2" stroke-linecap="round"/></svg>
-    </div>
-    <div class="input-wrap">
-      <div class="quote-preview" id="quotePreview">
-        <span id="quoteText"></span>
-        <span class="quote-preview-close" onclick="clearQuote()">×</span>
-      </div>
-      <textarea class="input-field" id="chatInput" placeholder="iMessage信息" rows="1"></textarea>
-    </div>
-    <button class="input-btn" id="sendBtn" onclick="handleSendBtn()"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 13V2M2 7l5.5-5.5L13 7" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <button class="xk-topbar-new" onclick="xkNewChat()" title="新对话">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2v14M2 9h14" stroke="#DA7756" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
   </div>
 
-  <!-- plus弹出菜单 -->
-  <div class="plus-popup-dark" id="plusPopupDark">
-    <div class="plus-item-dark" onclick="triggerImg()">
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="1" y="1" width="16" height="16" rx="3" stroke="#aaa" stroke-width="1.4"/><circle cx="6" cy="6" r="1.8" fill="#aaa"/><path d="M1 12l4-4 3 3 2-2 6 5" stroke="#aaa" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      照片
+  <!-- 消息流 -->
+  <div class="xk-stream" id="xkStream"></div>
+
+  <!-- 输入区 -->
+  <div class="xk-composer-wrap">
+    <div class="xk-composer">
+      <textarea class="xk-input" id="xkInput" rows="1" placeholder="和小克说点什么…"></textarea>
+      <button class="xk-send" id="xkSend" onclick="xkSend()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 13V3M3 8l5-5 5 5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
     </div>
   </div>
 </div>
