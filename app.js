@@ -2245,7 +2245,7 @@ async function xkCallAI(){
       tw.className='xk-thinking'
       const btn=document.createElement('div')
       btn.className='xk-think-btn'
-      btn.innerHTML=`<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.7" stroke="#A6A39A" stroke-width="1.1"/><path d="M6.5 3.8v3l1.7 1.7" stroke="#A6A39A" stroke-width="1.1" stroke-linecap="round"/></svg>心声`
+      btn.innerHTML=`<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.7" stroke="#A6A39A" stroke-width="1.1"/><path d="M6.5 3.8v3l1.7 1.7" stroke="#A6A39A" stroke-width="1.1" stroke-linecap="round"/></svg>Thinking`
       const t=thinkBuf
       btn.onclick=()=>xkOpenThink(t)
       tw.appendChild(btn)
