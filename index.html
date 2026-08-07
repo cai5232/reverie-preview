@@ -71,39 +71,44 @@
   <div class="sb-item" onclick="navTo('prettify')"><svg viewBox="0 0 18 18" fill="none"><path d="M9 2l1.5 4H15l-3.5 2.5 1.3 4L9 10l-3.8 2.5 1.3-4L3 6h4.5L9 2z" stroke="#ccc" stroke-width="1.3" stroke-linejoin="round"/></svg><span>Prettify</span></div>
   <div class="sb-item" onclick="navTo('mcp')" style="padding-bottom:36px"><svg viewBox="0 0 18 18" fill="none"><rect x="2" y="4" width="14" height="10" rx="2" stroke="#ccc" stroke-width="1.3"/><path d="M6 9h6M9 6v6" stroke="#ccc" stroke-width="1.3" stroke-linecap="round"/></svg><span>MCP</span></div>
 </div>
-<!-- CHAT (xiaoke) -->
+<!-- CHAT -->
 <div class="page active" id="page-xiaoke">
-  <!-- 顶栏 -->
+
   <div class="xk-topbar">
-    <button class="xk-topbar-menu" onclick="openSidebar()">
-      <svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#DA7756" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#DA7756" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#DA7756" stroke-width="2" stroke-linecap="round"/></svg>
+    <button class="xk-menu-btn" onclick="openSidebar()">
+      <svg width="20" height="14" viewBox="0 0 20 14" fill="none">
+        <path d="M1 1h18M1 7h12M1 13h8" stroke="#DA7756" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
     </button>
-    <div class="xk-topbar-center">
-      <label for="headerAvatarInput" style="cursor:pointer;border-radius:50%;overflow:hidden;width:32px;height:32px;display:block;flex-shrink:0">
-        <img src="https://i.ibb.co/Q7Lcr1yw/IMG-6805.jpg" id="headerAvatar" style="width:32px;height:32px;border-radius:50%;object-fit:cover;pointer-events:none">
+    <div class="xk-topbar-mid">
+      <label for="headerAvatarInput" style="display:block;width:34px;height:34px;border-radius:50%;overflow:hidden;cursor:pointer;flex-shrink:0">
+        <img id="headerAvatar" src="https://i.ibb.co/Q7Lcr1yw/IMG-6805.jpg" style="width:34px;height:34px;object-fit:cover;pointer-events:none">
       </label>
-      <div class="xk-topbar-name-wrap">
-        <span class="xk-topbar-name">小克</span>
-        <span class="xk-topbar-sub" id="xkModelLabel">sonnet-4-6</span>
+      <div>
+        <div class="xk-name">小克</div>
+        <div class="xk-sub" id="xkSubLabel">在线</div>
       </div>
     </div>
-    <button class="xk-topbar-new" onclick="xkNewChat()" title="新对话">
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2v14M2 9h14" stroke="#DA7756" stroke-width="2" stroke-linecap="round"/></svg>
+    <button class="xk-new-btn" onclick="xkNewChat()">
+      <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+        <path d="M8.5 2v13M2 8.5h13" stroke="#DA7756" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
     </button>
   </div>
 
-  <!-- 消息流 -->
   <div class="xk-stream" id="xkStream"></div>
 
-  <!-- 输入区 -->
-  <div class="xk-composer-wrap">
+  <div class="xk-bar">
     <div class="xk-composer">
-      <textarea class="xk-input" id="xkInput" rows="1" placeholder="和小克说点什么…"></textarea>
-      <button class="xk-send" id="xkSend" onclick="xkSend()">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 13V3M3 8l5-5 5 5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <textarea class="xk-textarea" id="xkInput" rows="1" placeholder="和小克说点什么…"></textarea>
+      <button class="xk-send-btn" id="xkSendBtn" onclick="xkSend()">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+          <path d="M7.5 12.5V2.5M2.5 7.5l5-5 5 5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </button>
     </div>
   </div>
+
 </div>
 
 <!-- SETTING -->
