@@ -2282,7 +2282,8 @@ function xkTypingRow(){
   const box=document.getElementById('xkStream')
   const row=document.createElement('div')
   row.className='xk-row them xk-typing'
-  row.innerHTML='<div class="xk-bubble"><div class="xk-dot"></div><div class="xk-dot"></div><div class="xk-dot"></div></div>'
+  row.style.cssText='display:flex;align-items:center;gap:5px;padding:10px 14px'
+  row.innerHTML='<span style="width:7px;height:7px;border-radius:50%;background:#bbb;display:inline-block;animation:dot-fade 1.2s ease-in-out infinite 0s"></span><span style="width:7px;height:7px;border-radius:50%;background:#bbb;display:inline-block;animation:dot-fade 1.2s ease-in-out infinite 0.4s"></span><span style="width:7px;height:7px;border-radius:50%;background:#bbb;display:inline-block;animation:dot-fade 1.2s ease-in-out infinite 0.8s"></span>'
   box.appendChild(row)
   box.scrollTop=box.scrollHeight
   return row
