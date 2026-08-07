@@ -6,6 +6,27 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#F5F2EA">
+<script>
+// 内联核心函数，不依赖app.js是否加载成功
+function openSidebar(){
+  var s=document.getElementById('sidebar');
+  var o=document.getElementById('overlay');
+  if(s)s.classList.add('open');
+  if(o)o.classList.add('open');
+}
+function closeSidebar(){
+  var s=document.getElementById('sidebar');
+  var o=document.getElementById('overlay');
+  if(s)s.classList.remove('open');
+  if(o)o.classList.remove('open');
+}
+function navTo(name){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  var t=document.getElementById('page-'+name);
+  if(t)t.classList.add('active');
+  closeSidebar();
+}
+</script>
 <link rel="stylesheet" href="style.css?v=119">
 <style>
 /* 强制覆盖：topbar和bar不用fixed，融入flex文档流 */
