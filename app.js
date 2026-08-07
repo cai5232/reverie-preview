@@ -2295,6 +2295,11 @@ function xkTypingRow(){
   return row
 }
 
+// xkRenderThem alias: for history restore compatibility
+function xkRenderThem(text, thinking){
+  xkRenderAI(text||'', thinking||null)
+}
+
 // xkTypingEl: 타이핑 점 애니메이션
 const xkAppendMe=xkAppendUser // alias
 
