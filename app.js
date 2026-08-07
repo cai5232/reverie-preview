@@ -118,9 +118,11 @@ function maybeInsertTimeLabel(box){
 
 // 页面导航
 function navTo(name){
-  document.getElementById('page-'+cur).classList.remove('active')
+  // 关掉所有page
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'))
   cur=name
-  document.getElementById('page-'+name).classList.add('active')
+  const target=document.getElementById('page-'+name)
+  if(target)target.classList.add('active')
   closeSidebar()
   if(name==='setting')renderSetting()
 }
