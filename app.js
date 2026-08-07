@@ -2236,9 +2236,38 @@ async function xkCallAI(){
         }
         if(streamBlock&&bodyBuf){
           // 追加新增的chunk
-          xkStreamAppend(streamBlock,text.replace(/<\/think>/g,''))
-          bodyBuf=''
+          if(tok){thinkBuf+=tok;ensureThinkLive();pendingThink+=tok;scheduleThinkFlush()}
+          continue
         }
+        if(delta.reasoning_content!==undefined){
+          const tok=delta.reasoning_content||''
+          if(tok){thinkBuf+=tok;ensureThinkLive();pendingThink+=tok;scheduleThinkFlush()}
+          continue
+        }
+        const text=delta.content||''
+        if(!text)continue
+        if(!thinkDone){
+          let t=text
+          if(!inThink&&t.includes('<think>')){inThink=true;t=t.slice(t.indexOf('<think>')+7)}
+          if(inThink){
+            if(t.includes('</think>')){
+              const tp=t.slice(0,t.indexOf('</think>'))
+              const ap=t.slice(t.indexOf('</think>')+8)
+              if(tp){thinkBuf+=tp;ensureThinkLive();pendingThink+=tp;scheduleThinkFlush()}
+              inThink=false;thinkDone=true
+              if(thinkRafId){cancelAnimationFrame(thinkRafId);flushThink()}
+              collapseThinkLive()
+              if(ap){bodyBuf+=ap;if(!streamBlock)streamBlock=xkStartStreamBlock(null);pendingBody+=ap;scheduleBodyFlush()}
+            }else{thinkBuf+=t;ensureThinkLive();pendingThink+=t;scheduleThinkFlush()}
+            continue
+          }else{thinkDone=true}
+        }
+        if(!streamBlock){
+          if(thinkRafId){cancelAnimationFrame(thinkRafId);flushThink()}
+          collapseThinkLive()
+          streamBlock=xkStartStreamBlock(null)
+        }
+        bodyBuf+=text;pendingBody+=text;scheduleBodyFlush()
       }
     }
 
