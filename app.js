@@ -2882,6 +2882,3 @@ function mcpSaveServer(){
     mcpPingServer(s)
   }
 }
-  xkRenderAI(text||'', thinking||null)
-}
-const xkAppendMe=xkAppendUser
