@@ -341,9 +341,10 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 }
 
 .xk-bar{
-  position:fixed;bottom:0;left:0;right:0;max-width:430px;margin:0 auto;z-index:20;
+  flex-shrink:0;
   background:#F5F2EA;
   padding:10px 14px calc(14px + env(safe-area-inset-bottom,0px)) 14px;
+  touch-action:manipulation;
 }
 .xk-composer-card{
   background:#FAF8F4;
