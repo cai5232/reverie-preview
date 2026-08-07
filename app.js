@@ -2622,7 +2622,101 @@ function _xkBtn(svgStr, label, cls='xk-action-btn'){
   btn.innerHTML=svgStr
   return btn
 }
-// mcpRunCustom 已迁移到直连模式，保留空函数防止引用报错
+// ── MCP 工具激活 ──
+let _xkActivatedTools = {}  // {tool_name: {schema, server_info}}
+
+function toggleMcpPanel(){
+  const panel = document.getElementById('xkMcpPanel')
+  if(!panel) return
+  if(panel.style.display === 'none'){
+    renderMcpToolPanel()
+    panel.style.display = 'block'
+    // 点其他地方关闭
+    setTimeout(()=>{
+      document.addEventListener('click', _closeMcpPanelOutside, {once:true})
+    }, 50)
+  } else {
+    panel.style.display = 'none'
+  }
+}
+
+function _closeMcpPanelOutside(e){
+  const panel = document.getElementById('xkMcpPanel')
+  const btn = document.getElementById('xkMcpBtn')
+  if(panel && !panel.contains(e.target) && !btn.contains(e.target)){
+    panel.style.display = 'none'
+  }
+}
+
+function renderMcpToolPanel(){
+  const list = document.getElementById('xkMcpToolList')
+  if(!list) return
+  const servers = _mcpServers.filter(s => s.tools && s.tools.length && s.status === 'ok')
+  if(!servers.length){
+    list.innerHTML = '<div style="font-size:13px;color:#aaa;padding:4px 0">没有可用工具，先在 MCP 页面连接服务器</div>'
+    return
+  }
+  list.innerHTML = servers.map(s => {
+    return `<div style="margin-bottom:10px">
+      <div style="font-size:11px;color:#aaa;margin-bottom:5px;font-weight:500">${escHtml(s.name||s.url)}</div>
+      ${s.tools.map(t => {
+        const key = t.name
+        const active = !!_xkActivatedTools[key]
+        return `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:.5px solid #f5f5f5" onclick="toggleTool('${escHtml(s.id)}','${escHtml(t.name)}')">
+          <div style="width:32px;height:18px;border-radius:9px;background:${active?'#34C759':'#ddd'};position:relative;cursor:pointer;flex-shrink:0;transition:background .2s">
+            <div style="position:absolute;top:2px;left:${active?'14':'2'}px;width:14px;height:14px;background:#fff;border-radius:50%;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)"></div>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;color:#111;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(t.name)}</div>
+            <div style="font-size:11px;color:#aaa;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml((t.description||'').slice(0,50))}</div>
+          </div>
+        </div>`
+      }).join('')}
+    </div>`
+  }).join('')
+}
+
+function toggleTool(serverId, toolName){
+  const s = _mcpServers.find(x => x.id === serverId)
+  if(!s) return
+  const tool = s.tools.find(t => t.name === toolName)
+  if(!tool) return
+  if(_xkActivatedTools[toolName]){
+    delete _xkActivatedTools[toolName]
+  } else {
+    _xkActivatedTools[toolName] = {
+      schema: tool,
+      server_info: {url: s.url, auth: s.auth||'', extraHeaders: s.extraHeaders||{}}
+    }
+  }
+  // 更新顶栏绿点
+  const dot = document.getElementById('xkMcpDot')
+  if(dot) dot.style.display = Object.keys(_xkActivatedTools).length ? 'block' : 'none'
+  // 重新渲染面板
+  renderMcpToolPanel()
+}
+
+function buildActivatedToolsPayload(){
+  const keys = Object.keys(_xkActivatedTools)
+  if(!keys.length) return {mcp_tools: null, mcp_servers: null}
+  const mcp_tools = keys.map(name => {
+    const t = _xkActivatedTools[name].schema
+    return {
+      type: 'function',
+      function: {
+        name: t.name,
+        description: t.description || '',
+        parameters: t.inputSchema || t.input_schema || {type:'object',properties:{}}
+      }
+    }
+  })
+  const mcp_servers = {}
+  keys.forEach(name => {
+    mcp_servers[name] = _xkActivatedTools[name].server_info
+  })
+  return {mcp_tools, mcp_servers}
+}
+
 function mcpRunCustom(){}
 // 通过 xiaoke 的 /internal/mcp-proxy 做 CORS 代理，直连各 MCP 服务器
 
