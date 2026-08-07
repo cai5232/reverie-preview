@@ -115,12 +115,25 @@ function navTo(name){
 <!-- CHAT -->
 <div class="page active" id="page-xiaoke">
 
-  <div class="xk-topbar" style="position:relative!important;z-index:50!important;flex-shrink:0!important;display:flex!important;background:#F5F2EA!important;padding:calc(env(safe-area-inset-top,0px) + 8px) 14px 8px!important;touch-action:manipulation!important">
+  <div class="xk-topbar" style="position:relative!important;z-index:50!important;flex-shrink:0!important;display:flex!important;align-items:center!important;background:#F5F2EA!important;padding:calc(env(safe-area-inset-top,0px) + 8px) 14px 8px!important;touch-action:manipulation!important">
     <button class="xk-menu-btn" id="xkMenuBtn" ontouchend="event.preventDefault();openSidebar()" onclick="openSidebar()" style="position:relative!important;z-index:51!important;width:44px!important;height:44px!important;background:none!important;border:none!important;touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important;cursor:pointer!important;display:flex!important;align-items:center!important;justify-content:center!important">
       <svg width="20" height="14" viewBox="0 0 20 14" fill="none">
         <path d="M1 1h18M1 7h12M1 13h8" stroke="#1F1E1D" stroke-width="1.8" stroke-linecap="round"/>
       </svg>
     </button>
+    <div style="flex:1"></div>
+    <!-- MCP工具激活按钮 -->
+    <button id="xkMcpBtn" onclick="toggleMcpPanel()" style="width:36px;height:36px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:10px;-webkit-tap-highlight-color:transparent;position:relative">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="1.5" y="4.5" width="15" height="9" rx="2" stroke="#1F1E1D" stroke-width="1.3"/><path d="M5.5 9h2M9.5 9h3" stroke="#1F1E1D" stroke-width="1.2" stroke-linecap="round"/><circle cx="5.5" cy="9" r=".7" fill="#1F1E1D"/></svg>
+      <div id="xkMcpDot" style="display:none;position:absolute;top:5px;right:5px;width:7px;height:7px;background:#34C759;border-radius:50%;border:1.5px solid #F5F2EA"></div>
+    </button>
+  </div>
+
+  <!-- MCP工具选择面板 -->
+  <div id="xkMcpPanel" style="display:none;position:absolute;top:calc(env(safe-area-inset-top,0px)+56px);right:10px;z-index:200;background:#fff;border-radius:14px;box-shadow:0 4px 24px rgba(0,0,0,.12);padding:14px 16px;min-width:220px;max-width:300px">
+    <div style="font-size:13px;font-weight:600;color:#111;margin-bottom:10px">激活 MCP 工具</div>
+    <div id="xkMcpToolList" style="max-height:240px;overflow-y:auto"></div>
+    <div style="margin-top:10px;font-size:11px;color:#aaa">激活后小克会自主决定是否调用工具</div>
   </div>
 
   <div class="xk-stream" id="xkStream" style="position:static!important;flex:1!important;overflow-y:auto!important"></div>
