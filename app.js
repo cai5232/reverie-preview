@@ -2461,7 +2461,7 @@ document.addEventListener('DOMContentLoaded',()=>{
           if(hm2){heart=hm2[1].trim();body=m.content.slice(hm2.index+hm2[0].length).trim()}
         }
         const block=xkRenderAI(body||'',heart||null)
-        if(block)xkAddActions(block,0)
+        if(block)xkAddActions(block,m.tokens||0)
       }
     })
     box.scrollTop=box.scrollHeight
