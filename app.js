@@ -2581,6 +2581,19 @@ document.addEventListener('DOMContentLoaded',()=>{
     },{passive:false})
   }
 
+  // iOS PWA 切后台回来重置 xkBusy
+  document.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='visible'){
+      setTimeout(()=>{
+        if(xkBusy){
+          xkBusy=false
+          const b=document.getElementById('xkSendBtn')
+          if(b)b.disabled=false
+        }
+      },1500)
+    }
+  })
+
   // xkStream：检测用户是否主动往上翻，翻了就停止自动跟底
   const xkBox=document.getElementById('xkStream')
   if(xkBox){
