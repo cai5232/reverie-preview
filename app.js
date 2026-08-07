@@ -2053,6 +2053,7 @@ function xkStreamAppend(block, chunk){
   // 过滤 markdown 加粗/斜体符号
   const clean=chunk.replace(/\*\*([^*]*)\*\*/g,'$1').replace(/\*([^*]*)\*/g,'$1')
 
+  // 双换行新起一段，单换行靠 pre-wrap 自然显示
   const parts=clean.split(/\n\n/)
   parts.forEach((part,i)=>{
     if(i>0){
@@ -2064,9 +2065,8 @@ function xkStreamAppend(block, chunk){
       curPara=newPara
       newPara.appendChild(cursor)
     }
-    const text=part.replace(/\n/g,' ')
-    if(text){
-      const t=document.createTextNode(text)
+    if(part){
+      const t=document.createTextNode(part)
       curPara.insertBefore(t,cursor)
     }
   })
