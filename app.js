@@ -2116,12 +2116,64 @@ async function xkCallAI(){
     let inThink=false
     let streamBlock=null
     let thinkDone=false
+    let thinkLiveEl=null   // 生成中的thinking展开区域
+    let thinkLivePara=null // 其中的文字节点
 
     typing.remove()
 
-    const flush=()=>{
-      // 从bodyBuf往block写
+    // 创建 thinking 流式展示区（还没有body时先放到box里）
+    function ensureThinkLive(){
+      if(thinkLiveEl)return
+      const box=document.getElementById('xkStream')
+      thinkLiveEl=document.createElement('div')
+      thinkLiveEl.className='xk-think-live'
+      const hd=document.createElement('div')
+      hd.className='xk-think-live-head'
+      hd.innerHTML=`<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#A6A39A" stroke-width="1.1"/><path d="M6 3.2v2.8l1.4 1.4" stroke="#A6A39A" stroke-width="1.1" stroke-linecap="round"/></svg><span>心声</span><span class="xk-think-live-dot"></span>`
+      thinkLivePara=document.createElement('div')
+      thinkLivePara.className='xk-think-live-body'
+      thinkLiveEl.appendChild(hd)
+      thinkLiveEl.appendChild(thinkLivePara)
+      box.appendChild(thinkLiveEl)
+      box.scrollTop=box.scrollHeight
     }
+
+    // thinking完成 → 把live区收起，换成可点击按钮
+    function collapseThinkLive(){
+      if(!thinkLiveEl)return
+      const box=document.getElementById('xkStream')
+      thinkLiveEl.classList.add('collapsing')
+      setTimeout(()=>{
+        if(thinkLiveEl&&thinkLiveEl.parentNode)thinkLiveEl.parentNode.removeChild(thinkLiveEl)
+        thinkLiveEl=null;thinkLivePara=null
+      },300)
+    }
+
+    // RAF批量写thinking
+    let pendingThink=''
+    let thinkRafId=null
+    const flushThink=()=>{
+      if(pendingThink&&thinkLivePara){
+        thinkLivePara.textContent+=pendingThink
+        pendingThink=''
+        const box=document.getElementById('xkStream')
+        if(box)box.scrollTop=box.scrollHeight
+      }
+      thinkRafId=null
+    }
+    const scheduleThinkFlush=()=>{if(!thinkRafId)thinkRafId=requestAnimationFrame(flushThink)}
+
+    // RAF批量写body
+    let pendingBody=''
+    let bodyRafId=null
+    const flushBody=()=>{
+      if(pendingBody&&streamBlock){
+        xkStreamAppend(streamBlock,pendingBody)
+        pendingBody=''
+      }
+      bodyRafId=null
+    }
+    const scheduleBodyFlush=()=>{if(!bodyRafId)bodyRafId=requestAnimationFrame(flushBody)}
 
     while(true){
       const {done,value}=await reader.read()
