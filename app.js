@@ -2201,7 +2201,8 @@ async function xkCallAI(){
         messages:[{role:'system',content:SYSTEM_PROMPT},...xkHistory],
         stream:true,
         stream_options:{include_usage:true},
-        temperature:cfg.temp
+        temperature:cfg.temp,
+        ...buildActivatedToolsPayload()
       })
     })
     if(!res.ok)throw new Error('HTTP '+res.status)
