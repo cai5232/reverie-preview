@@ -1940,6 +1940,15 @@ function xkTypingEl(){
   return el
 }
 
+// 全局 thinking 弹窗
+function xkOpenThink(text){
+  document.getElementById('xkThinkBody').textContent=text
+  document.getElementById('xkThinkOverlay').classList.add('open')
+}
+function xkCloseThink(){
+  document.getElementById('xkThinkOverlay').classList.remove('open')
+}
+
 // 渲染一整个AI回复块（带thinking）
 function xkRenderAI(bodyText, thinkText){
   const box=document.getElementById('xkStream')
@@ -1949,19 +1958,15 @@ function xkRenderAI(bodyText, thinkText){
   if(thinkText){
     const tw=document.createElement('div')
     tw.className='xk-thinking'
-    const toggle=document.createElement('div')
-    toggle.className='xk-thinking-toggle'
-    toggle.innerHTML=`<svg width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1l4.5 4.5L1 10" stroke="#A6A39A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>思考过程`
-    const body=document.createElement('div')
-    body.className='xk-thinking-body'
-    body.textContent=thinkText
-    toggle.onclick=()=>{toggle.classList.toggle('open');body.classList.toggle('open')}
-    tw.appendChild(toggle)
-    tw.appendChild(body)
+    const btn=document.createElement('div')
+    btn.className='xk-think-btn'
+    btn.innerHTML=`<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.7" stroke="#A6A39A" stroke-width="1.1"/><path d="M6.5 3.8v3l1.7 1.7" stroke="#A6A39A" stroke-width="1.1" stroke-linecap="round"/></svg>Thinking`
+    const t=thinkText
+    btn.onclick=()=>xkOpenThink(t)
+    tw.appendChild(btn)
     block.appendChild(tw)
   }
 
-  // 文字按段落拆开，每段一个 xk-ai-para
   const paras=bodyText.split(/\n\n+/).map(s=>s.trim()).filter(Boolean)
   if(!paras.length)paras.push(bodyText)
   paras.forEach(p=>{
@@ -1985,25 +1990,20 @@ function xkStartStreamBlock(thinkText){
   if(thinkText){
     const tw=document.createElement('div')
     tw.className='xk-thinking'
-    const toggle=document.createElement('div')
-    toggle.className='xk-thinking-toggle'
-    toggle.innerHTML=`<svg width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1l4.5 4.5L1 10" stroke="#A6A39A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>思考过程`
-    const tbody=document.createElement('div')
-    tbody.className='xk-thinking-body'
-    tbody.textContent=thinkText
-    toggle.onclick=()=>{toggle.classList.toggle('open');tbody.classList.toggle('open')}
-    tw.appendChild(toggle)
-    tw.appendChild(tbody)
+    const btn=document.createElement('div')
+    btn.className='xk-think-btn'
+    btn.innerHTML=`<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.7" stroke="#A6A39A" stroke-width="1.1"/><path d="M6.5 3.8v3l1.7 1.7" stroke="#A6A39A" stroke-width="1.1" stroke-linecap="round"/></svg>Thinking`
+    const t=thinkText
+    btn.onclick=()=>xkOpenThink(t)
+    tw.appendChild(btn)
     block.appendChild(tw)
   }
 
-  // 当前流式段落
   const curPara=document.createElement('p')
   curPara.className='xk-ai-para'
   block.appendChild(curPara)
   block._curPara=curPara
 
-  // 光标
   const cursor=document.createElement('span')
   cursor.className='streaming-cursor'
   curPara.appendChild(cursor)
