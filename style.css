@@ -590,7 +590,6 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 .xk-action-btn:active{background:#EBE8DF}
 .xk-action-btn svg{flex-shrink:0;opacity:.55}
 .xk-action-btn:active svg{opacity:.85}
-.xk-action-btn.danger svg{opacity:1}
 .xk-token-count{
   margin-left:auto;
   font-size:11px;color:#C8C5BC;
