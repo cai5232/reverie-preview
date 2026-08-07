@@ -2878,6 +2878,12 @@ function mcpShowEdit(){
   document.getElementById('mcpAddName').value = s.name||''
   document.getElementById('mcpAddUrl').value = s.url||''
   document.getElementById('mcpAddAuth').value = s.auth||''
+  const headersEl = document.getElementById('mcpAddHeaders')
+  if(headersEl && s.extraHeaders){
+    headersEl.value = Object.entries(s.extraHeaders).map(([k,v])=>`${k}: ${v}`).join('\n')
+  }else if(headersEl){
+    headersEl.value = ''
+  }
   mcpSelectType(s.type||'http')
   document.getElementById('mcpAddOverlay').classList.add('open')
 }
