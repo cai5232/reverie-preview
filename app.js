@@ -2637,6 +2637,7 @@ function mcpInitDefaults(){
   _mcpServers = [
     {id:'ob',name:'omber-brain',url:'https://caiovo.zeabur.app/mcp',type:'http',auth:'',status:'unknown',tools:[]},
     {id:'garden',name:'花园',url:'https://api.kelivo.com/mcp',type:'http',auth:'',status:'unknown',tools:[]},
+    {id:'github',name:'Github',url:'https://caiui.zeabur.app/sse',type:'sse',auth:'',status:'unknown',tools:[]},
   ]
   localStorage.setItem('mcp_servers', JSON.stringify(_mcpServers))
 }
