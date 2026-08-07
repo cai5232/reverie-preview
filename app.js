@@ -2296,6 +2296,7 @@ function xkTypingRow(){
 }
 
 // xkTypingEl: 타이핑 점 애니메이션
+const xkAppendMe=xkAppendUser // alias
 
 
 async function xkSend(){
