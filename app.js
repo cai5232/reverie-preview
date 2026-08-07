@@ -2266,7 +2266,21 @@ async function xkAgenticLoop(sendOptions, mcpServerMap, round){
     }
 
     let pendingThink='',thinkRafId=null
-    const flushThink=()=>{if(pendingThink&&thinkLivePara){thinkLivePara.textContent+=pendingThink;pendingThink='';const b=document.getElementById('xkStream');if(b&&!b._userScrolled)b.scrollTop=b.scrollHeight}thinkRafId=null}
+    const flushThink=()=>{
+      if(pendingThink&&thinkLivePara){
+        thinkLivePara.textContent+=pendingThink
+        pendingThink=''
+        const b=document.getElementById('xkStream')
+        if(b)b.scrollTop=b.scrollHeight
+        // 如果弹窗是开着的，同步实时更新
+        const overlay=document.getElementById('xkThinkOverlay')
+        if(overlay&&overlay.classList.contains('open')){
+          const body=document.getElementById('xkThinkBody')
+          if(body)body.textContent=thinkBuf
+        }
+      }
+      thinkRafId=null
+    }
     const scheduleThinkFlush=()=>{if(!thinkRafId)thinkRafId=requestAnimationFrame(flushThink)}
     let pendingBody='',bodyRafId=null
     const flushBody=()=>{if(pendingBody&&streamBlock){xkStreamAppend(streamBlock,pendingBody);pendingBody=''}bodyRafId=null}
