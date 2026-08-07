@@ -2215,6 +2215,8 @@ async function xkCallAI(){
           xkCallAI._lastUsage=j.usage
         }
         if(!delta)continue
+        // thinking content
+        if(delta.thinking!==undefined){
           const tok=delta.thinking||''
           if(tok){thinkBuf+=tok;ensureThinkLive();pendingThink+=tok;scheduleThinkFlush()}
           continue
