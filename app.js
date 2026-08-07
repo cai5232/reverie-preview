@@ -2406,6 +2406,8 @@ document.addEventListener('DOMContentLoaded',()=>{
       if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();mcpRunCustom()}
     })
   }
+
+  const xkta=document.getElementById('xkInput')
   if(xkta){
     xkta.addEventListener('input',function(){
       this.style.height='auto'
@@ -2429,16 +2431,13 @@ document.addEventListener('DOMContentLoaded',()=>{
     xkBox.addEventListener('touchmove',e=>{
       const dy=e.touches[0].clientY-_touchStartY
       if(dy>10){
-        // 手指往下移（即往上翻页面）
         xkBox._userScrolled=true
       }
     },{passive:true})
     xkBox.addEventListener('touchend',()=>{
-      // 如果已经滑到底了，恢复自动跟底
       const atBottom=xkBox.scrollHeight-xkBox.scrollTop-xkBox.clientHeight<40
       if(atBottom)xkBox._userScrolled=false
     },{passive:true})
-    // 鼠标滚轮（桌面端）
     xkBox.addEventListener('wheel',e=>{
       if(e.deltaY<0)xkBox._userScrolled=true
       else{
@@ -2470,11 +2469,9 @@ document.addEventListener('DOMContentLoaded',()=>{
         xkAppendUser(m.content)
       }else{
         let heart='',body=m.content
-        // 新格式 [THINK]...[/THINK]正文
         const hm=m.content.match(/\[THINK\]([\s\S]*?)\[\/THINK\]/)
         if(hm){heart=hm[1].trim();body=m.content.slice(hm.index+hm[0].length).trim()}
         else{
-          // 兼容旧格式 [心声]...[/心声]
           const hm2=m.content.match(/\[心声\]([\s\S]*?)\[\/心声\]/)
           if(hm2){heart=hm2[1].trim();body=m.content.slice(hm2.index+hm2[0].length).trim()}
         }
