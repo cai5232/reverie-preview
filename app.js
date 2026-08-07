@@ -2170,7 +2170,7 @@ async function xkCallAI(){
       },300)
     }
 
-    // RAF批量写thinking
+    // ── 每帧 flush，和屏幕刷新率对齐，iOS 最流畅 ──
     let pendingThink=''
     let thinkRafId=null
     const flushThink=()=>{
@@ -2182,9 +2182,10 @@ async function xkCallAI(){
       }
       thinkRafId=null
     }
-    const scheduleThinkFlush=()=>{if(!thinkRafId)thinkRafId=requestAnimationFrame(flushThink)}
+    const scheduleThinkFlush=()=>{
+      if(!thinkRafId)thinkRafId=requestAnimationFrame(flushThink)
+    }
 
-    // RAF批量写body — 改为立即flush保证逐字感
     let pendingBody=''
     let bodyRafId=null
     const flushBody=()=>{
@@ -2194,8 +2195,9 @@ async function xkCallAI(){
       }
       bodyRafId=null
     }
-    // 立即写，不等RAF
-    const scheduleBodyFlush=()=>{flushBody()}
+    const scheduleBodyFlush=()=>{
+      if(!bodyRafId)bodyRafId=requestAnimationFrame(flushBody)
+    }
 
     while(true){
       const {done,value}=await reader.read()
