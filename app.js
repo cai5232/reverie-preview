@@ -2612,7 +2612,8 @@ function _xkBtn(svgStr, label, cls='xk-action-btn'){
   btn.innerHTML=svgStr
   return btn
 }
-// ── MCP 真实客户端 ──
+// mcpRunCustom 已迁移到直连模式，保留空函数防止引用报错
+function mcpRunCustom(){}
 // 通过 xiaoke 的 /internal/mcp-proxy 做 CORS 代理，直连各 MCP 服务器
 
 const MCP_PROXY = cfg.api.replace('/v1','') + '/internal/mcp-proxy'
