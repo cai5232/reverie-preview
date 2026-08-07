@@ -2428,7 +2428,11 @@ async function xkAgenticLoop(sendOptions, mcpServerMap, round){
 let _xkToolGroup = null   // 当前正在追加的工具组容器
 let _xkToolGroupItems = []  // 工具组内的行元素（用于连线）
 
-function xkToolGroupStart(){
+function xkShouldAutoScroll(){
+  const box=document.getElementById('xkStream')
+  if(!box)return true
+  return box.scrollHeight-box.scrollTop-box.clientHeight<200
+}
   const box = document.getElementById('xkStream')
   _xkToolGroup = document.createElement('div')
   _xkToolGroup.className = 'xk-tool-group'
