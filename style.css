@@ -702,10 +702,9 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
   margin-left:2px;
 }
 @keyframes dot-fade{0%,100%{opacity:.3}50%{opacity:1}}
-.xk-think-live-body{
-  padding:0 12px 10px;
-  font-size:12px;color:#8A887F;
-  font-family:-apple-system,'PingFang SC',sans-serif;
-  line-height:1.7;white-space:pre-wrap;word-break:break-word;
-  overflow:hidden;
-}
+/* ===== 覆盖修复：xk布局必须用文档流，不能用fixed ===== */
+#page-xiaoke{display:none;flex-direction:column;overflow:hidden;position:relative;flex:1;min-height:0;background:#F5F2EA}
+#page-xiaoke.active{display:flex!important}
+#page-xiaoke .xk-topbar{position:relative!important;top:auto!important;left:auto!important;right:auto!important;bottom:auto!important;transform:none!important;flex-shrink:0!important;z-index:2!important;touch-action:manipulation!important}
+#page-xiaoke .xk-stream{position:relative!important;top:auto!important;left:auto!important;right:auto!important;bottom:auto!important;flex:1!important;min-height:0!important;z-index:1!important;overflow-y:auto!important;padding:12px 22px!important}
+#page-xiaoke .xk-bar{position:relative!important;top:auto!important;left:auto!important;right:auto!important;bottom:auto!important;transform:none!important;flex-shrink:0!important;z-index:2!important}
