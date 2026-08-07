@@ -256,11 +256,12 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
   font-weight:300;
   line-height:1.7;
   word-break:break-word;
-  white-space:pre-wrap;
   margin-bottom:1.1em;
   letter-spacing:.01em;
 }
 .xk-ai-para:last-child{margin-bottom:0}
+.xk-ai-para strong{font-weight:600}
+.xk-ai-para em{font-style:italic}
 
 /* Thinking 触发按钮（时钟图标 + 文字） */
 .xk-thinking{margin-bottom:12px}
