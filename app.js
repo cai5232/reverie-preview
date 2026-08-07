@@ -2878,9 +2878,9 @@ function mcpSaveServer(){
   if(!url){ showToast('请填写服务器地址'); return }
   if(_mcpEditMode){
     const s = _mcpServers.find(x=>x.id===_mcpCurrentServerId)
-    if(s){ s.name=name||url; s.url=url; s.auth=auth; s.type=_mcpAddType; s.status='unknown' }
+    if(s){ s.name=name||url; s.url=url; s.auth=auth; s.type=_mcpAddType; s.status='unknown'; s.extraHeaders=parseHeadersInput() }
   }else{
-    _mcpServers.push({id:'s'+Date.now(), name:name||url, url, auth, type:_mcpAddType, status:'unknown', tools:[]})
+    _mcpServers.push({id:'s'+Date.now(), name:name||url, url, auth, type:_mcpAddType, status:'unknown', tools:[], extraHeaders:parseHeadersInput()})
   }
   mcpSave()
   closeMcpAdd()
