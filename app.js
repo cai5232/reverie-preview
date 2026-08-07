@@ -2050,11 +2050,12 @@ function xkStreamAppend(block, chunk){
   const cursor=block._cursor
   let curPara=block._curPara
 
-  // 处理换行：遇到双换行新起一段
-  const parts=chunk.split(/\n\n/)
+  // 过滤 markdown 加粗/斜体符号
+  const clean=chunk.replace(/\*\*([^*]*)\*\*/g,'$1').replace(/\*([^*]*)\*/g,'$1')
+
+  const parts=clean.split(/\n\n/)
   parts.forEach((part,i)=>{
     if(i>0){
-      // 新段落
       cursor.remove()
       const newPara=document.createElement('p')
       newPara.className='xk-ai-para'
@@ -2063,7 +2064,6 @@ function xkStreamAppend(block, chunk){
       curPara=newPara
       newPara.appendChild(cursor)
     }
-    // 单换行转空格
     const text=part.replace(/\n/g,' ')
     if(text){
       const t=document.createTextNode(text)
