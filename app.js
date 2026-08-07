@@ -2922,10 +2922,16 @@ function mcpSaveServer(){
   mcpSave()
   closeMcpAdd()
   if(_mcpEditMode){
+    const s2 = _mcpServers.find(x=>x.id===_mcpCurrentServerId)
+    if(s2) mcpPingServer(s2).then(()=>{
+      if(document.getElementById('mcpPageTools').style.display!=='none') mcpRenderTools(s2)
+    })
     mcpOpenServer(_mcpCurrentServerId)
   }else{
     mcpRenderList()
-    const s = _mcpServers[_mcpServers.length-1]
-    mcpPingServer(s)
+    const s2 = _mcpServers[_mcpServers.length-1]
+    mcpPingServer(s2).then(()=>mcpRenderList())
+    // 自动跳进服务器页展示工具
+    setTimeout(()=>mcpOpenServer(s2.id), 200)
   }
 }
