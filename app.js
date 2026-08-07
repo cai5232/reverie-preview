@@ -2674,7 +2674,7 @@ function mcpAddHeaderRow(key, val){
     <div class="mcp-header-label" style="margin-top:6px">请求头值</div>
     <input class="mcp-header-val" placeholder="Bearer sk-..." value="${escHtml(val||'')}">
   </div>
-  <div class="mcp-header-row-del" onclick="this.parentNode.remove()">🗑</div>`
+      <div class="mcp-header-row-del" onclick="this.parentNode.remove()"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2.5 4h11M5.5 4V2.5h5V4M6.5 7v5M9.5 7v5M3.5 4l.8 9a1 1 0 001 .9h5.4a1 1 0 001-.9l.8-9" stroke="#CCC" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`
   rows.appendChild(row)
 }
 
