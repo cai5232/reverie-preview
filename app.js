@@ -2518,7 +2518,8 @@ function xkAddActions(block, tokens){
 function _xkBtn(svgStr, label, cls='xk-action-btn'){
   const btn=document.createElement('button')
   btn.className=cls
-  btn.innerHTML=svgStr+`<span>${label}</span>`
+  btn.title=label
+  btn.innerHTML=svgStr
   return btn
 }
 function xkRenderThem(text, thinking){
