@@ -2510,6 +2510,7 @@ function xkOpenToolDetail(row){
 
   const sheet = document.createElement('div')
   sheet.style.cssText = 'background:#fff;border-radius:20px 20px 0 0;width:100%;max-height:75vh;overflow-y:auto;padding:0 0 calc(env(safe-area-inset-bottom,0px)+20px)'
+  sheet.setAttribute('data-sheet','1')
 
   const handle = document.createElement('div')
   handle.style.cssText = 'width:36px;height:4px;background:#E0DDD8;border-radius:2px;margin:12px auto 0'
