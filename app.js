@@ -2613,91 +2613,274 @@ function _xkBtn(svgStr, label, cls='xk-action-btn'){
   btn.innerHTML=svgStr
   return btn
 }
-// ── MCP 工具调用 ──
-let _mcpTool=''
-let _mcpFields=[]
+// ── MCP 真实客户端 ──
+// 通过 xiaoke 的 /internal/mcp-proxy 做 CORS 代理，直连各 MCP 服务器
 
-function mcpShowResult(title,text){
-  const wrap=document.getElementById('mcpResult')
-  document.getElementById('mcpResultTitle').textContent=title
-  document.getElementById('mcpResultBody').textContent=text
-  wrap.style.display='block'
-  wrap.scrollIntoView({behavior:'smooth',block:'nearest'})
+const MCP_PROXY = cfg.api.replace('/v1','') + '/internal/mcp-proxy'
+const MCP_PROXY_KEY = cfg.key
+
+// 本地存储服务器列表
+let _mcpServers = JSON.parse(localStorage.getItem('mcp_servers') || '[]')
+// 内置服务器（首次初始化）
+function mcpInitDefaults(){
+  if(_mcpServers.length) return
+  _mcpServers = [
+    {id:'ob',name:'omber-brain',url:'https://caiovo.zeabur.app/mcp',type:'http',auth:'',status:'unknown',tools:[]},
+    {id:'garden',name:'花园',url:'https://api.kelivo.com/mcp',type:'http',auth:'',status:'unknown',tools:[]},
+  ]
+  localStorage.setItem('mcp_servers', JSON.stringify(_mcpServers))
 }
 
-async function mcpRun(tool){
-  mcpShowResult(tool,'请求中…')
-  const msg=`请现在调用 ${tool} 工具，把结果原文返回给我，不要总结。`
+let _mcpCurrentServerId = null
+let _mcpEditMode = false
+let _mcpCurrentTool = null
+let _mcpAddType = 'http'
+
+function mcpSave(){
+  localStorage.setItem('mcp_servers', JSON.stringify(_mcpServers))
+}
+
+// 代理请求
+async function mcpProxyFetch(targetUrl, body, extraHeaders={}){
+  const proxyBase = (cfg.api||'').replace(/\/v1\/?$/,'') + '/internal/mcp-proxy'
+  const res = await fetch(proxyBase, {
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key},
+    body: JSON.stringify({url: targetUrl, method:'POST', headers: extraHeaders, body})
+  })
+  const j = await res.json()
+  if(!res.ok) throw new Error(j.error || 'proxy error')
+  return j
+}
+
+// 发送 JSON-RPC 2.0
+async function mcpRPC(server, method, params={}){
+  const headers = {}
+  if(server.auth) headers['Authorization'] = server.auth
+  const payload = {jsonrpc:'2.0', id: Date.now(), method, params}
+  const j = await mcpProxyFetch(server.url, payload, headers)
+  if(j.data && j.data.error) throw new Error(JSON.stringify(j.data.error))
+  return j.data
+}
+
+// 渲染服务器列表
+function mcpRenderList(){
+  const el = document.getElementById('mcpServerList')
+  if(!_mcpServers.length){
+    el.innerHTML='<div style="text-align:center;padding:48px 0;color:#BBB;font-size:14px;font-family:-apple-system,\'PingFang SC\',sans-serif">还没有 MCP 服务器<br>点右上角 + 添加</div>'
+    return
+  }
+  el.innerHTML = _mcpServers.map(s=>{
+    const dotClass = s.status==='ok'?'ok':s.status==='err'?'err':s.status==='loading'?'loading':''
+    const toolCount = s.tools ? s.tools.length : 0
+    return`<div class="mcp-server-card" onclick="mcpOpenServer('${s.id}')">
+      <div class="mcp-server-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="5" width="16" height="10" rx="2" stroke="#5C6BC0" stroke-width="1.4"/><path d="M6 10h2M10 10h4" stroke="#5C6BC0" stroke-width="1.3" stroke-linecap="round"/><circle cx="6.5" cy="10" r=".8" fill="#5C6BC0"/></svg>
+        <div class="mcp-server-dot ${dotClass}"></div>
+      </div>
+      <div class="mcp-server-info">
+        <div class="mcp-server-name">${escHtml(s.name||s.url)}</div>
+        <div class="mcp-server-tags">
+          ${s.status==='ok'?'<span class="mcp-server-tag ok">已连接</span>':''}
+          <span class="mcp-server-tag type">${(s.type||'HTTP').toUpperCase()}</span>
+          ${toolCount?`<span class="mcp-server-tag tools">工具: ${toolCount}/${toolCount}</span>`:''}
+        </div>
+      </div>
+      <div class="mcp-server-arrow">›</div>
+    </div>`
+  }).join('')
+}
+
+// ping 所有服务器
+async function mcpPingAll(){
+  for(const s of _mcpServers){
+    mcpPingServer(s)
+  }
+}
+
+async function mcpPingServer(s){
+  s.status = 'loading'
+  mcpRenderList()
   try{
-    const res=await fetch(cfg.api+'/chat/completions',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key,'X-Session-Id':'reverie-yy'},
-      body:JSON.stringify({model:cfg.model,messages:[{role:'system',content:SYSTEM_PROMPT},{role:'user',content:msg}],stream:false,temperature:0.1})
-    })
-    const j=await res.json()
-    mcpShowResult(tool,(j.choices?.[0]?.message?.content||'').trim()||'（无结果）')
-  }catch(e){mcpShowResult(tool,'失败：'+e.message)}
+    const res = await mcpRPC(s, 'tools/list', {})
+    const tools = (res && res.result && res.result.tools) || []
+    s.tools = tools
+    s.status = 'ok'
+  }catch(e){
+    s.status = 'err'
+    s.tools = s.tools || []
+  }
+  mcpSave()
+  mcpRenderList()
 }
 
-async function mcpFish(cmd){
-  mcpShowResult('fishing: '+cmd,'请求中…')
-  const msg=`请帮我在钓鱼游戏里执行指令：${cmd}，把结果原文返回给我。`
+// 打开服务器（拉工具列表）
+async function mcpOpenServer(id){
+  const s = _mcpServers.find(x=>x.id===id)
+  if(!s) return
+  _mcpCurrentServerId = id
+  document.getElementById('mcpToolsTitle').textContent = s.name || s.url
+  document.getElementById('mcpPageList').style.display = 'none'
+  document.getElementById('mcpPageTools').style.display = ''
+  mcpRenderTools(s)
+  // 刷新工具列表
+  mcpPingServer(s).then(()=>mcpRenderTools(s))
+}
+
+function mcpRenderTools(s){
+  const el = document.getElementById('mcpToolList')
+  if(!s.tools || !s.tools.length){
+    el.innerHTML = `<div style="text-align:center;padding:48px 0;color:#BBB;font-size:14px;font-family:-apple-system,'PingFang SC',sans-serif">${s.status==='loading'?'连接中…':s.status==='err'?'连接失败':'暂无工具'}</div>`
+    return
+  }
+  el.innerHTML = s.tools.map((t,i)=>`
+    <div class="mcp-tool-card" onclick="mcpShowCallTool(${i})">
+      <div class="mcp-tool-card-name">${escHtml(t.name||'')}</div>
+      <div class="mcp-tool-card-desc">${escHtml((t.description||'').slice(0,80))}</div>
+    </div>`).join('')
+}
+
+function mcpBackToList(){
+  document.getElementById('mcpPageTools').style.display = 'none'
+  document.getElementById('mcpPageList').style.display = ''
+  mcpRenderList()
+}
+
+// 显示工具调用弹窗
+function mcpShowCallTool(toolIdx){
+  const s = _mcpServers.find(x=>x.id===_mcpCurrentServerId)
+  if(!s) return
+  const tool = s.tools[toolIdx]
+  if(!tool) return
+  _mcpCurrentTool = {server: s, tool}
+  document.getElementById('mcpCallTitle').textContent = tool.name
+  document.getElementById('mcpCallDesc').textContent = tool.description || ''
+  document.getElementById('mcpCallResult').style.display = 'none'
+  document.getElementById('mcpCallSubmit').textContent = '调用'
+  document.getElementById('mcpCallSubmit').disabled = false
+  // 生成参数输入框
+  const schema = tool.inputSchema || tool.input_schema || {}
+  const props = schema.properties || {}
+  const required = schema.required || []
+  const fields = document.getElementById('mcpCallFields')
+  if(!Object.keys(props).length){
+    fields.innerHTML = '<div style="color:#aaa;font-size:13px;margin-bottom:8px">无需参数，直接调用</div>'
+  }else{
+    fields.innerHTML = Object.entries(props).map(([key,def])=>{
+      const isRequired = required.includes(key)
+      const desc = def.description ? `<div style="font-size:11px;color:#aaa;margin-top:2px">${escHtml(def.description.slice(0,80))}</div>` : ''
+      const isLong = def.type==='string' && (key==='content'||key==='body'||key==='text')
+      return `<div class="mcp-modal-field">
+        <label>${escHtml(key)}${isRequired?' <span style="color:#ff6b6b">*</span>':''}</label>
+        ${isLong
+          ? `<textarea id="mcpParam_${key}" placeholder="${escHtml(def.description||key)}" rows="3"></textarea>`
+          : `<input id="mcpParam_${key}" placeholder="${escHtml(def.description||key)}">`
+        }
+        ${desc}
+      </div>`
+    }).join('')
+  }
+  document.getElementById('mcpCallOverlay').classList.add('open')
+}
+
+async function mcpDoCall(){
+  if(!_mcpCurrentTool) return
+  const {server, tool} = _mcpCurrentTool
+  const schema = tool.inputSchema || tool.input_schema || {}
+  const props = schema.properties || {}
+  const params = {}
+  for(const key of Object.keys(props)){
+    const el = document.getElementById('mcpParam_'+key)
+    if(el && el.value.trim()) params[key] = el.value.trim()
+  }
+  const btn = document.getElementById('mcpCallSubmit')
+  btn.textContent = '调用中…'
+  btn.disabled = true
   try{
-    const res=await fetch(cfg.api+'/chat/completions',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key,'X-Session-Id':'reverie-yy'},
-      body:JSON.stringify({model:cfg.model,messages:[{role:'system',content:SYSTEM_PROMPT},{role:'user',content:msg}],stream:false,temperature:0.1})
-    })
-    const j=await res.json()
-    mcpShowResult('fishing: '+cmd,(j.choices?.[0]?.message?.content||'').trim()||'（无结果）')
-  }catch(e){mcpShowResult('fishing: '+cmd,'失败：'+e.message)}
+    const res = await mcpRPC(server, 'tools/call', {name: tool.name, arguments: params})
+    const resultEl = document.getElementById('mcpCallResult')
+    const bodyEl = document.getElementById('mcpCallResultBody')
+    // 解析返回内容
+    const content = res?.result?.content || res?.result || res
+    let text = ''
+    if(Array.isArray(content)){
+      text = content.map(c=>c.text||JSON.stringify(c)).join('\n')
+    }else if(typeof content === 'string'){
+      text = content
+    }else{
+      text = JSON.stringify(content, null, 2)
+    }
+    bodyEl.textContent = text.slice(0, 4000) + (text.length>4000?'\n…(截断)':'')
+    resultEl.style.display = 'block'
+    resultEl.scrollIntoView({behavior:'smooth', block:'nearest'})
+    btn.textContent = '调用'
+    btn.disabled = false
+  }catch(e){
+    document.getElementById('mcpCallResultBody').textContent = '错误：'+e.message
+    document.getElementById('mcpCallResult').style.display = 'block'
+    btn.textContent = '调用'
+    btn.disabled = false
+  }
 }
 
-function mcpShowInput(tool,fieldsStr,desc){
-  _mcpTool=tool
-  _mcpFields=fieldsStr.split(',').map(s=>s.trim()).filter(Boolean)
-  document.getElementById('mcpModalTitle').textContent=tool
-  const container=document.getElementById('mcpModalFields')
-  container.innerHTML=_mcpFields.map(f=>`<div class="mcp-modal-field"><label>${f}</label>${f==='body'||f==='content'?`<textarea id="mcpField_${f}" placeholder="${f}"></textarea>`:`<input id="mcpField_${f}" placeholder="${f}">`}</div>`).join('')
-  document.getElementById('mcpModalOverlay').classList.add('open')
-  setTimeout(()=>{const el=container.querySelector('input,textarea');if(el)el.focus()},150)
+function closeMcpCall(){
+  document.getElementById('mcpCallOverlay').classList.remove('open')
 }
 
-function closeMcpModal(){document.getElementById('mcpModalOverlay').classList.remove('open')}
-
-async function mcpSubmitModal(){
-  const params={}
-  _mcpFields.forEach(f=>{const el=document.getElementById('mcpField_'+f);if(el)params[f]=el.value.trim()})
-  closeMcpModal()
-  const paramsDesc=Object.entries(params).map(([k,v])=>`${k}="${v}"`).join('，')
-  const msg=`请帮我调用 ${_mcpTool} 工具，参数：${paramsDesc}。把结果原文返回给我。`
-  mcpShowResult(_mcpTool,'请求中…')
-  try{
-    const res=await fetch(cfg.api+'/chat/completions',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key,'X-Session-Id':'reverie-yy'},
-      body:JSON.stringify({model:cfg.model,messages:[{role:'system',content:SYSTEM_PROMPT},{role:'user',content:msg}],stream:false,temperature:0.1})
-    })
-    const j=await res.json()
-    mcpShowResult(_mcpTool,(j.choices?.[0]?.message?.content||'').trim()||'（无结果）')
-  }catch(e){mcpShowResult(_mcpTool,'失败：'+e.message)}
+// 添加/编辑
+function mcpSelectType(t){
+  _mcpAddType = t
+  document.getElementById('mcpTypeHttp').className = 'mcp-type-btn'+(t==='http'?' active':'')
+  document.getElementById('mcpTypeSse').className = 'mcp-type-btn'+(t==='sse'?' active':'')
 }
 
-async function mcpRunCustom(){
-  const ta=document.getElementById('mcpCustomInput')
-  const cmd=ta.value.trim()
-  if(!cmd)return
-  ta.value='';ta.style.height='auto'
-  mcpShowResult('自定义指令','请求中…')
-  try{
-    const res=await fetch(cfg.api+'/chat/completions',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key,'X-Session-Id':'reverie-yy'},
-      body:JSON.stringify({model:cfg.model,messages:[{role:'system',content:SYSTEM_PROMPT},{role:'user',content:cmd}],stream:false,temperature:0.5})
-    })
-    const j=await res.json()
-    mcpShowResult('自定义指令',(j.choices?.[0]?.message?.content||'').trim()||'（无结果）')
-  }catch(e){mcpShowResult('自定义指令','失败：'+e.message)}
+function mcpShowAdd(){
+  _mcpEditMode = false
+  document.getElementById('mcpAddTitle').textContent = '添加 MCP'
+  document.getElementById('mcpAddName').value = ''
+  document.getElementById('mcpAddUrl').value = ''
+  document.getElementById('mcpAddAuth').value = ''
+  mcpSelectType('http')
+  document.getElementById('mcpAddOverlay').classList.add('open')
+  setTimeout(()=>document.getElementById('mcpAddName').focus(), 150)
+}
+
+function mcpShowEdit(){
+  const s = _mcpServers.find(x=>x.id===_mcpCurrentServerId)
+  if(!s) return
+  _mcpEditMode = true
+  document.getElementById('mcpAddTitle').textContent = '编辑服务器'
+  document.getElementById('mcpAddName').value = s.name||''
+  document.getElementById('mcpAddUrl').value = s.url||''
+  document.getElementById('mcpAddAuth').value = s.auth||''
+  mcpSelectType(s.type||'http')
+  document.getElementById('mcpAddOverlay').classList.add('open')
+}
+
+function closeMcpAdd(){
+  document.getElementById('mcpAddOverlay').classList.remove('open')
+}
+
+function mcpSaveServer(){
+  const name = document.getElementById('mcpAddName').value.trim()
+  const url = document.getElementById('mcpAddUrl').value.trim()
+  const auth = document.getElementById('mcpAddAuth').value.trim()
+  if(!url){ showToast('请填写服务器地址'); return }
+  if(_mcpEditMode){
+    const s = _mcpServers.find(x=>x.id===_mcpCurrentServerId)
+    if(s){ s.name=name||url; s.url=url; s.auth=auth; s.type=_mcpAddType; s.status='unknown' }
+  }else{
+    _mcpServers.push({id:'s'+Date.now(), name:name||url, url, auth, type:_mcpAddType, status:'unknown', tools:[]})
+  }
+  mcpSave()
+  closeMcpAdd()
+  if(_mcpEditMode){
+    mcpOpenServer(_mcpCurrentServerId)
+  }else{
+    mcpRenderList()
+    const s = _mcpServers[_mcpServers.length-1]
+    mcpPingServer(s)
+  }
 }
   xkRenderAI(text||'', thinking||null)
 }
