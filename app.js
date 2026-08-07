@@ -458,13 +458,21 @@ async function callAI(){
     const full=(j.choices?.[0]?.message?.content)||''
     cursor.remove()
     if(!full)throw new Error('empty response')
-    // 解析心声标签（从 content 里提取 [心声]...[/心声]）
-    let heartText=''
+    // thinking：优先从 message.thinking 字段取（非流式 extended thinking），其次找 [心声] 标签，最后找 <think> 标签
+    let heartText=j.choices?.[0]?.message?.thinking||''
     let bodyText=full
-    const thinkMatch=full.match(/\[心声\]([\s\S]*?)\[\/心声\]/)
-    if(thinkMatch){
-      heartText=thinkMatch[1].trim()
-      bodyText=full.slice(thinkMatch.index+thinkMatch[0].length).trim()
+    if(!heartText){
+      const thinkMatch=full.match(/\[心声\]([\s\S]*?)\[\/心声\]/)
+      if(thinkMatch){
+        heartText=thinkMatch[1].trim()
+        bodyText=full.slice(thinkMatch.index+thinkMatch[0].length).trim()
+      } else {
+        const thinkTag=full.match(/<think>([\s\S]*?)<\/think>/)
+        if(thinkTag){
+          heartText=thinkTag[1].trim()
+          bodyText=full.slice(thinkTag.index+thinkTag[0].length).trim()
+        }
+      }
     }
     // 分段，保证至少5条
     let segments=bodyText.split(/\n\n/).map(s=>s.trim()).filter(Boolean)
