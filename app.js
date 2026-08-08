@@ -2089,7 +2089,17 @@ const WEB_SEARCH_TOOL={
   }
 }
 
-let xkWebSearchOn=true
+function xkWebSearch(fromMenu){
+  xkWebSearchOn=!xkWebSearchOn
+  const badge=document.getElementById('xkSearchBadge')
+  if(badge)badge.style.opacity=xkWebSearchOn?'1':'0.35'
+}
+
+// 初始化联网状态显示
+function xkInitSearchBadge(){
+  const badge=document.getElementById('xkSearchBadge')
+  if(badge)badge.style.opacity=xkWebSearchOn?'1':'0.35'
+}
 function xkWebSearch(fromMenu){
   xkWebSearchOn=!xkWebSearchOn
   // 徽章
