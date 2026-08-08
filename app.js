@@ -2271,7 +2271,7 @@ async function xkAgenticLoop(sendOptions, mcpServerMap, round){
     function collapseThinkLive(){
       if(!thinkLiveEl)return
       thinkLiveEl.classList.add('collapsing')
-      setTimeout(()=>{if(thinkLiveEl&&thinkLiveEl.parentNode)thinkLiveEl.parentNode.removeChild(thinkLiveEl);thinkLiveEl=null;thinkLivePara=null},300)
+      setTimeout(()=>{if(thinkLiveEl&&thinkLiveEl.parentNode)thinkLiveEl.parentNode.removeChild(thinkLiveEl);thinkLiveEl=null;thinkLivePara=null},260)
     }
 
     let pendingThink='',thinkRafId=null
