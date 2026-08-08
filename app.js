@@ -2749,10 +2749,13 @@ document.addEventListener('DOMContentLoaded',()=>{
         if(!e.isComposing){
           xkSend()
         }else{
-          // iOS中文输入法：compositionend紧接着触发，等它完成再发
+          // iOS中文输入法：compositionend 后再发送，并清掉意外插入的换行
           xkta.addEventListener('compositionend',function handler(){
             xkta.removeEventListener('compositionend',handler)
-            xkSend()
+            setTimeout(()=>{
+              xkta.value=xkta.value.replace(/\n/g,'')
+              xkSend()
+            },0)
           })
         }
         return
