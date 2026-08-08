@@ -139,7 +139,34 @@ document.addEventListener('DOMContentLoaded', function(){
   document.body.addEventListener('touchend',_se,{passive:false})
 })
 
-var _sEl=null,_sY=0,_sOvr=null
-function _ss(e){var s=e.target.closest('[data-sheet]');if(!s)return;_sEl=s;_sOvr=s.parentElement;_sY=e.touches[0].clientY;s.style.transition='none'}
-function _sm(e){if(!_sEl)return;var dy=e.touches[0].clientY-_sY;if(dy>0){_sEl.style.transform='translateY('+dy+'px)';e.preventDefault()}}
-function _se(e){if(!_sEl)return;var dy=e.changedTouches[0].clientY-_sY;if(dy>80){_sEl.style.transition='transform .25s ease';_sEl.style.transform='translateY(100%)';var o=_sOvr;setTimeout(function(){if(o&&o.parentNode)o.parentNode.removeChild(o)},260)}else{_sEl.style.transition='transform .2s ease';_sEl.style.transform='translateY(0)'};_sEl=null;_sOvr=null}
+var _sEl=null,_sY=0,_sOvr=null,_sOnHandle=false
+function _ss(e){
+  // 只有点到 handle 元素才触发
+  var handle=e.target.closest('[data-handle]')
+  if(!handle)return
+  var s=handle.closest('[data-sheet]')
+  if(!s)return
+  _sOnHandle=true
+  _sEl=s;_sOvr=s.parentElement;_sY=e.touches[0].clientY
+  s.style.transition='none'
+  e.preventDefault()
+}
+function _sm(e){
+  if(!_sEl||!_sOnHandle)return
+  var dy=e.touches[0].clientY-_sY
+  if(dy>0){_sEl.style.transform='translateY('+dy+'px)';e.preventDefault()}
+}
+function _se(e){
+  if(!_sEl||!_sOnHandle)return
+  var dy=e.changedTouches[0].clientY-_sY
+  if(dy>60){
+    _sEl.style.transition='transform .25s ease'
+    _sEl.style.transform='translateY(100%)'
+    var o=_sOvr
+    setTimeout(function(){if(o&&o.parentNode)o.parentNode.removeChild(o)},260)
+  }else{
+    _sEl.style.transition='transform .2s ease'
+    _sEl.style.transform='translateY(0)'
+  }
+  _sEl=null;_sOvr=null;_sOnHandle=false
+}
