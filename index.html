@@ -229,7 +229,9 @@ function navTo(name){
     <div id="xkAttachBar" style="display:none"></div>
     <div class="xk-composer-card">
       <div class="xk-composer-top">
-        <textarea class="xk-textarea" id="xkInput" rows="1" placeholder="和小克说点什么……" enterkeyhint="send"></textarea>
+        <form id="xkForm" onsubmit="event.preventDefault();xkSend()" style="display:contents">
+          <textarea class="xk-textarea" id="xkInput" rows="1" placeholder="和小克说点什么……" enterkeyhint="send"></textarea>
+        </form>
       </div>
       <div class="xk-composer-bottom">
         <span class="xk-pill-btn" id="xkPlusBtn" onclick="document.getElementById('xkFileInput').click()">
