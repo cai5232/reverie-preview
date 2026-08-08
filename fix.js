@@ -1,6 +1,6 @@
-// fix.js v13
+// fix.js v14
 
-// ── 全局点击代理：.xk-think-btn点击→弹出xkThinkOverlay ──
+// click代理：.xk-think-btn → 打开 xkThinkOverlay
 document.addEventListener('click', function(e){
   var btn = e.target.closest('.xk-think-btn, .xk-thinking')
   if(!btn) return
@@ -23,26 +23,15 @@ document.addEventListener('click', function(e){
   if(overlay) overlay.classList.add('open')
 }, true)
 
+// patch：修正 thinking 标签文字
 function _patch(){
   var stream = document.getElementById('xkStream')
   if(!stream) return
-  var kids = Array.from(stream.children)
-  var sawThink = false
-  kids.forEach(function(n){
-    if(n.classList && n.classList.contains('xk-thinking')){
-      if(sawThink){ n.remove(); return }
-      sawThink = true
-      _fixThinkText(n)
-    }
-    if(n.classList && n.classList.contains('xk-tool-group')) sawThink = false
-    if(n.classList && n.classList.contains('xk-ai-block')) sawThink = false
-  })
   stream.querySelectorAll('.xk-ai-block .xk-thinking').forEach(_fixThinkText)
 }
-
 function _fixThinkText(tw){
   var btn = tw.querySelector('.xk-think-btn')
-  if(btn) btn.innerHTML = btn.innerHTML.replace(/思考过程|Thinking/g, 'Thought process')
+  if(btn) btn.innerHTML = btn.innerHTML.replace(/思考过程|Thinking/g, 'Thought')
   if(!tw._thinkText){
     var hist = window.xkHistory || []
     for(var i=hist.length-1;i>=0;i--){
@@ -54,51 +43,62 @@ function _fixThinkText(tw){
   }
 }
 
-// ── handle 下滑关闭弹窗 ──
-// 只有触点在 [data-handle] 元素上才激活，不影响弹窗内容区滚动
-var _sh = {el:null, ovr:null, y0:0, active:false}
+// ── handle 区域下滑关闭弹窗 ──
+// 规则：只有 touchstart 落在 [data-handle] 元素上才激活
+// 整个 sheet 内容区滚动完全不受影响
+var _drag = { active:false, el:null, ovr:null, y0:0 }
 
-function _shStart(e){
-  var handle = e.target.closest('[data-handle]')
-  if(!handle) return
-  var sheet = handle.closest('[data-sheet]')
+document.addEventListener('touchstart', function(e){
+  // 必须落在 data-handle 上
+  if(!e.target.closest('[data-handle]')) return
+  var sheet = e.target.closest('[data-sheet]')
   if(!sheet) return
-  _sh.el = sheet
-  _sh.ovr = sheet.parentElement
-  _sh.y0 = e.touches[0].clientY
-  _sh.active = true
+  _drag.active = true
+  _drag.el = sheet
+  _drag.ovr = sheet.parentElement
+  _drag.y0 = e.touches[0].clientY
   sheet.style.transition = 'none'
+  // 阻止默认防止页面滚动，但只在 handle 行
   e.preventDefault()
-}
-function _shMove(e){
-  if(!_sh.active) return
-  var dy = e.touches[0].clientY - _sh.y0
+}, {passive:false})
+
+document.addEventListener('touchmove', function(e){
+  if(!_drag.active) return
+  var dy = e.touches[0].clientY - _drag.y0
   if(dy > 0){
-    _sh.el.style.transform = 'translateY('+dy+'px)'
+    _drag.el.style.transform = 'translateY(' + dy + 'px)'
     e.preventDefault()
   }
-}
-function _shEnd(e){
-  if(!_sh.active) return
-  var dy = e.changedTouches[0].clientY - _sh.y0
+}, {passive:false})
+
+document.addEventListener('touchend', function(e){
+  if(!_drag.active) return
+  var dy = e.changedTouches[0].clientY - _drag.y0
+  var sheet = _drag.el
+  var ovr = _drag.ovr
+  _drag.active = false
   if(dy > 60){
-    _sh.el.style.transition = 'transform .25s ease'
-    _sh.el.style.transform = 'translateY(100%)'
-    var el = _sh.el, ovr = _sh.ovr
-    if(el.classList && el.classList.contains('xk-think-sheet')){
-      var ov = document.getElementById('xkThinkOverlay')
-      setTimeout(function(){ if(ov) ov.classList.remove('open') }, 260)
-    } else {
+    sheet.style.transition = 'transform .25s ease'
+    sheet.style.transform = 'translateY(100%)'
+    // Thought 弹窗：关 overlay
+    if(sheet.classList.contains('xk-think-sheet')){
       setTimeout(function(){
-        if(ovr && ovr.parentNode && !ovr.id) ovr.parentNode.removeChild(ovr)
+        var ov = document.getElementById('xkThinkOverlay')
+        if(ov) ov.classList.remove('open')
+        sheet.style.transform = ''
+      }, 260)
+    } else {
+      // 动态工具弹窗：移除容器节点
+      setTimeout(function(){
+        if(ovr && ovr.parentNode) ovr.parentNode.removeChild(ovr)
       }, 260)
     }
   } else {
-    _sh.el.style.transition = 'transform .2s ease'
-    _sh.el.style.transform = 'translateY(0)'
+    sheet.style.transition = 'transform .2s ease'
+    sheet.style.transform = 'translateY(0)'
   }
-  _sh.el = null; _sh.ovr = null; _sh.active = false
-}
+  _drag.el = null; _drag.ovr = null
+})
 
 document.addEventListener('DOMContentLoaded', function(){
   var stream = document.getElementById('xkStream')
@@ -108,18 +108,16 @@ document.addEventListener('DOMContentLoaded', function(){
       stream._ft = setTimeout(_patch, 80)
     }).observe(stream, {childList:true, subtree:true})
   }
+  // 切后台 xkBusy 重置
   document.addEventListener('visibilitychange', function(){
     if(document.visibilityState==='visible'){
       setTimeout(function(){
         if(window.xkBusy){
-          window.xkBusy=false
-          var b=document.getElementById('xkSendBtn')
-          if(b)b.disabled=false
+          window.xkBusy = false
+          var b = document.getElementById('xkSendBtn')
+          if(b) b.disabled = false
         }
-      },2000)
+      }, 2000)
     }
   })
-  document.body.addEventListener('touchstart', _shStart, {passive:false})
-  document.body.addEventListener('touchmove',  _shMove,  {passive:false})
-  document.body.addEventListener('touchend',   _shEnd,   {passive:false})
 })
