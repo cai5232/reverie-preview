@@ -485,7 +485,7 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 
 .xk-bar{
   flex-shrink:0;
-  background:#F5F2EA;
+  background:transparent;
   padding:10px 14px calc(14px + env(safe-area-inset-bottom,0px)) 14px;
   touch-action:manipulation;
 }
