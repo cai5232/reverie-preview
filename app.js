@@ -2361,14 +2361,21 @@ async function _xkDirectSend(text){
   await xkCallAI()
 }
 
-// 小飞机：先读内容，再 blur，立刻发送
-// iOS PWA 上 contenteditable blur 后内容可能丢失，必须先读
+// 小飞机：触发 blur，在 blur 事件里读内容发送
+// iOS IME 在 touchend 时还没 commit，必须等 blur 触发后才能正确读到内容
 function xkForceSend(){
-  const text=_xkGetInputText()
   const el=document.getElementById('xkInput')
-  if(el)el.blur()
-  if(!text)return
-  _xkDirectSend(text)
+  if(!el)return
+  const text=_xkGetInputText()
+  if(text){
+    // 已经有内容（英文/已commit）直接发
+    el.blur()
+    _xkDirectSend(text)
+  }else{
+    // 内容还在IME里没commit，标记后blur，blur事件里读
+    el._pendingSend=true
+    el.blur()
+  }
 }
 
 async function xkSend(){
