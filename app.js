@@ -2339,6 +2339,28 @@ function _xkClearInput(){
   el.classList.add('xk-empty')
 }
 
+// 直接用已知文本发送（MutationObserver场景，文本已从div读出）
+async function _xkDirectSend(text){
+  if(!text)return
+  if(xkBusy){
+    xkBusy=false
+    const b=document.getElementById('xkSendBtn')
+    if(b)b.disabled=false
+  }
+  _xkClearInput()
+  if(xkPendingAttachments.length)xkRenderAttachBubbles()
+  xkAppendUser(text)
+  const msgContent=xkFlushAttachments(text)
+  xkPendingAttachments=[]
+  xkRenderAttachBar()
+  xkHistory.push({role:'user',content:msgContent})
+  if(xkHistory.length>60)xkHistory=xkHistory.slice(-60)
+  localStorage.setItem('xk_history',JSON.stringify(xkHistory))
+  const box=document.getElementById('xkStream')
+  if(box)box._userScrolled=false
+  await xkCallAI()
+}
+
 // 小飞机：commit iOS IME，取文本，发送
 function xkForceSend(){
   xkBusy=false
