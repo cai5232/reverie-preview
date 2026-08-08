@@ -2361,16 +2361,14 @@ async function _xkDirectSend(text){
   await xkCallAI()
 }
 
-// 小飞机：blur 强制 commit iOS IME，100ms 后读文本发送
+// 小飞机：先读内容，再 blur，立刻发送
+// iOS PWA 上 contenteditable blur 后内容可能丢失，必须先读
 function xkForceSend(){
+  const text=_xkGetInputText()
   const el=document.getElementById('xkInput')
-  if(el){el.blur()}
-  setTimeout(()=>{
-    const text=_xkGetInputText()
-    showToast('读到：'+text.slice(0,10)+(text.length>10?'…':''))
-    if(!text)return
-    _xkDirectSend(text)
-  },80)
+  if(el)el.blur()
+  if(!text)return
+  _xkDirectSend(text)
 }
 
 async function xkSend(){
