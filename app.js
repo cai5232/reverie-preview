@@ -2880,15 +2880,16 @@ document.addEventListener('DOMContentLoaded',()=>{
       }
     },{passive:true})
   }
-  // 键盘推bar：改用 fixed + bottom，transform 在 iOS PWA 里不更新 hit-test 区域
+  // 键盘推bar：bar 在 flex 流里，用 marginBottom 推高，触摸命中区域正确跟随
   const bar=document.querySelector('#page-xiaoke .xk-bar')
+  const stream=document.getElementById('xkStream')
   function onVP(){
     const vp=window.visualViewport
-    if(!vp||!bar)return
+    if(!vp)return
     const kh=Math.max(0,window.innerHeight-vp.height-vp.offsetTop)
-    bar.style.bottom=kh+'px'
-    const s=document.getElementById('xkStream')
-    if(s)setTimeout(()=>s.scrollTop=s.scrollHeight,50)
+    if(bar)bar.style.marginBottom=kh+'px'
+    if(stream)stream.style.paddingBottom=kh?'8px':'80px'
+    if(stream)setTimeout(()=>stream.scrollTop=stream.scrollHeight,50)
   }
   if(window.visualViewport){
     window.visualViewport.addEventListener('resize',onVP)
