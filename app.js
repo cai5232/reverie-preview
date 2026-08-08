@@ -2751,13 +2751,27 @@ document.addEventListener('DOMContentLoaded',()=>{
   }
   const xkta=document.getElementById('xkInput')
   if(xkta){
+    // contenteditable div：读取纯文本
+    function xkGetText(){
+      return(xkta.innerText||xkta.textContent||'').replace(/\n+$/,'').trim()
+    }
+    function xkClearText(){
+      xkta.innerHTML=''
+    }
+    // 空内容时显示 placeholder（用 CSS attr(data-placeholder) 实现，JS只管add/remove class）
+    function xkUpdatePlaceholder(){
+      const empty=xkGetText()===''
+      xkta.classList.toggle('xk-empty',empty)
+    }
+    xkta.classList.add('xk-empty')
+
     xkta.addEventListener('input',function(){
-      this.style.height='auto'
-      this.style.height=Math.min(this.scrollHeight,140)+'px'
+      xkUpdatePlaceholder()
     })
-    // iOS中文输入法发送键处理
-    // iOS按发送键触发的是 inputType="insertLineBreak"，\n不一定写进value
-    // 必须通过 inputType 来检测，而不是检查 value.includes('\n')
+    xkta.addEventListener('focus',function(){xkUpdatePlaceholder()})
+    xkta.addEventListener('blur',function(){xkUpdatePlaceholder()})
+
+    // iOS PWA contenteditable：按发送键触发 keydown Enter，可靠捕获
     let _composing=false
     xkta.addEventListener('compositionstart',function(){_composing=true})
     xkta.addEventListener('compositionend',function(){_composing=false})
@@ -2767,17 +2781,13 @@ document.addEventListener('DOMContentLoaded',()=>{
         xkSend()
       }
     })
+    // 兜底：insertLineBreak / insertParagraph（部分iOS版本走这里）
     xkta.addEventListener('input',function(e){
-      // 只要出现换行，不管什么状态，立刻清掉并发送
-      // 不加 !_composing 判断：中文输入法按发送键时 composing 可能仍为 true
-      const hasNewline=e.inputType==='insertLineBreak'||e.inputType==='insertParagraph'||this.value.includes('\n')
-      if(hasNewline){
-        this.value=this.value.replace(/\n+/g,'').trim()
-        this.style.height='auto'
-        if(this.value) xkSend()
+      if(e.inputType==='insertLineBreak'||e.inputType==='insertParagraph'){
+        e.preventDefault()
+        xkSend()
       }
     })
-    // 注意：不要在 textarea 上绑 touchend preventDefault，会拦截 iOS 发送键
   }
   // xkSendBtn 的 touchend 在 HTML 里用 ontouchend 绑了，这里不再重复绑
 
