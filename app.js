@@ -1961,21 +1961,55 @@ function xkRenderAttachBar(){
   if(!bar)return
   if(!xkPendingAttachments.length){bar.style.display='none';return}
   bar.style.display='flex'
-  bar.innerHTML=xkPendingAttachments.map((a,i)=>{
+  bar.style.flexDirection='column'
+  bar.style.gap='6px'
+  bar.style.padding='6px 14px 0'
+  // 附件预览行
+  const rowHtml=xkPendingAttachments.map((a,i)=>{
     if(a.type==='image'){
-      return`<div class="xk-attach-chip" data-idx="${i}">
+      return`<div class="xk-attach-chip" data-idx="${i}" style="flex-shrink:0">
         <img src="${a.dataUrl}" style="width:36px;height:36px;border-radius:8px;object-fit:cover;flex-shrink:0">
         <div class="xk-attach-chip-del" onclick="xkRemoveAttach(${i})">✕</div>
       </div>`
     }else{
       const ext=(a.name.split('.').pop()||'').toUpperCase()
-      return`<div class="xk-attach-chip xk-attach-chip-file" data-idx="${i}">
+      return`<div class="xk-attach-chip xk-attach-chip-file" data-idx="${i}" style="flex-shrink:0;cursor:pointer" onclick="xkEditFileContent(${i})">
         <div class="xk-attach-chip-ext">${ext}</div>
         <span class="xk-attach-chip-name">${a.name}</span>
-        <div class="xk-attach-chip-del" onclick="xkRemoveAttach(${i})">✕</div>
+        <div class="xk-attach-chip-del" onclick="event.stopPropagation();xkRemoveAttach(${i})">✕</div>
       </div>`
     }
   }).join('')
+  bar.innerHTML=`<div style="display:flex;flex-wrap:wrap;gap:6px">${rowHtml}</div>`
+}
+
+// 文件内容编辑弹窗
+function xkEditFileContent(i){
+  const a=xkPendingAttachments[i]
+  if(!a||a.type!=='file')return
+  // 简单 inline 编辑：弹一个覆盖层
+  const ov=document.createElement('div')
+  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:600;display:flex;flex-direction:column;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)'
+  ov.innerHTML=`
+    <div style="display:flex;align-items:center;padding:12px 16px;background:#FAF8F4;flex-shrink:0;border-bottom:.5px solid #DDD9D0">
+      <span style="flex:1;font-size:14px;font-weight:600;color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif">${a.name}</span>
+      <div onclick="this.closest('.xk-file-edit-ov').remove()" style="width:28px;height:28px;border-radius:50%;background:#EBE8DF;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:#666">✕</div>
+    </div>
+    <textarea style="flex:1;width:100%;padding:14px 16px;background:#FAF8F4;border:none;outline:none;font-size:13px;font-family:ui-monospace,'SF Mono',monospace;color:#1F1E1D;resize:none;line-height:1.6;box-sizing:border-box;-webkit-user-select:text;user-select:text">${(a.text||'').replace(/</g,'&lt;')}</textarea>
+    <div style="display:flex;padding:10px 14px;background:#FAF8F4;border-top:.5px solid #DDD9D0;gap:8px">
+      <button onclick="this.closest('.xk-file-edit-ov').remove()" style="flex:1;padding:12px;background:#EBE8DF;border:none;border-radius:14px;font-size:14px;font-family:inherit;color:#555;cursor:pointer">取消</button>
+      <button id="xkFileEditSave" style="flex:1;padding:12px;background:#1F1E1D;border:none;border-radius:14px;font-size:14px;font-family:inherit;color:#fff;cursor:pointer;font-weight:600">保存</button>
+    </div>`
+  ov.className='xk-file-edit-ov'
+  document.body.appendChild(ov)
+  const ta=ov.querySelector('textarea')
+  const saveBtn=ov.querySelector('#xkFileEditSave')
+  saveBtn.onclick=()=>{
+    xkPendingAttachments[i].text=ta.value
+    ov.remove()
+    xkRenderAttachBar()
+  }
+  setTimeout(()=>ta.focus(),80)
 }
 function xkRemoveAttach(i){
   xkPendingAttachments.splice(i,1)
