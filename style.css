@@ -240,7 +240,7 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 
 .xk-topbar{
   flex-shrink:0;
-  background:#EEEEEC;
+  background:#F5F2EA;
   display:flex;align-items:center;
   padding:calc(env(safe-area-inset-top,0px) + 8px) 14px 8px;
   touch-action:manipulation;
