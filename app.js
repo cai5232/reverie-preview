@@ -2662,7 +2662,7 @@ function xkAddActions(block, tokens){
   }
 
   // 重新生成
-  const btnRegen=_xkBtn(`<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2.5 7.5A5 5 0 0112.5 5M12.5 7.5A5 5 0 012.5 10" stroke="#A6A39A" stroke-width="1.2" stroke-linecap="round"/><path d="M11 3l1.5 2-2 1" stroke="#A6A39A" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 12l-1.5-2 2-1" stroke="#A6A39A" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,'重新生成')
+  const btnRegen=_xkBtn(`<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M11 3.5a5.5 5.5 0 11-5.5 9" stroke="#A6A39A" stroke-width="1.3" stroke-linecap="round"/><path d="M11 1v3.5H7.5" stroke="#A6A39A" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,'重新生成')
   btnRegen.onclick=()=>{
     // 删掉最后一条assistant历史，删掉DOM里这个block，重新生成
     for(let i=xkHistory.length-1;i>=0;i--){
@@ -2703,7 +2703,7 @@ function xkAddActions(block, tokens){
   }
 
   // 编辑（把最后一段变成 textarea）
-  const btnEdit=_xkBtn(`<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2 11.5l2-2 6.5-6.5a1.414 1.414 0 012 2L6 11.5H2z" stroke="#A6A39A" stroke-width="1.2" stroke-linejoin="round"/><path d="M10 3.5l1.5 1.5" stroke="#A6A39A" stroke-width="1.2" stroke-linecap="round"/></svg>`,'编辑')
+  const btnEdit=_xkBtn(`<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2 13h11" stroke="#A6A39A" stroke-width="1.2" stroke-linecap="round"/><path d="M9.5 2.5l1 1" stroke="#A6A39A" stroke-width="1.2" stroke-linecap="round"/><path d="M3 10l6-6 1.5 1.5-6 6H3v-1.5z" stroke="#A6A39A" stroke-width="1.2" stroke-linejoin="round"/></svg>`,'编辑')
   btnEdit.onclick=()=>{
     const paras=block.querySelectorAll('.xk-ai-para')
     const lastPara=paras[paras.length-1]
