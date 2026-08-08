@@ -2768,15 +2768,10 @@ document.addEventListener('DOMContentLoaded',()=>{
       }
     })
     xkta.addEventListener('input',function(e){
-      // iOS中文输入法按发送键：inputType是insertLineBreak或insertParagraph
-      if(e.inputType==='insertLineBreak'||e.inputType==='insertParagraph'){
-        this.value=this.value.replace(/\n+/g,'').trim()
-        this.style.height='auto'
-        if(this.value) xkSend()
-        return
-      }
-      // 兜底：万一\n真的写进来了
-      if(this.value.includes('\n')&&!_composing){
+      // 只要出现换行，不管什么状态，立刻清掉并发送
+      // 不加 !_composing 判断：中文输入法按发送键时 composing 可能仍为 true
+      const hasNewline=e.inputType==='insertLineBreak'||e.inputType==='insertParagraph'||this.value.includes('\n')
+      if(hasNewline){
         this.value=this.value.replace(/\n+/g,'').trim()
         this.style.height='auto'
         if(this.value) xkSend()
