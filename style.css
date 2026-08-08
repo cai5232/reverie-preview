@@ -721,21 +721,14 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
   margin-left:2px;
 }
 @keyframes dot-fade{0%,100%{opacity:.3}50%{opacity:1}}
-/* action-btn：图标清晰可点 */
 .xk-action-btn{
   display:inline-flex;align-items:center;justify-content:center;
   background:none;border:none;
-  width:32px;height:32px;border-radius:8px;
+  padding:4px 8px;height:28px;border-radius:6px;
   cursor:pointer;-webkit-tap-highlight-color:transparent;
-  flex-shrink:0;position:relative;
-  isolation:isolate;
+  flex-shrink:0;
 }
 .xk-action-btn:active{background:#EBE8DF}
-.xk-action-btn svg{
-  display:block;flex-shrink:0;
-  position:relative;z-index:1;
-  pointer-events:none;
-}
 
 /* ── live thinking 色块（高度自由增长，生成完收起） ── */
 .xk-think-live{
