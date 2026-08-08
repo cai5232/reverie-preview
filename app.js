@@ -2477,6 +2477,10 @@ async function xkAgenticLoop(sendOptions, mcpServerMap, round){
             toolResult='工具调用失败: '+e.message
             xkUpdateToolStatus(statusEl,toolName,'error',toolResult)
           }
+        }else if(toolName==='web_search'){
+          // 联网搜索前端直接执行
+          toolResult=await doWebSearch(toolArgs.query||'')
+          xkUpdateToolStatus(statusEl,toolName,'done',toolResult)
         }else{
           toolResult='找不到工具 '+toolName+' 对应的服务器'
           xkUpdateToolStatus(statusEl,toolName,'error',toolResult)
