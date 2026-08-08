@@ -265,7 +265,7 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 
 .xk-topbar{
   flex-shrink:0;
-  background:rgba(247,247,245,0.75);
+  background:transparent;
   -webkit-backdrop-filter:blur(20px) saturate(1.4);
   backdrop-filter:blur(20px) saturate(1.4);
   display:flex;align-items:center;
