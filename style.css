@@ -511,19 +511,40 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 .xk-bar{
   flex-shrink:0;
   background:transparent;
-  padding:10px 14px calc(14px + env(safe-area-inset-bottom,0px)) 14px;
+  padding:8px 12px calc(12px + env(safe-area-inset-bottom,0px)) 12px;
   touch-action:manipulation;
 }
-.xk-composer-card{
-  background:#FAF8F4;
-  border:1.5px solid #DDD9D0;
-  border-radius:22px;
-  box-shadow:0 2px 12px rgba(31,30,29,.06);
-  padding:12px 12px 10px 16px;
-  display:flex;flex-direction:column;gap:10px;
+.xk-input-row{
+  display:flex;align-items:flex-end;gap:8px;
 }
-.xk-composer-top{display:flex;align-items:flex-start}
-.xk-composer-bottom{display:flex;align-items:center;gap:8px}
+.xk-circle-btn{
+  width:42px;height:42px;border-radius:50%;
+  background:#EEEEED;border:none;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;cursor:pointer;
+  transition:background .15s;
+  padding:0;
+}
+.xk-circle-btn:active{background:#DEDAD6}
+.xk-send-circle{
+  background:#1F1E1D;
+}
+.xk-send-circle:active{opacity:.75;background:#1F1E1D}
+.xk-input-pill{
+  flex:1;display:flex;align-items:flex-end;
+  background:#EEEEED;border-radius:22px;
+  padding:0 8px 0 16px;
+  min-height:42px;
+}
+.xk-emoji-in-btn{
+  width:34px;height:42px;border:none;background:none;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;cursor:pointer;padding:0;
+}
+/* 旧 composer card（保留以防其他地方引用） */
+.xk-composer-card{display:none}
+.xk-composer-top{display:none}
+.xk-composer-bottom{display:none}
 
 .xk-textarea{
   flex:1;width:100%;
