@@ -163,18 +163,7 @@ function sendImage(){
   document.getElementById('imgInput').click()
 }
 
-// 旧版 chat 初始化（已废弃，保留空壳防止报错）
-document.addEventListener('DOMContentLoaded',()=>{
-  // chatInput 已移除，只保留不会报错的安全操作
-  const searchInput=document.getElementById('searchInput')
-  if(searchInput){
-    searchInput.addEventListener('input',function(){doSearch(this.value)})
-  }
-  document.addEventListener('click',function(e){
-    const pp=document.getElementById('plusPopupDark')
-    if(pp&&pp.classList.contains('open')&&!pp.contains(e.target)&&!e.target.closest('.input-plus-btn'))closePlus()
-  })
-})
+// 旧版 chat 初始化已废弃，全部移到下方第二个 DOMContentLoaded
 
 function renderChat(){
   const box=document.getElementById('messages')
