@@ -2361,12 +2361,16 @@ async function _xkDirectSend(text){
   await xkCallAI()
 }
 
-// 小飞机：commit iOS IME，取文本，发送
+// 小飞机：blur 强制 commit iOS IME，100ms 后读文本发送
 function xkForceSend(){
-  xkBusy=false
-  const text=_xkGetInputText()
-  if(!text)return
-  xkSend()
+  const el=document.getElementById('xkInput')
+  if(el){el.blur()}
+  setTimeout(()=>{
+    const text=_xkGetInputText()
+    showToast('读到：'+text.slice(0,10)+(text.length>10?'…':''))
+    if(!text)return
+    _xkDirectSend(text)
+  },80)
 }
 
 async function xkSend(){
