@@ -2279,14 +2279,8 @@ async function xkAgenticLoop(sendOptions, mcpServerMap, round){
       if(pendingThink&&thinkLivePara){
         thinkLivePara.textContent+=pendingThink
         pendingThink=''
-        // 色块内部滚到底
-        thinkLivePara.scrollTop=thinkLivePara.scrollHeight
-        // 如果弹窗是开着的，同步更新
-        const overlay=document.getElementById('xkThinkOverlay')
-        if(overlay&&overlay.classList.contains('open')){
-          const bd=document.getElementById('xkThinkBody')
-          if(bd)bd.textContent=thinkBuf
-        }
+        const box=document.getElementById('xkStream')
+        if(box&&!box._userScrolled)box.scrollTop=box.scrollHeight
       }
       thinkRafId=null
     }
