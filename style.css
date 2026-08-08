@@ -977,7 +977,7 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
   position:relative;z-index:1;
 }
 .xk-think-handle:active{background:#C8C5BC;cursor:grabbing}
-#page-xiaoke{display:none;flex-direction:column;overflow:hidden;position:relative;flex:1;min-height:0;background:#F7F7F5}
+#page-xiaoke{display:none;flex-direction:column;overflow:hidden;position:relative;flex:1;min-height:0;background:url('https://i.ibb.co/VWx86Jj0/IMG-7293.jpg') center/cover no-repeat}
 #page-xiaoke.active{display:flex!important}
 #page-xiaoke .xk-topbar{position:relative!important;top:auto!important;left:auto!important;right:auto!important;bottom:auto!important;transform:none!important;flex-shrink:0!important;z-index:2!important;touch-action:manipulation!important}
 #page-xiaoke .xk-stream{position:relative!important;top:auto!important;left:auto!important;right:auto!important;bottom:auto!important;flex:1!important;min-height:0!important;z-index:1!important;overflow-y:auto!important;padding:12px 22px!important}
