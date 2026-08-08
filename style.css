@@ -274,7 +274,7 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 .xk-menu-btn{
   width:40px;height:40px;
   border:0.5px solid rgba(255,255,255,0.55);
-  background:rgba(255,255,255,0.32);
+  background:rgba(255,255,255,0.18);
   -webkit-backdrop-filter:blur(16px) saturate(1.4);
   backdrop-filter:blur(16px) saturate(1.4);
   border-radius:50%;
@@ -283,9 +283,9 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
   -webkit-tap-highlight-color:transparent;
   touch-action:manipulation;
   padding:0;
-  box-shadow:0 2px 10px rgba(0,0,0,.08),inset 0 1px 0 rgba(255,255,255,0.4);
+  box-shadow:0 2px 10px rgba(0,0,0,.08),inset 0 1px 0 rgba(255,255,255,0.5);
 }
-.xk-menu-btn:active{background:rgba(255,255,255,0.50)}
+.xk-menu-btn:active{background:rgba(255,255,255,0.32)}
 /* 加号胶囊 */
 .xk-pill-btn{
   display:inline-flex;align-items:center;justify-content:center;
