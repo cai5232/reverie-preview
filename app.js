@@ -2744,21 +2744,17 @@ document.addEventListener('DOMContentLoaded',()=>{
       this.style.height=Math.min(this.scrollHeight,140)+'px'
     })
     xkta.addEventListener('keydown',function(e){
-      if(e.key==='Enter'&&!e.shiftKey){
+      if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){
         e.preventDefault()
-        if(!e.isComposing){
-          xkSend()
-        }else{
-          // iOS中文输入法：compositionend 后再发送，并清掉意外插入的换行
-          xkta.addEventListener('compositionend',function handler(){
-            xkta.removeEventListener('compositionend',handler)
-            setTimeout(()=>{
-              xkta.value=xkta.value.replace(/\n/g,'')
-              xkSend()
-            },0)
-          })
-        }
-        return
+        xkSend()
+      }
+    })
+    // iOS 中文输入法 keydown 拦不住换行，用 input 事件兜底
+    xkta.addEventListener('input',function(){
+      if(this.value.includes('\n')){
+        this.value=this.value.replace(/\n/g,'')
+        this.style.height='auto'
+        xkSend()
       }
     })
     xkta.addEventListener('touchend',function(e){
