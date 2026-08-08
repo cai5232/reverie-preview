@@ -2505,7 +2505,7 @@ function xkOpenToolDetail(row){
     <div style="font-size:12px;color:#AAA;margin-bottom:8px;font-family:-apple-system,'PingFang SC',sans-serif">参数</div>
     <pre style="background:#F7F6F3;border-radius:10px;padding:12px 14px;font-size:13px;color:#333;overflow-x:auto;white-space:pre-wrap;word-break:break-all;line-height:1.6;margin:0 0 16px;font-family:ui-monospace,'SF Mono',monospace">${escHtml(argsStr)}</pre>
     ${result ? `<div style="font-size:12px;color:#AAA;margin-bottom:8px;font-family:-apple-system,'PingFang SC',sans-serif">结果</div>
-    <pre style="background:#F7F6F3;border-radius:10px;padding:12px 14px;font-size:13px;color:#333;overflow-x:auto;white-space:pre-wrap;word-break:break-all;line-height:1.6;margin:0;font-family:ui-monospace,'SF Mono',monospace">${escHtml(result.slice(0,6000)+(result.length>6000?'\n…(截断)':''))}</pre>` : ''}
+    <pre style="background:#F7F6F3;border-radius:10px;padding:12px 14px;font-size:13px;color:#333;overflow-x:auto;white-space:pre-wrap;word-break:break-all;line-height:1.6;margin:0;font-family:ui-monospace,'SF Mono',monospace">${escHtml(result)}</pre>` : ''}
   `
   sheet.appendChild(body)
   overlay.appendChild(sheet)
