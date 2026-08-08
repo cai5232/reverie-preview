@@ -2765,13 +2765,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       e.preventDefault();this.focus()
     },{passive:false})
   }
-  const xkSendBtn=document.getElementById('xkSendBtn')
-  if(xkSendBtn){
-    xkSendBtn.addEventListener('touchend',function(e){
-      e.preventDefault()
-      xkSend()
-    },{passive:false})
-  }
+  // xkSendBtn 的 touchend 在 HTML 里用 ontouchend 绑了，这里不再重复绑
 
   // iOS PWA 切后台回来重置 xkBusy
   document.addEventListener('visibilitychange',()=>{
