@@ -2253,8 +2253,26 @@ async function xkAgenticLoop(sendOptions, mcpServerMap, round){
 
     typing.remove()
 
-    function ensureThinkLive(){ /* 已禁用实时thinking显示 */ }
-    function collapseThinkLive(){ thinkLiveEl=null; thinkLivePara=null }
+    function ensureThinkLive(){
+      if(thinkLiveEl)return
+      const box=document.getElementById('xkStream')
+      thinkLiveEl=document.createElement('div')
+      thinkLiveEl.className='xk-think-live'
+      const hd=document.createElement('div')
+      hd.className='xk-think-live-head'
+      hd.innerHTML=`<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><circle cx="5.5" cy="5.5" r="4.5" stroke="#A6A39A" stroke-width="1"/><path d="M5.5 3v2.5l1.5 1.5" stroke="#A6A39A" stroke-width="1" stroke-linecap="round"/></svg>Thinking<span class="xk-think-live-dot"></span>`
+      thinkLivePara=document.createElement('div')
+      thinkLivePara.className='xk-think-live-body'
+      thinkLiveEl.appendChild(hd)
+      thinkLiveEl.appendChild(thinkLivePara)
+      box.appendChild(thinkLiveEl)
+      box.scrollTop=box.scrollHeight
+    }
+    function collapseThinkLive(){
+      if(!thinkLiveEl)return
+      thinkLiveEl.classList.add('collapsing')
+      setTimeout(()=>{if(thinkLiveEl&&thinkLiveEl.parentNode)thinkLiveEl.parentNode.removeChild(thinkLiveEl);thinkLiveEl=null;thinkLivePara=null},300)
+    }
 
     let pendingThink='',thinkRafId=null
     const flushThink=()=>{ pendingThink=''; thinkRafId=null }
