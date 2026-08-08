@@ -2298,9 +2298,11 @@ async function xkCallAI(){
   if(btn)btn.disabled=true
 
   const {mcp_tools, mcp_servers} = buildActivatedToolsPayload()
-  // 去掉前端不需要传给模型的key
+  // 联网搜索开启时注入 web_search tool
   const sendOptions = {}
-  if(mcp_tools) sendOptions.tools = mcp_tools
+  const allTools = mcp_tools ? [...mcp_tools] : []
+  if(xkWebSearchOn) allTools.push(WEB_SEARCH_TOOL)
+  if(allTools.length) sendOptions.tools = allTools
 
   await xkAgenticLoop(sendOptions, mcp_servers, 0)
 
