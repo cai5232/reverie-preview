@@ -2758,6 +2758,17 @@ document.addEventListener('DOMContentLoaded',()=>{
     xkMenuBtn.addEventListener('click',function(){openSidebar()})
   }
 
+  // 页面加载时强制重置busy状态，防止刷新前卡住导致永远发不出
+  xkBusy=false
+  const xkSendBtnEl=document.getElementById('xkSendBtn')
+  if(xkSendBtnEl){
+    xkSendBtnEl.disabled=false
+    xkSendBtnEl.addEventListener('touchend',function(e){
+      e.preventDefault()
+      e.stopPropagation()
+      xkSend()
+    },{passive:false})
+  }
   const xkta=document.getElementById('xkInput')
   if(xkta){
     xkta.addEventListener('input',function(){
