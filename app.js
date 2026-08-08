@@ -2862,7 +2862,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   initMemory()
   initPush()
   renderNovels()
-})
+  xkInitSearchBadge()
 
 // 操作栏：只显示 token 数
 function xkAddActions(block, tokens){
