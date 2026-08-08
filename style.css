@@ -519,7 +519,7 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 .xk-bar{
   flex-shrink:0;
   background:transparent;
-  padding:8px 12px calc(4px + env(safe-area-inset-bottom,0px)) 12px;
+  padding:8px 12px env(safe-area-inset-bottom,0px) 12px;
   touch-action:manipulation;
 }
 .xk-input-row{
