@@ -69,6 +69,7 @@ window.addEventListener('load', function(){
       e.preventDefault()
       e.stopPropagation()
       btn.style.background = ''
+      alert('touchend fired')
       if(typeof xkBusy !== 'undefined') window.xkBusy = false
       btn.removeAttribute('disabled')
       if(typeof xkForceSend === 'function') xkForceSend()
