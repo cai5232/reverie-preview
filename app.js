@@ -2282,8 +2282,7 @@ async function xkSend(){
   ta.value=''
   ta.style.height='auto'
   xkAppendUser(text)
-  const sendText=xkWebSearchOn?`[请联网搜索相关信息后回答] ${text}`:text
-  xkHistory.push({role:'user',content:sendText})
+  xkHistory.push({role:'user',content:text})
   if(xkHistory.length>60)xkHistory=xkHistory.slice(-60)
   localStorage.setItem('xk_history',JSON.stringify(xkHistory))
   const box=document.getElementById('xkStream')
