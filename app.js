@@ -1989,7 +1989,8 @@ function xkTypingEl(){
 
 // 全局 thinking 弹窗
 function xkOpenThink(text){
-  document.getElementById('xkThinkBody').textContent=text
+  const inner=document.getElementById('xkThinkBody')
+  if(inner)inner.textContent=text
   document.getElementById('xkThinkOverlay').classList.add('open')
 }
 function xkCloseThink(){
