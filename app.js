@@ -1961,26 +1961,21 @@ function xkRenderAttachBar(){
   if(!bar)return
   if(!xkPendingAttachments.length){bar.style.display='none';return}
   bar.style.display='flex'
-  bar.style.flexDirection='column'
-  bar.style.gap='6px'
-  bar.style.padding='6px 14px 0'
-  // 附件预览行
-  const rowHtml=xkPendingAttachments.map((a,i)=>{
+  bar.innerHTML=xkPendingAttachments.map((a,i)=>{
     if(a.type==='image'){
-      return`<div class="xk-attach-chip" data-idx="${i}" style="flex-shrink:0">
-        <img src="${a.dataUrl}" style="width:36px;height:36px;border-radius:8px;object-fit:cover;flex-shrink:0">
-        <div class="xk-attach-chip-del" onclick="xkRemoveAttach(${i})">✕</div>
+      return`<div class="xk-attach-preview-img">
+        <img src="${a.dataUrl}">
+        <div class="xk-attach-preview-del" onclick="xkRemoveAttach(${i})">✕</div>
       </div>`
     }else{
-      const ext=(a.name.split('.').pop()||'').toUpperCase()
-      return`<div class="xk-attach-chip xk-attach-chip-file" data-idx="${i}" style="flex-shrink:0;cursor:pointer" onclick="xkEditFileContent(${i})">
-        <div class="xk-attach-chip-ext">${ext}</div>
-        <span class="xk-attach-chip-name">${a.name}</span>
-        <div class="xk-attach-chip-del" onclick="event.stopPropagation();xkRemoveAttach(${i})">✕</div>
+      const ext=(a.name.split('.').pop()||'').toUpperCase().slice(0,4)
+      return`<div class="xk-attach-preview-file">
+        <div class="xk-attach-preview-file-icon">${ext}</div>
+        <div class="xk-attach-preview-file-name">${a.name}</div>
+        <div class="xk-attach-preview-del" onclick="xkRemoveAttach(${i})">✕</div>
       </div>`
     }
   }).join('')
-  bar.innerHTML=`<div style="display:flex;flex-wrap:wrap;gap:6px">${rowHtml}</div>`
 }
 
 // 文件内容编辑弹窗
