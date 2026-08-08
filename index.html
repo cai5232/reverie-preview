@@ -232,13 +232,16 @@ function navTo(name){
         <textarea class="xk-textarea" id="xkInput" rows="1" placeholder="和小克说点什么……"></textarea>
       </div>
       <div class="xk-composer-bottom">
-        <span class="xk-pill-btn" id="xkPlusBtn" onclick="xkTogglePlus()">
-          <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-            <path d="M6.5 1v11M1 6.5h11" stroke="#5A5852" stroke-width="1.7" stroke-linecap="round"/>
-          </svg>
-        </span>
+        <!-- 图片：直接打开相册 -->
+        <button class="xk-cb-icon" onclick="document.getElementById('imgInput').click()" title="图片">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="1.5" y="3.5" width="17" height="13" rx="2.5" stroke="#5A5852" stroke-width="1.4"/><circle cx="7" cy="9" r="1.8" stroke="#5A5852" stroke-width="1.3"/><path d="M1.5 15l4-5 3.5 4 2.5-3 7 5" stroke="#5A5852" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <!-- 文件：直接打开文件选择器 -->
+        <button class="xk-cb-icon" onclick="document.getElementById('xkFileInput').click()" title="文件">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 2h8l4 4v12a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="#5A5852" stroke-width="1.4" stroke-linejoin="round"/><path d="M13 2v5h5" stroke="#5A5852" stroke-width="1.3" stroke-linecap="round"/></svg>
+        </button>
         <span class="xk-model-label" id="xkModelLabel">sonnet-4-6</span>
-        <span id="xkSearchBadge" class="xk-search-badge" style="display:none;cursor:pointer" onclick="xkWebSearch()">
+        <span id="xkSearchBadge" class="xk-search-badge" style="cursor:pointer" onclick="xkWebSearch()">
           <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="4.5" cy="4.5" r="3.5" stroke="#5C6BC0" stroke-width="1.2"/><path d="M7.5 7.5l2 2" stroke="#5C6BC0" stroke-width="1.2" stroke-linecap="round"/></svg>
           联网
         </span>
