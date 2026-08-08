@@ -65,9 +65,9 @@ document.addEventListener('touchmove', function(e){
   var dy = e.touches[0].clientY - _drag.y0
   if(dy > 0){
     _drag.el.style.transform = 'translateY(' + dy + 'px)'
-    e.preventDefault()
+    // passive:true 注册，不能 preventDefault，靠 overscroll-behavior 阻止
   }
-}, {passive:false})
+}, {passive:true})
 
 document.addEventListener('touchend', function(e){
   if(!_drag.active) return
