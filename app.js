@@ -61,10 +61,11 @@ let keepaliveTimer=null
 let lastAssistantRow=null  // 上一条AI回复，用于重新生成
 let isGenerating=false
 
-// 发送按钮：空输入框时重新生成，有内容时发送
+// 发送按钮：有内容就发送（不管isGenerating），空输入框时重新生成
 function handleSendBtn(){
   const ta=document.getElementById('chatInput')
-  if(ta.value.trim()){
+  const text=ta.value.trim()
+  if(text){
     sendMsg()
   }else if(lastAssistantRow&&!isGenerating){
     regenLast()
