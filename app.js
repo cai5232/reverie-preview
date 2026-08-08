@@ -2755,40 +2755,27 @@ document.addEventListener('DOMContentLoaded',()=>{
       this.style.height='auto'
       this.style.height=Math.min(this.scrollHeight,140)+'px'
     })
-    // 追踪中文输入法状态 + 发送意图标记
+    // iOS中文输入法发送键处理
+    // 核心问题：iOS 在 compositionend 之后才把 \n 写进 value，
+    // 所以必须用 setTimeout(0) 推迟一帧再检查 \n
     let _composing=false
-    let _pendingSend=false  // 选词中按了发送键，等 compositionend 后再发
-    xkta.addEventListener('compositionstart',function(){_composing=true;_pendingSend=false})
+    xkta.addEventListener('compositionstart',function(){_composing=true})
     xkta.addEventListener('compositionend',function(){
       _composing=false
-      // 删掉可能残留的 \n
-      if(this.value.includes('\n')){
-        this.value=this.value.replace(/\n+/g,'').trim()
-        this.style.height='auto'
-      }
-      // input 事件检测到 \n 但因为 _composing=true 没发，_pendingSend 会标记
-      if(_pendingSend){
-        _pendingSend=false
-        if(this.value.trim()) xkSend()
-      }
+      const el=this
+      // 推迟一帧，等 iOS 把 \n 写进 value
+      setTimeout(function(){
+        if(el.value.includes('\n')){
+          el.value=el.value.replace(/\n+/g,'').trim()
+          el.style.height='auto'
+          if(el.value) xkSend()
+        }
+      },0)
     })
     xkta.addEventListener('keydown',function(e){
-      if(e.key==='Enter'&&!e.shiftKey){
-        if(_composing) return  // 选词中，交给 compositionend 处理
+      if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing&&!_composing){
         e.preventDefault()
         xkSend()
-      }
-    })
-    // input 兜底：有 \n 就删；选词中则标记 _pendingSend 等 compositionend
-    xkta.addEventListener('input',function(){
-      if(!this.value.includes('\n'))return
-      const t=this.value.replace(/\n+/g,'').trim()
-      this.value=t
-      this.style.height='auto'
-      if(_composing){
-        _pendingSend=!!t  // 等 compositionend 发
-      }else if(t){
-        setTimeout(()=>xkSend(),10)
       }
     })
     xkta.addEventListener('touchend',function(e){
