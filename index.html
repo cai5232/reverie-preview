@@ -28,11 +28,38 @@ function navTo(name){
 }
 </script>
 <style>
-/* 唯一内联样式：修复page隐藏和xk布局 */
+/* page 布局 */
 .page{display:none!important}
 .page.active{display:flex!important;flex-direction:column!important;flex:1!important;overflow:hidden!important;min-height:0!important}
 .xk-topbar,.xk-bar{position:relative!important;top:auto!important;left:auto!important;right:auto!important;bottom:auto!important;transform:none!important;flex-shrink:0!important}
 .xk-stream{position:relative!important;top:auto!important;left:auto!important;right:auto!important;bottom:auto!important;flex:1!important;min-height:0!important;overflow-y:auto!important}
+
+/* 图标按钮：防止遮挡 */
+.xk-action-btn{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  width:30px!important;height:30px!important;padding:0!important;
+  background:none!important;border:none!important;border-radius:8px!important;
+  cursor:pointer!important;-webkit-tap-highlight-color:transparent!important;
+  flex-shrink:0!important;position:relative!important;z-index:1!important;
+  overflow:visible!important;
+}
+.xk-action-btn:active{background:#EBE8DF!important}
+.xk-action-btn svg{display:block!important;flex-shrink:0!important;pointer-events:none!important}
+
+/* Thought 弹窗：flex列，handle固定顶部不随内容滚动 */
+.xk-think-sheet{
+  display:flex!important;flex-direction:column!important;
+  max-height:55vh!important;overflow:hidden!important;
+}
+.xk-think-handle{
+  flex-shrink:0!important;
+  width:36px!important;height:4px!important;
+  background:#DDD9D0!important;border-radius:2px!important;
+  margin:12px auto 4px!important;
+  touch-action:none!important;cursor:grab!important;
+}
+.xk-think-head{flex-shrink:0!important}
+.xk-think-body{flex:1!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important}
 </style>
 <link rel="stylesheet" href="style.css?v=127">
 </head>
