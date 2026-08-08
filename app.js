@@ -2055,7 +2055,7 @@ const WEB_SEARCH_TOOL={
   }
 }
 
-let xkWebSearchOn=false
+let xkWebSearchOn=true
 function xkWebSearch(fromMenu){
   xkWebSearchOn=!xkWebSearchOn
   // 徽章
