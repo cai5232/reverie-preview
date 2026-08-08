@@ -232,18 +232,11 @@ function navTo(name){
         <textarea class="xk-textarea" id="xkInput" rows="1" placeholder="和小克说点什么……"></textarea>
       </div>
       <div class="xk-composer-bottom">
-        <!-- 拍照 -->
-        <button class="xk-cb-icon" onclick="document.getElementById('xkCameraInput').click()" title="拍照">
-          <svg width="20" height="20" viewBox="0 0 22 22" fill="none"><rect x="1" y="5" width="20" height="14" rx="3" stroke="#5A5852" stroke-width="1.5"/><circle cx="11" cy="12" r="4" stroke="#5A5852" stroke-width="1.4"/><path d="M7 5l1.5-2h5L15 5" stroke="#5A5852" stroke-width="1.3" stroke-linecap="round"/></svg>
-        </button>
-        <!-- 相册 -->
-        <button class="xk-cb-icon" onclick="document.getElementById('imgInput').click()" title="相册">
-          <svg width="20" height="20" viewBox="0 0 22 22" fill="none"><rect x="1" y="2" width="20" height="18" rx="3" stroke="#5A5852" stroke-width="1.5"/><circle cx="7" cy="8" r="2" stroke="#5A5852" stroke-width="1.3"/><path d="M1 16l5-5 4 4 3-3 8 5" stroke="#5A5852" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <!-- 文件 -->
-        <button class="xk-cb-icon" onclick="document.getElementById('xkFileInput').click()" title="文件">
-          <svg width="20" height="20" viewBox="0 0 22 22" fill="none"><path d="M5 2h8l5 5v13a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="#5A5852" stroke-width="1.5" stroke-linejoin="round"/><path d="M13 2v6h6" stroke="#5A5852" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
+        <span class="xk-pill-btn" id="xkPlusBtn" onclick="document.getElementById('xkFileInput').click()">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+            <path d="M6.5 1v11M1 6.5h11" stroke="#5A5852" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
+        </span>
         <span class="xk-model-label" id="xkModelLabel">sonnet-4-6</span>
         <div style="flex:1"></div>
         <button class="xk-send-btn" id="xkSendBtn" onclick="xkSend()">
