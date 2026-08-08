@@ -2756,21 +2756,27 @@ document.addEventListener('DOMContentLoaded',()=>{
       this.style.height=Math.min(this.scrollHeight,140)+'px'
     })
     // iOS中文输入法发送键处理
-    // 核心问题：iOS 在 compositionend 之后才把 \n 写进 value，
-    // 所以必须用 setTimeout(0) 推迟一帧再检查 \n
+    // 事件顺序在不同iOS版本上不可靠，改用50ms轮询监控\n
+    // 一旦发现\n立刻清掉并发送，完全不依赖事件顺序
     let _composing=false
-    xkta.addEventListener('compositionstart',function(){_composing=true})
-    xkta.addEventListener('compositionend',function(){
-      _composing=false
-      const el=this
-      // 推迟一帧，等 iOS 把 \n 写进 value
-      setTimeout(function(){
-        if(el.value.includes('\n')){
-          el.value=el.value.replace(/\n+/g,'').trim()
-          el.style.height='auto'
-          if(el.value) xkSend()
+    let _nlPoller=null
+    function startNlPoller(){
+      if(_nlPoller)return
+      _nlPoller=setInterval(function(){
+        if(!xkta)return
+        if(xkta.value.includes('\n')){
+          const t=xkta.value.replace(/\n+/g,'').trim()
+          xkta.value=t
+          xkta.style.height='auto'
+          if(t) xkSend()
         }
-      },0)
+      },50)
+    }
+    xkta.addEventListener('compositionstart',function(){_composing=true})
+    xkta.addEventListener('compositionend',function(){_composing=false})
+    xkta.addEventListener('focus',function(){startNlPoller()})
+    xkta.addEventListener('blur',function(){
+      clearInterval(_nlPoller);_nlPoller=null
     })
     xkta.addEventListener('keydown',function(e){
       if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing&&!_composing){
