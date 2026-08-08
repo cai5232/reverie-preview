@@ -1978,8 +1978,8 @@ function xkAppendUser(text){
     setTimeout(()=>{btnCopy.innerHTML=`<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="5" y="1" width="9" height="11" rx="1.5" fill="#F5F2EA" stroke="#A6A39A" stroke-width="1.2"/><rect x="1" y="4" width="9" height="10" rx="1.5" fill="#F5F2EA" stroke="#A6A39A" stroke-width="1.2"/></svg>`},1500)
   }
 
-  // 编辑
-  const btnEdit=_xkBtn(`<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2 11.5l2-2 6.5-6.5a1.414 1.414 0 012 2L6 11.5H2z" stroke="#A6A39A" stroke-width="1.2" stroke-linejoin="round"/><path d="M10 3.5l1.5 1.5" stroke="#A6A39A" stroke-width="1.2" stroke-linecap="round"/></svg>`,'编辑')
+  // 编辑（完成后自动触发重新生成）
+  const btnEdit=_xkBtn(`<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2 13h11" stroke="#A6A39A" stroke-width="1.2" stroke-linecap="round"/><path d="M9.5 2.5l1 1" stroke="#A6A39A" stroke-width="1.2" stroke-linecap="round"/><path d="M3 10l6-6 1.5 1.5-6 6H3v-1.5z" stroke="#A6A39A" stroke-width="1.2" stroke-linejoin="round"/></svg>`,'编辑')
   btnEdit.onclick=()=>{
     const old=el.textContent
     const ta=document.createElement('textarea')
@@ -1998,12 +1998,21 @@ function xkAppendUser(text){
           xkHistory[i].content=newText;break
         }
       }
+      // 删掉紧跟的assistant历史 + DOM，自动重新生成
+      for(let i=xkHistory.length-1;i>=0;i--){
+        if(xkHistory[i].role==='assistant'){xkHistory.splice(i,1);break}
+      }
       localStorage.setItem('xk_history',JSON.stringify(xkHistory))
+      const next=wrap.nextElementSibling
+      if(next&&next.classList.contains('xk-ai-block'))next.remove()
+      const box2=document.getElementById('xkStream')
+      if(box2)box2._userScrolled=false
+      xkCallAI()
     })
   }
 
-  // 重新生成（删掉这条user之后的assistant，重新call）
-  const btnRegen=_xkBtn(`<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2.5 7.5A5 5 0 0112.5 5M12.5 7.5A5 5 0 012.5 10" stroke="#A6A39A" stroke-width="1.2" stroke-linecap="round"/><path d="M11 3l1.5 2-2 1" stroke="#A6A39A" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 12l-1.5-2 2-1" stroke="#A6A39A" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,'重新生成')
+  // 重新生成
+  const btnRegen=_xkBtn(`<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M11 3.5a5.5 5.5 0 11-5.5 9" stroke="#A6A39A" stroke-width="1.3" stroke-linecap="round"/><path d="M11 1v3.5H7.5" stroke="#A6A39A" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,'重新生成')
   btnRegen.onclick=()=>{
     // 删掉最后一条assistant再重新生成
     for(let i=xkHistory.length-1;i>=0;i--){
