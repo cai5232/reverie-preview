@@ -2174,10 +2174,10 @@ function xkStreamDone(block){
 }
 
 async function xkSend(){
-  if(xkBusy){showToast('busy');return}
+  if(xkBusy)return
   const ta=document.getElementById('xkInput')
   const text=ta.value.trim()
-  if(!text){showToast('empty');return}
+  if(!text)return
   ta.value=''
   ta.style.height='auto'
   xkAppendUser(text)
@@ -2186,7 +2186,6 @@ async function xkSend(){
   localStorage.setItem('xk_history',JSON.stringify(xkHistory))
   const box=document.getElementById('xkStream')
   if(box)box._userScrolled=false
-  showToast('发送中...')
   await xkCallAI()
 }
 
