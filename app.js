@@ -2782,9 +2782,7 @@ document.addEventListener('DOMContentLoaded',()=>{
         if(this.value) xkSend()
       }
     })
-    xkta.addEventListener('touchend',function(e){
-      e.preventDefault();this.focus()
-    },{passive:false})
+    // 注意：不要在 textarea 上绑 touchend preventDefault，会拦截 iOS 发送键
   }
   // xkSendBtn 的 touchend 在 HTML 里用 ontouchend 绑了，这里不再重复绑
 
