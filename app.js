@@ -2322,8 +2322,12 @@ async function xkSend(){
   if(!text)return
   ta.value=''
   ta.style.height='auto'
+  if(xkPendingAttachments.length)xkRenderAttachBubbles()
   xkAppendUser(text)
-  xkHistory.push({role:'user',content:text})
+  const msgContent=xkFlushAttachments(text)
+  xkPendingAttachments=[]
+  xkRenderAttachBar()
+  xkHistory.push({role:'user',content:msgContent})
   if(xkHistory.length>60)xkHistory=xkHistory.slice(-60)
   localStorage.setItem('xk_history',JSON.stringify(xkHistory))
   const box=document.getElementById('xkStream')
