@@ -1,5 +1,5 @@
 *{margin:0;padding:0;box-sizing:border-box}
-html{height:100%;background:url('https://i.ibb.co/1tc1YwrY/IMG-7316.jpg') center/cover no-repeat fixed}
+html{height:100%;background:url('https://i.ibb.co/1tc1YwrY/IMG-7316.jpg') center/cover no-repeat fixed;background-color:#bfcf90}
 body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:flex;flex-direction:column;width:100%;max-width:430px;margin:0 auto;position:fixed;top:0;left:0;right:0;bottom:0;overflow:hidden;background:url('https://i.ibb.co/1tc1YwrY/IMG-7316.jpg') center/cover no-repeat}
 @media (min-width:430px){body{left:50%;right:auto;transform:translateX(-50%)}}
 @media all and (display-mode:standalone){textarea,input{-webkit-user-select:text!important;user-select:text!important;pointer-events:auto!important}}
