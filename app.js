@@ -2367,12 +2367,11 @@ function xkForceSend(){
   const el=document.getElementById('xkInput')
   if(!el)return
   const text=_xkGetInputText()
+  showToast('txt:「'+text.slice(0,15)+'」len='+text.length)
   if(text){
-    // 已经有内容（英文/已commit）直接发
     el.blur()
     _xkDirectSend(text)
   }else{
-    // 内容还在IME里没commit，标记后blur，blur事件里读
     el._pendingSend=true
     el.blur()
   }
