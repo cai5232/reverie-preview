@@ -45,6 +45,7 @@ function _fixThinkText(tw){
 
 // ── 发送按钮兜底绑定（不用 passive:false，不 preventDefault） ──
 window.addEventListener('load', function(){
+  alert('fix.js load fired')
   function tryBindSend(){
     var btn = document.getElementById('xkSendBtn')
     if(!btn) return
