@@ -131,15 +131,15 @@ function navTo(name){
 <!-- Thinking 弹窗 -->
 <div class="xk-think-overlay" id="xkThinkOverlay" onclick="xkCloseThink()">
   <div class="xk-think-sheet" data-sheet="1" onclick="event.stopPropagation()">
-    <div class="xk-think-handle-wrap" data-handle="1"><div class="xk-think-handle"></div></div>
+    <div class="xk-think-handle-wrap"><div class="xk-think-handle"></div></div>
     <div class="xk-think-head">
-      <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
-        <circle cx="7.5" cy="7.5" r="6.5" stroke="#1F1E1D" stroke-width="1.2"/>
-        <path d="M7.5 4.5v3.5l2 2" stroke="#1F1E1D" stroke-width="1.2" stroke-linecap="round"/>
-      </svg>
-      Thought process      <div class="xk-think-close" onclick="xkCloseThink()">✕</div>
+      <svg width="14" height="14" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.7" stroke="#1F1E1D" stroke-width="1.1"/><path d="M6.5 3.8v3l1.7 1.7" stroke="#1F1E1D" stroke-width="1.1" stroke-linecap="round"/></svg>
+      Thought process
+      <div class="xk-think-close" onclick="xkCloseThink()">✕</div>
     </div>
-    <div class="xk-think-body" id="xkThinkBody"></div>
+    <div class="xk-think-body">
+      <div class="xk-think-body-inner" id="xkThinkBody"></div>
+    </div>
   </div>
 </div>
 
