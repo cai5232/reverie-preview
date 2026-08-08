@@ -261,7 +261,7 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 .xk-ai-para th{background:#EBE8DF;font-weight:600}
 .xk-ai-para blockquote{border-left:3px solid #DDD9D0;margin:4px 0;padding:4px 10px;color:#6E6D66}
 .xk-ai-para hr{border:none;border-top:.5px solid #DDD9D0;margin:8px 0}
-#page-xiaoke{background:#F5F2EA;display:flex;flex-direction:column}
+#page-xiaoke{display:none;flex-direction:column;overflow:hidden;position:relative;flex:1;min-height:0;background:url('https://i.ibb.co/VWx86Jj0/IMG-7293.jpg') center/cover no-repeat}
 
 .xk-topbar{
   flex-shrink:0;
