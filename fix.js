@@ -97,7 +97,32 @@ document.addEventListener('touchend', function(e){
   }
 })
 
-document.addEventListener('DOMContentLoaded', function(){
+// ── 发送按钮兜底绑定（最高优先级，不依赖 app.js 初始化顺序）──
+window.addEventListener('load', function(){
+  function tryBindSend(){
+    var btn = document.getElementById('xkSendBtn')
+    if(!btn) return
+    // 强制重置 busy
+    if(typeof xkBusy !== 'undefined') window.xkBusy = false
+    btn.disabled = false
+    // 清掉之前可能重复绑定的监听，用 onclick 覆盖最干净
+    btn.ontouchend = function(e){
+      e.preventDefault()
+      e.stopPropagation()
+      if(typeof xkBusy !== 'undefined') window.xkBusy = false
+      btn.disabled = false
+      if(typeof xkSend === 'function') xkSend()
+    }
+    btn.onclick = function(){
+      if(typeof xkBusy !== 'undefined') window.xkBusy = false
+      btn.disabled = false
+      if(typeof xkSend === 'function') xkSend()
+    }
+  }
+  tryBindSend()
+  // 再等 500ms 确保 app.js 全部跑完
+  setTimeout(tryBindSend, 500)
+})
   var stream = document.getElementById('xkStream')
   if(stream){
     new MutationObserver(function(){
