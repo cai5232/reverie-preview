@@ -246,7 +246,7 @@ function navTo(name){
         </button>
       </div>
       <!-- 发送按钮（小飞机） -->
-      <button class="xk-circle-btn xk-send-circle" id="xkSendBtn" type="button" onclick="xkBusy=false;xkSend()" ontouchend="event.preventDefault();xkBusy=false;xkSend()" style="touch-action:manipulation;-webkit-tap-highlight-color:transparent">
+      <button class="xk-circle-btn xk-send-circle" id="xkSendBtn" type="button" ontouchend="event.preventDefault();xkForceSend()" onclick="xkForceSend()" style="touch-action:manipulation;-webkit-tap-highlight-color:transparent">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none">
           <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="#1F1E1D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
