@@ -2778,14 +2778,20 @@ document.addEventListener('DOMContentLoaded',()=>{
     xkSendBtnEl.removeAttribute('disabled')
     xkSendBtnEl.addEventListener('touchstart',function(e){
       e.stopPropagation()
-      this.style.background='rgba(255,255,255,0.55)'
+      this.style.background='rgba(255,255,255,0.8)'
+      this.style.border='1.5px solid rgba(0,0,0,0.3)'
     },{passive:true})
     xkSendBtnEl.addEventListener('touchend',function(e){
       e.preventDefault()
       e.stopPropagation()
       this.style.background=''
+      this.style.border=''
       xkForceSend()
     },{passive:false})
+    xkSendBtnEl.addEventListener('touchcancel',function(){
+      this.style.background=''
+      this.style.border=''
+    },{passive:true})
     xkSendBtnEl.addEventListener('click',function(){
       xkForceSend()
     })
