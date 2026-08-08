@@ -444,7 +444,7 @@ async function callAI(){
   const currentUserMsg=chatHistory[chatHistory.length-1]
   const messages=[
     {role:'system',content:SYSTEM_PROMPT},
-    ...(currentUserMsg&&currentUserMsg.role==='user'?[{role:currentUserMsg.role,content:currentUserMsg.content}]:[])
+    ...(currentUserMsg?.role==='user'?[currentUserMsg]:[])
   ]
 
   const placeholderRow=appendMsg('them','',null,null,null,false,true)
