@@ -1,4 +1,4 @@
-// fix.js v15
+// fix.js v18
 
 // click代理：.xk-think-btn → 打开 xkThinkOverlay
 document.addEventListener('click', function(e){
@@ -23,7 +23,7 @@ document.addEventListener('click', function(e){
   if(overlay) overlay.classList.add('open')
 }, true)
 
-// patch：改正文字
+// patch think text
 function _patch(){
   var stream = document.getElementById('xkStream')
   if(!stream) return
@@ -43,86 +43,53 @@ function _fixThinkText(tw){
   }
 }
 
-// ── handle-wrap 下滑关闭弹窗 ──
-// .xk-think-handle-wrap 是一条 28px 高的条形水平居中元素，里面是小横条
-// data-handle 放在 wrap 上，触摸任意一点都能激活
-var _drag = { active:false, el:null, ovr:null, y0:0 }
-
-document.addEventListener('touchstart', function(e){
-  if(!e.target.closest('[data-handle]')) return
-  var sheet = e.target.closest('[data-sheet]')
-  if(!sheet) return
-  _drag.active = true
-  _drag.el = sheet
-  _drag.ovr = sheet.parentElement
-  _drag.y0 = e.touches[0].clientY
-  sheet.style.transition = 'none'
-  e.stopPropagation()
-}, {passive:true})
-
-document.addEventListener('touchmove', function(e){
-  if(!_drag.active) return
-  var dy = e.touches[0].clientY - _drag.y0
-  if(dy > 0){
-    _drag.el.style.transform = 'translateY(' + dy + 'px)'
-    // passive:true 注册，不能 preventDefault，靠 overscroll-behavior 阻止
-  }
-}, {passive:true})
-
-document.addEventListener('touchend', function(e){
-  if(!_drag.active) return
-  var dy = e.changedTouches[0].clientY - _drag.y0
-  var sheet = _drag.el
-  var ovr = _drag.ovr
-  _drag.active = false
-  _drag.el = null
-  _drag.ovr = null
-  if(dy > 60){
-    sheet.style.transition = 'transform .25s ease'
-    sheet.style.transform = 'translateY(100%)'
-    if(sheet.classList.contains('xk-think-sheet')){
-      setTimeout(function(){
-        var ov = document.getElementById('xkThinkOverlay')
-        if(ov) ov.classList.remove('open')
-        sheet.style.transform = ''
-      }, 260)
-    } else {
-      setTimeout(function(){
-        if(ovr && ovr.parentNode) ovr.parentNode.removeChild(ovr)
-      }, 260)
-    }
-  } else {
-    sheet.style.transition = 'transform .2s ease'
-    sheet.style.transform = 'translateY(0)'
-  }
-})
-
-// ── 发送按钮兜底绑定（最高优先级，不依赖 app.js 初始化顺序）──
+// ── 发送按钮兜底绑定（不用 passive:false，不 preventDefault） ──
 window.addEventListener('load', function(){
   function tryBindSend(){
     var btn = document.getElementById('xkSendBtn')
     if(!btn) return
-    // 强制重置 busy
     if(typeof xkBusy !== 'undefined') window.xkBusy = false
-    btn.disabled = false
-    // 清掉之前可能重复绑定的监听，用 onclick 覆盖最干净
+    btn.removeAttribute('disabled')
+
+    // 启动时探测 xkSendBtn 位置上最顶层的元素，showToast 告知
+    setTimeout(function(){
+      var rect = btn.getBoundingClientRect()
+      var cx = rect.left + rect.width/2
+      var cy = rect.top + rect.height/2
+      var top = document.elementFromPoint(cx, cy)
+      var info = top ? (top.tagName||'')+'#'+(top.id||'')+' .'+(typeof top.className==='string'?top.className.split(' ')[0]:'') : 'null'
+      if(typeof showToast==='function') showToast('顶层:'+info)
+    }, 800)
+
+    btn.ontouchstart = function(e){
+      e.stopPropagation()
+      btn.style.background = 'rgba(255,255,255,0.75)'
+    }
     btn.ontouchend = function(e){
       e.preventDefault()
       e.stopPropagation()
+      btn.style.background = ''
       if(typeof xkBusy !== 'undefined') window.xkBusy = false
-      btn.disabled = false
-      if(typeof xkSend === 'function') xkSend()
+      btn.removeAttribute('disabled')
+      if(typeof xkForceSend === 'function') xkForceSend()
+      else if(typeof xkSend === 'function') xkSend()
+    }
+    btn.ontouchcancel = function(){
+      btn.style.background = ''
     }
     btn.onclick = function(){
       if(typeof xkBusy !== 'undefined') window.xkBusy = false
-      btn.disabled = false
-      if(typeof xkSend === 'function') xkSend()
+      btn.removeAttribute('disabled')
+      if(typeof xkForceSend === 'function') xkForceSend()
+      else if(typeof xkSend === 'function') xkSend()
     }
   }
   tryBindSend()
-  // 再等 500ms 确保 app.js 全部跑完
-  setTimeout(tryBindSend, 500)
+  setTimeout(tryBindSend, 600)
 })
+
+// MutationObserver 修正 think text
+;(function(){
   var stream = document.getElementById('xkStream')
   if(stream){
     new MutationObserver(function(){
@@ -136,9 +103,9 @@ window.addEventListener('load', function(){
         if(window.xkBusy){
           window.xkBusy = false
           var b = document.getElementById('xkSendBtn')
-          if(b) b.disabled = false
+          if(b) b.removeAttribute('disabled')
         }
       }, 2000)
     }
   })
-})
+})()
