@@ -163,7 +163,14 @@ function _se(e){
     _sEl.style.transition='transform .25s ease'
     _sEl.style.transform='translateY(100%)'
     var o=_sOvr
-    setTimeout(function(){if(o&&o.parentNode)o.parentNode.removeChild(o)},260)
+    // 如果是 xk-think-sheet，顺带关掉 overlay
+    if(_sEl.classList&&_sEl.classList.contains('xk-think-sheet')){
+      var ov=document.getElementById('xkThinkOverlay')
+      if(ov)setTimeout(function(){ov.classList.remove('open')},260)
+    }
+    setTimeout(function(){
+      if(o&&o.parentNode&&!o.id)o.parentNode.removeChild(o)
+    },260)
   }else{
     _sEl.style.transition='transform .2s ease'
     _sEl.style.transform='translateY(0)'
