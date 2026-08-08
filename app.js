@@ -163,58 +163,17 @@ function sendImage(){
   document.getElementById('imgInput').click()
 }
 
+// 旧版 chat 初始化（已废弃，保留空壳防止报错）
 document.addEventListener('DOMContentLoaded',()=>{
-  document.getElementById('imgInput').addEventListener('change',e=>{
-    const file=e.target.files[0]
-    if(!file)return
-    const reader=new FileReader()
-    reader.onload=ev=>{
-      appendMsg('me','',null,ev.target.result,null)
-      saveChatHistory('user','[图片]')
-      e.target.value=''
-    }
-    reader.readAsDataURL(file)
-  })
-  // iOS PWA 模式下 textarea 需要在 touchend 里显式 focus 才能弹键盘
-  document.getElementById('chatInput').addEventListener('touchend',function(e){
-    e.preventDefault()
-    this.focus()
-  },{passive:false})
-  document.getElementById('chatInput').addEventListener('input',function(){
-    this.style.height='auto'
-    this.style.height=this.scrollHeight+'px'
-  })
-  document.getElementById('chatInput').addEventListener('keydown',function(e){
-    if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();handleSendBtn()}
-  })
-  // 键盘弹起：只用 transform 推 input-bar，header 完全不动
-  const _inputBar=document.querySelector('#page-chat .input-bar')
-  function onVPChange(){
-    const vp=window.visualViewport
-    if(!vp||!_inputBar)return
-    // offsetTop>0 说明系统把视口往上 scroll 了，加进去一起补偿
-    const kh=Math.max(0,window.innerHeight-vp.height-vp.offsetTop)
-    _inputBar.style.transform=kh>0?`translateY(-${kh}px)`:''
-    const box=document.getElementById('messages')
-    if(box)setTimeout(()=>box.scrollTop=box.scrollHeight,50)
+  // chatInput 已移除，只保留不会报错的安全操作
+  const searchInput=document.getElementById('searchInput')
+  if(searchInput){
+    searchInput.addEventListener('input',function(){doSearch(this.value)})
   }
-  if(window.visualViewport){
-    window.visualViewport.addEventListener('resize',onVPChange)
-    window.visualViewport.addEventListener('scroll',onVPChange)
-  }
-  document.getElementById('searchInput').addEventListener('input',function(){
-    doSearch(this.value)
-  })
   document.addEventListener('click',function(e){
     const pp=document.getElementById('plusPopupDark')
     if(pp&&pp.classList.contains('open')&&!pp.contains(e.target)&&!e.target.closest('.input-plus-btn'))closePlus()
   })
-  renderChat()
-  applyKeepalive()
-  initMemory()
-  initPush()
-  renderNovels()
-  loadHeaderAvatar()
 })
 
 function renderChat(){
