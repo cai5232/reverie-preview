@@ -550,9 +550,9 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
   flex:1;width:100%;
   border:none;background:transparent;outline:none;
   font-family:-apple-system,'PingFang SC',sans-serif;
-  font-size:14px;color:#1F1E1D;line-height:1.55;
+  font-size:16px;color:#1F1E1D;line-height:1.5;
   -webkit-user-select:text;user-select:text;-webkit-appearance:none;
-  padding:0;
+  padding:11px 0;resize:none;overflow:hidden;
 }
 .xk-textarea::placeholder{color:#B8B6AE}
 
