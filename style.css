@@ -280,7 +280,7 @@ body{color:#1C1C1E;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 
 .xk-topbar{
   flex-shrink:0;
-  background:#F5F2EA;
+  background:#EEEEEC;
   display:flex;align-items:center;
   padding:calc(env(safe-area-inset-top,0px) + 8px) 14px 8px;
   touch-action:manipulation;
