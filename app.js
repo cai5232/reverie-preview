@@ -2760,20 +2760,8 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   const xkta=document.getElementById('xkInput')
   if(xkta){
-    xkta.addEventListener('input',function(){
-      this.style.height='auto'
-      this.style.height=Math.min(this.scrollHeight,140)+'px'
-    })
     xkta.addEventListener('keydown',function(e){
-      if((e.key==='Enter'||e.keyCode===13)&&!e.shiftKey&&!e.isComposing){e.preventDefault();xkSend();return}
-    })
-    xkta.addEventListener('input',function(e){
-      if(e.isComposing)return
-      if(this.value.includes('\n')&&!e.shiftKey){
-        this.value=this.value.replace(/\n/g,'')
-        xkSend()
-        return
-      }
+      if((e.key==='Enter'||e.keyCode===13)&&!e.isComposing){e.preventDefault();xkSend();return}
     })
     xkta.addEventListener('touchend',function(e){
       e.preventDefault();this.focus()
