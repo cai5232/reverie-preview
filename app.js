@@ -2004,11 +2004,40 @@ function xkAppendFileBubble(name,size){
   box.scrollTop=box.scrollHeight
 }
 
-// ── 联网搜索标记 ──
+// ── 联网搜索：作为 function tool 注入，模型自主判断 ──
+const WEB_SEARCH_TOOL={
+  type:'function',
+  function:{
+    name:'web_search',
+    description:'当需要查询实时信息、新闻、天气、价格、或任何知识截止日期后的内容时调用此工具进行联网搜索。',
+    parameters:{type:'object',properties:{query:{type:'string',description:'搜索关键词，用中文或英文均可'}},required:['query']}
+  }
+}
+
 let xkWebSearchOn=false
 function xkWebSearch(){
   xkWebSearchOn=!xkWebSearchOn
-  showToast(xkWebSearchOn?'联网搜索已开启':'联网搜索已关闭')
+  const btn=document.getElementById('xkSearchBadge')
+  if(btn){btn.style.display=xkWebSearchOn?'inline-flex':'none'}
+  showToast(xkWebSearchOn?'联网搜索已开启，小克会自主决定是否搜索':'联网搜索已关闭')
+}
+
+// 执行搜索：通过 xiaoke proxy 转 Jina Reader Search
+async function doWebSearch(query){
+  const url=`https://s.jina.ai/${encodeURIComponent(query)}`
+  try{
+    const proxyBase=(cfg.api||'').replace(/\/v1\/?$/,'')+'/internal/mcp-proxy'
+    const res=await fetch(proxyBase,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key},
+      body:JSON.stringify({url,method:'GET',headers:{'Accept':'text/plain','X-No-Cache':'true'},body:null})
+    })
+    const j=await res.json()
+    const text=j.data||j.text||j.result||JSON.stringify(j)
+    return typeof text==='string'?text.slice(0,3000):JSON.stringify(text).slice(0,3000)
+  }catch(e){
+    return '搜索失败: '+e.message
+  }
 }
 
 // ── HTML全屏 ──
