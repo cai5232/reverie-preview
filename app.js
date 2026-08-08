@@ -2091,16 +2091,17 @@ const WEB_SEARCH_TOOL={
 
 let xkWebSearchOn=true
 
-function xkWebSearch(fromMenu){
-  xkWebSearchOn=!xkWebSearchOn
-  const badge=document.getElementById('xkSearchBadge')
-  if(badge)badge.style.opacity=xkWebSearchOn?'1':'0.35'
-}
-
-// 初始化联网状态显示
+// 初始化联网状态显示（默认开启）
 function xkInitSearchBadge(){
   const badge=document.getElementById('xkSearchBadge')
-  if(badge)badge.style.opacity=xkWebSearchOn?'1':'0.35'
+  if(badge){badge.style.display='inline-flex';badge.style.opacity='1'}
+  const icon=document.getElementById('xkSearchIcon')
+  const label=document.getElementById('xkSearchLabel')
+  if(icon){
+    icon.style.background='#5C6BC0'
+    icon.querySelectorAll('path,circle').forEach(el=>el.setAttribute('stroke','#fff'))
+  }
+  if(label)label.style.color='#5C6BC0'
 }
 function xkWebSearch(fromMenu){
   xkWebSearchOn=!xkWebSearchOn
