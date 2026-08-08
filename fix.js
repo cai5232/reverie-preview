@@ -1,4 +1,4 @@
-// fix.js v14
+// fix.js v15
 
 // click代理：.xk-think-btn → 打开 xkThinkOverlay
 document.addEventListener('click', function(e){
@@ -23,7 +23,7 @@ document.addEventListener('click', function(e){
   if(overlay) overlay.classList.add('open')
 }, true)
 
-// patch：修正 thinking 标签文字
+// patch：改正文字
 function _patch(){
   var stream = document.getElementById('xkStream')
   if(!stream) return
@@ -31,7 +31,7 @@ function _patch(){
 }
 function _fixThinkText(tw){
   var btn = tw.querySelector('.xk-think-btn')
-  if(btn) btn.innerHTML = btn.innerHTML.replace(/思考过程|Thinking|^Thought$/g, 'Thought process')
+  if(btn) btn.innerHTML = btn.innerHTML.replace(/思考过程|Thinking/g, 'Thought process')
   if(!tw._thinkText){
     var hist = window.xkHistory || []
     for(var i=hist.length-1;i>=0;i--){
@@ -43,13 +43,12 @@ function _fixThinkText(tw){
   }
 }
 
-// ── handle 区域下滑关闭弹窗 ──
-// 规则：只有 touchstart 落在 [data-handle] 元素上才激活
-// 整个 sheet 内容区滚动完全不受影响
+// ── handle-wrap 下滑关闭弹窗 ──
+// .xk-think-handle-wrap 是一条 28px 高的条形水平居中元素，里面是小横条
+// data-handle 放在 wrap 上，触摸任意一点都能激活
 var _drag = { active:false, el:null, ovr:null, y0:0 }
 
 document.addEventListener('touchstart', function(e){
-  // 必须落在 data-handle 上
   if(!e.target.closest('[data-handle]')) return
   var sheet = e.target.closest('[data-sheet]')
   if(!sheet) return
@@ -58,7 +57,6 @@ document.addEventListener('touchstart', function(e){
   _drag.ovr = sheet.parentElement
   _drag.y0 = e.touches[0].clientY
   sheet.style.transition = 'none'
-  // 阻止默认防止页面滚动，但只在 handle 行
   e.preventDefault()
 }, {passive:false})
 
@@ -77,10 +75,11 @@ document.addEventListener('touchend', function(e){
   var sheet = _drag.el
   var ovr = _drag.ovr
   _drag.active = false
+  _drag.el = null
+  _drag.ovr = null
   if(dy > 60){
     sheet.style.transition = 'transform .25s ease'
     sheet.style.transform = 'translateY(100%)'
-    // Thought 弹窗：关 overlay
     if(sheet.classList.contains('xk-think-sheet')){
       setTimeout(function(){
         var ov = document.getElementById('xkThinkOverlay')
@@ -88,7 +87,6 @@ document.addEventListener('touchend', function(e){
         sheet.style.transform = ''
       }, 260)
     } else {
-      // 动态工具弹窗：移除容器节点
       setTimeout(function(){
         if(ovr && ovr.parentNode) ovr.parentNode.removeChild(ovr)
       }, 260)
@@ -97,7 +95,6 @@ document.addEventListener('touchend', function(e){
     sheet.style.transition = 'transform .2s ease'
     sheet.style.transform = 'translateY(0)'
   }
-  _drag.el = null; _drag.ovr = null
 })
 
 document.addEventListener('DOMContentLoaded', function(){
@@ -108,7 +105,6 @@ document.addEventListener('DOMContentLoaded', function(){
       stream._ft = setTimeout(_patch, 80)
     }).observe(stream, {childList:true, subtree:true})
   }
-  // 切后台 xkBusy 重置
   document.addEventListener('visibilitychange', function(){
     if(document.visibilityState==='visible'){
       setTimeout(function(){
