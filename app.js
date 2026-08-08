@@ -2749,13 +2749,14 @@ document.addEventListener('DOMContentLoaded',()=>{
         xkSend()
       }
     })
-    // iOS 中文输入法 keydown 拦不住换行，用 input 事件兜底
+    // iOS 中文输入法发送键：keydown 拦不住换行，用 input 事件兜底
+    // 先存好文字再清空，用 setTimeout 跳过 iOS IME 时序问题
     xkta.addEventListener('input',function(){
-      if(this.value.includes('\n')){
-        this.value=this.value.replace(/\n/g,'')
-        this.style.height='auto'
-        xkSend()
-      }
+      if(!this.value.includes('\n'))return
+      const savedText=this.value.replace(/\n+/g,'').trim()
+      this.value=savedText
+      this.style.height='auto'
+      if(savedText) setTimeout(xkSend,0)
     })
     xkta.addEventListener('touchend',function(e){
       e.preventDefault();this.focus()
