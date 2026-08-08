@@ -101,8 +101,43 @@ function navTo(name){
 <body>
 
 <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="changeAvatar(event)">
-<input type="file" id="imgInput" accept="image/*" style="display:none">
+<input type="file" id="imgInput" accept="image/*" style="display:none" onchange="xkHandleImgInput(event)">
+<input type="file" id="xkFileInput" accept="*/*" style="display:none" onchange="xkHandleFileInput(event)">
+<input type="file" id="xkCameraInput" accept="image/*" capture="environment" style="display:none" onchange="xkHandleImgInput(event)">
 <input type="file" id="headerAvatarInput" accept="image/*" style="display:none" onchange="changeHeaderAvatar(event)">
+
+<!-- HTML 全屏预览 -->
+<div id="xkHtmlOverlay" style="display:none;position:fixed;inset:0;z-index:400;background:#fff;flex-direction:column">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top,0px)+10px) 16px 10px;background:#F5F2EA;flex-shrink:0;border-bottom:.5px solid #DDD9D0">
+    <span style="font-size:14px;font-weight:600;color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif">HTML 预览</span>
+    <div onclick="xkCloseHtml()" style="width:28px;height:28px;border-radius:50%;background:#EBE8DF;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:#555;-webkit-tap-highlight-color:transparent">✕</div>
+  </div>
+  <iframe id="xkHtmlFrame" style="flex:1;border:none;width:100%;background:#fff"></iframe>
+</div>
+
+<!-- 加号菜单 -->
+<div id="xkPlusOverlay" onclick="xkClosePlus()" style="position:fixed;inset:0;z-index:150;display:none"></div>
+<div id="xkPlusMenu" style="position:fixed;bottom:0;left:0;right:0;max-width:430px;margin:0 auto;z-index:151;transform:translateY(100%);transition:transform .28s cubic-bezier(.34,1.1,.64,1);background:#FAF8F4;border-radius:20px 20px 0 0;padding-bottom:calc(env(safe-area-inset-bottom,0px)+8px);box-shadow:0 -4px 28px rgba(0,0,0,.12)">
+  <div style="width:36px;height:4px;background:#DDD9D0;border-radius:2px;margin:12px auto 16px"></div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;padding:0 8px 12px">
+    <div class="xk-plus-item" onclick="xkClosePlus();document.getElementById('xkCameraInput').click()">
+      <div class="xk-plus-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="1" y="5" width="20" height="14" rx="3" stroke="#1F1E1D" stroke-width="1.5"/><circle cx="11" cy="12" r="4" stroke="#1F1E1D" stroke-width="1.4"/><path d="M7 5l1.5-2h5L15 5" stroke="#1F1E1D" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+      <span class="xk-plus-label">拍照</span>
+    </div>
+    <div class="xk-plus-item" onclick="xkClosePlus();document.getElementById('imgInput').click()">
+      <div class="xk-plus-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="1" y="2" width="20" height="18" rx="3" stroke="#1F1E1D" stroke-width="1.5"/><circle cx="7" cy="8" r="2" stroke="#1F1E1D" stroke-width="1.3"/><path d="M1 16l5-5 4 4 3-3 8 5" stroke="#1F1E1D" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <span class="xk-plus-label">图片</span>
+    </div>
+    <div class="xk-plus-item" onclick="xkClosePlus();document.getElementById('xkFileInput').click()">
+      <div class="xk-plus-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M5 2h8l5 5v13a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="#1F1E1D" stroke-width="1.5" stroke-linejoin="round"/><path d="M13 2v6h6" stroke="#1F1E1D" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <span class="xk-plus-label">上传文件</span>
+    </div>
+    <div class="xk-plus-item" onclick="xkClosePlus();xkWebSearch()">
+      <div class="xk-plus-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="10" cy="10" r="7" stroke="#1F1E1D" stroke-width="1.5"/><path d="M10 3c-2 2-3 4.5-3 7s1 5 3 7M10 3c2 2 3 4.5 3 7s-1 5-3 7M3 10h14" stroke="#1F1E1D" stroke-width="1.2" stroke-linecap="round"/><path d="M16 16l4 4" stroke="#1F1E1D" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      <span class="xk-plus-label">联网搜索</span>
+    </div>
+  </div>
+</div>
 <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
 <!-- 搜索 -->
