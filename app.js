@@ -2275,7 +2275,7 @@ async function xkAgenticLoop(sendOptions, mcpServerMap, round){
       if(thinkBuf){
         const tw=document.createElement('div');tw.className='xk-thinking'
         const tbtn=document.createElement('div');tbtn.className='xk-think-btn'
-        tbtn.innerHTML=`<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.7" stroke="#A6A39A" stroke-width="1.1"/><path d="M6.5 3.8v3l1.7 1.7" stroke="#A6A39A" stroke-width="1.1" stroke-linecap="round"/></svg>Thought process`
+        tbtn.innerHTML=`<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.7" stroke="#A6A39A" stroke-width="1.1"/><path d="M6.5 3.8v3l1.7 1.7" stroke="#A6A39A" stroke-width="1.1" stroke-linecap="round"/></svg>Thinking`
         const _t=thinkBuf;tbtn.onclick=()=>xkOpenThink(_t);tw.appendChild(tbtn)
         document.getElementById('xkStream').appendChild(tw)
       }
