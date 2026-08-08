@@ -2880,13 +2880,13 @@ document.addEventListener('DOMContentLoaded',()=>{
       }
     },{passive:true})
   }
-  // 键盘推bar
+  // 键盘推bar：改用 fixed + bottom，transform 在 iOS PWA 里不更新 hit-test 区域
   const bar=document.querySelector('#page-xiaoke .xk-bar')
   function onVP(){
     const vp=window.visualViewport
     if(!vp||!bar)return
     const kh=Math.max(0,window.innerHeight-vp.height-vp.offsetTop)
-    bar.style.transform=kh>0?`translateY(-${kh}px)`:''
+    bar.style.bottom=kh+'px'
     const s=document.getElementById('xkStream')
     if(s)setTimeout(()=>s.scrollTop=s.scrollHeight,50)
   }
