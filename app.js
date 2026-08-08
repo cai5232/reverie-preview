@@ -2756,34 +2756,27 @@ document.addEventListener('DOMContentLoaded',()=>{
       this.style.height=Math.min(this.scrollHeight,140)+'px'
     })
     // iOS中文输入法发送键处理
-    // 事件顺序在不同iOS版本上不可靠，改用50ms轮询监控\n
-    // 一旦发现\n立刻清掉并发送，完全不依赖事件顺序
+    // iOS顺序：blur → 写\n → input，所以blur时停轮询会漏掉\n
+    // 解决方案：轮询永远不停，只要input里有\n就清掉发送
     let _composing=false
-    let _nlPoller=null
-    function startNlPoller(){
-      if(_nlPoller)return
-      _nlPoller=setInterval(function(){
-        if(!xkta)return
-        if(xkta.value.includes('\n')){
-          const t=xkta.value.replace(/\n+/g,'').trim()
-          xkta.value=t
-          xkta.style.height='auto'
-          if(t) xkSend()
-        }
-      },50)
-    }
     xkta.addEventListener('compositionstart',function(){_composing=true})
     xkta.addEventListener('compositionend',function(){_composing=false})
-    xkta.addEventListener('focus',function(){startNlPoller()})
-    xkta.addEventListener('blur',function(){
-      clearInterval(_nlPoller);_nlPoller=null
-    })
     xkta.addEventListener('keydown',function(e){
       if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing&&!_composing){
         e.preventDefault()
         xkSend()
       }
     })
+    // 全局轮询，永远运行，不绑定focus/blur
+    setInterval(function(){
+      if(!xkta)return
+      if(xkta.value.includes('\n')){
+        const t=xkta.value.replace(/\n+/g,'').trim()
+        xkta.value=t
+        xkta.style.height='auto'
+        if(t) xkSend()
+      }
+    },50)
     xkta.addEventListener('touchend',function(e){
       e.preventDefault();this.focus()
     },{passive:false})
