@@ -1933,7 +1933,144 @@ function loadHeaderAvatar(){
   if(saved&&img)img.src=saved;
 }
 
-// ── XK Chat ──
+// ── 加号菜单 ──
+function xkTogglePlus(){
+  const menu=document.getElementById('xkPlusMenu')
+  const ov=document.getElementById('xkPlusOverlay')
+  if(!menu)return
+  const open=menu.style.transform==='translateY(0px)'||menu.style.transform==='translateY(0)'
+  if(open){xkClosePlus()}else{
+    ov.style.display='block'
+    menu.style.display='block'
+    requestAnimationFrame(()=>menu.style.transform='translateY(0)')
+  }
+}
+function xkClosePlus(){
+  const menu=document.getElementById('xkPlusMenu')
+  const ov=document.getElementById('xkPlusOverlay')
+  if(menu)menu.style.transform='translateY(100%)'
+  if(ov)ov.style.display='none'
+  setTimeout(()=>{if(menu)menu.style.display='none'},300)
+}
+
+// ── 图片/文件处理 ──
+function xkHandleImgInput(e){
+  const file=e.target.files[0];if(!file)return
+  const reader=new FileReader()
+  reader.onload=ev=>{
+    xkAppendImgBubble(ev.target.result,file.name)
+    xkHistory.push({role:'user',content:[{type:'image_url',image_url:{url:ev.target.result}}]})
+    localStorage.setItem('xk_history',JSON.stringify(xkHistory))
+    xkCallAI()
+  }
+  reader.readAsDataURL(file)
+  e.target.value=''
+}
+function xkHandleFileInput(e){
+  const file=e.target.files[0];if(!file)return
+  const reader=new FileReader()
+  reader.onload=ev=>{
+    const content=ev.target.result
+    xkAppendFileBubble(file.name,file.size)
+    xkHistory.push({role:'user',content:`[文件: ${file.name}]\n\`\`\`\n${content.slice(0,8000)}\n\`\`\``})
+    localStorage.setItem('xk_history',JSON.stringify(xkHistory))
+    xkCallAI()
+  }
+  reader.readAsText(file,'utf-8')
+  e.target.value=''
+}
+function xkAppendImgBubble(dataUrl,name){
+  const box=document.getElementById('xkStream')
+  const wrap=document.createElement('div')
+  wrap.className='xk-user-wrap'
+  const img=document.createElement('img')
+  img.src=dataUrl
+  img.style.cssText='max-width:200px;border-radius:14px;display:block;cursor:pointer'
+  img.onclick=()=>{ const a=document.createElement('a');a.href=dataUrl;a.download=name||'image';a.click() }
+  wrap.appendChild(img)
+  box.appendChild(wrap)
+  box.scrollTop=box.scrollHeight
+}
+function xkAppendFileBubble(name,size){
+  const box=document.getElementById('xkStream')
+  const wrap=document.createElement('div')
+  wrap.className='xk-user-wrap'
+  const bub=document.createElement('div')
+  bub.className='xk-file-bubble'
+  const ext=(name.split('.').pop()||'').toLowerCase()
+  bub.innerHTML=`<div class="xk-file-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 2h7l4 4v11a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="#5A5852" stroke-width="1.3" stroke-linejoin="round"/><path d="M11 2v5h5" stroke="#5A5852" stroke-width="1.2" stroke-linecap="round"/></svg></div><div><div class="xk-file-name">${name}</div><div class="xk-file-size">${(size/1024).toFixed(1)} KB · ${ext.toUpperCase()}</div></div>`
+  wrap.appendChild(bub)
+  box.appendChild(wrap)
+  box.scrollTop=box.scrollHeight
+}
+
+// ── 联网搜索标记 ──
+let xkWebSearchOn=false
+function xkWebSearch(){
+  xkWebSearchOn=!xkWebSearchOn
+  showToast(xkWebSearchOn?'联网搜索已开启':'联网搜索已关闭')
+}
+
+// ── HTML全屏 ──
+function xkOpenHtml(code){
+  const ov=document.getElementById('xkHtmlOverlay')
+  const fr=document.getElementById('xkHtmlFrame')
+  ov.style.display='flex'
+  fr.srcdoc=code
+}
+function xkCloseHtml(){
+  const ov=document.getElementById('xkHtmlOverlay')
+  ov.style.display='none'
+  document.getElementById('xkHtmlFrame').srcdoc=''
+}
+
+// ── Markdown 渲染（替换原 xkApplyMarkdown）──
+function xkApplyMarkdown(block){
+  block.querySelectorAll('.xk-ai-para').forEach(p=>{
+    const raw=p.textContent||''
+    p.innerHTML=xkMd(raw)
+  })
+  // 检测 HTML 代码块，变成可点击预览气泡
+  block.querySelectorAll('.xk-ai-para').forEach(p=>{
+    const htmlM=p.innerHTML.match(/&lt;!DOCTYPE html[\s\S]*?&lt;\/html&gt;/i)||p.textContent.match(/<!DOCTYPE html[\s\S]*?<\/html>/i)
+    if(htmlM){
+      const code=p.textContent.match(/<!DOCTYPE html[\s\S]*?<\/html>/i)?.[0]||htmlM[0].replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&')
+      const bub=document.createElement('div')
+      bub.className='xk-html-bubble'
+      bub.innerHTML=`<iframe class="xk-html-preview" srcdoc="${code.replace(/"/g,'&quot;')}" sandbox="allow-scripts allow-same-origin"></iframe><div class="xk-html-foot"><span class="xk-html-foot-label">HTML 预览</span><span class="xk-html-foot-btn">全屏 ›</span></div>`
+      bub.onclick=()=>xkOpenHtml(code)
+      p.replaceWith(bub)
+    }
+  })
+}
+
+function xkMd(raw){
+  let s=raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+  // code block
+  s=s.replace(/```[\w]*\n?([\s\S]*?)```/g,(_,c)=>`<pre>${c.trim()}</pre>`)
+  // inline code
+  s=s.replace(/`([^`]+)`/g,'<code>$1</code>')
+  // heading → bold
+  s=s.replace(/^#{1,6}\s+(.+)$/gm,'<strong>$1</strong>')
+  // bold
+  s=s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+  // italic
+  s=s.replace(/\*([^*\n]+?)\*/g,'<em>$1</em>')
+  // hr
+  s=s.replace(/^---+$/gm,'<hr>')
+  // blockquote
+  s=s.replace(/^&gt;\s?(.+)$/gm,'<blockquote>$1</blockquote>')
+  // ul
+  s=s.replace(/^[\-\*]\s+(.+)$/gm,'<li>$1</li>')
+  s=s.replace(/(<li>[\s\S]+?<\/li>)/g,'<ul>$1</ul>')
+  // ol
+  s=s.replace(/^\d+\.\s+(.+)$/gm,'<li>$1</li>')
+  // links
+  s=s.replace(/\[([^\]]+)\]\((https?[^)]+)\)/g,'<a href="$2" target="_blank">$1</a>')
+  return s
+}
+
+// ── 联网搜索注入（在 SYSTEM_PROMPT 后加提示）──
 let xkHistory=JSON.parse(localStorage.getItem('xk_history')||'[]')
 let xkBusy=false
 let xkLastTime=0
