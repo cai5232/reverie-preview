@@ -2089,6 +2089,8 @@ const WEB_SEARCH_TOOL={
   }
 }
 
+let xkWebSearchOn=true
+
 function xkWebSearch(fromMenu){
   xkWebSearchOn=!xkWebSearchOn
   const badge=document.getElementById('xkSearchBadge')
