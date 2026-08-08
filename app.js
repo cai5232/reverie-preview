@@ -2433,6 +2433,8 @@ function xkShouldAutoScroll(){
   if(!box)return true
   return box.scrollHeight-box.scrollTop-box.clientHeight<200
 }
+
+function xkToolGroupStart(){
   const box = document.getElementById('xkStream')
   _xkToolGroup = document.createElement('div')
   _xkToolGroup.className = 'xk-tool-group'
