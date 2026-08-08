@@ -46,20 +46,21 @@ function navTo(name){
 .xk-action-btn:active{background:#EBE8DF!important}
 .xk-action-btn svg{display:block!important;flex-shrink:0!important;pointer-events:none!important}
 
-/* Thought 弹窗：flex列，handle固定顶部不随内容滚动 */
+/* Thought process 弹窗：flex列，handle固定顶部不随内容滚动 */
 .xk-think-sheet{
   display:flex!important;flex-direction:column!important;
   max-height:55vh!important;overflow:hidden!important;
 }
-.xk-think-handle{
+.xk-think-handle-wrap{
   flex-shrink:0!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  height:28px!important;width:100%!important;
+  touch-action:none!important;cursor:grab!important;
+}
+.xk-think-handle{
   width:36px!important;height:4px!important;
   background:#DDD9D0!important;border-radius:2px!important;
-  margin:0 auto!important;
-  /* 用padding撑大触摸区 */
-  padding:10px 40px!important;
-  box-sizing:content-box!important;
-  touch-action:none!important;cursor:grab!important;
+  pointer-events:none!important;
 }
 .xk-think-head{flex-shrink:0!important}
 .xk-think-body{flex:1!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important}
