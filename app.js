@@ -2327,10 +2327,15 @@ function xkStreamDone(block){
 }
 
 async function xkSend(){
-  if(xkBusy)return
   const ta=document.getElementById('xkInput')
   const text=ta.value.trim()
   if(!text)return
+  // 有文字就强制发送，不被 xkBusy 锁住
+  if(xkBusy){
+    xkBusy=false
+    const b=document.getElementById('xkSendBtn')
+    if(b)b.disabled=false
+  }
   ta.value=''
   ta.style.height='auto'
   if(xkPendingAttachments.length)xkRenderAttachBubbles()
