@@ -2743,20 +2743,34 @@ document.addEventListener('DOMContentLoaded',()=>{
       this.style.height='auto'
       this.style.height=Math.min(this.scrollHeight,140)+'px'
     })
+    // 追踪中文输入法状态
+    let _composing=false
+    xkta.addEventListener('compositionstart',function(){_composing=true})
+    xkta.addEventListener('compositionend',function(){
+      _composing=false
+      // 中文选词后如果有换行，清掉并发送
+      if(this.value.includes('\n')){
+        this.value=this.value.replace(/\n+/g,'').trim()
+        this.style.height='auto'
+        if(this.value) xkSend()
+      }
+    })
     xkta.addEventListener('keydown',function(e){
-      if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){
+      if(e.key==='Enter'&&!e.shiftKey){
+        if(_composing) return  // 中文选词过程中，让 compositionend 处理
         e.preventDefault()
         xkSend()
       }
     })
-    // iOS 中文输入法发送键：keydown 拦不住换行，用 input 事件兜底
-    // 先存好文字再清空，用 setTimeout 跳过 iOS IME 时序问题
+    // input 兜底：选词完成后 \n 如果还在就清掉发送
     xkta.addEventListener('input',function(){
-      if(!this.value.includes('\n'))return
-      const savedText=this.value.replace(/\n+/g,'').trim()
-      this.value=savedText
-      this.style.height='auto'
-      if(savedText) setTimeout(xkSend,0)
+      if(_composing) return
+      if(this.value.includes('\n')){
+        const t=this.value.replace(/\n+/g,'').trim()
+        this.value=t
+        this.style.height='auto'
+        if(t) setTimeout(()=>xkSend(),10)
+      }
     })
     xkta.addEventListener('touchend',function(e){
       e.preventDefault();this.focus()
