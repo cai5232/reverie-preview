@@ -410,7 +410,7 @@ body{color:#1C1C1E;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 .xk-think-sheet{
   position:fixed;bottom:0;left:0;right:0;
   max-width:430px;margin:0 auto;
-  background:#FAF8F4;
+  background:#F7F7F5;
   border-radius:20px 20px 0 0;
   padding-bottom:calc(env(safe-area-inset-bottom,0px) + 8px);
   max-height:50vh;
