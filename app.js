@@ -2778,7 +2778,29 @@ document.addEventListener('DOMContentLoaded',()=>{
     xkta.addEventListener('focus',function(){xkUpdatePlaceholder()})
     xkta.addEventListener('blur',function(){xkUpdatePlaceholder()})
 
-    // iOS PWA contenteditable：按发送键触发 keydown Enter，可靠捕获
+    // iOS PWA contenteditable：按发送键不触发 keydown，而是插入 <br>
+    // 用 MutationObserver 检测 <br> 插入，立刻清掉并发送
+    const _observer = new MutationObserver(()=>{
+      if(xkta.querySelector('br')||xkta.innerText.includes('\n')){
+        // 有换行：取文本、清空、发送
+        const raw=(xkta.innerText||'').replace(/\n/g,'').trim()
+        if(raw){
+          xkta.innerHTML=''
+          xkta.classList.add('xk-empty')
+          // 用 setTimeout 0 确保 iOS IME commit 完成
+          setTimeout(()=>{
+            // 直接发，绕过 xkSend 里再次读取 div 的逻辑
+            _xkDirectSend(raw)
+          },0)
+        }else{
+          xkta.innerHTML=''
+          xkta.classList.add('xk-empty')
+        }
+      }
+    })
+    _observer.observe(xkta,{childList:true,subtree:true,characterData:true})
+
+    // keydown Enter 兜底（桌面端/英文键盘）
     let _composing=false
     xkta.addEventListener('compositionstart',function(){_composing=true})
     xkta.addEventListener('compositionend',function(){_composing=false})
@@ -2788,12 +2810,8 @@ document.addEventListener('DOMContentLoaded',()=>{
         xkSend()
       }
     })
-    // 兜底：insertLineBreak / insertParagraph（部分iOS版本走这里）
-    xkta.addEventListener('input',function(e){
-      if(e.inputType==='insertLineBreak'||e.inputType==='insertParagraph'){
-        e.preventDefault()
-        xkSend()
-      }
+    xkta.addEventListener('input',function(){
+      xkUpdatePlaceholder()
     })
   }
   // xkSendBtn 的 touchend 在 HTML 里用 ontouchend 绑了，这里不再重复绑
