@@ -2744,7 +2744,19 @@ document.addEventListener('DOMContentLoaded',()=>{
       this.style.height=Math.min(this.scrollHeight,140)+'px'
     })
     xkta.addEventListener('keydown',function(e){
-      if((e.key==='Enter'||e.keyCode===13)&&!e.isComposing){e.preventDefault();xkSend();return}
+      if(e.key==='Enter'&&!e.shiftKey){
+        e.preventDefault()
+        if(!e.isComposing){
+          xkSend()
+        }else{
+          // iOS中文输入法：compositionend紧接着触发，等它完成再发
+          xkta.addEventListener('compositionend',function handler(){
+            xkta.removeEventListener('compositionend',handler)
+            xkSend()
+          })
+        }
+        return
+      }
     })
     xkta.addEventListener('touchend',function(e){
       e.preventDefault();this.focus()
