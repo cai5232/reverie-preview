@@ -2756,8 +2756,8 @@ document.addEventListener('DOMContentLoaded',()=>{
       this.style.height=Math.min(this.scrollHeight,140)+'px'
     })
     // iOS中文输入法发送键处理
-    // iOS顺序：blur → 写\n → input，所以blur时停轮询会漏掉\n
-    // 解决方案：轮询永远不停，只要input里有\n就清掉发送
+    // iOS按发送键触发的是 inputType="insertLineBreak"，\n不一定写进value
+    // 必须通过 inputType 来检测，而不是检查 value.includes('\n')
     let _composing=false
     xkta.addEventListener('compositionstart',function(){_composing=true})
     xkta.addEventListener('compositionend',function(){_composing=false})
@@ -2767,16 +2767,21 @@ document.addEventListener('DOMContentLoaded',()=>{
         xkSend()
       }
     })
-    // 全局轮询，永远运行，不绑定focus/blur
-    setInterval(function(){
-      if(!xkta)return
-      if(xkta.value.includes('\n')){
-        const t=xkta.value.replace(/\n+/g,'').trim()
-        xkta.value=t
-        xkta.style.height='auto'
-        if(t) xkSend()
+    xkta.addEventListener('input',function(e){
+      // iOS中文输入法按发送键：inputType是insertLineBreak或insertParagraph
+      if(e.inputType==='insertLineBreak'||e.inputType==='insertParagraph'){
+        this.value=this.value.replace(/\n+/g,'').trim()
+        this.style.height='auto'
+        if(this.value) xkSend()
+        return
       }
-    },50)
+      // 兜底：万一\n真的写进来了
+      if(this.value.includes('\n')&&!_composing){
+        this.value=this.value.replace(/\n+/g,'').trim()
+        this.style.height='auto'
+        if(this.value) xkSend()
+      }
+    })
     xkta.addEventListener('touchend',function(e){
       e.preventDefault();this.focus()
     },{passive:false})
