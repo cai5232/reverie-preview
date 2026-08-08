@@ -2326,21 +2326,29 @@ function xkStreamDone(block){
   xkApplyMarkdown(block)
 }
 
-// 小飞机：先让输入框失焦 commit iOS IME，再延迟发送
+// contenteditable 工具函数（全局）
+function _xkGetInputText(){
+  const el=document.getElementById('xkInput')
+  if(!el)return''
+  return(el.innerText||el.textContent||'').replace(/\n+$/,'').trim()
+}
+function _xkClearInput(){
+  const el=document.getElementById('xkInput')
+  if(!el)return
+  el.innerHTML=''
+  el.classList.add('xk-empty')
+}
+
+// 小飞机：commit iOS IME，取文本，发送
 function xkForceSend(){
   xkBusy=false
-  const ta=document.getElementById('xkInput')
-  if(!ta)return
-  // blur 触发 iOS 输入法 commit，然后 re-focus 并发送
-  const text=ta.value.replace(/\n/g,'').trim()
-  ta.value=text
+  const text=_xkGetInputText()
   if(!text)return
   xkSend()
 }
 
 async function xkSend(){
-  const ta=document.getElementById('xkInput')
-  const text=ta.value.trim()
+  const text=_xkGetInputText()
   if(!text)return
   // 有文字就强制发送，不被 xkBusy 锁住
   if(xkBusy){
@@ -2348,8 +2356,7 @@ async function xkSend(){
     const b=document.getElementById('xkSendBtn')
     if(b)b.disabled=false
   }
-  ta.value=''
-  ta.style.height='auto'
+  _xkClearInput()
   if(xkPendingAttachments.length)xkRenderAttachBubbles()
   xkAppendUser(text)
   const msgContent=xkFlushAttachments(text)
