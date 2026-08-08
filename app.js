@@ -2786,7 +2786,11 @@ function _xkBtn(svgStr, label, cls='xk-action-btn'){
   const btn=document.createElement('button')
   btn.className=cls
   btn.title=label
-  btn.innerHTML=svgStr
+  // 用文字代替SVG，彻底解决图标显示不全问题
+  const sp=document.createElement('span')
+  sp.style.cssText='font-size:11px;color:#A6A39A;white-space:nowrap;pointer-events:none'
+  sp.textContent=label
+  btn.appendChild(sp)
   return btn
 }
 // ── MCP 工具 ──
