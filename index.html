@@ -46,24 +46,55 @@ function navTo(name){
 .xk-action-btn:active{background:#EBE8DF!important}
 .xk-action-btn svg{display:block!important;flex-shrink:0!important;pointer-events:none!important}
 
-/* Thought process 弹窗：flex列，handle固定顶部不随内容滚动 */
+/* Thought process 弹窗 */
+.xk-think-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;
+  opacity:0;pointer-events:none;transition:opacity .2s;
+  display:flex;align-items:flex-start;justify-content:center;
+  padding-top:calc(env(safe-area-inset-top,0px) + 52px);
+  padding-left:14px;padding-right:14px;
+}
+.xk-think-overlay.open{opacity:1;pointer-events:auto}
 .xk-think-sheet{
-  display:flex!important;flex-direction:column!important;
-  max-height:55vh!important;overflow:hidden!important;
+  width:100%;max-width:430px;background:#FAF8F4;border-radius:20px;
+  max-height:calc(100vh - env(safe-area-inset-top,0px) - 68px);
+  display:flex;flex-direction:column;overflow:hidden;
+  box-shadow:0 8px 36px rgba(0,0,0,.16);
+  transform:translateY(-10px) scale(.98);opacity:0;
+  transition:transform .26s cubic-bezier(.34,1.1,.64,1),opacity .2s;
 }
+.xk-think-overlay.open .xk-think-sheet{transform:translateY(0) scale(1);opacity:1}
 .xk-think-handle-wrap{
-  flex-shrink:0!important;
-  display:flex!important;align-items:center!important;justify-content:center!important;
-  height:28px!important;width:100%!important;
-  touch-action:none!important;cursor:grab!important;
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  height:24px;padding-top:4px;
 }
-.xk-think-handle{
-  width:36px!important;height:4px!important;
-  background:#DDD9D0!important;border-radius:2px!important;
-  pointer-events:none!important;
+.xk-think-handle{width:36px;height:4px;background:#DDD9D0;border-radius:2px}
+.xk-think-head{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 16px 12px;flex-shrink:0;
+  font-size:14px;font-weight:600;color:#1F1E1D;
+  font-family:-apple-system,'PingFang SC',sans-serif;
+  border-bottom:.5px solid #EBE8DF;
 }
-.xk-think-head{flex-shrink:0!important}
-.xk-think-body{flex:1!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important}
+.xk-think-close{
+  margin-left:auto;width:24px;height:24px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:50%;background:#EBE8DF;
+  cursor:pointer;font-size:12px;color:#888;flex-shrink:0;
+  -webkit-tap-highlight-color:transparent;
+}
+.xk-think-body{
+  flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:12px 14px 16px;
+}
+.xk-think-body::-webkit-scrollbar{display:none}
+.xk-think-body-inner{
+  background:#EDE9E0;border-radius:14px;
+  padding:14px 16px;
+  font-size:13.5px;color:#6E6D66;line-height:1.85;
+  font-family:-apple-system,'PingFang SC',sans-serif;
+  white-space:pre-wrap;word-break:break-word;
+}
 </style>
 <link rel="stylesheet" href="style.css?v=131">
 </head>
