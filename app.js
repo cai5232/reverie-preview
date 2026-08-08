@@ -2755,34 +2755,41 @@ document.addEventListener('DOMContentLoaded',()=>{
       this.style.height='auto'
       this.style.height=Math.min(this.scrollHeight,140)+'px'
     })
-    // 追踪中文输入法状态
+    // 追踪中文输入法状态 + 发送意图标记
     let _composing=false
-    xkta.addEventListener('compositionstart',function(){_composing=true})
+    let _pendingSend=false  // 选词中按了发送键，等 compositionend 后再发
+    xkta.addEventListener('compositionstart',function(){_composing=true;_pendingSend=false})
     xkta.addEventListener('compositionend',function(){
       _composing=false
-      // 中文选词后如果有换行，清掉并发送
+      // 删掉可能残留的 \n
       if(this.value.includes('\n')){
         this.value=this.value.replace(/\n+/g,'').trim()
         this.style.height='auto'
-        if(this.value) xkSend()
+      }
+      // input 事件检测到 \n 但因为 _composing=true 没发，_pendingSend 会标记
+      if(_pendingSend){
+        _pendingSend=false
+        if(this.value.trim()) xkSend()
       }
     })
     xkta.addEventListener('keydown',function(e){
       if(e.key==='Enter'&&!e.shiftKey){
-        if(_composing) return  // 中文选词过程中，让 compositionend 处理
+        if(_composing) return  // 选词中，交给 compositionend 处理
         e.preventDefault()
         xkSend()
       }
     })
-    // input 兜底：只要检测到 \n 就立刻清掉
-    // 注意：不管 _composing 状态，先删换行；只有不在输入法中才触发发送
+    // input 兜底：有 \n 就删；选词中则标记 _pendingSend 等 compositionend
     xkta.addEventListener('input',function(){
       if(!this.value.includes('\n'))return
       const t=this.value.replace(/\n+/g,'').trim()
       this.value=t
       this.style.height='auto'
-      // _composing=true 说明还在选字过程中，compositionend 会负责发送
-      if(!_composing&&t) setTimeout(()=>xkSend(),10)
+      if(_composing){
+        _pendingSend=!!t  // 等 compositionend 发
+      }else if(t){
+        setTimeout(()=>xkSend(),10)
+      }
     })
     xkta.addEventListener('touchend',function(e){
       e.preventDefault();this.focus()
