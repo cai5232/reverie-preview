@@ -2429,45 +2429,42 @@ function xkOpenToolDetail(row){
   const name = row._toolName || ''
   const args = row._args || {}
   const result = row._result || ''
-  const state = row._state || 'done'
 
-  // 创建遮罩+弹窗
   const overlay = document.createElement('div')
-  overlay.style.cssText = 'position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.3);display:flex;align-items:flex-end'
-  overlay.onclick = e => { if(e.target===overlay) overlay.remove() }
+  overlay.className = 'xk-tool-detail-overlay'
+  overlay.onclick = e => { if(e.target===overlay) closeToolDetail(overlay) }
 
   const sheet = document.createElement('div')
-  sheet.style.cssText = 'background:#fff;border-radius:20px 20px 0 0;width:100%;max-height:75vh;overflow-y:auto;padding:0 0 calc(env(safe-area-inset-bottom,0px)+20px)'
-  sheet.setAttribute('data-sheet','1')
+  sheet.className = 'xk-tool-detail-sheet'
 
-  const handle = document.createElement('div')
-  handle.style.cssText = 'width:36px;height:4px;background:#E0DDD8;border-radius:2px;margin:12px auto 0;cursor:grab'
-  handle.setAttribute('data-handle','1')
-  sheet.appendChild(handle)
+  sheet.innerHTML = `
+    <div class="xk-tool-detail-handle"></div>
+    <div class="xk-tool-detail-head">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10.5 2.5a3.5 3.5 0 00-3.4 4.3L2.2 11.7a1.5 1.5 0 002.1 2.1l4.9-4.9a3.5 3.5 0 004.3-4.1l-2 2-1.5-1.5 2-2A3.5 3.5 0 0010.5 2.5z" stroke="#A6A39A" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      调用工具: ${escHtml(name)}
+      <div class="xk-tool-detail-close" onclick="closeToolDetail(this.closest('.xk-tool-detail-overlay'))">✕</div>
+    </div>
+    <div class="xk-tool-detail-body">
+      <div class="xk-tool-detail-section">
+        <div class="xk-tool-detail-section-label">ARGUMENTS</div>
+        <pre class="xk-tool-detail-section-pre">${escHtml(typeof args==='object'?JSON.stringify(args,null,2):String(args))}</pre>
+      </div>
+      ${result ? `<div class="xk-tool-detail-section">
+        <div class="xk-tool-detail-section-label">RESULT</div>
+        <pre class="xk-tool-detail-section-pre">${escHtml(result)}</pre>
+      </div>` : ''}
+    </div>`
 
-  const header = document.createElement('div')
-  header.style.cssText = 'display:flex;align-items:center;gap:10px;padding:16px 20px 12px'
-  header.innerHTML = `<svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M10.5 2.5a3.5 3.5 0 00-3.4 4.3L2.2 11.7a1.5 1.5 0 002.1 2.1l4.9-4.9a3.5 3.5 0 004.3-4.1l-2 2-1.5-1.5 2-2A3.5 3.5 0 0010.5 2.5z" stroke="#5C6BC0" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span style="font-size:16px;font-weight:600;color:#111;font-family:-apple-system,'PingFang SC',sans-serif">调用工具: ${escHtml(name)}</span>`
-  sheet.appendChild(header)
-
-  const body = document.createElement('div')
-  body.style.cssText = 'padding:0 20px'
-
-  const argsStr = typeof args === 'object' ? JSON.stringify(args, null, 2) : String(args)
-  body.innerHTML = `
-    <div style="font-size:12px;color:#AAA;margin-bottom:8px;font-family:-apple-system,'PingFang SC',sans-serif">参数</div>
-    <pre style="background:#F7F6F3;border-radius:10px;padding:12px 14px;font-size:13px;color:#333;overflow-x:auto;white-space:pre-wrap;word-break:break-all;line-height:1.6;margin:0 0 16px;font-family:ui-monospace,'SF Mono',monospace">${escHtml(argsStr)}</pre>
-    ${result ? `<div style="font-size:12px;color:#AAA;margin-bottom:8px;font-family:-apple-system,'PingFang SC',sans-serif">结果</div>
-    <pre style="background:#F7F6F3;border-radius:10px;padding:12px 14px;font-size:13px;color:#333;overflow-x:auto;white-space:pre-wrap;word-break:break-all;line-height:1.6;margin:0;font-family:ui-monospace,'SF Mono',monospace">${escHtml(result)}</pre>` : ''}
-  `
-  sheet.appendChild(body)
   overlay.appendChild(sheet)
   document.body.appendChild(overlay)
+  requestAnimationFrame(()=>overlay.classList.add('open'))
+}
 
-  // 弹入动画
-  sheet.style.transform = 'translateY(100%)'
-  sheet.style.transition = 'transform .3s cubic-bezier(.32,1,.28,1)'
-  requestAnimationFrame(()=>{ sheet.style.transform = 'translateY(0)' })
+function closeToolDetail(overlay){
+  if(!overlay)return
+  const sheet = overlay.querySelector('.xk-tool-detail-sheet')
+  if(sheet) sheet.style.transform='translateY(100%)'
+  setTimeout(()=>overlay.remove(), 300)
 }
 
 document.addEventListener('DOMContentLoaded',()=>{
