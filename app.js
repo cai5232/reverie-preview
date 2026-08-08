@@ -2770,7 +2770,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       this.style.height=Math.min(this.scrollHeight,140)+'px'
     })
     xkta.addEventListener('keydown',function(e){
-      if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();xkSend()}
+      if(e.key==='Enter'||e.keyCode===13){if(!e.shiftKey){e.preventDefault();xkSend()}}
     })
     xkta.addEventListener('touchend',function(e){
       e.preventDefault();this.focus()
