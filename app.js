@@ -2489,7 +2489,8 @@ function xkOpenToolDetail(row){
   sheet.setAttribute('data-sheet','1')
 
   const handle = document.createElement('div')
-  handle.style.cssText = 'width:36px;height:4px;background:#E0DDD8;border-radius:2px;margin:12px auto 0'
+  handle.style.cssText = 'width:36px;height:4px;background:#E0DDD8;border-radius:2px;margin:12px auto 0;cursor:grab'
+  handle.setAttribute('data-handle','1')
   sheet.appendChild(handle)
 
   const header = document.createElement('div')
