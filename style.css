@@ -530,7 +530,6 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
   border:none;background:transparent;outline:none;
   font-family:-apple-system,'PingFang SC',sans-serif;
   font-size:14px;color:#1F1E1D;line-height:1.55;
-  resize:none;max-height:120px;min-height:24px;
   -webkit-user-select:text;user-select:text;-webkit-appearance:none;
   padding:0;
 }
