@@ -1953,54 +1953,95 @@ function xkClosePlus(){
   setTimeout(()=>{if(menu)menu.style.display='none'},300)
 }
 
-// ── 图片/文件处理 ──
+// ── 附件暂存区 ──
+let xkPendingAttachments=[]  // [{type:'image'|'file', dataUrl, name, size, text}]
+
+function xkRenderAttachBar(){
+  const bar=document.getElementById('xkAttachBar')
+  if(!bar)return
+  if(!xkPendingAttachments.length){bar.style.display='none';return}
+  bar.style.display='flex'
+  bar.innerHTML=xkPendingAttachments.map((a,i)=>{
+    if(a.type==='image'){
+      return`<div class="xk-attach-chip" data-idx="${i}">
+        <img src="${a.dataUrl}" style="width:36px;height:36px;border-radius:8px;object-fit:cover;flex-shrink:0">
+        <div class="xk-attach-chip-del" onclick="xkRemoveAttach(${i})">✕</div>
+      </div>`
+    }else{
+      const ext=(a.name.split('.').pop()||'').toUpperCase()
+      return`<div class="xk-attach-chip xk-attach-chip-file" data-idx="${i}">
+        <div class="xk-attach-chip-ext">${ext}</div>
+        <span class="xk-attach-chip-name">${a.name}</span>
+        <div class="xk-attach-chip-del" onclick="xkRemoveAttach(${i})">✕</div>
+      </div>`
+    }
+  }).join('')
+}
+function xkRemoveAttach(i){
+  xkPendingAttachments.splice(i,1)
+  xkRenderAttachBar()
+}
+
+// ── 图片/文件处理：进预览区 ──
 function xkHandleImgInput(e){
-  const file=e.target.files[0];if(!file)return
-  const reader=new FileReader()
-  reader.onload=ev=>{
-    xkAppendImgBubble(ev.target.result,file.name)
-    xkHistory.push({role:'user',content:[{type:'image_url',image_url:{url:ev.target.result}}]})
-    localStorage.setItem('xk_history',JSON.stringify(xkHistory))
-    xkCallAI()
-  }
-  reader.readAsDataURL(file)
+  const files=Array.from(e.target.files);if(!files.length)return
+  files.forEach(file=>{
+    const reader=new FileReader()
+    reader.onload=ev=>{
+      xkPendingAttachments.push({type:'image',dataUrl:ev.target.result,name:file.name,size:file.size})
+      xkRenderAttachBar()
+    }
+    reader.readAsDataURL(file)
+  })
   e.target.value=''
 }
 function xkHandleFileInput(e){
-  const file=e.target.files[0];if(!file)return
-  const reader=new FileReader()
-  reader.onload=ev=>{
-    const content=ev.target.result
-    xkAppendFileBubble(file.name,file.size)
-    xkHistory.push({role:'user',content:`[文件: ${file.name}]\n\`\`\`\n${content.slice(0,8000)}\n\`\`\``})
-    localStorage.setItem('xk_history',JSON.stringify(xkHistory))
-    xkCallAI()
-  }
-  reader.readAsText(file,'utf-8')
+  const files=Array.from(e.target.files);if(!files.length)return
+  files.forEach(file=>{
+    const reader=new FileReader()
+    reader.onload=ev=>{
+      xkPendingAttachments.push({type:'file',dataUrl:null,name:file.name,size:file.size,text:ev.target.result})
+      xkRenderAttachBar()
+    }
+    reader.readAsText(file,'utf-8')
+  })
   e.target.value=''
 }
-function xkAppendImgBubble(dataUrl,name){
-  const box=document.getElementById('xkStream')
-  const wrap=document.createElement('div')
-  wrap.className='xk-user-wrap'
-  const img=document.createElement('img')
-  img.src=dataUrl
-  img.style.cssText='max-width:200px;border-radius:14px;display:block;cursor:pointer'
-  img.onclick=()=>{ const a=document.createElement('a');a.href=dataUrl;a.download=name||'image';a.click() }
-  wrap.appendChild(img)
-  box.appendChild(wrap)
-  box.scrollTop=box.scrollHeight
+
+// ── 发送时把附件拼进消息 ──
+function xkFlushAttachments(textContent){
+  if(!xkPendingAttachments.length)return textContent
+  // 构建 content array (openai vision format)
+  const parts=[]
+  if(textContent)parts.push({type:'text',text:textContent})
+  xkPendingAttachments.forEach(a=>{
+    if(a.type==='image'){
+      parts.push({type:'image_url',image_url:{url:a.dataUrl}})
+    }else{
+      parts.push({type:'text',text:`[文件: ${a.name}]\n\`\`\`\n${(a.text||'').slice(0,8000)}\n\`\`\``})
+    }
+  })
+  return parts.length===1&&parts[0].type==='text'?parts[0].text:parts
 }
-function xkAppendFileBubble(name,size){
+
+// 发送时在消息区显示图片/文件
+function xkRenderAttachBubbles(){
   const box=document.getElementById('xkStream')
-  const wrap=document.createElement('div')
-  wrap.className='xk-user-wrap'
-  const bub=document.createElement('div')
-  bub.className='xk-file-bubble'
-  const ext=(name.split('.').pop()||'').toLowerCase()
-  bub.innerHTML=`<div class="xk-file-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 2h7l4 4v11a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="#5A5852" stroke-width="1.3" stroke-linejoin="round"/><path d="M11 2v5h5" stroke="#5A5852" stroke-width="1.2" stroke-linecap="round"/></svg></div><div><div class="xk-file-name">${name}</div><div class="xk-file-size">${(size/1024).toFixed(1)} KB · ${ext.toUpperCase()}</div></div>`
-  wrap.appendChild(bub)
-  box.appendChild(wrap)
+  xkPendingAttachments.forEach(a=>{
+    if(a.type==='image'){
+      const wrap=document.createElement('div');wrap.className='xk-user-wrap'
+      const img=document.createElement('img')
+      img.src=a.dataUrl
+      img.style.cssText='max-width:200px;border-radius:14px;display:block'
+      wrap.appendChild(img);box.appendChild(wrap)
+    }else{
+      const wrap=document.createElement('div');wrap.className='xk-user-wrap'
+      const ext=(a.name.split('.').pop()||'').toUpperCase()
+      const bub=document.createElement('div');bub.className='xk-file-bubble'
+      bub.innerHTML=`<div class="xk-file-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 2h7l4 4v11a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="#5A5852" stroke-width="1.3" stroke-linejoin="round"/><path d="M11 2v5h5" stroke="#5A5852" stroke-width="1.2" stroke-linecap="round"/></svg></div><div><div class="xk-file-name">${a.name}</div><div class="xk-file-size">${(a.size/1024).toFixed(1)} KB · ${ext}</div></div>`
+      wrap.appendChild(bub);box.appendChild(wrap)
+    }
+  })
   box.scrollTop=box.scrollHeight
 }
 
