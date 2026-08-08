@@ -525,15 +525,15 @@ body{color:#1C1C1E;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 
 .xk-bar{
   flex-shrink:0;
-  background:#F5F2EA;
+  background:#EEEEEC;
   padding:10px 14px calc(14px + env(safe-area-inset-bottom,0px)) 14px;
   touch-action:manipulation;
 }
 .xk-composer-card{
-  background:#FAF8F4;
-  border:1.5px solid #DDD9D0;
+  background:#FAFAFA;
+  border:1px solid #E0E0DE;
   border-radius:22px;
-  box-shadow:0 2px 12px rgba(31,30,29,.06);
+  box-shadow:0 2px 12px rgba(0,0,0,.05);
   padding:12px 12px 10px 16px;
   display:flex;flex-direction:column;gap:10px;
 }
