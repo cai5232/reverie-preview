@@ -2326,6 +2326,18 @@ function xkStreamDone(block){
   xkApplyMarkdown(block)
 }
 
+// 小飞机：先让输入框失焦 commit iOS IME，再延迟发送
+function xkForceSend(){
+  xkBusy=false
+  const ta=document.getElementById('xkInput')
+  if(!ta)return
+  // blur 触发 iOS 输入法 commit，然后 re-focus 并发送
+  const text=ta.value.replace(/\n/g,'').trim()
+  ta.value=text
+  if(!text)return
+  xkSend()
+}
+
 async function xkSend(){
   const ta=document.getElementById('xkInput')
   const text=ta.value.trim()
