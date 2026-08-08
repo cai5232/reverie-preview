@@ -384,6 +384,20 @@ async function sendMsg(){
   await callAI()
 }
 
+// 键盘Enter发送（不受isGenerating阻塞）
+document.addEventListener('DOMContentLoaded',()=>{
+  const inp=document.getElementById('chatInput')
+  if(inp){
+    inp.addEventListener('keydown',e=>{
+      if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){
+        e.preventDefault()
+        const text=inp.value.trim()
+        if(text)sendMsg()
+      }
+    })
+  }
+})
+
 async function callAI(){
   if(isGenerating)return
   isGenerating=true
