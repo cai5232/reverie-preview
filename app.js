@@ -2774,15 +2774,15 @@ document.addEventListener('DOMContentLoaded',()=>{
         xkSend()
       }
     })
-    // input 兜底：选词完成后 \n 如果还在就清掉发送
+    // input 兜底：只要检测到 \n 就立刻清掉
+    // 注意：不管 _composing 状态，先删换行；只有不在输入法中才触发发送
     xkta.addEventListener('input',function(){
-      if(_composing) return
-      if(this.value.includes('\n')){
-        const t=this.value.replace(/\n+/g,'').trim()
-        this.value=t
-        this.style.height='auto'
-        if(t) setTimeout(()=>xkSend(),10)
-      }
+      if(!this.value.includes('\n'))return
+      const t=this.value.replace(/\n+/g,'').trim()
+      this.value=t
+      this.style.height='auto'
+      // _composing=true 说明还在选字过程中，compositionend 会负责发送
+      if(!_composing&&t) setTimeout(()=>xkSend(),10)
     })
     xkta.addEventListener('touchend',function(e){
       e.preventDefault();this.focus()
