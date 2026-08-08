@@ -57,8 +57,8 @@ document.addEventListener('touchstart', function(e){
   _drag.ovr = sheet.parentElement
   _drag.y0 = e.touches[0].clientY
   sheet.style.transition = 'none'
-  e.preventDefault()
-}, {passive:false})
+  e.stopPropagation()
+}, {passive:true})
 
 document.addEventListener('touchmove', function(e){
   if(!_drag.active) return
