@@ -324,7 +324,7 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
   padding:8px 22px calc(8px + env(safe-area-inset-bottom,0px));
   display:flex;flex-direction:column;
   -webkit-overflow-scrolling:touch;
-  background:url('https://i.ibb.co/VWx86Jj0/IMG-7293.jpg') center/cover no-repeat fixed;
+  background:transparent;
 }
 .xk-stream::-webkit-scrollbar{display:none}
 
