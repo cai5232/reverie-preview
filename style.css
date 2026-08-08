@@ -757,7 +757,7 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 }
 
 /* MCP 客户端 */
-.mcp-topbar{display:flex;align-items:center;padding:12px 16px;background:#EEEEEC;position:sticky;top:0;z-index:10}
+.mcp-topbar{display:flex;align-items:center;padding:12px 16px;background:#F5F2EA;position:sticky;top:0;z-index:10}
 .mcp-topbar-left{width:72px;display:flex;align-items:center;gap:4px}
 .mcp-topbar-title{flex:1;text-align:center;font-size:15px;font-weight:600;color:#111;font-family:-apple-system,'PingFang SC',sans-serif}
 .mcp-topbar-actions{width:72px;display:flex;align-items:center;justify-content:flex-end;gap:4px}
