@@ -150,16 +150,66 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 .streaming-cursor{display:inline-block;width:2px;height:1em;background:#A6A39A;margin-left:1px;vertical-align:text-bottom;animation:blink .8s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 
-/* ── 消息区渐变遮罩 ── */
-.xk-stream-fade-top{
-  position:absolute;top:0;left:0;right:0;height:48px;
-  background:linear-gradient(to bottom,#F5F2EA 0%,rgba(245,242,234,0) 100%);
-  pointer-events:none;z-index:5;
+/* ── iOS 风格玻璃模糊保护区 ── */
+.xk-glass-top{
+  position:absolute;top:0;left:0;right:0;z-index:10;pointer-events:none;
+  height:calc(env(safe-area-inset-top,0px) + 56px);
+  background:linear-gradient(
+    to bottom,
+    rgba(245,242,234,1) 0%,
+    rgba(245,242,234,0.85) 50%,
+    rgba(245,242,234,0) 100%
+  );
+  -webkit-backdrop-filter:blur(0px);
+  backdrop-filter:blur(0px);
 }
-.xk-stream-fade-bot{
-  position:absolute;bottom:0;left:0;right:0;height:40px;
-  background:linear-gradient(to top,#F5F2EA 0%,rgba(245,242,234,0) 100%);
-  pointer-events:none;z-index:5;
+.xk-glass-top::after{
+  content:'';position:absolute;inset:0;
+  -webkit-backdrop-filter:blur(12px) saturate(1.6);
+  backdrop-filter:blur(12px) saturate(1.6);
+  -webkit-mask-image:linear-gradient(to bottom,black 30%,transparent 100%);
+  mask-image:linear-gradient(to bottom,black 30%,transparent 100%);
+}
+.xk-glass-bot{
+  position:absolute;bottom:0;left:0;right:0;z-index:10;pointer-events:none;
+  height:calc(env(safe-area-inset-bottom,0px) + 52px);
+  background:linear-gradient(
+    to top,
+    rgba(245,242,234,1) 0%,
+    rgba(245,242,234,0.85) 50%,
+    rgba(245,242,234,0) 100%
+  );
+}
+.xk-glass-bot::after{
+  content:'';position:absolute;inset:0;
+  -webkit-backdrop-filter:blur(12px) saturate(1.6);
+  backdrop-filter:blur(12px) saturate(1.6);
+  -webkit-mask-image:linear-gradient(to top,black 30%,transparent 100%);
+  mask-image:linear-gradient(to top,black 30%,transparent 100%);
+}
+
+/* ── 附件预览 chip ── */
+.xk-attach-chip{
+  position:relative;display:inline-flex;align-items:center;gap:6px;
+  background:#EBE8DF;border-radius:10px;padding:4px 24px 4px 4px;
+  flex-shrink:0;
+}
+.xk-attach-chip-file{padding:6px 28px 6px 8px}
+.xk-attach-chip-ext{
+  width:32px;height:32px;border-radius:6px;background:#DDD9D0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:700;color:#5A5852;font-family:-apple-system,sans-serif;flex-shrink:0;
+}
+.xk-attach-chip-name{
+  font-size:12px;color:#1F1E1D;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-family:-apple-system,'PingFang SC',sans-serif;
+}
+.xk-attach-chip-del{
+  position:absolute;top:-5px;right:-5px;width:18px;height:18px;
+  background:#A6A39A;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;color:#fff;cursor:pointer;font-weight:600;
+  -webkit-tap-highlight-color:transparent;
 }
 
 /* ── 加号菜单 item ── */
