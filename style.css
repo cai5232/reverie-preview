@@ -280,11 +280,10 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 .xk-think-btn:active{opacity:.5}
 .xk-think-btn svg{flex-shrink:0}
 
-/* Thinking 弹窗：底部弹出，最高到屏幕中间 */
+/* Thought process 弹窗 */
 .xk-think-overlay{
   position:fixed;inset:0;background:rgba(0,0,0,.38);z-index:200;
-  opacity:0;pointer-events:none;
-  transition:opacity .22s;
+  opacity:0;pointer-events:none;transition:opacity .22s;
 }
 .xk-think-overlay.open{opacity:1;pointer-events:auto}
 .xk-think-sheet{
@@ -320,12 +319,71 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
 .xk-think-close:active{background:#DEDAD3}
 .xk-think-body{
   flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
-  padding:14px 18px 16px;
-  font-size:13.5px;color:#6E6D66;font-weight:400;
+  padding:12px 14px 8px;
+}
+.xk-think-body::-webkit-scrollbar{display:none}
+.xk-think-body-inner{
+  background:#F0EDE6;border-radius:14px;
+  padding:13px 15px;
+  font-size:13.5px;color:#6E6D66;
   font-family:-apple-system,'PingFang SC',sans-serif;
   line-height:1.85;white-space:pre-wrap;word-break:break-word;
 }
-.xk-think-body::-webkit-scrollbar{display:none}
+
+/* 调用工具详情弹窗：内容套色块，弹窗顶端有安全距离 */
+.xk-tool-detail-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;
+  display:none;align-items:flex-end;justify-content:center;
+}
+.xk-tool-detail-overlay.open{display:flex}
+.xk-tool-detail-sheet{
+  width:100%;max-width:430px;background:#FAF8F4;
+  border-radius:20px 20px 0 0;
+  padding-bottom:calc(env(safe-area-inset-bottom,0px) + 8px);
+  max-height:calc(100vh - env(safe-area-inset-top,0px) - 60px);
+  display:flex;flex-direction:column;
+  box-shadow:0 -4px 32px rgba(0,0,0,.14);
+  transform:translateY(100%);
+  transition:transform .3s cubic-bezier(.34,1.1,.64,1);
+  overflow:hidden;
+}
+.xk-tool-detail-overlay.open .xk-tool-detail-sheet{transform:translateY(0)}
+.xk-tool-detail-handle{width:36px;height:4px;background:#DDD9D0;border-radius:2px;margin:12px auto 4px;flex-shrink:0}
+.xk-tool-detail-head{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 18px 12px;flex-shrink:0;
+  font-size:14px;font-weight:600;color:#1F1E1D;
+  font-family:-apple-system,'PingFang SC',sans-serif;
+  border-bottom:.5px solid #EBE8DF;
+}
+.xk-tool-detail-head svg{flex-shrink:0;opacity:.6}
+.xk-tool-detail-close{
+  margin-left:auto;width:26px;height:26px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:50%;background:#EBE8DF;
+  cursor:pointer;font-size:13px;color:#666;
+  -webkit-tap-highlight-color:transparent;flex-shrink:0;
+}
+.xk-tool-detail-close:active{background:#DEDAD3}
+.xk-tool-detail-body{
+  flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:12px 14px 8px;
+}
+.xk-tool-detail-body::-webkit-scrollbar{display:none}
+.xk-tool-detail-section{
+  background:#F0EDE6;border-radius:14px;
+  padding:12px 14px;margin-bottom:10px;
+}
+.xk-tool-detail-section-label{
+  font-size:11px;color:#A6A39A;margin-bottom:6px;font-weight:500;
+  letter-spacing:.04em;font-family:-apple-system,'PingFang SC',sans-serif;
+}
+.xk-tool-detail-section-pre{
+  font-size:13px;color:#5A5852;line-height:1.7;
+  white-space:pre-wrap;word-break:break-all;
+  font-family:ui-monospace,'SF Mono',monospace;
+  margin:0;
+}
 
 /* 打字动画 */
 .xk-typing-dots{display:flex;gap:5px;padding:12px 0 4px}
