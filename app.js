@@ -2275,8 +2275,22 @@ async function xkAgenticLoop(sendOptions, mcpServerMap, round){
     }
 
     let pendingThink='',thinkRafId=null
-    const flushThink=()=>{ pendingThink=''; thinkRafId=null }
-    const scheduleThinkFlush=()=>{ pendingThink='' }
+    const flushThink=()=>{
+      if(pendingThink&&thinkLivePara){
+        thinkLivePara.textContent+=pendingThink
+        pendingThink=''
+        // 色块内部滚到底
+        thinkLivePara.scrollTop=thinkLivePara.scrollHeight
+        // 如果弹窗是开着的，同步更新
+        const overlay=document.getElementById('xkThinkOverlay')
+        if(overlay&&overlay.classList.contains('open')){
+          const bd=document.getElementById('xkThinkBody')
+          if(bd)bd.textContent=thinkBuf
+        }
+      }
+      thinkRafId=null
+    }
+    const scheduleThinkFlush=()=>{if(!thinkRafId)thinkRafId=requestAnimationFrame(flushThink)}
     let pendingBody='',bodyRafId=null
     const flushBody=()=>{if(pendingBody&&streamBlock){xkStreamAppend(streamBlock,pendingBody);pendingBody=''}bodyRafId=null}
     const scheduleBodyFlush=()=>{flushBody()}
