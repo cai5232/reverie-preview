@@ -2771,6 +2771,18 @@ document.addEventListener('DOMContentLoaded',()=>{
     xkMenuBtn.addEventListener('click',function(){openSidebar()})
   }
 
+  // 全局触摸诊断：哪个元素在最顶层
+  document.addEventListener('touchstart',function(e){
+    const t=e.touches[0]
+    const el=document.elementFromPoint(t.clientX,t.clientY)
+    if(el){
+      const id=el.id||''
+      const cls=el.className&&typeof el.className==='string'?el.className.slice(0,30):''
+      const tag=el.tagName||''
+      showToast(tag+(id?'#'+id:'')+(cls?' .'+cls.split(' ')[0]:''))
+    }
+  },{passive:true,once:true})
+
   // 页面加载时强制重置busy状态，防止刷新前卡住导致永远发不出
   xkBusy=false
   const xkSendBtnEl=document.getElementById('xkSendBtn')
