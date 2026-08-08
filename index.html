@@ -225,30 +225,32 @@ function navTo(name){
   </div>
 
   <div class="xk-bar">
-    <!-- 附件预览条：在composer card上方，输入框外面 -->
     <div id="xkAttachBar" style="display:none"></div>
-    <div class="xk-composer-card">
-      <div class="xk-composer-top">
-        <textarea class="xk-textarea" id="xkInput" rows="1" placeholder="和小克说点什么……" enterkeyhint="send"></textarea>
-      </div>
-      <div class="xk-composer-bottom">
-        <span class="xk-pill-btn" id="xkPlusBtn" onclick="document.getElementById('xkFileInput').click()">
-          <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-            <path d="M6.5 1v11M1 6.5h11" stroke="#5A5852" stroke-width="1.7" stroke-linecap="round"/>
-          </svg>
-        </span>
-        <span class="xk-model-label" id="xkModelLabel">sonnet-4-6</span>
-        <div style="flex:1"></div>
-        <button class="xk-send-btn" id="xkSendBtn" type="button" onclick="xkBusy=false;xkSend()" ontouchend="event.preventDefault();xkBusy=false;xkSend()" style="touch-action:manipulation;-webkit-tap-highlight-color:transparent">
-          <svg width="18" height="14" viewBox="-1 0 20 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="1"  y="4"   width="2" height="6"  rx="1" fill="#fff"/>
-            <rect x="5"  y="2"   width="2" height="10" rx="1" fill="#fff"/>
-            <rect x="9"  y="0"   width="2" height="14" rx="1" fill="#fff"/>
-            <rect x="13" y="2"   width="2" height="10" rx="1" fill="#fff"/>
-            <rect x="17" y="4"   width="2" height="6"  rx="1" fill="#fff"/>
+    <div class="xk-input-row">
+      <!-- 附件按钮 -->
+      <button class="xk-circle-btn" id="xkPlusBtn" type="button" onclick="document.getElementById('xkFileInput').click()" style="touch-action:manipulation;-webkit-tap-highlight-color:transparent">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none">
+          <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" stroke="#5A5852" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <!-- 输入框胶囊 -->
+      <div class="xk-input-pill">
+        <textarea class="xk-textarea" id="xkInput" rows="1" placeholder="输入消息" enterkeyhint="send"></textarea>
+        <button class="xk-emoji-in-btn" type="button" style="-webkit-tap-highlight-color:transparent">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="#A6A39A" stroke-width="1.6"/>
+            <path d="M8 14s1.5 2 4 2 4-2 4-2" stroke="#A6A39A" stroke-width="1.6" stroke-linecap="round"/>
+            <circle cx="9" cy="10" r="1" fill="#A6A39A"/>
+            <circle cx="15" cy="10" r="1" fill="#A6A39A"/>
           </svg>
         </button>
       </div>
+      <!-- 发送按钮（小飞机） -->
+      <button class="xk-circle-btn xk-send-circle" id="xkSendBtn" type="button" onclick="xkBusy=false;xkSend()" ontouchend="event.preventDefault();xkBusy=false;xkSend()" style="touch-action:manipulation;-webkit-tap-highlight-color:transparent">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none">
+          <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
     </div>
   </div>
 
