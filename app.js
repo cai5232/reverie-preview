@@ -2056,11 +2056,17 @@ const WEB_SEARCH_TOOL={
 }
 
 let xkWebSearchOn=false
-function xkWebSearch(){
+function xkWebSearch(fromMenu){
   xkWebSearchOn=!xkWebSearchOn
-  const btn=document.getElementById('xkSearchBadge')
-  if(btn){btn.style.display=xkWebSearchOn?'inline-flex':'none'}
-  showToast(xkWebSearchOn?'联网搜索已开启，小克会自主决定是否搜索':'联网搜索已关闭')
+  // 徽章
+  const badge=document.getElementById('xkSearchBadge')
+  if(badge)badge.style.display=xkWebSearchOn?'inline-flex':'none'
+  // 加号菜单里的图标变色
+  const icon=document.getElementById('xkSearchIcon')
+  const label=document.getElementById('xkSearchLabel')
+  if(icon){icon.style.background=xkWebSearchOn?'#5C6BC0':''}
+  if(icon)icon.querySelectorAll('path,circle').forEach(el=>{el.setAttribute('stroke',xkWebSearchOn?'#fff':'#1F1E1D')})
+  if(label)label.style.color=xkWebSearchOn?'#5C6BC0':''
 }
 
 // 执行搜索：通过 xiaoke proxy 转 Jina Reader Search
