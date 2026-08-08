@@ -2775,12 +2775,20 @@ document.addEventListener('DOMContentLoaded',()=>{
   xkBusy=false
   const xkSendBtnEl=document.getElementById('xkSendBtn')
   if(xkSendBtnEl){
-    xkSendBtnEl.disabled=false
+    xkSendBtnEl.removeAttribute('disabled')
+    xkSendBtnEl.addEventListener('touchstart',function(e){
+      e.stopPropagation()
+      this.style.background='rgba(255,255,255,0.55)'
+    },{passive:true})
     xkSendBtnEl.addEventListener('touchend',function(e){
       e.preventDefault()
       e.stopPropagation()
-      xkSend()
+      this.style.background=''
+      xkForceSend()
     },{passive:false})
+    xkSendBtnEl.addEventListener('click',function(){
+      xkForceSend()
+    })
   }
   const xkta=document.getElementById('xkInput')
   if(xkta){
