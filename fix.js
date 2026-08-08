@@ -31,7 +31,7 @@ function _patch(){
 }
 function _fixThinkText(tw){
   var btn = tw.querySelector('.xk-think-btn')
-  if(btn) btn.innerHTML = btn.innerHTML.replace(/思考过程|Thinking/g, 'Thought')
+  if(btn) btn.innerHTML = btn.innerHTML.replace(/思考过程|Thinking|^Thought$/g, 'Thought process')
   if(!tw._thinkText){
     var hist = window.xkHistory || []
     for(var i=hist.length-1;i>=0;i--){
