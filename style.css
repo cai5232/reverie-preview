@@ -1,6 +1,6 @@
 *{margin:0;padding:0;box-sizing:border-box}
-html{height:100vh;overflow:hidden;background:url('https://i.ibb.co/tpXX1b3s/IMG-7385.jpg') center/cover no-repeat fixed}
-body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:flex;flex-direction:column;width:100%;max-width:430px;margin:0 auto;height:100vh;overflow:hidden;background:url('https://i.ibb.co/tpXX1b3s/IMG-7385.jpg') center/cover no-repeat fixed}
+html{height:100vh;overflow:hidden;background-color:#f5dde8;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");background-size:200px 200px}
+body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:flex;flex-direction:column;width:100%;max-width:430px;margin:0 auto;height:100vh;overflow:hidden;background-color:#f5dde8;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");background-size:200px 200px}
 @media (min-width:430px){body{left:50%;right:auto;transform:translateX(-50%);position:absolute;top:0}}
 @media all and (display-mode:standalone){textarea,input{-webkit-user-select:text!important;user-select:text!important;pointer-events:auto!important}}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;opacity:0;pointer-events:none;transition:opacity .28s ease}
