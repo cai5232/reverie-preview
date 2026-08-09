@@ -166,10 +166,10 @@ body{color:#1F1E1D;font-family:'GJDJCR',-apple-system,'PingFang SC',sans-serif;d
 .xk-attach-preview-img{
   position:relative;flex-shrink:0;
   width:64px;height:64px;
-  border-radius:10px;overflow:hidden;
+  border-radius:10px;overflow:visible;
 }
 .xk-attach-preview-img img{
-  width:100%;height:100%;object-fit:cover;display:block;
+  width:100%;height:100%;object-fit:cover;display:block;border-radius:10px;overflow:hidden;
 }
 .xk-attach-preview-file{
   position:relative;flex-shrink:0;
