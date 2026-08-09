@@ -2796,6 +2796,9 @@ document.addEventListener('DOMContentLoaded',()=>{
   const xkta=document.getElementById('xkInput')
   if(xkta){
     let _composing=false
+    xkta.addEventListener('input',function(){
+      if(!this._pendingSend)this._sendTriggeredAt=0
+    })
     xkta.addEventListener('compositionstart',()=>{_composing=true;xtka._composing=true})
     xkta.addEventListener('compositionend',()=>{_composing=false;xtka._composing=false})
     xkta.addEventListener('keydown',function(e){
@@ -2806,7 +2809,8 @@ document.addEventListener('DOMContentLoaded',()=>{
       }
     })
     xkta.addEventListener('blur',function(){
-      this._sendTriggeredAt=0
+      if(this._pendingSend)_xkSchedulePendingSend(this,0)
+      else this._sendTriggeredAt=0
     })
   }
 
