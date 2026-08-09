@@ -2445,7 +2445,6 @@ function xkStreamAppend(block, chunk){
 
 function xkStreamDone(block){
   if(block._cursor)block._cursor.remove()
-  // 完成后一次性渲染 markdown
   xkApplyMarkdown(block)
 }
 
