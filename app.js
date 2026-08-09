@@ -2338,6 +2338,36 @@ function _xkClearInput(){
   el.style.height=''
 }
 
+function _xkConsumePendingSend(el){
+  if(!el)return
+  const text=(el.value||'').trim()
+  el._pendingSend=false
+  el._sendingAfterBlur=false
+  if(!text)return
+  _xkClearInput()
+  _xkDirectSend(text)
+}
+
+function _xkRequestSendFromInput(){
+  const el=document.getElementById('xkInput')
+  if(!el)return
+  const text=(el.value||'').trim()
+  if(!text)return
+  if(document.activeElement===el){
+    el._pendingSend=true
+    el._sendingAfterBlur=true
+    el.blur()
+    setTimeout(()=>{
+      if(el._pendingSend&&el._sendingAfterBlur){
+        _xkConsumePendingSend(el)
+      }
+    },120)
+    return
+  }
+  _xkClearInput()
+  _xkDirectSend(text)
+}
+
 // 直接用已知文本发送（MutationObserver场景，文本已从div读出）
 async function _xkDirectSend(text){
   if(!text)return
