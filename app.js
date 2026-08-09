@@ -42,6 +42,12 @@ const SYSTEM_PROMPT=`[IMPORTANT: ALL thinking/reasoning MUST be written in Chine
 回复内容要自然，语气亲密温柔，用中文。
 段落之间空一行。`
 
+// 清理无效值，防止空字符串或"undefined"覆盖默认
+;['cfg_api','cfg_key','cfg_model'].forEach(k=>{
+  const v=localStorage.getItem(k)
+  if(v===''||v==='undefined'||v==='null')localStorage.removeItem(k)
+})
+
 let cfg={
   api:localStorage.getItem('cfg_api')||DEFAULT_API,
   key:localStorage.getItem('cfg_key')||DEFAULT_KEY,
