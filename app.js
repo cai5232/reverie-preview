@@ -2895,7 +2895,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   initPush()
   renderNovels()
   xkInitSearchBadge()
-}
+})
 
 // 操作栏：只显示 token 数（全局函数，不能放在DOMContentLoaded里）
 function xkAddActions(block, tokens){
