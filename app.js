@@ -2504,30 +2504,34 @@ function _xkClearInput(){
   el.value=''
 }
 
+let xkCurrentMsgContent = null  // 本轮发送的原始内容（含base64），API完成后清除
+
 async function _xkDirectSend(text){
   const finalText=(text||'').trim()
   if(!finalText&&!xkPendingAttachments.length)return
   if(xkBusy)return
   _xkClearInput()
   if(xkPendingAttachments.length)xkRenderAttachBubbles()
-  xkAppendUser(finalText)
+  if(finalText)xkAppendUser(finalText)
   const msgContent=xkFlushAttachments(finalText)
   xkPendingAttachments=[]
   xkRenderAttachBar()
-  // 存历史时把图片base64替换成占位符，避免localStorage超限
+  // 存历史时把base64替换成占位，避免localStorage超限
   function sanitizeForStorage(content){
     if(!content)return content
     if(typeof content==='string')return content
     if(Array.isArray(content)){
       return content.map(p=>{
         if(p&&p.type==='image_url'&&p.image_url&&p.image_url.url&&p.image_url.url.startsWith('data:')){
-          return{type:'image_url',image_url:{url:'[图片]'},_isImage:true}
+          return{type:'text',text:'[图片]'}
         }
         return p
       })
     }
     return content
   }
+  // 真实内容用于本轮API调用，占位内容存进历史
+  xkCurrentMsgContent = msgContent
   xkHistory.push({role:'user',content:sanitizeForStorage(msgContent)})
   if(xkHistory.length>60)xkHistory=xkHistory.slice(-60)
   localStorage.setItem('xk_history',JSON.stringify(xkHistory))
