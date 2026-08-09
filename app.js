@@ -3264,6 +3264,15 @@ function xkAddActions(block, tokens){
   }
   bar.appendChild(copyBtn)
   bar.appendChild(favBtn)
+  if(tokens){
+    const spacer=document.createElement('div')
+    spacer.style.flex='1'
+    bar.appendChild(spacer)
+    const tokenEl2=document.createElement('div')
+    tokenEl2.className='xk-token-count'
+    tokenEl2.textContent=tokens+' tokens'
+    bar.appendChild(tokenEl2)
+  }
   block.appendChild(bar)
   // AI block 长按：删这一轮
   let _lp=null
