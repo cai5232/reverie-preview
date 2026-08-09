@@ -2793,10 +2793,14 @@ document.addEventListener('DOMContentLoaded',()=>{
   const xkSendBtnEl=document.getElementById('xkSendBtn')
   if(xkSendBtnEl){
     xkSendBtnEl.removeAttribute('disabled')
-    xkSendBtnEl.addEventListener('touchend',function(e){
+    xkSendBtnEl.addEventListener('touchstart',function(e){
       e.preventDefault()
       e.stopPropagation()
       _xkRequestSendFromInput()
+    },{passive:false})
+    xkSendBtnEl.addEventListener('touchend',function(e){
+      e.preventDefault()
+      e.stopPropagation()
     },{passive:false})
     xkSendBtnEl.addEventListener('click',function(e){
       e.preventDefault()
