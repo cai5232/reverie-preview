@@ -2394,6 +2394,11 @@ function xkAppendUser(text){
   const el=document.createElement('div')
   el.className='xk-user-msg'
   el.textContent=text||''
+  // 长按删除
+  let _lpMsg=null
+  wrap.addEventListener('touchstart',()=>{_lpMsg=setTimeout(()=>{if(confirm('删除这条消息？'))wrap.remove()},500)},{passive:true})
+  wrap.addEventListener('touchend',()=>clearTimeout(_lpMsg),{passive:true})
+  wrap.addEventListener('touchmove',()=>clearTimeout(_lpMsg),{passive:true})
   wrap.appendChild(el)
   box.appendChild(wrap)
   box.scrollTop=box.scrollHeight
