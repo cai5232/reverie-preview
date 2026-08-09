@@ -3117,13 +3117,13 @@ document.addEventListener('DOMContentLoaded',()=>{
           if(Array.isArray(m.content)){
             m.content.forEach(p=>{
               if(!p)return
-              if(p.type==='image_url'){
-                // 占位符：显示灰色图片提示
+              if(p.type==='image_url'||(p.type==='text'&&p.text==='[图片]')){
+                // 占位符：小方块样式
                 const w=document.createElement('div');w.className='xk-user-wrap'
-                const el=document.createElement('div')
-                el.style.cssText='background:#EBE8DF;border-radius:14px;padding:10px 14px;font-size:13px;color:#A6A39A;display:flex;align-items:center;gap:6px'
-                el.innerHTML=`<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="2.5" stroke="#A6A39A" stroke-width="1.2"/><circle cx="4.5" cy="4.5" r="1" fill="#A6A39A"/><path d="M1 10l3-3 2.5 2.5 2-2 3 3" stroke="#A6A39A" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>图片`
-                w.appendChild(el);box.appendChild(w)
+                const sq=document.createElement('div')
+                sq.style.cssText='width:100px;height:100px;border-radius:14px;background:#EBE8DF;display:flex;align-items:center;justify-content:center;flex-shrink:0'
+                sq.innerHTML=`<svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="2" y="2" width="24" height="24" rx="5" stroke="#C8C4BC" stroke-width="1.5"/><circle cx="9" cy="9" r="2" fill="#C8C4BC"/><path d="M2 20l6-6 5 5 4-4 8 7" stroke="#C8C4BC" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+                w.appendChild(sq);box.appendChild(w)
               }else if(p.type==='text'&&p.text){
                 if(p.text==='[图片]'){
                   const w=document.createElement('div');w.className='xk-user-wrap'
