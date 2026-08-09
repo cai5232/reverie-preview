@@ -2322,10 +2322,27 @@ function xkAppendUser(text){
       if(!p)return
       if(p.type==='image_url'&&p.image_url){
         const w=document.createElement('div');w.className='xk-user-wrap'
+        const imgWrap=document.createElement('div')
+        imgWrap.style.cssText='width:100px;height:100px;border-radius:14px;overflow:hidden;cursor:pointer;flex-shrink:0;position:relative'
         const img=document.createElement('img')
         img.src=p.image_url.url
-        img.style.cssText='max-width:200px;border-radius:14px;display:block'
-        w.appendChild(img);box.appendChild(w)
+        img.style.cssText='width:100%;height:100%;object-fit:cover;display:block'
+        img.onclick=()=>{
+          const ov=document.createElement('div')
+          ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;display:flex;align-items:center;justify-content:center'
+          const full=document.createElement('img')
+          full.src=p.image_url.url
+          full.style.cssText='max-width:95vw;max-height:90vh;border-radius:12px;object-fit:contain'
+          ov.onclick=()=>ov.remove()
+          ov.appendChild(full);document.body.appendChild(ov)
+        }
+        imgWrap.appendChild(img)
+        // 长按删除
+        let _lp=null
+        imgWrap.addEventListener('touchstart',()=>{_lp=setTimeout(()=>{if(confirm('删除这条消息？'))w.remove()},500)},{passive:true})
+        imgWrap.addEventListener('touchend',()=>clearTimeout(_lp),{passive:true})
+        imgWrap.addEventListener('touchmove',()=>clearTimeout(_lp),{passive:true})
+        w.appendChild(imgWrap);box.appendChild(w)
       }else if(p.type==='text'&&p.text){
         const t=p.text
         // 文件文本：[文件: xxx]\n```...``` → 渲染文件气泡
