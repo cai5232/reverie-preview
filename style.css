@@ -1017,6 +1017,10 @@ body{color:#1F1E1D;font-family:'GJDJCR',-apple-system,'PingFang SC',sans-serif;d
 .xk-action-icon-btn svg{display:block;flex-shrink:0}
 
 /* MCP 弹窗input描边 */
+.search-favs-label{font-size:11px;color:#aaa;letter-spacing:1.5px;padding:14px 16px 6px;font-weight:600}
+.search-favs-list{padding:0 12px 8px}
+.search-fav-item{padding:10px 12px;background:#f5f5f5;border-radius:10px;margin-bottom:6px;font-size:13px;color:#333;line-height:1.5;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.search-fav-item:active{background:#ebe8df}
 .mcp-modal input,.mcp-modal textarea,.mcp-header-row input{outline:none!important;border:none!important;-webkit-appearance:none!important;box-shadow:none!important}
 .mcp-modal input:focus,.mcp-modal textarea:focus,.mcp-header-row input:focus{outline:none!important;border:none!important;box-shadow:none!important}
 .mcp-header-row input{background:transparent;font-size:14px;font-family:-apple-system,'PingFang SC',sans-serif;color:#1F1E1D;padding:0;min-width:0;flex:1;width:100%}
