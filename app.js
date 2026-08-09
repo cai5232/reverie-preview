@@ -2145,9 +2145,9 @@ function xkViewFile(fname, content){
     <div style="display:flex;align-items:center;padding:12px 16px;background:#FAF8F4;flex-shrink:0;border-bottom:.5px solid #DDD9D0;gap:10px">
       <div onclick="this.closest('.xk-view-file-ov').remove()" style="width:28px;height:28px;border-radius:50%;background:#EBE8DF;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:#666;flex-shrink:0">✕</div>
       <span style="flex:1;font-size:14px;font-weight:600;color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(fname)}</span>
-      <button id="xkFileSaveBtn" style="padding:6px 14px;background:#1F1E1D;border:none;border-radius:14px;font-size:13px;font-family:inherit;color:#fff;cursor:pointer;flex-shrink:0">保存</button>
+      <button id="xkFileSaveBtn" style="width:32px;height:32px;background:none;border:none;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:0"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 3v10M6 9l4 4 4-4" stroke="#1F1E1D" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 15v1a1 1 0 001 1h12a1 1 0 001-1v-1" stroke="#1F1E1D" stroke-width="1.6" stroke-linecap="round"/></svg></button>
     </div>
-    <textarea readonly style="flex:1;width:100%;padding:14px 16px;background:#FAF8F4;border:none;outline:none;font-size:13px;font-family:ui-monospace,'SF Mono',monospace;color:#1F1E1D;resize:none;line-height:1.6;box-sizing:border-box;-webkit-user-select:text;user-select:text">${escHtml(content)}</textarea>`
+    <textarea readonly style="flex:1;width:100%;padding:14px 16px;background:#fff;border:none;outline:none;font-size:13px;font-family:ui-monospace,'SF Mono',monospace;color:#1F1E1D;resize:none;line-height:1.6;box-sizing:border-box;-webkit-user-select:text;user-select:text">${escHtml(content)}</textarea>`
   document.body.appendChild(ov)
   const saveBtn=ov.querySelector('#xkFileSaveBtn')
   saveBtn.onclick=()=>{
