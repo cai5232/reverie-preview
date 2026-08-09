@@ -788,6 +788,39 @@ function showToast(msg){
   t._t=setTimeout(()=>t.style.opacity='0',1800)
 }
 
+// ── IndexedDB 图片存储 ──
+const IDB_NAME='reverie_imgs'
+const IDB_STORE='images'
+let _idbPromise=null
+function idbOpen(){
+  if(_idbPromise)return _idbPromise
+  _idbPromise=new Promise((resolve,reject)=>{
+    const req=indexedDB.open(IDB_NAME,1)
+    req.onupgradeneeded=e=>e.target.result.createObjectStore(IDB_STORE)
+    req.onsuccess=e=>resolve(e.target.result)
+    req.onerror=e=>reject(e.target.error)
+  })
+  return _idbPromise
+}
+async function idbPut(key,value){
+  const db=await idbOpen()
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(IDB_STORE,'readwrite')
+    tx.objectStore(IDB_STORE).put(value,key)
+    tx.oncomplete=resolve
+    tx.onerror=e=>reject(e.target.error)
+  })
+}
+async function idbGet(key){
+  const db=await idbOpen()
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(IDB_STORE,'readonly')
+    const req=tx.objectStore(IDB_STORE).get(key)
+    req.onsuccess=e=>resolve(e.target.result)
+    req.onerror=e=>reject(e.target.error)
+  })
+}
+
 // ── WebPush 订阅 ──
 async function initPush(){
   if(!('serviceWorker' in navigator)||!('PushManager' in window))return
