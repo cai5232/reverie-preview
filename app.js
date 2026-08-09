@@ -2711,6 +2711,7 @@ async function xkAgenticLoop(sendOptions, mcpServerMap, round){
     xkHistory.push({role:'assistant',content:histContent,tokens:totalTokens||0})
     if(xkHistory.length>60)xkHistory=xkHistory.slice(-60)
     localStorage.setItem('xk_history',JSON.stringify(xkHistory))
+    xkHistoryPersist()
 
   }catch(err){
     if(typing.parentNode)typing.remove()
@@ -2841,28 +2842,6 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   mcpInitDefaults()
   mcpRenderList()
-  // 启动时先从服务器把数据恢复到localStorage，然后重新初始化
-  kvSyncFromServer().then(()=>{
-    // 恢复后重新加载历史
-    const restored=localStorage.getItem('xk_history')
-    if(restored){
-      try{
-        const arr=JSON.parse(restored)
-        if(arr.length>xkHistory.length){
-          xkHistory=arr
-          // 如果流已经渲染过，重新渲染（一般首次打开还没渲染）
-          const box=document.getElementById('xkStream')
-          if(box&&!box._historyRendered)return  // DOMContentLoaded末尾会渲染
-        }
-      }catch{}
-    }
-    // 恢复mcp_servers
-    const mcpStored=localStorage.getItem('mcp_servers')
-    if(mcpStored){try{_mcpServers=JSON.parse(mcpStored);mcpRenderList()}catch{}}
-    // 恢复novel_books
-    const nvStored=localStorage.getItem('novel_books')
-    if(nvStored){try{novelBooks=JSON.parse(nvStored);renderNovels()}catch{}}
-  })
 
   const mcpTa=document.getElementById('mcpCustomInput')
   if(mcpTa){
