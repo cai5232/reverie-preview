@@ -2514,7 +2514,21 @@ async function _xkDirectSend(text){
   const msgContent=xkFlushAttachments(finalText)
   xkPendingAttachments=[]
   xkRenderAttachBar()
-  xkHistory.push({role:'user',content:msgContent})
+  // 存历史时把图片base64替换成占位符，避免localStorage超限
+  function sanitizeForStorage(content){
+    if(!content)return content
+    if(typeof content==='string')return content
+    if(Array.isArray(content)){
+      return content.map(p=>{
+        if(p&&p.type==='image_url'&&p.image_url&&p.image_url.url&&p.image_url.url.startsWith('data:')){
+          return{type:'image_url',image_url:{url:'[图片]'},_isImage:true}
+        }
+        return p
+      })
+    }
+    return content
+  }
+  xkHistory.push({role:'user',content:sanitizeForStorage(msgContent)})
   if(xkHistory.length>60)xkHistory=xkHistory.slice(-60)
   localStorage.setItem('xk_history',JSON.stringify(xkHistory))
   const box=document.getElementById('xkStream')
