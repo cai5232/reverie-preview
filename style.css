@@ -66,7 +66,7 @@ body{color:#1F1E1D;font-family:'GJDJCR',-apple-system,'PingFang SC',sans-serif;d
 .msg-row.them .bubble-quote-name{color:#5a9fe8}
 .bubble-quote-text{font-size:12px;color:rgba(0,0,0,.4);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .msg-row.me .bubble-quote-text{color:rgba(255,255,255,.6)}
-.input-bar{position:fixed;bottom:0;left:0;right:0;max-width:430px;margin:0 auto;padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px)) 12px;display:flex;align-items:flex-end;gap:8px;background:#F8F8F6;border-top:.5px solid rgba(31,30,29,.10);z-index:10}
+.input-bar{position:fixed;bottom:0;left:0;right:0;max-width:430px;margin:0 auto;padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px)) 12px;display:flex;align-items:flex-end;gap:8px;background:rgba(248,248,246,0.65);-webkit-backdrop-filter:blur(24px) saturate(1.6);backdrop-filter:blur(24px) saturate(1.6);border-top:.5px solid rgba(31,30,29,.06);z-index:10}
 .home-bar-spacer{height:env(safe-area-inset-bottom,0px);background:#F8F8F6;flex-shrink:0}
 .input-img-btn{display:none}
 .input-emoji-btn{display:none}
