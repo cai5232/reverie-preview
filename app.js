@@ -202,7 +202,13 @@ function closeSearch(){
 }
 function doSearch(q){
   const box=document.getElementById('searchResults')
-  if(!q.trim()){box.innerHTML='<div class="search-empty">输入关键词搜索</div>';return}
+  const favsSection=document.getElementById('xkFavsSection')
+  if(!q.trim()){
+    box.innerHTML=''
+    if(favsSection)favsSection.style.display='block'
+    return
+  }
+  if(favsSection)favsSection.style.display='none'
   const hits=chatHistory.filter(m=>m.content&&m.content.includes(q))
   if(!hits.length){box.innerHTML='<div class="search-empty">没有找到相关消息</div>';return}
   const re=new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'g')
