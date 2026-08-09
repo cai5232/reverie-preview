@@ -2880,19 +2880,26 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(xkHistory.length){
     const box=document.getElementById('xkStream')
     xkHistory.forEach(m=>{
-      if(m.role==='user'){
-        xkAppendUser(m.content)
-      }else{
-        let heart='',body=m.content
-        const hm=m.content.match(/\[THINK\]([\s\S]*?)\[\/THINK\]/)
-        if(hm){heart=hm[1].trim();body=m.content.slice(hm.index+hm[0].length).trim()}
-        else{
-          const hm2=m.content.match(/\[心声\]([\s\S]*?)\[\/心声\]/)
-          if(hm2){heart=hm2[1].trim();body=m.content.slice(hm2.index+hm2[0].length).trim()}
+      try{
+        // 跳过 tool 消息和 tool_calls 中间过程消息（content为null）
+        if(m.role==='tool')return
+        if(m.role==='assistant'&&m.tool_calls)return
+        if(m.role==='user'){
+          xkAppendUser(m.content)
+        }else if(m.role==='assistant'){
+          const raw=m.content||''
+          if(!raw)return
+          let heart='',body=raw
+          const hm=raw.match(/\[THINK\]([\s\S]*?)\[\/THINK\]/)
+          if(hm){heart=hm[1].trim();body=raw.slice(hm.index+hm[0].length).trim()}
+          else{
+            const hm2=raw.match(/\[心声\]([\s\S]*?)\[\/心声\]/)
+            if(hm2){heart=hm2[1].trim();body=raw.slice(hm2.index+hm2[0].length).trim()}
+          }
+          const block=xkRenderAI(body||'',heart||null)
+          if(block)xkAddActions(block,m.tokens||0)
         }
-        const block=xkRenderAI(body||'',heart||null)
-        if(block)xkAddActions(block,m.tokens||0)
-      }
+      }catch(e){console.warn('[history restore]',e)}
     })
     box.scrollTop=box.scrollHeight
   }
