@@ -2204,7 +2204,7 @@ function xkApplyMarkdown(block){
     const _code=htmlCode
     card.onclick=()=>xkOpenHtml(_code)
     // 保留html块之外的文字
-    const htmlRaw=htmlCodeM?fullText.match(/```html[\s\S]+?```/i)?.[0]:fullText.match(/<!DOCTYPE[\s\S]+?<\/html>/i)?.[0]:null
+    const htmlRaw=htmlCodeM?(fullText.match(/```html[\s\S]+?```/i)||[])[0]:(fullText.match(/<!DOCTYPE[\s\S]+?<\/html>/i)||[])[0]||null
     const leftover2=htmlRaw?fullText.replace(htmlRaw,'').trim():''
     paras.forEach(p=>p.remove())
     block.appendChild(card)
