@@ -2789,7 +2789,13 @@ document.addEventListener('DOMContentLoaded',()=>{
       e.stopPropagation()
       this.style.background=''
       this.style.border=''
-      xkForceSend()
+      // 先 blur 让 iOS 输入法 commit 内容到 DOM，再延迟读取
+      var inp=document.getElementById('xkInput')
+      if(inp) inp.blur()
+      setTimeout(function(){
+        var text=_xkGetInputText()
+        if(text) _xkDirectSend(text)
+      },80)
     },{passive:false})
     xkSendBtnEl.addEventListener('touchcancel',function(){
       this.style.background=''
