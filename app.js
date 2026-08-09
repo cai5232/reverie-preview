@@ -1,20 +1,18 @@
-// ── 全局函数代理：确保 HTML inline onclick 在任何加载时序下都能找到 ──
-;['clickToggle','setToggle','fetchModels','fetchGenModels','fetchImgModels','saveCfg',
-  'navTo','openSidebar','closeSidebar','openDotsMenu','closeDotsMenu',
-  'openSearch','closeSearch','doSearch',
-  'xkTogglePlus','xkClosePlus','xkHandleSubmit','xkForceSend','xkSend',
-  'xkWebSearch','xkOpenHtml','xkCloseHtml','xkCloseThink',
-  'mcpPingAll','mcpShowAdd','mcpBackToList','mcpShowEdit','closeMcpAdd','mcpSaveServer',
-  'mcpSelectType','mcpAddHeaderRow','closeMcpCall','mcpDoCall',
-  'closeToolDetail'
-].forEach(name=>{
-  window[name]=function(){
-    // 等到真正的函数定义后再调用
-    const fn=window['_fn_'+name]
-    if(fn)return fn.apply(this,arguments)
-    console.warn('[reverie] function not ready:',name)
+// ── 把所有 HTML inline onclick 用到的函数显式挂到 window ──
+// GPT 修改后这些函数可能丢失全局绑定，补一次兜底
+;(function(){
+  const fns={
+    clickToggle,setToggle,fetchModels,fetchGenModels,fetchImgModels,saveCfg,
+    navTo,openSidebar,closeSidebar,openDotsMenu,closeDotsMenu,
+    openSearch,closeSearch,doSearch,
+    xkTogglePlus,xkClosePlus,xkHandleSubmit,xkForceSend,xkSend,
+    xkWebSearch,xkOpenHtml,xkCloseHtml,xkCloseThink,
+    mcpPingAll,mcpShowAdd,mcpBackToList,mcpShowEdit,closeMcpAdd,mcpSaveServer,
+    mcpSelectType,mcpAddHeaderRow,closeMcpCall,mcpDoCall,closeToolDetail,
+    showToast,renderSetting,renderNovels
   }
-})
+  Object.entries(fns).forEach(([k,v])=>{if(typeof v==='function')window[k]=v})
+})()
 
 const DEFAULT_API='https://yanvn.zeabur.app/v1'
 const DEFAULT_KEY='xiaoke-cai-2026'
