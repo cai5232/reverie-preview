@@ -2395,38 +2395,6 @@ function xkStreamAppend(block, chunk){
   xkApplyMarkdown(block)
 }
 
-function xkParseReturnedFiles(text){
-  const results=[]
-  const re=/\[(?:文件|文件名|File)[:：]\s*([^\]]+)\]\s*(?:```[^\n]*\n([\s\S]*?)```|((?:.|\n)+?)(?=\[(?:文件|文件名|File)[:：]|$))/gi
-  let m
-  while((m=re.exec(text))!==null){
-    const name=m[1].trim()
-    const content=(m[2]!==undefined?m[2]:m[3]||'').trim()
-    if(name)results.push({name,content})
-  }
-  return results
-}
-function xkRenderReturnedFile(name,content,container){
-  const ext=(name.split('.').pop()||'').toUpperCase().slice(0,4)
-  const wrap=document.createElement('div')
-  wrap.style.cssText='margin:6px 0'
-  const bub=document.createElement('div')
-  bub.className='xk-file-bubble'
-  bub.style.cursor='pointer'
-  bub.title='点击下载'
-  bub.innerHTML=`<div class="xk-file-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 2h7l4 4v11a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="#5A5852" stroke-width="1.3" stroke-linejoin="round"/><path d="M11 2v5h5" stroke="#5A5852" stroke-width="1.2" stroke-linecap="round"/></svg></div><div><div class="xk-file-name">${escHtml(name)}</div><div class="xk-file-size">${content.length} 字节 · ${ext||'FILE'}</div></div>`
-  bub.onclick=()=>{
-    const blob=new Blob([content],{type:'text/plain;charset=utf-8'})
-    const url=URL.createObjectURL(blob)
-    const a=document.createElement('a')
-    a.href=url;a.download=name
-    document.body.appendChild(a);a.click()
-    document.body.removeChild(a)
-    setTimeout(()=>URL.revokeObjectURL(url),1000)
-  }
-  wrap.appendChild(bub)
-  container.appendChild(wrap)
-}
 function xkStreamDone(block){
   if(block._cursor)block._cursor.remove()
   xkApplyMarkdown(block)
