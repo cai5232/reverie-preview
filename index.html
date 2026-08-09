@@ -121,9 +121,13 @@ function navTo(name){
 <div class="search-overlay" id="searchOverlay">
   <div class="search-header">
     <div class="search-back" onclick="closeSearch()">✕</div>
-    <input class="search-input" id="searchInput" placeholder="搜索聊天记录">
+    <input class="search-input" id="searchInput" placeholder="搜索聊天记录" oninput="doSearch(this.value)">
   </div>
-  <div class="search-results" id="searchResults"><div class="search-empty">输入关键词搜索</div></div>
+  <div id="xkFavsSection">
+    <div class="search-favs-label">收藏</div>
+    <div id="xkFavsList" class="search-favs-list"></div>
+  </div>
+  <div class="search-results" id="searchResults"></div>
 </div>
 
 <!-- 消息长按菜单 -->
