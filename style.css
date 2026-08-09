@@ -459,7 +459,7 @@ body{color:#1F1E1D;font-family:'GJDJCR',-apple-system,'PingFang SC',sans-serif;d
 }
 .xk-tool-detail-overlay.open{display:flex}
 .xk-tool-detail-sheet{
-  width:100%;max-width:430px;background:#FAF8F4;
+  width:100%;max-width:430px;background:#FFFFFF;
   border-radius:20px 20px 0 0;
   padding-bottom:calc(env(safe-area-inset-bottom,0px) + 8px);
   max-height:calc(100vh - env(safe-area-inset-top,0px) - 60px);
