@@ -622,10 +622,13 @@ function renderSetting(){
 }
 
 function setToggle(id,val){
-  document.getElementById(id).className='toggle'+(val?' on':'')
+  const el=document.getElementById(id)
+  if(!el)return
+  el.className='toggle'+(val?' on':'')
 }
 function clickToggle(id){
   const el=document.getElementById(id)
+  if(!el)return
   const on=el.classList.contains('on')
   const newVal=!on
   el.className='toggle'+(newVal?' on':'')
@@ -639,6 +642,12 @@ function clickToggle(id){
     showToast(newVal?'保活开启':'保活关闭')
   }
 }
+window.setToggle=setToggle
+window.clickToggle=clickToggle
+window.fetchModels=fetchModels
+window.fetchGenModels=fetchGenModels
+window.fetchImgModels=fetchImgModels
+window.saveCfg=saveCfg
 
 async function fetchModels(){
   const api=document.getElementById('cfgApi').value.trim()
