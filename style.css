@@ -32,7 +32,7 @@ body{color:#1F1E1D;font-family:'GJDJCR',-apple-system,'PingFang SC',sans-serif;d
 .header-sub-menu{cursor:pointer;-webkit-tap-highlight-color:transparent;padding:2px}
 .page{display:none;flex-direction:column;overflow:hidden;position:relative;flex:1;min-height:0}
 .page.active{display:flex}
-.messages{flex:1;overflow-y:auto;padding:calc(env(safe-area-inset-top,0px) + 54px) 12px calc(70px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:2px;background:transparent;min-height:0}
+.messages{flex:1;overflow-y:auto;padding:calc(env(safe-area-inset-top,0px) + 54px) 12px calc(70px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:2px;background:transparent;min-height:0;-webkit-mask-image:linear-gradient(to bottom,transparent 0%,black calc(env(safe-area-inset-top,0px) + 64px),black calc(100% - 80px),transparent 100%);mask-image:linear-gradient(to bottom,transparent 0%,black calc(env(safe-area-inset-top,0px) + 64px),black calc(100% - 80px),transparent 100%)}
 .messages::-webkit-scrollbar{display:none}
 .time-label{text-align:center;font-size:11px;color:#6E6D66;margin:10px 0 4px;user-select:none}
 .msg-row{display:flex;flex-direction:column;margin-bottom:6px}
