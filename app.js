@@ -3092,12 +3092,11 @@ document.addEventListener('DOMContentLoaded',()=>{
             m.content.forEach(p=>{
               if(!p)return
               if(p.type==='image_url'){
-                // 占位符：显示灰色图片提示
                 const w=document.createElement('div');w.className='xk-user-wrap'
-                const el=document.createElement('div')
-                el.style.cssText='background:#EBE8DF;border-radius:14px;padding:10px 14px;font-size:13px;color:#A6A39A;display:flex;align-items:center;gap:6px'
-                el.innerHTML=`<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="2.5" stroke="#A6A39A" stroke-width="1.2"/><circle cx="4.5" cy="4.5" r="1" fill="#A6A39A"/><path d="M1 10l3-3 2.5 2.5 2-2 3 3" stroke="#A6A39A" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>图片`
-                w.appendChild(el);box.appendChild(w)
+                const imgWrap=document.createElement('div')
+                imgWrap.style.cssText='width:100px;height:100px;border-radius:14px;overflow:hidden;flex-shrink:0;background:#EBE8DF;display:flex;align-items:center;justify-content:center'
+                imgWrap.innerHTML=`<svg width="28" height="28" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="2.5" stroke="#C8C4BC" stroke-width="1.2"/><circle cx="4.5" cy="4.5" r="1" fill="#C8C4BC"/><path d="M1 10l3-3 2.5 2.5 2-2 3 3" stroke="#C8C4BC" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+                w.appendChild(imgWrap);box.appendChild(w)
               }else if(p.type==='text'&&p.text){
                 if(p.text==='[图片]'){
                   const w=document.createElement('div');w.className='xk-user-wrap'
