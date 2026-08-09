@@ -2557,15 +2557,6 @@ async function _xkDirectSend(text){
   // 存历史时把base64替换成占位，避免localStorage超限
   function sanitizeForStorage(content){
     if(!content)return content
-    if(typeof content==='string')return content
-    if(Array.isArray(content)){
-      return content.map(p=>{
-        if(p&&p.type==='image_url'&&p.image_url&&p.image_url.url&&p.image_url.url.startsWith('data:')){
-          return{type:'text',text:'[图片]'}
-        }
-        return p
-      })
-    }
     return content
   }
   // 真实内容用于本轮API调用，占位内容存进历史
