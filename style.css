@@ -957,7 +957,7 @@ body{color:#1F1E1D;font-family:'GJDJCR',-apple-system,'PingFang SC',sans-serif;d
 .xk-think-live{
   margin:0 0 8px;
   border-radius:12px;
-  background:#F0EDE6;
+  background:#FFF3E8;
   overflow:hidden;
   transition:opacity .25s ease, max-height .25s ease;
   max-height:600px;
