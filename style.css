@@ -219,8 +219,9 @@ body{color:#1F1E1D;font-family:'GJDJCR',-apple-system,'PingFang SC',sans-serif;d
 /* ── 文件气泡 ── */
 .xk-file-bubble{
   display:flex;align-items:center;gap:10px;
-  background:#E5E5E3;border-radius:14px;
+  background:#FFFFFF;border-radius:14px;
   padding:10px 14px;max-width:220px;
+  border:.5px solid rgba(31,30,29,.06);
 }
 .xk-file-icon{width:36px;height:36px;border-radius:8px;background:#D8D8D6;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .xk-file-name{font-size:13px;color:#1C1C1E;font-weight:500;word-break:break-all;line-height:1.4;font-family:-apple-system,'PingFang SC',sans-serif}
