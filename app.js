@@ -3284,6 +3284,27 @@ function xkAddActions(block, tokens){
     const path=favBtn.querySelector('path')
     if(path)path.setAttribute('fill',faved?'#C8C4BC':'none')
     showToast(faved?'已收藏':'已取消收藏')
+    if(!faved){
+      // 取消收藏：从 xk_favorites 里删掉这条
+      const text=Array.from(block.querySelectorAll('.xk-ai-para')).map(p=>p.textContent).join('\n')
+      const favs=JSON.parse(localStorage.getItem('xk_favorites')||'[]')
+      const idx=favs.findIndex(f=>(f.text||'').slice(0,30)===text.slice(0,30))
+      if(idx>=0)favs.splice(idx,1)
+      localStorage.setItem('xk_favorites',JSON.stringify(favs))
+      // 如果搜索弹窗开着，实时刷新
+      const favsSection=document.getElementById('xkFavsSection')
+      const favsList=document.getElementById('xkFavsList')
+      if(favsSection&&favsList){
+        if(favs.length){
+          favsList.innerHTML=favs.map((f,i)=>{
+            const preview=(f.text||'').replace(/\s+/g,' ').trim().slice(0,60)
+            return`<div class="search-fav-item" onclick="xkJumpToFav(${i})">${escHtml(preview+(preview.length>=60?'…':''))}</div>`
+          }).join('')
+        }else{
+          favsSection.style.display='none'
+        }
+      }
+    }
     if(faved){
       const text=Array.from(block.querySelectorAll('.xk-ai-para')).map(p=>p.textContent).join('\n')
       const favs=JSON.parse(localStorage.getItem('xk_favorites')||'[]')
