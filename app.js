@@ -2587,14 +2587,29 @@ async function _xkDirectSend(text){
   const msgContent=xkFlushAttachments(finalText)
   xkPendingAttachments=[]
   xkRenderAttachBar()
-  // 存历史时把base64替换成占位，避免localStorage超限
-  function sanitizeForStorage(content){
+  // 图片存IndexedDB，历史只存idb:key引用
+  async function sanitizeForStorage(content){
     if(!content)return content
+    if(typeof content==='string')return content
+    if(Array.isArray(content)){
+      const result=[]
+      for(const p of content){
+        if(p&&p.type==='image_url'&&p.image_url&&p.image_url.url&&p.image_url.url.startsWith('data:')){
+          const key='img_'+Date.now()+'_'+Math.random().toString(36).slice(2)
+          try{await idbPut(key,p.image_url.url)}catch(e){console.warn('[idb]',e)}
+          result.push({type:'image_url',image_url:{url:'idb:'+key}})
+        }else{
+          result.push(p)
+        }
+      }
+      return result
+    }
     return content
   }
   // 真实内容用于本轮API调用，占位内容存进历史
   xkCurrentMsgContent = msgContent
-  xkHistory.push({role:'user',content:sanitizeForStorage(msgContent)})
+  const storedContent = await sanitizeForStorage(msgContent)
+  xkHistory.push({role:'user',content:storedContent})
   if(xkHistory.length>60)xkHistory=xkHistory.slice(-60)
   localStorage.setItem('xk_history',JSON.stringify(xkHistory))
   const box=document.getElementById('xkStream')
