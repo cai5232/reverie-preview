@@ -2773,98 +2773,44 @@ document.addEventListener('DOMContentLoaded',()=>{
     xkMenuBtn.addEventListener('click',function(){openSidebar()})
   }
 
-  // 页面加载时强制重置busy状态，防止刷新前卡住导致永远发不出
   xkBusy=false
   const xkSendBtnEl=document.getElementById('xkSendBtn')
   if(xkSendBtnEl){
-    var _xkSendFlag = false
     xkSendBtnEl.removeAttribute('disabled')
-    xkSendBtnEl.addEventListener('touchstart', function(e){
+    xkSendBtnEl.addEventListener('touchend',function(e){
+      e.preventDefault()
       e.stopPropagation()
-      _xkSendFlag = true
-      this.style.opacity = '0.6'
-      var text = _xkGetInputText()
-      showToast('读到：[' + text + ']')
-    }, {passive: true})
-    xkSendBtnEl.addEventListener('touchend', function(){
-      this.style.opacity = ''
-    }, {passive: true})
-    xkSendBtnEl.addEventListener('touchcancel', function(){
-      _xkSendFlag = false
-      this.style.opacity = ''
-    }, {passive: true})
-    xkSendBtnEl.addEventListener('click', function(){
-      // 桌面端 / 已失焦时走 click
-      var text = _xkGetInputText()
-      if(text) _xkDirectSend(text)
+      const text=_xkGetInputText()
+      if(text){
+        _xkClearInput()
+        _xkDirectSend(text)
+      }
+    },{passive:false})
+    xkSendBtnEl.addEventListener('click',function(){
+      const text=_xkGetInputText()
+      if(text){
+        _xkClearInput()
+        _xkDirectSend(text)
+      }
     })
   }
   const xkta=document.getElementById('xkInput')
   if(xkta){
-    // contenteditable div：读取纯文本
-    function xkGetText(){
-      return(xkta.innerText||xkta.textContent||'').replace(/\n+$/,'').trim()
-    }
-    function xkClearText(){
-      xkta.innerHTML=''
-    }
-    // 空内容时显示 placeholder（用 CSS attr(data-placeholder) 实现，JS只管add/remove class）
-    function xkUpdatePlaceholder(){
-      const empty=xkGetText()===''
-      xkta.classList.toggle('xk-empty',empty)
-    }
-    xkta.classList.add('xk-empty')
-
     xkta.addEventListener('input',function(){
-      xkUpdatePlaceholder()
+      this.style.height='auto'
+      this.style.height=Math.min(this.scrollHeight,120)+'px'
     })
-    xkta.addEventListener('focus',function(){xkUpdatePlaceholder()})
-    xkta.addEventListener('blur', function(){
-      xkUpdatePlaceholder()
-      if(_xkSendFlag){
-        _xkSendFlag = false
-        var text = _xkGetInputText()
-        if(text) _xkDirectSend(text)
-      }
-    })
-
-    // iOS PWA contenteditable：按发送键不触发 keydown，而是插入 <br>
-    // 用 MutationObserver 检测 <br> 插入，立刻清掉并发送
-    const _observer = new MutationObserver(()=>{
-      if(xkta.querySelector('br')||xkta.innerText.includes('\n')){
-        // 有换行：取文本、清空、发送
-        const raw=(xkta.innerText||'').replace(/\n/g,'').trim()
-        if(raw){
-          xkta.innerHTML=''
-          xkta.classList.add('xk-empty')
-          // 用 setTimeout 0 确保 iOS IME commit 完成
-          setTimeout(()=>{
-            // 直接发，绕过 xkSend 里再次读取 div 的逻辑
-            _xkDirectSend(raw)
-          },0)
-        }else{
-          xkta.innerHTML=''
-          xkta.classList.add('xk-empty')
-        }
-      }
-    })
-    _observer.observe(xkta,{childList:true,subtree:true,characterData:true})
-
-    // keydown Enter 兜底（桌面端/英文键盘）
     let _composing=false
-    xkta.addEventListener('compositionstart',function(){_composing=true})
-    xkta.addEventListener('compositionend',function(){_composing=false})
+    xkta.addEventListener('compositionstart',()=>_composing=true)
+    xkta.addEventListener('compositionend',()=>_composing=false)
     xkta.addEventListener('keydown',function(e){
       if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing&&!_composing){
         e.preventDefault()
-        xkSend()
+        const text=_xkGetInputText()
+        if(text){_xkClearInput();_xkDirectSend(text)}
       }
     })
-    xkta.addEventListener('input',function(){
-      xkUpdatePlaceholder()
-    })
   }
-  // xkSendBtn 的 touchend 在 HTML 里用 ontouchend 绑了，这里不再重复绑
 
   // iOS PWA 切后台回来重置 xkBusy
   document.addEventListener('visibilitychange',()=>{
