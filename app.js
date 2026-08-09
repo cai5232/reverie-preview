@@ -2136,23 +2136,79 @@ function xkCloseHtml(){
   document.getElementById('xkHtmlFrame').srcdoc=''
 }
 
-// ── Markdown 渲染（替换原 xkApplyMarkdown）──
-function xkApplyMarkdown(block){
-  block.querySelectorAll('.xk-ai-para').forEach(p=>{
-    const raw=p.textContent||''
-    p.innerHTML=xkMd(raw)
-  })
-  // 检测 HTML 代码块，变成可点击预览气泡
-  block.querySelectorAll('.xk-ai-para').forEach(p=>{
-    const htmlM=p.innerHTML.match(/&lt;!DOCTYPE html[\s\S]*?&lt;\/html&gt;/i)||p.textContent.match(/<!DOCTYPE html[\s\S]*?<\/html>/i)
-    if(htmlM){
-      const code=p.textContent.match(/<!DOCTYPE html[\s\S]*?<\/html>/i)?.[0]||htmlM[0].replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&')
-      const bub=document.createElement('div')
-      bub.className='xk-html-bubble'
-      bub.innerHTML=`<iframe class="xk-html-preview" srcdoc="${code.replace(/"/g,'&quot;')}" sandbox="allow-scripts allow-same-origin"></iframe><div class="xk-html-foot"><span class="xk-html-foot-label">HTML 预览</span><span class="xk-html-foot-btn">全屏 ›</span></div>`
-      bub.onclick=()=>xkOpenHtml(code)
-      p.replaceWith(bub)
+// ── 查看AI返回的文件 ──
+function xkViewFile(fname, content){
+  const ov=document.createElement('div')
+  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:600;display:flex;flex-direction:column;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)'
+  ov.className='xk-view-file-ov'
+  ov.innerHTML=`
+    <div style="display:flex;align-items:center;padding:12px 16px;background:#FAF8F4;flex-shrink:0;border-bottom:.5px solid #DDD9D0;gap:10px">
+      <div onclick="this.closest('.xk-view-file-ov').remove()" style="width:28px;height:28px;border-radius:50%;background:#EBE8DF;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:#666;flex-shrink:0">✕</div>
+      <span style="flex:1;font-size:14px;font-weight:600;color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(fname)}</span>
+      <button id="xkFileSaveBtn" style="padding:6px 14px;background:#1F1E1D;border:none;border-radius:14px;font-size:13px;font-family:inherit;color:#fff;cursor:pointer;flex-shrink:0">保存</button>
+    </div>
+    <textarea readonly style="flex:1;width:100%;padding:14px 16px;background:#FAF8F4;border:none;outline:none;font-size:13px;font-family:ui-monospace,'SF Mono',monospace;color:#1F1E1D;resize:none;line-height:1.6;box-sizing:border-box;-webkit-user-select:text;user-select:text">${escHtml(content)}</textarea>`
+  document.body.appendChild(ov)
+  const saveBtn=ov.querySelector('#xkFileSaveBtn')
+  saveBtn.onclick=()=>{
+    try{
+      const blob=new Blob([content],{type:'text/plain'})
+      const url=URL.createObjectURL(blob)
+      const a=document.createElement('a');a.href=url;a.download=fname
+      document.body.appendChild(a);a.click()
+      setTimeout(()=>{URL.revokeObjectURL(url);a.remove()},500)
+      showToast('已保存 '+fname)
+    }catch(e){
+      // iOS不支持下载，复制内容到剪贴板
+      navigator.clipboard&&navigator.clipboard.writeText(content).then(()=>showToast('内容已复制，可粘贴保存'))
     }
+  }
+}
+
+function xkApplyMarkdown(block){
+  // 先收集所有 para，避免遍历中DOM变化
+  const paras=Array.from(block.querySelectorAll('.xk-ai-para'))
+  paras.forEach(p=>{
+    const raw=p.textContent||''
+
+    // ── 检测 AI 返回的文件格式 ──
+    // 格式：[文件: xxx.txt]\n```\n内容\n```
+    const fileM=raw.match(/^\[文件:\s*(.+?)\]\s*[\n\r]+```[\w]*[\n\r]([\s\S]*?)```/)
+    if(fileM){
+      const fname=fileM[1].trim()
+      const content=fileM[2]
+      const ext=(fname.split('.').pop()||'').toUpperCase()
+      const size=new Blob([content]).size
+      const sizeStr=size<1024?size+' B':(size/1024).toFixed(1)+' KB'
+      const bub=document.createElement('div')
+      // 右侧气泡样式（AI发的文件，左侧对齐）
+      bub.className='xk-ai-file-bubble'
+      bub.style.cssText='display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #EBE8DF;border-radius:16px;padding:12px 16px;cursor:pointer;max-width:260px;box-shadow:0 1px 4px rgba(0,0,0,.06)'
+      bub.innerHTML=`<div style="width:36px;height:36px;background:#F0EDE6;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 2h7l4 4v11a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="#5A5852" stroke-width="1.3" stroke-linejoin="round"/><path d="M11 2v5h5" stroke="#5A5852" stroke-width="1.2" stroke-linecap="round"/></svg></div><div style="min-width:0"><div style="font-size:14px;font-weight:600;color:#1F1E1D;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(fname)}</div><div style="font-size:11px;color:#A6A39A;margin-top:2px">${sizeStr} · ${ext} · 点击查看</div></div>`
+      const _c=content,_f=fname
+      bub.onclick=()=>xkViewFile(_f,_c)
+      p.replaceWith(bub)
+      return
+    }
+
+    // ── 检测 HTML 代码块 → 预览卡片 ──
+    const htmlCodeM=raw.match(/```html\s*([\s\S]+?)```/i)
+    const htmlDocM=!htmlCodeM&&raw.match(/(<!DOCTYPE\s+html[\s\S]+?<\/html>)/i)
+    const htmlCode=htmlCodeM?htmlCodeM[1]:htmlDocM?htmlDocM[1]:null
+    if(htmlCode){
+      const card=document.createElement('div')
+      card.className='xk-html-bubble'
+      card.style.cssText='border-radius:16px;overflow:hidden;border:1px solid #EBE8DF;max-width:300px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.06)'
+      const encoded=htmlCode.replace(/"/g,'&quot;')
+      card.innerHTML=`<iframe srcdoc="${encoded}" sandbox="allow-scripts allow-same-origin" style="width:100%;height:200px;border:none;display:block;pointer-events:none"></iframe><div style="display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:#FAF8F4;border-top:.5px solid #EBE8DF"><span style="font-size:12px;color:#A6A39A">HTML 预览</span><span style="font-size:12px;color:#5C6BC0;font-weight:600">全屏 ›</span></div>`
+      const _code=htmlCode
+      card.onclick=()=>xkOpenHtml(_code)
+      p.replaceWith(card)
+      return
+    }
+
+    // ── 普通 markdown ──
+    p.innerHTML=xkMd(raw)
   })
 }
 
