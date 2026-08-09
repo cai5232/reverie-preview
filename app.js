@@ -2742,8 +2742,7 @@ async function xkAgenticLoop(sendOptions, mcpServerMap, round){
       }
     }
     if(!streamBlock&&(thinkBuf||bodyBuf)){xkRenderAI(bodyBuf||'(´・ω・`)',thinkBuf||null)}
-    const reconstructed=streamBlock?Array.from(streamBlock.querySelectorAll('.xk-ai-para')).map(p=>p.textContent).join('\n\n'):bodyBuf
-    const histContent=thinkBuf?`[THINK]${thinkBuf}[/THINK]${reconstructed}`:reconstructed
+    const histContent=thinkBuf?`[THINK]${thinkBuf}[/THINK]${bodyBuf}`:bodyBuf
     xkHistory.push({role:'assistant',content:histContent,tokens:totalTokens||0})
     if(xkHistory.length>60)xkHistory=xkHistory.slice(-60)
     localStorage.setItem('xk_history',JSON.stringify(xkHistory))
