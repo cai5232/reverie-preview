@@ -179,6 +179,14 @@ function doSearch(q){
   if(!fh.length&&!hh.length){box.innerHTML='<div class="search-empty">没有找到相关消息</div>';return}
   var esc=q.replace(/[.*+?^${}()|[\]\\]/g,'\\function doSearch(q){
   const box=document.getElementById('searchResults')
+  if(!q||!q.trim()){box.innerHTML='<div class="search-empty">输入关键词搜索</div>';return}
+  var favs=JSON.parse(localStorage.getItem('xk_favorites')||'[]')
+  var hist=JSON.parse(localStorage.getItem('xk_history')||'[]')
+  var fh=favs.filter(function(f){return f.text&&f.text.includes(q)})
+  var hh=hist.filter(function(m){return m.role==='assistant'&&m.content&&typeof m.content==='string'&&m.content.includes(q)})
+  if(!fh.length&&!hh.length){box.innerHTML='<div class="search-empty">没有找到相关消息</div>';return}
+  var esc=q.replace(/[.*+?^${}()|[\]\\]/g,'\\function doSearch(q){
+  const box=document.getElementById('searchResults')
   if(!q.trim()){box.innerHTML='<div class="search-empty">输入关键词搜索</div>';return}
   const hits=chatHistory.filter(m=>m.content&&typeof m.content==='string'&&m.content.includes(q))
   // 搜索收藏
@@ -236,6 +244,30 @@ function doSearch(q){
     })
   }
   box.innerHTML=_html
+}
+
+function sendImage(){
+  closePlus()
+  document.getElementById('imgInput').click()
+}')
+  var re=new RegExp(esc,'g')
+  var html=''
+  if(fh.length){
+    html+='<div style="font-size:11px;color:#f0a0aa;padding:8px 12px 4px;letter-spacing:1px">★ 收藏</div>'
+    fh.forEach(function(f){
+      var hl=escHtml(f.text.slice(0,200)).replace(re,'<mark>'+escHtml(q)+'</mark>')
+      html+='<div class="search-item"><div class="search-item-meta">小克 · 已收藏</div><div class="search-item-text">'+hl+'</div></div>'
+    })
+  }
+  if(hh.length){
+    html+='<div style="font-size:11px;color:#A6A39A;padding:8px 12px 4px;letter-spacing:1px">聊天记录</div>'
+    hh.forEach(function(m){
+      var raw=(m.content||'').replace(/\[THINK\][\s\S]*?\[\/THINK\]/,'').replace(/\[心声\][\s\S]*?\[\/心声\]/,'').trim()
+      var hl=escHtml(raw.slice(0,200)).replace(re,'<mark>'+escHtml(q)+'</mark>')
+      html+='<div class="search-item"><div class="search-item-meta">小克</div><div class="search-item-text">'+hl+'</div></div>'
+    })
+  }
+  box.innerHTML=html
 }
 
 function sendImage(){
