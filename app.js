@@ -2772,15 +2772,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   const xkSendBtnEl=document.getElementById('xkSendBtn')
   if(xkSendBtnEl){
     xkSendBtnEl.removeAttribute('disabled')
-    xkSendBtnEl.addEventListener('touchstart',function(e){
-      e.preventDefault()
-      e.stopPropagation()
-      _xkRequestSendFromInput()
-    },{passive:false})
-    xkSendBtnEl.addEventListener('touchend',function(e){
-      e.preventDefault()
-      e.stopPropagation()
-    },{passive:false})
     xkSendBtnEl.addEventListener('click',function(e){
       e.preventDefault()
       _xkRequestSendFromInput()
@@ -2788,11 +2779,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   }
   const xkta=document.getElementById('xkInput')
   if(xkta){
-    xkta.addEventListener('input',function(){
-      this.style.height='auto'
-      this.style.height=Math.min(this.scrollHeight,120)+'px'
-      _xkMaybeSendFromTrailingNewline(this)
-    })
     let _composing=false
     xkta.addEventListener('compositionstart',()=>{_composing=true;xtka._composing=true})
     xkta.addEventListener('compositionend',()=>{_composing=false;xtka._composing=false})
@@ -2803,16 +2789,8 @@ document.addEventListener('DOMContentLoaded',()=>{
         _xkRequestSendFromInput()
       }
     })
-    xkta.addEventListener('beforeinput',function(e){
-      if(e.inputType==='insertLineBreak'&&!_composing){
-        e.preventDefault()
-        _xkRequestSendFromInput()
-      }
-    })
     xkta.addEventListener('blur',function(){
-      if(this._pendingSend){
-        setTimeout(()=>_xkConsumePendingSend(this),0)
-      }
+      this._sendTriggeredAt=0
     })
   }
 
