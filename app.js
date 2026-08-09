@@ -3227,13 +3227,6 @@ function xkDeleteRound(userWrapEl){
 function xkAddActions(block, tokens){
   const bar=document.createElement('div')
   bar.className='xk-actions-bar'
-  // token 数
-  if(tokens){
-    const tokenEl=document.createElement('div')
-    tokenEl.className='xk-token-count'
-    tokenEl.textContent=tokens+' tokens'
-    bar.appendChild(tokenEl)
-  }
   // 复制按钮
   const copyBtn=document.createElement('button')
   copyBtn.className='xk-action-icon-btn'
