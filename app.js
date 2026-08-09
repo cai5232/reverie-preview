@@ -2326,78 +2326,30 @@ function xkStreamDone(block){
   xkApplyMarkdown(block)
 }
 
+function _xkGetInputEl(){
+  return document.getElementById('xkInput')
+}
+
 function _xkGetInputText(){
-  const el=document.getElementById('xkInput')
+  const el=_xkGetInputEl()
   if(!el)return''
   return(el.value||'').trim()
 }
+
 function _xkClearInput(){
-  const el=document.getElementById('xkInput')
+  const el=_xkGetInputEl()
   if(!el)return
   el.value=''
-  el.style.height=''
 }
 
-function _xkConsumePendingSend(el){
-  if(!el)return false
-  const liveText=(el.value||'').trim()
-  const fallbackText=(el._pendingSendText||'').trim()
-  const text=liveText||fallbackText
-  el._pendingSend=false
-  el._sendingAfterBlur=false
-  el._sendTriggeredAt=0
-  el._sendRetryTimer=0
-  el._pendingSendText=''
-  if(!text)return false
-  _xkClearInput()
-  _xkDirectSend(text)
-  return true
-}
-
-function _xkSchedulePendingSend(el, attempt){
-  if(!el)return
-  const tries=attempt||0
-  const liveText=(el.value||'').trim()
-  if(liveText)el._pendingSendText=liveText
-  if(_xkConsumePendingSend(el))return
-  if(tries>=5){
-    el._pendingSend=false
-    el._sendingAfterBlur=false
-    el._sendTriggeredAt=0
-    el._sendRetryTimer=0
-    el._pendingSendText=''
-    return
-  }
-  el._sendRetryTimer=setTimeout(()=>_xkSchedulePendingSend(el,tries+1),tries<2?30:80)
-}
-
-function _xkRequestSendFromInput(){
-  const el=document.getElementById('xkInput')
-  if(!el)return
-  const now=Date.now()
-  if(el._sendTriggeredAt&&now-el._sendTriggeredAt<500)return
-  const snapshot=(el.value||'').trim()
-  if(!snapshot)return
-  el._sendTriggeredAt=now
-  el._pendingSend=true
-  el._sendingAfterBlur=true
-  el._pendingSendText=snapshot
-  if(el._sendRetryTimer)clearTimeout(el._sendRetryTimer)
-  setTimeout(()=>_xkSchedulePendingSend(el,0),0)
-}
-
-// 直接用已知文本发送（MutationObserver场景，文本已从div读出）
 async function _xkDirectSend(text){
-  if(!text)return
-  if(xkBusy){
-    xkBusy=false
-    const b=document.getElementById('xkSendBtn')
-    if(b)b.disabled=false
-  }
+  const finalText=(text||'').trim()
+  if(!finalText)return
+  if(xkBusy)return
   _xkClearInput()
   if(xkPendingAttachments.length)xkRenderAttachBubbles()
-  xkAppendUser(text)
-  const msgContent=xkFlushAttachments(text)
+  xkAppendUser(finalText)
+  const msgContent=xkFlushAttachments(finalText)
   xkPendingAttachments=[]
   xkRenderAttachBar()
   xkHistory.push({role:'user',content:msgContent})
@@ -2408,14 +2360,23 @@ async function _xkDirectSend(text){
   await xkCallAI()
 }
 
-// 小飞机：触发 blur，在 blur 事件里读内容发送
-// iOS IME 在 touchend 时还没 commit，必须等 blur 触发后才能正确读到内容
-function xkForceSend(){
-  _xkRequestSendFromInput()
+function xkHandleSubmit(e){
+  if(e){
+    e.preventDefault()
+    e.stopPropagation()
+  }
+  const text=_xkGetInputText()
+  if(!text)return false
+  _xkDirectSend(text)
+  return false
 }
 
-async function xkSend(){
-  _xkRequestSendFromInput()
+function xkForceSend(){
+  return xkHandleSubmit()
+}
+
+function xkSend(){
+  return xkHandleSubmit()
 }
 
 // 前端 agentic loop：流式输出 + 检测tool_call + 调MCP + 继续
