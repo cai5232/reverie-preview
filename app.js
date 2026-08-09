@@ -3070,7 +3070,6 @@ let _mcpAddType = 'http'
 
 function mcpSave(){
   localStorage.setItem('mcp_servers', JSON.stringify(_mcpServers))
-  kvPutDebounced('mcp_servers', _mcpServers, 1500)
 }
 
 // 代理请求
