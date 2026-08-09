@@ -2778,31 +2778,24 @@ document.addEventListener('DOMContentLoaded',()=>{
   xkBusy=false
   const xkSendBtnEl=document.getElementById('xkSendBtn')
   if(xkSendBtnEl){
+    var _xkSendFlag = false
     xkSendBtnEl.removeAttribute('disabled')
-    xkSendBtnEl.addEventListener('touchstart',function(e){
+    xkSendBtnEl.addEventListener('touchstart', function(e){
       e.stopPropagation()
-      this.style.background='rgba(255,255,255,0.8)'
-      this.style.border='1.5px solid rgba(0,0,0,0.3)'
-    },{passive:true})
-    xkSendBtnEl.addEventListener('touchend',function(e){
-      e.preventDefault()
-      e.stopPropagation()
-      this.style.background=''
-      this.style.border=''
-      // 先 blur 让 iOS 输入法 commit 内容到 DOM，再延迟读取
-      var inp=document.getElementById('xkInput')
-      if(inp) inp.blur()
-      setTimeout(function(){
-        var text=_xkGetInputText()
-        if(text) _xkDirectSend(text)
-      },80)
-    },{passive:false})
-    xkSendBtnEl.addEventListener('touchcancel',function(){
-      this.style.background=''
-      this.style.border=''
-    },{passive:true})
-    xkSendBtnEl.addEventListener('click',function(){
-      xkForceSend()
+      _xkSendFlag = true
+      this.style.opacity = '0.6'
+    }, {passive: true})
+    xkSendBtnEl.addEventListener('touchend', function(){
+      this.style.opacity = ''
+    }, {passive: true})
+    xkSendBtnEl.addEventListener('touchcancel', function(){
+      _xkSendFlag = false
+      this.style.opacity = ''
+    }, {passive: true})
+    xkSendBtnEl.addEventListener('click', function(){
+      // 桌面端 / 已失焦时走 click
+      var text = _xkGetInputText()
+      if(text) _xkDirectSend(text)
     })
   }
   const xkta=document.getElementById('xkInput')
