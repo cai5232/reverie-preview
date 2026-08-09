@@ -2326,17 +2326,17 @@ function xkStreamDone(block){
   xkApplyMarkdown(block)
 }
 
-  function _xkGetInputText(){
-    const el=document.getElementById('xkInput')
-    if(!el)return''
-    return(el.value||'').trim()
-  }
-  function _xkClearInput(){
-    const el=document.getElementById('xkInput')
-    if(!el)return
-    el.value=''
-    el.style.height=''
-  }
+function _xkGetInputText(){
+  const el=document.getElementById('xkInput')
+  if(!el)return''
+  return(el.value||'').trim()
+}
+function _xkClearInput(){
+  const el=document.getElementById('xkInput')
+  if(!el)return
+  el.value=''
+  el.style.height=''
+}
 
 // 直接用已知文本发送（MutationObserver场景，文本已从div读出）
 async function _xkDirectSend(text){
