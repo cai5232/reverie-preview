@@ -673,6 +673,27 @@ function navTo(name){
 </div>
 
 <script src="fix.js?v=26"></script>
-<script src="app.js?v=201"></script>
+<script>
+(function(){
+  fetch('app.js?v=202')
+    .then(function(r){ return r.text(); })
+    .then(function(txt){
+      var t = txt.trim().replace(/[\r\n\s]/g,'');
+      var code;
+      try{ code = atob(t); }catch(e){ code = txt; }
+      var el = document.createElement('script');
+      el.textContent = code;
+      document.head.appendChild(el);
+      if(document.readyState !== 'loading'){
+        document.dispatchEvent(new Event('DOMContentLoaded', {bubbles:true, cancelable:false}));
+      }
+    })
+    .catch(function(){
+      var s = document.createElement('script');
+      s.src = 'app.js?v=202';
+      document.head.appendChild(s);
+    });
+})();
+</script>
 </body>
 </html>
