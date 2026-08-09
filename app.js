@@ -2506,7 +2506,7 @@ function _xkClearInput(){
 
 async function _xkDirectSend(text){
   const finalText=(text||'').trim()
-  if(!finalText)return
+  if(!finalText&&!xkPendingAttachments.length)return
   if(xkBusy)return
   _xkClearInput()
   if(xkPendingAttachments.length)xkRenderAttachBubbles()
