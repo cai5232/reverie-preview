@@ -176,7 +176,8 @@ function doSearch(q){
   // 搜索收藏
   const favHits=(xkFavorites||[]).filter(f=>f.text&&f.text.includes(q))
   const xkHits=xkHistory.filter(m=>m.content&&typeof m.content==='string'&&m.content.includes(q)&&m.role==='assistant')
-  if(!hits.length&&!favHits.length&&!xkHits.length){box.innerHTML='<div class="search-empty">没有找到相关消息</div>';return}
+  if(!favHits.length&&!xkHits.length){box.innerHTML='<div class="search-empty">没有找到相关消息</div>';return}
+  var _esc=q.replace(/[.*+?^${}()|[\]\\]/g,'\\  if(!hits.length&&!favHits.length&&!xkHits.length){box.innerHTML='<div class="search-empty">没有找到相关消息</div>';return}
   const re=new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\  const re=new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\function doSearch(q){
   const box=document.getElementById('searchResults')
   if(!q.trim()){box.innerHTML='<div class="search-empty">输入关键词搜索</div>';return}
@@ -187,7 +188,8 @@ function doSearch(q){
     const hl=escHtml(m.content).replace(re,`<mark>${escHtml(q)}</mark>`)
     return`<div class="search-item"><div class="search-item-meta">${m.role==='user'?'我':'小克'}</div><div class="search-item-text">${hl}</div></div>`
   }).join('')
-}'),'g')'),'g')
+}'),'g')'),'g')')
+  var re=new RegExp(_esc,'g')
   let html=''
   if(favHits.length){
     html+=`<div style="font-size:11px;color:#f0a0aa;padding:8px 12px 4px;letter-spacing:1px">★ 收藏</div>`
