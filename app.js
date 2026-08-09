@@ -2566,13 +2566,27 @@ async function xkCallAI(){
   if(btn)btn.disabled=true
 
   const {mcp_tools, mcp_servers} = buildActivatedToolsPayload()
-  // 联网搜索开启时注入 web_search tool
   const sendOptions = {}
   const allTools = mcp_tools ? [...mcp_tools] : []
   if(xkWebSearchOn) allTools.push(WEB_SEARCH_TOOL)
   if(allTools.length) sendOptions.tools = allTools
 
+  // 如果本轮有真实图片内容，临时替换历史最后一条再发API
+  let _originalLastMsg = null
+  if(xkCurrentMsgContent !== null){
+    _originalLastMsg = xkHistory[xkHistory.length-1]
+    xkHistory[xkHistory.length-1] = {role:'user', content: xkCurrentMsgContent}
+    xkCurrentMsgContent = null
+  }
+
   await xkAgenticLoop(sendOptions, mcp_servers, 0)
+
+  // 发完恢复（历史里保持占位符版本）
+  if(_originalLastMsg !== null){
+    xkHistory[xkHistory.length-2] = _originalLastMsg  // assistant已经push进去了，user在倒数第二
+    // 重新保存
+    localStorage.setItem('xk_history',JSON.stringify(xkHistory))
+  }
 
   xkBusy=false
   if(btn)btn.disabled=false
