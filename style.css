@@ -1,5 +1,6 @@
 @font-face{font-family:'GJDJCR';src:url('https://image.uglycat.cc/gjdjcr.ttf') format('truetype');font-weight:normal;font-style:normal;font-display:swap}
 *{margin:0;padding:0;box-sizing:border-box}
+input,textarea,select,button,div,span,p,a,label,li,td,th,pre,code{font-family:inherit}
 html{height:100vh;overflow:hidden;background:#fff}
 body{color:#1F1E1D;font-family:'GJDJCR',-apple-system,'PingFang SC',sans-serif;display:flex;flex-direction:column;width:100%;max-width:430px;margin:0 auto;height:100vh;overflow:hidden;background:url('https://i.ibb.co/N6mj1mdx/IMG-7386.jpg') center/cover no-repeat fixed}
 @media (min-width:430px){body{left:50%;right:auto;transform:translateX(-50%);position:absolute;top:0}}
