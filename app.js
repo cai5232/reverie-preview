@@ -2207,31 +2207,46 @@ function xkAppendUser(text){
   const box=document.getElementById('xkStream')
   xkMaybeTime(box)
 
-  const wrap=document.createElement('div')
-  wrap.className='xk-user-wrap'
-
-  // content 可能是数组（发送图片/文件时），提取文字部分显示
-  let displayText=text
+  // content 是数组时，逐项渲染气泡
   if(Array.isArray(text)){
-    const textParts=text.filter(p=>p&&p.type==='text').map(p=>p.text)
-    displayText=textParts.join(' ')||'[附件]'
-    // 渲染图片气泡
-    text.filter(p=>p&&p.type==='image_url'&&p.image_url).forEach(p=>{
-      const imgWrap=document.createElement('div');imgWrap.className='xk-user-wrap'
-      const img=document.createElement('img')
-      img.src=p.image_url.url
-      img.style.cssText='max-width:200px;border-radius:14px;display:block'
-      imgWrap.appendChild(img);box.appendChild(imgWrap)
+    text.forEach(p=>{
+      if(!p)return
+      if(p.type==='image_url'&&p.image_url){
+        const w=document.createElement('div');w.className='xk-user-wrap'
+        const img=document.createElement('img')
+        img.src=p.image_url.url
+        img.style.cssText='max-width:200px;border-radius:14px;display:block'
+        w.appendChild(img);box.appendChild(w)
+      }else if(p.type==='text'&&p.text){
+        const t=p.text
+        // 文件文本：[文件: xxx]\n```...``` → 渲染文件气泡
+        const fileM=t.match(/^\[文件:\s*(.+?)\]/)
+        if(fileM){
+          const fname=fileM[1].trim()
+          const ext=(fname.split('.').pop()||'').toUpperCase()
+          const w=document.createElement('div');w.className='xk-user-wrap'
+          const bub=document.createElement('div');bub.className='xk-file-bubble'
+          bub.innerHTML=`<div class="xk-file-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 2h7l4 4v11a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="#5A5852" stroke-width="1.3" stroke-linejoin="round"/><path d="M11 2v5h5" stroke="#5A5852" stroke-width="1.2" stroke-linecap="round"/></svg></div><div><div class="xk-file-name">${escHtml(fname)}</div><div class="xk-file-size">${ext}</div></div>`
+          w.appendChild(bub);box.appendChild(w)
+        }else{
+          // 普通文字气泡
+          const w=document.createElement('div');w.className='xk-user-wrap'
+          const el=document.createElement('div');el.className='xk-user-msg'
+          el.textContent=t;w.appendChild(el);box.appendChild(w)
+        }
+      }
     })
+    box.scrollTop=box.scrollHeight
+    return
   }
 
+  // 字符串：直接渲染
+  const wrap=document.createElement('div')
+  wrap.className='xk-user-wrap'
   const el=document.createElement('div')
   el.className='xk-user-msg'
-  el.textContent=displayText
+  el.textContent=text||''
   wrap.appendChild(el)
-
-
-
   box.appendChild(wrap)
   box.scrollTop=box.scrollHeight
 }
