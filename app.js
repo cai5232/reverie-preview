@@ -2280,9 +2280,16 @@ function xkAppendUser(text){
         if(fileM){
           const fname=fileM[1].trim()
           const ext=(fname.split('.').pop()||'').toUpperCase()
+          // 从 ``` ``` 里提取内容，用于计算size和点击查看
+          const contentM=t.match(/```[\w]*\n?([\s\S]*?)```/)
+          const fileContent=contentM?contentM[1]:''
+          const size=new Blob([fileContent]).size
+          const sizeStr=size<1024?size+' B':(size/1024).toFixed(1)+' KB'
           const w=document.createElement('div');w.className='xk-user-wrap'
           const bub=document.createElement('div');bub.className='xk-file-bubble'
-          bub.innerHTML=`<div class="xk-file-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 2h7l4 4v11a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="#5A5852" stroke-width="1.3" stroke-linejoin="round"/><path d="M11 2v5h5" stroke="#5A5852" stroke-width="1.2" stroke-linecap="round"/></svg></div><div><div class="xk-file-name">${escHtml(fname)}</div><div class="xk-file-size">${ext}</div></div>`
+          bub.style.cursor='pointer'
+          bub.innerHTML=`<div class="xk-file-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 2h7l4 4v11a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="#5A5852" stroke-width="1.3" stroke-linejoin="round"/><path d="M11 2v5h5" stroke="#5A5852" stroke-width="1.2" stroke-linecap="round"/></svg></div><div><div class="xk-file-name">${escHtml(fname)}</div><div class="xk-file-size">${sizeStr} · ${ext}</div></div>`
+          if(fileContent){const _f=fname,_c=fileContent;bub.onclick=()=>xkViewFile(_f,_c)}
           w.appendChild(bub);box.appendChild(w)
         }else{
           // 普通文字气泡
