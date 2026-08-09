@@ -555,6 +555,7 @@ function saveChatHistory(role,content){
   chatHistory.push({role,content})
   if(chatHistory.length>100)chatHistory=chatHistory.slice(-100)
   localStorage.setItem('chat_history',JSON.stringify(chatHistory))
+  kvSet('chat_history',chatHistory)
 }
 
 // 后台保活
