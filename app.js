@@ -2064,10 +2064,26 @@ function xkRenderAttachBubbles(){
   xkPendingAttachments.forEach(a=>{
     if(a.type==='image'){
       const wrap=document.createElement('div');wrap.className='xk-user-wrap'
+      const imgWrap=document.createElement('div')
+      imgWrap.style.cssText='width:100px;height:100px;border-radius:14px;overflow:hidden;cursor:pointer;flex-shrink:0'
       const img=document.createElement('img')
       img.src=a.dataUrl
-      img.style.cssText='max-width:200px;border-radius:14px;display:block'
-      wrap.appendChild(img);box.appendChild(wrap)
+      img.style.cssText='width:100%;height:100%;object-fit:cover;display:block'
+      img.onclick=()=>{
+        const ov=document.createElement('div')
+        ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;display:flex;align-items:center;justify-content:center'
+        const full=document.createElement('img')
+        full.src=a.dataUrl
+        full.style.cssText='max-width:95vw;max-height:90vh;border-radius:12px;object-fit:contain'
+        ov.onclick=()=>ov.remove()
+        ov.appendChild(full);document.body.appendChild(ov)
+      }
+      imgWrap.appendChild(img)
+      let _lp=null
+      imgWrap.addEventListener('touchstart',()=>{_lp=setTimeout(()=>{if(confirm('删除这条消息？'))wrap.remove()},500)},{passive:true})
+      imgWrap.addEventListener('touchend',()=>clearTimeout(_lp),{passive:true})
+      imgWrap.addEventListener('touchmove',()=>clearTimeout(_lp),{passive:true})
+      wrap.appendChild(imgWrap);box.appendChild(wrap)
     }else{
       const wrap=document.createElement('div');wrap.className='xk-user-wrap'
       const ext=(a.name.split('.').pop()||'').toUpperCase()
