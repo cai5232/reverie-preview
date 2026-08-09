@@ -329,6 +329,8 @@ body{color:#1F1E1D;font-family:'GJDJCR',-apple-system,'PingFang SC',sans-serif;d
   display:flex;flex-direction:column;
   -webkit-overflow-scrolling:touch;
   background:rgba(248,248,246,0.72);
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,black 60px,black calc(100% - 60px),transparent 100%);
+  mask-image:linear-gradient(to bottom,transparent 0%,black 60px,black calc(100% - 60px),transparent 100%);
 }
 .xk-stream::-webkit-scrollbar{display:none}
 
