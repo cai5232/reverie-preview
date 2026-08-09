@@ -2344,21 +2344,37 @@ function _xkConsumePendingSend(el){
   el._pendingSend=false
   el._sendingAfterBlur=false
   el._sendTriggeredAt=0
-  if(!text)return
+  el._sendRetryTimer=0
+  if(!text)return false
   _xkClearInput()
   _xkDirectSend(text)
+  return true
+}
+
+function _xkSchedulePendingSend(el, attempt){
+  if(!el)return
+  const tries=attempt||0
+  if(_xkConsumePendingSend(el))return
+  if(tries>=5){
+    el._pendingSend=false
+    el._sendingAfterBlur=false
+    el._sendTriggeredAt=0
+    el._sendRetryTimer=0
+    return
+  }
+  el._sendRetryTimer=setTimeout(()=>_xkSchedulePendingSend(el,tries+1),tries<2?30:80)
 }
 
 function _xkRequestSendFromInput(){
   const el=document.getElementById('xkInput')
   if(!el)return
-  const text=(el.value||'').trim()
-  if(!text)return
   const now=Date.now()
-  if(el._sendTriggeredAt&&now-el._sendTriggeredAt<400)return
+  if(el._sendTriggeredAt&&now-el._sendTriggeredAt<500)return
   el._sendTriggeredAt=now
-  _xkClearInput()
-  _xkDirectSend(text)
+  el._pendingSend=true
+  el._sendingAfterBlur=true
+  if(el._sendRetryTimer)clearTimeout(el._sendRetryTimer)
+  setTimeout(()=>_xkSchedulePendingSend(el,0),0)
 }
 
 // 直接用已知文本发送（MutationObserver场景，文本已从div读出）
