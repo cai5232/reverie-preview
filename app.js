@@ -171,31 +171,6 @@ function closeSearch(){
 }
 function doSearch(q){
   const box=document.getElementById('searchResults')
-  if(!q||!q.trim()){box.innerHTML='<div class="search-empty">输入关键词搜索</div>';return}
-  var favs=JSON.parse(localStorage.getItem('xk_favorites')||'[]')
-  var hist=JSON.parse(localStorage.getItem('xk_history')||'[]')
-  var fh=favs.filter(function(f){return f.text&&f.text.includes(q)})
-  var hh=hist.filter(function(m){return m.role==='assistant'&&m.content&&typeof m.content==='string'&&m.content.includes(q)})
-  if(!fh.length&&!hh.length){box.innerHTML='<div class="search-empty">没有找到相关消息</div>';return}
-  var esc=q.replace(/[.*+?^${}()|[\]\\]/g,'\\function doSearch(q){
-  const box=document.getElementById('searchResults')
-  if(!q||!q.trim()){box.innerHTML='<div class="search-empty">输入关键词搜索</div>';return}
-  var favs=JSON.parse(localStorage.getItem('xk_favorites')||'[]')
-  var hist=JSON.parse(localStorage.getItem('xk_history')||'[]')
-  var fh=favs.filter(function(f){return f.text&&f.text.includes(q)})
-  var hh=hist.filter(function(m){return m.role==='assistant'&&m.content&&typeof m.content==='string'&&m.content.includes(q)})
-  if(!fh.length&&!hh.length){box.innerHTML='<div class="search-empty">没有找到相关消息</div>';return}
-  var esc=q.replace(/[.*+?^${}()|[\]\\]/g,'\\function doSearch(q){
-  const box=document.getElementById('searchResults')
-  if(!q.trim()){box.innerHTML='<div class="search-empty">输入关键词搜索</div>';return}
-  const hits=chatHistory.filter(m=>m.content&&typeof m.content==='string'&&m.content.includes(q))
-  // 搜索收藏
-  const favHits=(xkFavorites||[]).filter(f=>f.text&&f.text.includes(q))
-  const xkHits=xkHistory.filter(m=>m.content&&typeof m.content==='string'&&m.content.includes(q)&&m.role==='assistant')
-  if(!favHits.length&&!xkHits.length){box.innerHTML='<div class="search-empty">没有找到相关消息</div>';return}
-  var _esc=q.replace(/[.*+?^${}()|[\]\\]/g,'\\  if(!hits.length&&!favHits.length&&!xkHits.length){box.innerHTML='<div class="search-empty">没有找到相关消息</div>';return}
-  const re=new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\  const re=new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\function doSearch(q){
-  const box=document.getElementById('searchResults')
   if(!q.trim()){box.innerHTML='<div class="search-empty">输入关键词搜索</div>';return}
   const hits=chatHistory.filter(m=>m.content&&m.content.includes(q))
   if(!hits.length){box.innerHTML='<div class="search-empty">没有找到相关消息</div>';return}
@@ -204,94 +179,6 @@ function doSearch(q){
     const hl=escHtml(m.content).replace(re,`<mark>${escHtml(q)}</mark>`)
     return`<div class="search-item"><div class="search-item-meta">${m.role==='user'?'我':'小克'}</div><div class="search-item-text">${hl}</div></div>`
   }).join('')
-  var _hh=_hist.filter(function(m){return m.role==='assistant'&&m.content&&typeof m.content==='string'&&m.content.includes(q)})
-  if(!_fh.length&&!_hh.length){box.innerHTML='<div class="search-empty">没有找到相关消息</div>';return}
-  var _restr=q.replace(/[.*+?^${}()|[\]\\]/g,'\\}'),'g')'),'g')')
-  var re=new RegExp(_esc,'g')
-  let html=''
-  if(favHits.length){
-    html+=`<div style="font-size:11px;color:#f0a0aa;padding:8px 12px 4px;letter-spacing:1px">★ 收藏</div>`
-    html+=favHits.map(f=>{
-      const hl=escHtml(f.text.slice(0,200)).replace(re,`<mark>${escHtml(q)}</mark>`)
-      return`<div class="search-item"><div class="search-item-meta">小克 · 已收藏</div><div class="search-item-text">${hl}</div></div>`
-    }).join('')
-  }
-  if(xkHits.length){
-    html+=`<div style="font-size:11px;color:#A6A39A;padding:8px 12px 4px;letter-spacing:1px">聊天记录</div>`
-    html+=xkHits.map(m=>{
-      const raw=(m.content||'').replace(/\[THINK\][\s\S]*?\[\/THINK\]/,'').replace(/\[心声\][\s\S]*?\[\/心声\]/,'').trim()
-      const hl=escHtml(raw.slice(0,200)).replace(re,`<mark>${escHtml(q)}</mark>`)
-      return`<div class="search-item"><div class="search-item-meta">小克</div><div class="search-item-text">${hl}</div></div>`
-    }).join('')
-  }
-  box.innerHTML=html||'<div class="search-empty">没有找到相关消息</div>'
-}')
-  var _re=new RegExp(_restr,'g')
-  var _html=''
-  if(_fh.length){
-    _html+='<div style="font-size:11px;color:#f0a0aa;padding:8px 12px 4px;letter-spacing:1px">★ 收藏</div>'
-    _fh.forEach(function(f){
-      var hl=escHtml(f.text.slice(0,200)).replace(_re,'<mark>'+escHtml(q)+'</mark>')
-      _html+='<div class="search-item"><div class="search-item-meta">小克 · 已收藏</div><div class="search-item-text">'+hl+'</div></div>'
-    })
-  }
-  if(_hh.length){
-    _html+='<div style="font-size:11px;color:#A6A39A;padding:8px 12px 4px;letter-spacing:1px">聊天记录</div>'
-    _hh.forEach(function(m){
-      var raw=(m.content||'').replace(/\[THINK\][\s\S]*?\[\/THINK\]/,'').replace(/\[心声\][\s\S]*?\[\/心声\]/,'').trim()
-      var hl=escHtml(raw.slice(0,200)).replace(_re,'<mark>'+escHtml(q)+'</mark>')
-      _html+='<div class="search-item"><div class="search-item-meta">小克</div><div class="search-item-text">'+hl+'</div></div>'
-    })
-  }
-  box.innerHTML=_html
-}
-
-function sendImage(){
-  closePlus()
-  document.getElementById('imgInput').click()
-}')
-  var re=new RegExp(esc,'g')
-  var html=''
-  if(fh.length){
-    html+='<div style="font-size:11px;color:#f0a0aa;padding:8px 12px 4px;letter-spacing:1px">★ 收藏</div>'
-    fh.forEach(function(f){
-      var hl=escHtml(f.text.slice(0,200)).replace(re,'<mark>'+escHtml(q)+'</mark>')
-      html+='<div class="search-item"><div class="search-item-meta">小克 · 已收藏</div><div class="search-item-text">'+hl+'</div></div>'
-    })
-  }
-  if(hh.length){
-    html+='<div style="font-size:11px;color:#A6A39A;padding:8px 12px 4px;letter-spacing:1px">聊天记录</div>'
-    hh.forEach(function(m){
-      var raw=(m.content||'').replace(/\[THINK\][\s\S]*?\[\/THINK\]/,'').replace(/\[心声\][\s\S]*?\[\/心声\]/,'').trim()
-      var hl=escHtml(raw.slice(0,200)).replace(re,'<mark>'+escHtml(q)+'</mark>')
-      html+='<div class="search-item"><div class="search-item-meta">小克</div><div class="search-item-text">'+hl+'</div></div>'
-    })
-  }
-  box.innerHTML=html
-}
-
-function sendImage(){
-  closePlus()
-  document.getElementById('imgInput').click()
-}')
-  var re=new RegExp(esc,'g')
-  var html=''
-  if(fh.length){
-    html+='<div style="font-size:11px;color:#f0a0aa;padding:8px 12px 4px;letter-spacing:1px">★ 收藏</div>'
-    fh.forEach(function(f){
-      var hl=escHtml(f.text.slice(0,200)).replace(re,'<mark>'+escHtml(q)+'</mark>')
-      html+='<div class="search-item"><div class="search-item-meta">小克 · 已收藏</div><div class="search-item-text">'+hl+'</div></div>'
-    })
-  }
-  if(hh.length){
-    html+='<div style="font-size:11px;color:#A6A39A;padding:8px 12px 4px;letter-spacing:1px">聊天记录</div>'
-    hh.forEach(function(m){
-      var raw=(m.content||'').replace(/\[THINK\][\s\S]*?\[\/THINK\]/,'').replace(/\[心声\][\s\S]*?\[\/心声\]/,'').trim()
-      var hl=escHtml(raw.slice(0,200)).replace(re,'<mark>'+escHtml(q)+'</mark>')
-      html+='<div class="search-item"><div class="search-item-meta">小克</div><div class="search-item-text">'+hl+'</div></div>'
-    })
-  }
-  box.innerHTML=html
 }
 
 function sendImage(){
@@ -2697,7 +2584,7 @@ function xkHandleSubmit(e){
     e.stopPropagation()
   }
   const text=_xkGetInputText()
-  if(!text&&!xkPendingAttachments.length)return false
+  if(!text)return false
   _xkDirectSend(text)
   return false
 }
@@ -3204,13 +3091,13 @@ document.addEventListener('DOMContentLoaded',()=>{
           if(Array.isArray(m.content)){
             m.content.forEach(p=>{
               if(!p)return
-              if(p.type==='image_url'||(p.type==='text'&&p.text==='[图片]')){
-                // 占位符：小方块样式
+              if(p.type==='image_url'){
+                // 占位符：显示灰色图片提示
                 const w=document.createElement('div');w.className='xk-user-wrap'
-                const sq=document.createElement('div')
-                sq.style.cssText='width:100px;height:100px;border-radius:14px;background:#EBE8DF;display:flex;align-items:center;justify-content:center;flex-shrink:0'
-                sq.innerHTML=`<svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="2" y="2" width="24" height="24" rx="5" stroke="#C8C4BC" stroke-width="1.5"/><circle cx="9" cy="9" r="2" fill="#C8C4BC"/><path d="M2 20l6-6 5 5 4-4 8 7" stroke="#C8C4BC" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`
-                w.appendChild(sq);box.appendChild(w)
+                const el=document.createElement('div')
+                el.style.cssText='background:#EBE8DF;border-radius:14px;padding:10px 14px;font-size:13px;color:#A6A39A;display:flex;align-items:center;gap:6px'
+                el.innerHTML=`<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="2.5" stroke="#A6A39A" stroke-width="1.2"/><circle cx="4.5" cy="4.5" r="1" fill="#A6A39A"/><path d="M1 10l3-3 2.5 2.5 2-2 3 3" stroke="#A6A39A" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>图片`
+                w.appendChild(el);box.appendChild(w)
               }else if(p.type==='text'&&p.text){
                 if(p.text==='[图片]'){
                   const w=document.createElement('div');w.className='xk-user-wrap'
@@ -3261,71 +3148,13 @@ document.addEventListener('DOMContentLoaded',()=>{
   xkInitSearchBadge()
 })
 
-// 操作栏：token数 + 复制 + 收藏
-let xkFavorites = JSON.parse(localStorage.getItem('xk_favorites')||'[]')
-
+// 操作栏：只显示 token 数（全局函数，不能放在DOMContentLoaded里）
 function xkAddActions(block, tokens){
-  const bar=document.createElement('div')
-  bar.className='xk-action-bar'
-  bar.style.cssText='display:flex;align-items:center;gap:10px;margin-top:4px;padding:0 2px'
-
-  // 复制按钮
-  const copyBtn=document.createElement('button')
-  copyBtn.style.cssText='background:none;border:none;padding:0;cursor:pointer;display:flex;align-items:center;gap:3px;color:#C8C4BC;font-size:11px;-webkit-tap-highlight-color:transparent'
-  copyBtn.innerHTML=`<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="3.5" width="8.5" height="8.5" rx="1.5" stroke="#C8C4BC" stroke-width="1.1"/><path d="M3.5 3V2A1 1 0 014.5 1h6.5A1 1 0 0112 2v6.5A1 1 0 0111 9.5H10" stroke="#C8C4BC" stroke-width="1.1" stroke-linecap="round"/></svg>复制`
-  copyBtn.onclick=()=>{
-    const paras=Array.from(block.querySelectorAll('.xk-ai-para')).map(p=>p.textContent).join('\n')
-    navigator.clipboard&&navigator.clipboard.writeText(paras).then(()=>{
-      copyBtn.innerHTML=`<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 7l3 3 6-6" stroke="#5C6BC0" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>已复制`
-      copyBtn.style.color='#5C6BC0'
-      setTimeout(()=>{
-        copyBtn.innerHTML=`<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="3.5" width="8.5" height="8.5" rx="1.5" stroke="#C8C4BC" stroke-width="1.1"/><path d="M3.5 3V2A1 1 0 014.5 1h6.5A1 1 0 0112 2v6.5A1 1 0 0111 9.5H10" stroke="#C8C4BC" stroke-width="1.1" stroke-linecap="round"/></svg>复制`
-        copyBtn.style.color='#C8C4BC'
-      },1500)
-    })
-  }
-
-  // 收藏按钮
-  const favBtn=document.createElement('button')
-  favBtn.style.cssText='background:none;border:none;padding:0;cursor:pointer;display:flex;align-items:center;gap:3px;color:#C8C4BC;font-size:11px;-webkit-tap-highlight-color:transparent'
-  const starSvg=(filled)=>filled
-    ?`<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1l1.5 3.2 3.5.5-2.5 2.5.6 3.5L6.5 9 3.4 10.7l.6-3.5L1.5 4.7l3.5-.5z" fill="#f0a0aa" stroke="#f0a0aa" stroke-width=".8" stroke-linejoin="round"/></svg>`
-    :`<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1l1.5 3.2 3.5.5-2.5 2.5.6 3.5L6.5 9 3.4 10.7l.6-3.5L1.5 4.7l3.5-.5z" stroke="#C8C4BC" stroke-width="1.1" stroke-linejoin="round"/></svg>`
-  const text=Array.from(block.querySelectorAll('.xk-ai-para')).map(p=>p.textContent).join('\n').trim()
-  const isFaved=()=>xkFavorites.some(f=>f.text===text)
-  const render=()=>{
-    const f=isFaved()
-    favBtn.innerHTML=starSvg(f)+(f?'<span style="color:#f0a0aa">已收藏</span>':'收藏')
-    favBtn.style.color=f?'#f0a0aa':'#C8C4BC'
-  }
-  render()
-  favBtn.onclick=()=>{
-    if(isFaved()){
-      xkFavorites=xkFavorites.filter(f=>f.text!==text)
-      showToast('已取消收藏')
-    }else{
-      xkFavorites.unshift({text,time:Date.now()})
-      if(xkFavorites.length>200)xkFavorites=xkFavorites.slice(0,200)
-      showToast('已收藏')
-    }
-    localStorage.setItem('xk_favorites',JSON.stringify(xkFavorites))
-    render()
-  }
-
-  // token数
-  if(tokens){
-    const tokenEl=document.createElement('div')
-    tokenEl.className='xk-token-count'
-    tokenEl.style.cssText='margin-left:auto;font-size:11px;color:#D8D4CC'
-    tokenEl.textContent=tokens+' tokens'
-    bar.appendChild(copyBtn)
-    bar.appendChild(favBtn)
-    bar.appendChild(tokenEl)
-  }else{
-    bar.appendChild(copyBtn)
-    bar.appendChild(favBtn)
-  }
-  block.appendChild(bar)
+  if(!tokens) return
+  const tokenEl=document.createElement('div')
+  tokenEl.className='xk-token-count'
+  tokenEl.textContent=tokens+' tokens'
+  block.appendChild(tokenEl)
 }
 
 function _xkBtn(svgStr, label, cls='xk-action-btn'){
