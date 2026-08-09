@@ -2289,8 +2289,7 @@ function xkAppendUser(text){
           const w=document.createElement('div');w.className='xk-user-wrap'
           const el=document.createElement('div');el.className='xk-user-msg'
           el.textContent=t;w.appendChild(el);box.appendChild(w)
-        }
-      }
+        }      }
     })
     box.scrollTop=box.scrollHeight
     return
