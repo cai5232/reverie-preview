@@ -2983,15 +2983,24 @@ document.addEventListener('DOMContentLoaded',()=>{
   // 恢复历史
   if(xkHistory.length){
     const box=document.getElementById('xkStream')
-    xkHistory.forEach(m=>{
+    xkHistory.forEach((m,mi)=>{
       try{
-        // tool 结果消息跳过（内容已经在工具行里展示了）
+        // 跳过 tool 消息（内容已在工具行里展示）
         if(m.role==='tool')return
-        // assistant 带 tool_calls：渲染工具调用行，不渲染气泡
+        // assistant 带 tool_calls：渲染工具调用行，结果从后面的 tool 消息里取
         if(m.role==='assistant'&&m.tool_calls){
           xkToolGroupStart()
           m.tool_calls.forEach(tc=>{
-            xkShowToolStatus(tc.function?.name||'tool','done','')
+            const toolId=tc.id
+            const toolName=tc.function?.name||'tool'
+            let result=''
+            for(let j=mi+1;j<xkHistory.length;j++){
+              const tm=xkHistory[j]
+              if(tm.role==='tool'&&(tm.tool_call_id===toolId||!toolId)){result=tm.content||'';break}
+              if(tm.role==='assistant')break
+            }
+            const row=xkShowToolStatus(toolName,'done','')
+            row._result=result
           })
           xkToolGroupEnd()
           return
