@@ -2615,21 +2615,20 @@ async function xkCallAI(){
   if(xkWebSearchOn) allTools.push(WEB_SEARCH_TOOL)
   if(allTools.length) sendOptions.tools = allTools
 
-  // 如果本轮有真实图片内容，临时替换历史最后一条再发API
-  let _originalLastMsg = null
+  // 如果本轮有真实图片内容（含base64），发给API时用真实内容，但不恢复（历史已是idb:key版本）
   if(xkCurrentMsgContent !== null){
-    _originalLastMsg = xkHistory[xkHistory.length-1]
-    xkHistory[xkHistory.length-1] = {role:'user', content: xkCurrentMsgContent}
+    const realContent = xkCurrentMsgContent
     xkCurrentMsgContent = null
-  }
-
-  await xkAgenticLoop(sendOptions, mcp_servers, 0)
-
-  // 发完恢复（历史里保持占位符版本）
-  if(_originalLastMsg !== null){
-    xkHistory[xkHistory.length-2] = _originalLastMsg  // assistant已经push进去了，user在倒数第二
-    // 重新保存
-    localStorage.setItem('xk_history',JSON.stringify(xkHistory))
+    // 临时替换最后一条user消息为含base64的真实内容，只用于本次API调用
+    const lastIdx = xkHistory.length - 1
+    const storedMsg = xkHistory[lastIdx]
+    xkHistory[lastIdx] = {role:'user', content: realContent}
+    await xkAgenticLoop(sendOptions, mcp_servers, 0)
+    // 恢复回idb:key版本（历史存储用）
+    xkHistory[lastIdx] = storedMsg
+    localStorage.setItem('xk_history', JSON.stringify(xkHistory))
+  } else {
+    await xkAgenticLoop(sendOptions, mcp_servers, 0)
   }
 
   xkBusy=false
