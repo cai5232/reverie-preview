@@ -2757,6 +2757,7 @@ async function xkAgenticLoop(sendOptions, mcpServerMap, round){
     xkHistory.push({role:'assistant',content:histContent,tokens:totalTokens||0})
     if(xkHistory.length>60)xkHistory=xkHistory.slice(-60)
     localStorage.setItem('xk_history',JSON.stringify(xkHistory))
+    xkHistoryPersist()
 
   }catch(err){
     if(typing.parentNode)typing.remove()
