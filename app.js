@@ -2818,8 +2818,13 @@ document.addEventListener('DOMContentLoaded',()=>{
       xkUpdatePlaceholder()
     })
     xkta.addEventListener('focus',function(){xkUpdatePlaceholder()})
-    xkta.addEventListener('blur',function(){
+    xkta.addEventListener('blur', function(){
       xkUpdatePlaceholder()
+      if(_xkSendFlag){
+        _xkSendFlag = false
+        var text = _xkGetInputText()
+        if(text) _xkDirectSend(text)
+      }
     })
 
     // iOS PWA contenteditable：按发送键不触发 keydown，而是插入 <br>
