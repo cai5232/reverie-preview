@@ -2339,12 +2339,15 @@ function _xkClearInput(){
 }
 
 function _xkConsumePendingSend(el){
-  if(!el)return
-  const text=(el.value||'').trim()
+  if(!el)return false
+  const liveText=(el.value||'').trim()
+  const fallbackText=(el._pendingSendText||'').trim()
+  const text=liveText||fallbackText
   el._pendingSend=false
   el._sendingAfterBlur=false
   el._sendTriggeredAt=0
   el._sendRetryTimer=0
+  el._pendingSendText=''
   if(!text)return false
   _xkClearInput()
   _xkDirectSend(text)
@@ -2354,12 +2357,15 @@ function _xkConsumePendingSend(el){
 function _xkSchedulePendingSend(el, attempt){
   if(!el)return
   const tries=attempt||0
+  const liveText=(el.value||'').trim()
+  if(liveText)el._pendingSendText=liveText
   if(_xkConsumePendingSend(el))return
   if(tries>=5){
     el._pendingSend=false
     el._sendingAfterBlur=false
     el._sendTriggeredAt=0
     el._sendRetryTimer=0
+    el._pendingSendText=''
     return
   }
   el._sendRetryTimer=setTimeout(()=>_xkSchedulePendingSend(el,tries+1),tries<2?30:80)
@@ -2370,9 +2376,12 @@ function _xkRequestSendFromInput(){
   if(!el)return
   const now=Date.now()
   if(el._sendTriggeredAt&&now-el._sendTriggeredAt<500)return
+  const snapshot=(el.value||'').trim()
+  if(!snapshot)return
   el._sendTriggeredAt=now
   el._pendingSend=true
   el._sendingAfterBlur=true
+  el._pendingSendText=snapshot
   if(el._sendRetryTimer)clearTimeout(el._sendRetryTimer)
   setTimeout(()=>_xkSchedulePendingSend(el,0),0)
 }
