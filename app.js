@@ -188,7 +188,9 @@ function doSearch(q){
     const hl=escHtml(m.content).replace(re,`<mark>${escHtml(q)}</mark>`)
     return`<div class="search-item"><div class="search-item-meta">${m.role==='user'?'我':'小克'}</div><div class="search-item-text">${hl}</div></div>`
   }).join('')
-}'),'g')'),'g')')
+  var _hh=_hist.filter(function(m){return m.role==='assistant'&&m.content&&typeof m.content==='string'&&m.content.includes(q)})
+  if(!_fh.length&&!_hh.length){box.innerHTML='<div class="search-empty">没有找到相关消息</div>';return}
+  var _restr=q.replace(/[.*+?^${}()|[\]\\]/g,'\\}'),'g')'),'g')')
   var re=new RegExp(_esc,'g')
   let html=''
   if(favHits.length){
@@ -207,6 +209,25 @@ function doSearch(q){
     }).join('')
   }
   box.innerHTML=html||'<div class="search-empty">没有找到相关消息</div>'
+}')
+  var _re=new RegExp(_restr,'g')
+  var _html=''
+  if(_fh.length){
+    _html+='<div style="font-size:11px;color:#f0a0aa;padding:8px 12px 4px;letter-spacing:1px">★ 收藏</div>'
+    _fh.forEach(function(f){
+      var hl=escHtml(f.text.slice(0,200)).replace(_re,'<mark>'+escHtml(q)+'</mark>')
+      _html+='<div class="search-item"><div class="search-item-meta">小克 · 已收藏</div><div class="search-item-text">'+hl+'</div></div>'
+    })
+  }
+  if(_hh.length){
+    _html+='<div style="font-size:11px;color:#A6A39A;padding:8px 12px 4px;letter-spacing:1px">聊天记录</div>'
+    _hh.forEach(function(m){
+      var raw=(m.content||'').replace(/\[THINK\][\s\S]*?\[\/THINK\]/,'').replace(/\[心声\][\s\S]*?\[\/心声\]/,'').trim()
+      var hl=escHtml(raw.slice(0,200)).replace(_re,'<mark>'+escHtml(q)+'</mark>')
+      _html+='<div class="search-item"><div class="search-item-meta">小克</div><div class="search-item-text">'+hl+'</div></div>'
+    })
+  }
+  box.innerHTML=_html
 }
 
 function sendImage(){
