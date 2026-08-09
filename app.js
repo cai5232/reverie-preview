@@ -2401,6 +2401,7 @@ function xkStreamDone(block){
   xkParseReturnedFiles(Array.from(block.querySelectorAll('.xk-ai-para')).map(p=>p.textContent).join('\n\n')).forEach(f=>xkRenderReturnedFile(f.name,f.content,block))
 }
 function _xkGetInputEl(){
+function _xkGetInputEl(){
   return document.getElementById('xkInput')
 }
 
