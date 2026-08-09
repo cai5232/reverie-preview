@@ -2168,11 +2168,48 @@ function xkViewFile(fname, content){
 function xkApplyMarkdown(block){
   // 先收集所有 para，避免遍历中DOM变化
   const paras=Array.from(block.querySelectorAll('.xk-ai-para'))
+
+  // ── 跨段落检测：先把所有para合并成完整文本，再做文件/HTML检测 ──
+  // （历史恢复时多行内容会被\n\n拆成多个para，必须先合并）
+  const fullText=paras.map(p=>p.textContent||'').join('\n')
+
+  const fileM=fullText.match(/\[文件:\s*(.+?)\]\s*[\n\r]+```[\w]*[\n\r]([\s\S]*?)```/)
+  if(fileM){
+    const fname=fileM[1].trim()
+    const content=fileM[2]
+    const ext=(fname.split('.').pop()||'').toUpperCase()
+    const size=new Blob([content]).size
+    const sizeStr=size<1024?size+' B':(size/1024).toFixed(1)+' KB'
+    const bub=document.createElement('div')
+    bub.className='xk-ai-file-bubble'
+    bub.style.cssText='display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #EBE8DF;border-radius:16px;padding:12px 16px;cursor:pointer;max-width:260px;box-shadow:0 1px 4px rgba(0,0,0,.06)'
+    bub.innerHTML=`<div style="width:36px;height:36px;background:#F0EDE6;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 2h7l4 4v11a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="#5A5852" stroke-width="1.3" stroke-linejoin="round"/><path d="M11 2v5h5" stroke="#5A5852" stroke-width="1.2" stroke-linecap="round"/></svg></div><div style="min-width:0"><div style="font-size:14px;font-weight:600;color:#1F1E1D;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(fname)}</div><div style="font-size:11px;color:#A6A39A;margin-top:2px">${sizeStr} · ${ext} · 点击查看</div></div>`
+    const _c=content,_f=fname
+    bub.onclick=()=>xkViewFile(_f,_c)
+    paras.forEach(p=>p.remove())
+    block.appendChild(bub)
+    return
+  }
+
+  const htmlCodeM=fullText.match(/```html\s*([\s\S]+?)```/i)
+  const htmlDocM=!htmlCodeM&&fullText.match(/(<!DOCTYPE\s+html[\s\S]+?<\/html>)/i)
+  const htmlCode=htmlCodeM?htmlCodeM[1]:htmlDocM?htmlDocM[1]:null
+  if(htmlCode){
+    const card=document.createElement('div')
+    card.style.cssText='display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #EBE8DF;border-radius:16px;padding:12px 16px;cursor:pointer;max-width:260px;box-shadow:0 1px 4px rgba(0,0,0,.06)'
+    card.innerHTML=`<div style="width:36px;height:36px;background:#ECEFFE;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="14" height="14" rx="2.5" stroke="#5C6BC0" stroke-width="1.3"/><path d="M5 7h8M5 10h5" stroke="#5C6BC0" stroke-width="1.2" stroke-linecap="round"/></svg></div><div style="min-width:0"><div style="font-size:14px;font-weight:600;color:#1F1E1D">HTML 页面</div><div style="font-size:11px;color:#A6A39A;margin-top:2px">点击全屏查看</div></div>`
+    const _code=htmlCode
+    card.onclick=()=>xkOpenHtml(_code)
+    paras.forEach(p=>p.remove())
+    block.appendChild(card)
+    return
+  }
+
+  // ── 逐para处理普通markdown ──
   paras.forEach(p=>{
     const raw=p.textContent||''
 
-    // ── 检测 AI 返回的文件格式 ──
-    // 格式：[文件: xxx.txt]\n```\n内容\n```
+    // 单para内的文件/HTML检测（流式输出时走这里）
     const fileM=raw.match(/^\[文件:\s*(.+?)\]\s*[\n\r]+```[\w]*[\n\r]([\s\S]*?)```/)
     if(fileM){
       const fname=fileM[1].trim()
