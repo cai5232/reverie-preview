@@ -2610,7 +2610,7 @@ function xkHandleSubmit(e){
     e.stopPropagation()
   }
   const text=_xkGetInputText()
-  if(!text)return false
+  if(!text&&!xkPendingAttachments.length)return false
   _xkDirectSend(text)
   return false
 }
