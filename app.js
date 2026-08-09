@@ -3199,13 +3199,86 @@ document.addEventListener('DOMContentLoaded',()=>{
   xkInitSearchBadge()
 })
 
-// 操作栏：只显示 token 数（全局函数，不能放在DOMContentLoaded里）
+// 删除一轮对话（user wrap 起，往后把紧随的 AI block/工具行也删，并从 xkHistory 清这一轮）
+function xkDeleteRound(userWrapEl){
+  const box=document.getElementById('xkStream')
+  if(!box)return
+  let cur=userWrapEl.nextElementSibling
+  const toRemove=[]
+  while(cur&&!cur.classList.contains('xk-user-wrap')){
+    toRemove.push(cur)
+    cur=cur.nextElementSibling
+  }
+  toRemove.forEach(el=>el.remove())
+  userWrapEl.remove()
+  // 从 xkHistory 删对应的一轮（最靠末尾的 user + 之后直到下一个 user 的所有消息）
+  for(let i=xkHistory.length-1;i>=0;i--){
+    if(xkHistory[i].role==='user'){
+      let end=i+1
+      while(end<xkHistory.length&&xkHistory[end].role!=='user')end++
+      xkHistory.splice(i,end-i)
+      break
+    }
+  }
+  localStorage.setItem('xk_history',JSON.stringify(xkHistory))
+}
+
+// 操作栏：复制 + 收藏 + token 数，同一行靠左
 function xkAddActions(block, tokens){
-  if(!tokens) return
-  const tokenEl=document.createElement('div')
-  tokenEl.className='xk-token-count'
-  tokenEl.textContent=tokens+' tokens'
-  block.appendChild(tokenEl)
+  const bar=document.createElement('div')
+  bar.className='xk-actions-bar'
+  // token 数
+  if(tokens){
+    const tokenEl=document.createElement('div')
+    tokenEl.className='xk-token-count'
+    tokenEl.textContent=tokens+' tokens'
+    bar.appendChild(tokenEl)
+  }
+  // 复制按钮
+  const copyBtn=document.createElement('button')
+  copyBtn.className='xk-action-icon-btn'
+  copyBtn.title='复制'
+  copyBtn.innerHTML=`<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="4.5" y="4.5" width="7" height="7" rx="1.5" stroke="#C8C4BC" stroke-width="1.2"/><path d="M4.5 9.5H3a1 1 0 01-1-1V3a1 1 0 011-1h5.5a1 1 0 011 1v1.5" stroke="#C8C4BC" stroke-width="1.2" stroke-linecap="round"/></svg>`
+  copyBtn.onclick=()=>{
+    const text=Array.from(block.querySelectorAll('.xk-ai-para')).map(p=>p.textContent).join('\n')
+    navigator.clipboard&&navigator.clipboard.writeText(text).then(()=>showToast('已复制'))
+  }
+  // 收藏按钮
+  const favBtn=document.createElement('button')
+  favBtn.className='xk-action-icon-btn'
+  favBtn.title='收藏'
+  favBtn.innerHTML=`<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1.5l1.5 3.2 3.5.5-2.5 2.4.5 3.5L7 9.5 4 11.1l.5-3.5L2 5.2l3.5-.5z" stroke="#C8C4BC" stroke-width="1.2" stroke-linejoin="round"/></svg>`
+  let faved=false
+  favBtn.onclick=()=>{
+    faved=!faved
+    const path=favBtn.querySelector('path')
+    if(path)path.setAttribute('fill',faved?'#C8C4BC':'none')
+    showToast(faved?'已收藏':'已取消收藏')
+    if(faved){
+      const text=Array.from(block.querySelectorAll('.xk-ai-para')).map(p=>p.textContent).join('\n')
+      const favs=JSON.parse(localStorage.getItem('xk_favorites')||'[]')
+      favs.unshift({text,time:Date.now()})
+      if(favs.length>100)favs.pop()
+      localStorage.setItem('xk_favorites',JSON.stringify(favs))
+    }
+  }
+  bar.appendChild(copyBtn)
+  bar.appendChild(favBtn)
+  block.appendChild(bar)
+  // AI block 长按：删这一轮
+  let _lp=null
+  block.addEventListener('touchstart',()=>{
+    _lp=setTimeout(()=>{
+      if(confirm('删除这条消息？')){
+        let prev=block.previousElementSibling
+        while(prev&&!prev.classList.contains('xk-user-wrap'))prev=prev.previousElementSibling
+        if(prev)xkDeleteRound(prev)
+        else block.remove()
+      }
+    },500)
+  },{passive:true})
+  block.addEventListener('touchend',()=>clearTimeout(_lp),{passive:true})
+  block.addEventListener('touchmove',()=>clearTimeout(_lp),{passive:true})
 }
 
 function _xkBtn(svgStr, label, cls='xk-action-btn'){
