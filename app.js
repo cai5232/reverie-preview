@@ -3148,13 +3148,71 @@ document.addEventListener('DOMContentLoaded',()=>{
   xkInitSearchBadge()
 })
 
-// 操作栏：只显示 token 数（全局函数，不能放在DOMContentLoaded里）
+// 操作栏：token数 + 复制 + 收藏
+let xkFavorites = JSON.parse(localStorage.getItem('xk_favorites')||'[]')
+
 function xkAddActions(block, tokens){
-  if(!tokens) return
-  const tokenEl=document.createElement('div')
-  tokenEl.className='xk-token-count'
-  tokenEl.textContent=tokens+' tokens'
-  block.appendChild(tokenEl)
+  const bar=document.createElement('div')
+  bar.className='xk-action-bar'
+  bar.style.cssText='display:flex;align-items:center;gap:10px;margin-top:4px;padding:0 2px'
+
+  // 复制按钮
+  const copyBtn=document.createElement('button')
+  copyBtn.style.cssText='background:none;border:none;padding:0;cursor:pointer;display:flex;align-items:center;gap:3px;color:#C8C4BC;font-size:11px;-webkit-tap-highlight-color:transparent'
+  copyBtn.innerHTML=`<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="3.5" width="8.5" height="8.5" rx="1.5" stroke="#C8C4BC" stroke-width="1.1"/><path d="M3.5 3V2A1 1 0 014.5 1h6.5A1 1 0 0112 2v6.5A1 1 0 0111 9.5H10" stroke="#C8C4BC" stroke-width="1.1" stroke-linecap="round"/></svg>复制`
+  copyBtn.onclick=()=>{
+    const paras=Array.from(block.querySelectorAll('.xk-ai-para')).map(p=>p.textContent).join('\n')
+    navigator.clipboard&&navigator.clipboard.writeText(paras).then(()=>{
+      copyBtn.innerHTML=`<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 7l3 3 6-6" stroke="#5C6BC0" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>已复制`
+      copyBtn.style.color='#5C6BC0'
+      setTimeout(()=>{
+        copyBtn.innerHTML=`<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="3.5" width="8.5" height="8.5" rx="1.5" stroke="#C8C4BC" stroke-width="1.1"/><path d="M3.5 3V2A1 1 0 014.5 1h6.5A1 1 0 0112 2v6.5A1 1 0 0111 9.5H10" stroke="#C8C4BC" stroke-width="1.1" stroke-linecap="round"/></svg>复制`
+        copyBtn.style.color='#C8C4BC'
+      },1500)
+    })
+  }
+
+  // 收藏按钮
+  const favBtn=document.createElement('button')
+  favBtn.style.cssText='background:none;border:none;padding:0;cursor:pointer;display:flex;align-items:center;gap:3px;color:#C8C4BC;font-size:11px;-webkit-tap-highlight-color:transparent'
+  const starSvg=(filled)=>filled
+    ?`<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1l1.5 3.2 3.5.5-2.5 2.5.6 3.5L6.5 9 3.4 10.7l.6-3.5L1.5 4.7l3.5-.5z" fill="#f0a0aa" stroke="#f0a0aa" stroke-width=".8" stroke-linejoin="round"/></svg>`
+    :`<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1l1.5 3.2 3.5.5-2.5 2.5.6 3.5L6.5 9 3.4 10.7l.6-3.5L1.5 4.7l3.5-.5z" stroke="#C8C4BC" stroke-width="1.1" stroke-linejoin="round"/></svg>`
+  const text=Array.from(block.querySelectorAll('.xk-ai-para')).map(p=>p.textContent).join('\n').trim()
+  const isFaved=()=>xkFavorites.some(f=>f.text===text)
+  const render=()=>{
+    const f=isFaved()
+    favBtn.innerHTML=starSvg(f)+(f?'<span style="color:#f0a0aa">已收藏</span>':'收藏')
+    favBtn.style.color=f?'#f0a0aa':'#C8C4BC'
+  }
+  render()
+  favBtn.onclick=()=>{
+    if(isFaved()){
+      xkFavorites=xkFavorites.filter(f=>f.text!==text)
+      showToast('已取消收藏')
+    }else{
+      xkFavorites.unshift({text,time:Date.now()})
+      if(xkFavorites.length>200)xkFavorites=xkFavorites.slice(0,200)
+      showToast('已收藏')
+    }
+    localStorage.setItem('xk_favorites',JSON.stringify(xkFavorites))
+    render()
+  }
+
+  // token数
+  if(tokens){
+    const tokenEl=document.createElement('div')
+    tokenEl.className='xk-token-count'
+    tokenEl.style.cssText='margin-left:auto;font-size:11px;color:#D8D4CC'
+    tokenEl.textContent=tokens+' tokens'
+    bar.appendChild(copyBtn)
+    bar.appendChild(favBtn)
+    bar.appendChild(tokenEl)
+  }else{
+    bar.appendChild(copyBtn)
+    bar.appendChild(favBtn)
+  }
+  block.appendChild(bar)
 }
 
 function _xkBtn(svgStr, label, cls='xk-action-btn'){
