@@ -2069,53 +2069,6 @@ function xkRenderAttachBubbles(){
   box.scrollTop=box.scrollHeight
 }
 
-// ── 服务端 KV 持久化（防 iOS 后台清 localStorage）──────────────
-const KV_BASE = () => (cfg.api || DEFAULT_API).replace(/\/v1\/?$/, '') + '/internal/kv'
-const KV_HDR = () => ({ 'Authorization': 'Bearer ' + (cfg.key || DEFAULT_KEY) })
-
-async function kvGet(key) {
-  try {
-    const res = await fetch(KV_BASE() + '/' + encodeURIComponent(key), { headers: KV_HDR() })
-    if (!res.ok) return null
-    const j = await res.json()
-    return j.found ? j.value : null
-  } catch { return null }
-}
-async function kvPut(key, value) {
-  try {
-    await fetch(KV_BASE() + '/' + encodeURIComponent(key), {
-      method: 'PUT',
-      headers: { ...KV_HDR(), 'Content-Type': 'application/json' },
-      body: JSON.stringify({ value })
-    })
-  } catch {}
-}
-
-const _kvDebounceTimers = {}
-function kvPutDebounced(key, value, delay = 2000) {
-  localStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value))
-  clearTimeout(_kvDebounceTimers[key])
-  _kvDebounceTimers[key] = setTimeout(() => kvPut(key, value), delay)
-}
-
-async function kvRestoreIfEmpty(key) {
-  const local = localStorage.getItem(key)
-  if (local && local !== 'null' && local !== 'undefined' && local.length > 2) return
-  const remote = await kvGet(key)
-  if (remote !== null && remote !== undefined) {
-    const str = typeof remote === 'string' ? remote : JSON.stringify(remote)
-    localStorage.setItem(key, str)
-    console.log('[kv] restored from server:', key)
-    return str
-  }
-}
-
-let _xkHistorySyncTimer = null
-function xkHistoryPersist() {
-  clearTimeout(_xkHistorySyncTimer)
-  _xkHistorySyncTimer = setTimeout(() => kvPut('xk_history', xkHistory), 2500)
-}
-
 // ── 联网搜索：作为 function tool 注入，模型自主判断 ──
 const WEB_SEARCH_TOOL={
   type:'function',
