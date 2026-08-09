@@ -2210,9 +2210,24 @@ function xkAppendUser(text){
   const wrap=document.createElement('div')
   wrap.className='xk-user-wrap'
 
+  // content 可能是数组（发送图片/文件时），提取文字部分显示
+  let displayText=text
+  if(Array.isArray(text)){
+    const textParts=text.filter(p=>p&&p.type==='text').map(p=>p.text)
+    displayText=textParts.join(' ')||'[附件]'
+    // 渲染图片气泡
+    text.filter(p=>p&&p.type==='image_url'&&p.image_url).forEach(p=>{
+      const imgWrap=document.createElement('div');imgWrap.className='xk-user-wrap'
+      const img=document.createElement('img')
+      img.src=p.image_url.url
+      img.style.cssText='max-width:200px;border-radius:14px;display:block'
+      imgWrap.appendChild(img);box.appendChild(imgWrap)
+    })
+  }
+
   const el=document.createElement('div')
   el.className='xk-user-msg'
-  el.textContent=text
+  el.textContent=displayText
   wrap.appendChild(el)
 
 
