@@ -2021,12 +2021,23 @@ function xkHandleImgInput(e){
 function xkHandleFileInput(e){
   const files=Array.from(e.target.files);if(!files.length)return
   files.forEach(file=>{
-    const reader=new FileReader()
-    reader.onload=ev=>{
-      xkPendingAttachments.push({type:'file',dataUrl:null,name:file.name,size:file.size,text:ev.target.result})
-      xkRenderAttachBar()
+    if(file.type.startsWith('image/')){
+      // 图片：用 base64 读，发送时作为 image_url 传给 AI，AI 能识图
+      const reader=new FileReader()
+      reader.onload=ev=>{
+        xkPendingAttachments.push({type:'image',dataUrl:ev.target.result,name:file.name,size:file.size})
+        xkRenderAttachBar()
+      }
+      reader.readAsDataURL(file)
+    }else{
+      // 普通文件：读文本内容
+      const reader=new FileReader()
+      reader.onload=ev=>{
+        xkPendingAttachments.push({type:'file',dataUrl:null,name:file.name,size:file.size,text:ev.target.result})
+        xkRenderAttachBar()
+      }
+      reader.readAsText(file,'utf-8')
     }
-    reader.readAsText(file,'utf-8')
   })
   e.target.value=''
 }
