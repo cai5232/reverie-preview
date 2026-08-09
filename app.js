@@ -2289,64 +2289,6 @@ let xkHistory=JSON.parse(localStorage.getItem('xk_history')||'[]')
 let xkBusy=false
 let xkLastTime=0
 
-// ── 服务端 KV 持久化 ──────────────────────────────────────────────
-// 读写都走 xiaoke /internal/kv，localStorage 只作内存缓存，清后台也不丢
-
-const KV_KEYS = ['xk_history','mcp_servers','novel_books',
-  'cfg_api','cfg_key','cfg_model','cfg_temp','cfg_notify','cfg_keepalive',
-  'cfg_gen_api','cfg_gen_key','cfg_gen_model',
-  'cfg_img_api','cfg_img_key','cfg_img_model','cfg_pos_prom','cfg_neg_prom',
-  'model_list','gen_model_list','img_model_list','headerAvatar']
-
-async function kvGet(key){
-  try{
-    const base=(cfg?.api||DEFAULT_API).replace(/\/v1\/?$/,'')
-    const authKey=cfg?.key||DEFAULT_KEY
-    const r=await fetch(base+'/internal/kv/'+encodeURIComponent(key),{
-      headers:{'Authorization':'Bearer '+authKey}
-    })
-    if(!r.ok)return null
-    const j=await r.json()
-    return j.found?j.value:null
-  }catch{return null}
-}
-
-async function kvSet(key,value){
-  // 先写localStorage（同步，立刻生效）
-  try{localStorage.setItem(key,typeof value==='string'?value:JSON.stringify(value))}catch{}
-  // 再异步写服务器
-  try{
-    const base=(cfg?.api||DEFAULT_API).replace(/\/v1\/?$/,'')
-    const authKey=cfg?.key||DEFAULT_KEY
-    await fetch(base+'/internal/kv/'+encodeURIComponent(key),{
-      method:'PUT',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+authKey},
-      body:JSON.stringify({value})
-    })
-  }catch{}
-}
-
-// 启动时从服务器恢复所有关键数据到localStorage
-async function kvSyncFromServer(){
-  try{
-    const base=(cfg?.api||DEFAULT_API).replace(/\/v1\/?$/,'')
-    const authKey=cfg?.key||DEFAULT_KEY
-    await Promise.all(KV_KEYS.map(async key=>{
-      try{
-        const r=await fetch(base+'/internal/kv/'+encodeURIComponent(key),{
-          headers:{'Authorization':'Bearer '+authKey}
-        })
-        if(!r.ok)return
-        const j=await r.json()
-        if(j.found&&j.value!==null&&j.value!==undefined){
-          const s=typeof j.value==='string'?j.value:JSON.stringify(j.value)
-          localStorage.setItem(key,s)
-        }
-      }catch{}
-    }))
-  }catch{}
-}
-
 function xkNewChat(){
   xkHistory=[]
   localStorage.setItem('xk_history',JSON.stringify(xkHistory))
