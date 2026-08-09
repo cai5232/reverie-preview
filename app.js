@@ -2393,39 +2393,11 @@ async function _xkDirectSend(text){
 // 小飞机：触发 blur，在 blur 事件里读内容发送
 // iOS IME 在 touchend 时还没 commit，必须等 blur 触发后才能正确读到内容
 function xkForceSend(){
-  const el=document.getElementById('xkInput')
-  if(!el)return
-  const text=_xkGetInputText()
-  if(text){
-    el.blur()
-    _xkDirectSend(text)
-  }else{
-    el._pendingSend=true
-    el.blur()
-  }
+  _xkRequestSendFromInput()
 }
 
 async function xkSend(){
-  const text=_xkGetInputText()
-  if(!text)return
-  // 有文字就强制发送，不被 xkBusy 锁住
-  if(xkBusy){
-    xkBusy=false
-    const b=document.getElementById('xkSendBtn')
-    if(b)b.disabled=false
-  }
-  _xkClearInput()
-  if(xkPendingAttachments.length)xkRenderAttachBubbles()
-  xkAppendUser(text)
-  const msgContent=xkFlushAttachments(text)
-  xkPendingAttachments=[]
-  xkRenderAttachBar()
-  xkHistory.push({role:'user',content:msgContent})
-  if(xkHistory.length>60)xkHistory=xkHistory.slice(-60)
-  localStorage.setItem('xk_history',JSON.stringify(xkHistory))
-  const box=document.getElementById('xkStream')
-  if(box)box._userScrolled=false
-  await xkCallAI()
+  _xkRequestSendFromInput()
 }
 
 // 前端 agentic loop：流式输出 + 检测tool_call + 调MCP + 继续
