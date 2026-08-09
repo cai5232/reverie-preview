@@ -2782,18 +2782,11 @@ document.addEventListener('DOMContentLoaded',()=>{
     xkSendBtnEl.addEventListener('touchend',function(e){
       e.preventDefault()
       e.stopPropagation()
-      const text=_xkGetInputText()
-      if(text){
-        _xkClearInput()
-        _xkDirectSend(text)
-      }
+      _xkRequestSendFromInput()
     },{passive:false})
-    xkSendBtnEl.addEventListener('click',function(){
-      const text=_xkGetInputText()
-      if(text){
-        _xkClearInput()
-        _xkDirectSend(text)
-      }
+    xkSendBtnEl.addEventListener('click',function(e){
+      e.preventDefault()
+      _xkRequestSendFromInput()
     })
   }
   const xkta=document.getElementById('xkInput')
