@@ -579,14 +579,7 @@ body{color:#1F1E1D;font-family:-apple-system,'PingFang SC',sans-serif;display:fl
   word-break:break-word;white-space:pre-wrap;
   cursor:text;
 }
-/* placeholder 通过 CSS attr 实现 */
-.xk-textarea.xk-empty::before{
-  content:attr(data-placeholder);
-  color:#B8B6AE;
-  pointer-events:none;
-  position:absolute;
-  left:0;top:11px;
-}
+/* placeholder 已移除 */
 .xk-input-pill{
   position:relative;
 }
