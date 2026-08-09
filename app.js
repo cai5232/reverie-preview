@@ -3133,8 +3133,36 @@ document.addEventListener('DOMContentLoaded',()=>{
               if(p.type==='image_url'){
                 const w=document.createElement('div');w.className='xk-user-wrap'
                 const imgWrap=document.createElement('div')
-                imgWrap.style.cssText='width:100px;height:100px;border-radius:14px;overflow:hidden;flex-shrink:0;background:#EBE8DF;display:flex;align-items:center;justify-content:center'
-                imgWrap.innerHTML=`<svg width="28" height="28" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="2.5" stroke="#C8C4BC" stroke-width="1.2"/><circle cx="4.5" cy="4.5" r="1" fill="#C8C4BC"/><path d="M1 10l3-3 2.5 2.5 2-2 3 3" stroke="#C8C4BC" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+                imgWrap.style.cssText='width:100px;height:100px;border-radius:14px;overflow:hidden;cursor:pointer;flex-shrink:0'
+                const img=document.createElement('img')
+                img.style.cssText='width:100%;height:100%;object-fit:cover;display:block'
+                const url=p.image_url?.url||''
+                if(url.startsWith('idb:')){
+                  const idbKey=url.slice(4)
+                  idbGet(idbKey).then(dataUrl=>{
+                    if(dataUrl){
+                      img.src=dataUrl
+                      img.onclick=()=>{
+                        const ov=document.createElement('div')
+                        ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;display:flex;align-items:center;justify-content:center'
+                        const full=document.createElement('img')
+                        full.src=dataUrl
+                        full.style.cssText='max-width:95vw;max-height:90vh;border-radius:12px;object-fit:contain'
+                        ov.onclick=()=>ov.remove()
+                        ov.appendChild(full);document.body.appendChild(ov)
+                      }
+                    }else{
+                      imgWrap.style.background='#EBE8DF'
+                      imgWrap.style.display='flex'
+                      imgWrap.style.alignItems='center'
+                      imgWrap.style.justifyContent='center'
+                      imgWrap.innerHTML=`<svg width="28" height="28" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="2.5" stroke="#C8C4BC" stroke-width="1.2"/><circle cx="4.5" cy="4.5" r="1" fill="#C8C4BC"/><path d="M1 10l3-3 2.5 2.5 2-2 3 3" stroke="#C8C4BC" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+                    }
+                  }).catch(()=>{})
+                }else if(url){
+                  img.src=url
+                }
+                imgWrap.appendChild(img)
                 w.appendChild(imgWrap);box.appendChild(w)
               }else if(p.type==='text'&&p.text){
                 if(p.text==='[图片]'){
