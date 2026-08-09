@@ -2340,7 +2340,7 @@ function _xkClearInput(){
 
 function _xkConsumePendingSend(el){
   if(!el)return
-  const text=(el.value||'').replace(/\n+$/,'').trim()
+  const text=(el.value||'').trim()
   el._pendingSend=false
   el._sendingAfterBlur=false
   el._sendTriggeredAt=0
@@ -2352,34 +2352,13 @@ function _xkConsumePendingSend(el){
 function _xkRequestSendFromInput(){
   const el=document.getElementById('xkInput')
   if(!el)return
-  const text=(el.value||'').replace(/\n+$/,'').trim()
+  const text=(el.value||'').trim()
   if(!text)return
   const now=Date.now()
   if(el._sendTriggeredAt&&now-el._sendTriggeredAt<400)return
   el._sendTriggeredAt=now
-  if(document.activeElement===el){
-    el._pendingSend=true
-    el._sendingAfterBlur=true
-    el.blur()
-    setTimeout(()=>{
-      if(el._pendingSend&&el._sendingAfterBlur){
-        _xkConsumePendingSend(el)
-      }
-    },180)
-    return
-  }
   _xkClearInput()
   _xkDirectSend(text)
-}
-
-function _xkMaybeSendFromTrailingNewline(el){
-  if(!el||el._composing)return
-  const raw=el.value||''
-  if(!/\n$/.test(raw))return
-  const text=raw.replace(/\n+$/,'').trim()
-  if(!text)return
-  el.value=raw.replace(/\n+$/,'')
-  _xkRequestSendFromInput()
 }
 
 // 直接用已知文本发送（MutationObserver场景，文本已从div读出）
