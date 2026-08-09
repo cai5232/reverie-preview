@@ -1,3 +1,21 @@
+// ── 全局函数代理：确保 HTML inline onclick 在任何加载时序下都能找到 ──
+;['clickToggle','setToggle','fetchModels','fetchGenModels','fetchImgModels','saveCfg',
+  'navTo','openSidebar','closeSidebar','openDotsMenu','closeDotsMenu',
+  'openSearch','closeSearch','doSearch',
+  'xkTogglePlus','xkClosePlus','xkHandleSubmit','xkForceSend','xkSend',
+  'xkWebSearch','xkOpenHtml','xkCloseHtml','xkCloseThink',
+  'mcpPingAll','mcpShowAdd','mcpBackToList','mcpShowEdit','closeMcpAdd','mcpSaveServer',
+  'mcpSelectType','mcpAddHeaderRow','closeMcpCall','mcpDoCall',
+  'closeToolDetail'
+].forEach(name=>{
+  window[name]=function(){
+    // 等到真正的函数定义后再调用
+    const fn=window['_fn_'+name]
+    if(fn)return fn.apply(this,arguments)
+    console.warn('[reverie] function not ready:',name)
+  }
+})
+
 const DEFAULT_API='https://yanvn.zeabur.app/v1'
 const DEFAULT_KEY='xiaoke-cai-2026'
 const DEFAULT_GEN_API='https://api.ckff.tech/v1'
