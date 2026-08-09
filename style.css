@@ -957,26 +957,21 @@ body{color:#1F1E1D;font-family:'GJDJCR',-apple-system,'PingFang SC',sans-serif;d
 /* ── live thinking 色块（高度自由增长，生成完收起） ── */
 .xk-think-live{
   margin:0 0 8px;
-  border-radius:12px;
-  background:#FFF3E8;
+  border-radius:0;
+  background:transparent;
   overflow:hidden;
   transition:opacity .25s ease, max-height .25s ease;
   max-height:600px;
 }
 .xk-think-live.collapsing{opacity:0;max-height:0;pointer-events:none;margin:0}
 .xk-think-live-head{
-  display:flex;align-items:center;gap:5px;
-  padding:9px 14px 5px;
-  font-size:11px;color:#A6A39A;font-weight:500;
-  font-family:-apple-system,'PingFang SC',sans-serif;
-  letter-spacing:.02em;
+  display:none;
 }
 .xk-think-live-dot{
-  width:5px;height:5px;border-radius:50%;background:#A6A39A;
-  animation:dot-fade 1s ease-in-out infinite;flex-shrink:0;
+  display:none;
 }
 .xk-think-live-body{
-  padding:0 14px 12px;
+  padding:0 0 8px;
   font-size:12px;color:#A6A39A;line-height:1.65;
   font-family:-apple-system,'PingFang SC',sans-serif;
   white-space:pre-wrap;word-break:break-word;
