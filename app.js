@@ -2643,9 +2643,28 @@ async function xkAgenticLoop(sendOptions, mcpServerMap, round){
   const typing = xkTypingEl()
 
   try{
+    // 发给API时把历史里的base64图片剔掉，只保留idb:key占位或文字，避免超token
+    function stripBase64FromHistory(history){
+      return history.map(m=>{
+        if(!m.content||typeof m.content==='string')return m
+        if(Array.isArray(m.content)){
+          const parts=m.content.map(p=>{
+            if(p&&p.type==='image_url'){
+              const url=p.image_url?.url||''
+              if(url.startsWith('data:')){
+                return{type:'text',text:'[图片]'}
+              }
+            }
+            return p
+          })
+          return{...m,content:parts}
+        }
+        return m
+      })
+    }
     const body = {
       model: cfg.model,
-      messages: [{role:'system',content:SYSTEM_PROMPT},...xkHistory],
+      messages: [{role:'system',content:SYSTEM_PROMPT},...stripBase64FromHistory(xkHistory)],
       stream: true,
       stream_options: {include_usage: true},
       temperature: cfg.temp,
