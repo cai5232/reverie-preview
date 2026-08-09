@@ -2826,11 +2826,6 @@ document.addEventListener('DOMContentLoaded',()=>{
     })
     xkta.addEventListener('focus',function(){xkUpdatePlaceholder()})
     xkta.addEventListener('blur',function(){
-      if(xkta._pendingSend){
-        xkta._pendingSend=false
-        const text=_xkGetInputText()
-        if(text)_xkDirectSend(text)
-      }
       xkUpdatePlaceholder()
     })
 
