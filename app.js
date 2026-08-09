@@ -2402,19 +2402,6 @@ function xkStartStreamBlock(thinkText){
   return block
 }
 
-// 流式完成后对 block 做一次 markdown 渲染
-function xkApplyMarkdown(block){
-  block.querySelectorAll('.xk-ai-para').forEach(p=>{
-    const raw=p.textContent||''
-    const html=raw
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-      .replace(/^#{1,6}\s+(.+)$/gm,'$1')
-      .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-      .replace(/\*([^*\n]+?)\*/g,'<em>$1</em>')
-    p.innerHTML=html
-  })
-}
-
 function xkStreamAppend(block, chunk){
   const cursor=block._cursor
   let curPara=block._curPara
