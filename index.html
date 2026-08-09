@@ -681,10 +681,6 @@ function navTo(name){
       var t = txt.trim().replace(/[\r\n\s]/g,'');
       var code;
       try{ code = atob(t); }catch(e){ code = txt; }
-      var bootEnd = code.indexOf('})()\n', code.indexOf('Object.entries(fns)'));
-      if(bootEnd > -1){
-        code = code.slice(bootEnd + 5);
-      }
       var el = document.createElement('script');
       el.textContent = code;
       document.head.appendChild(el);
