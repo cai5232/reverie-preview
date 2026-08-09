@@ -164,7 +164,38 @@ function closeDotsMenu(){document.getElementById('dotsOverlay').classList.remove
 function openSearch(){
   closeDotsMenu()
   document.getElementById('searchOverlay').classList.add('open')
+  document.getElementById('searchResults').innerHTML=''
+  // 渲染收藏区
+  const favs=JSON.parse(localStorage.getItem('xk_favorites')||'[]')
+  const favsSection=document.getElementById('xkFavsSection')
+  const favsList=document.getElementById('xkFavsList')
+  if(favs.length){
+    favsSection.style.display='block'
+    favsList.innerHTML=favs.map((f,i)=>{
+      const preview=(f.text||'').replace(/\s+/g,' ').trim().slice(0,60)
+      return`<div class="search-fav-item" onclick="xkJumpToFav(${i})">${escHtml(preview+(preview.length>=60?'…':''))}</div>`
+    }).join('')
+  }else{
+    favsSection.style.display='none'
+  }
   setTimeout(()=>document.getElementById('searchInput').focus(),100)
+}
+function xkJumpToFav(idx){
+  const favs=JSON.parse(localStorage.getItem('xk_favorites')||'[]')
+  const fav=favs[idx]
+  if(!fav)return
+  closeSearch()
+  // 在 xkStream 里找包含该文本的 para，滚动过去
+  const paras=Array.from(document.querySelectorAll('#xkStream .xk-ai-para'))
+  const target=paras.find(p=>(p.textContent||'').includes((fav.text||'').slice(0,30)))
+  if(target){
+    target.scrollIntoView({behavior:'smooth',block:'center'})
+    target.style.transition='background .2s'
+    target.style.background='rgba(200,180,140,.18)'
+    setTimeout(()=>target.style.background='',1200)
+  }else{
+    showToast('消息已不在当前记录中')
+  }
 }
 function closeSearch(){
   document.getElementById('searchOverlay').classList.remove('open')
