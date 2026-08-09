@@ -2755,32 +2755,24 @@ document.addEventListener('DOMContentLoaded',()=>{
   }
 
   xkBusy=false
+  const xkComposerForm=document.getElementById('xkComposerForm')
+  if(xkComposerForm){
+    xkComposerForm.addEventListener('submit',xkHandleSubmit)
+  }
   const xkSendBtnEl=document.getElementById('xkSendBtn')
   if(xkSendBtnEl){
     xkSendBtnEl.removeAttribute('disabled')
-    xkSendBtnEl.addEventListener('click',function(e){
-      e.preventDefault()
-      _xkRequestSendFromInput()
-    })
   }
   const xkta=document.getElementById('xkInput')
   if(xkta){
     let _composing=false
-    xkta.addEventListener('input',function(){
-      if(!this._pendingSend)this._sendTriggeredAt=0
-    })
-    xkta.addEventListener('compositionstart',()=>{_composing=true;xtka._composing=true})
-    xkta.addEventListener('compositionend',()=>{_composing=false;xtka._composing=false})
+    xkta.addEventListener('compositionstart',()=>{_composing=true})
+    xkta.addEventListener('compositionend',()=>{_composing=false})
     xkta.addEventListener('keydown',function(e){
       if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing&&!_composing){
         e.preventDefault()
-        e.stopPropagation()
-        _xkRequestSendFromInput()
+        xkHandleSubmit(e)
       }
-    })
-    xkta.addEventListener('blur',function(){
-      if(this._pendingSend)_xkSchedulePendingSend(this,0)
-      else this._sendTriggeredAt=0
     })
   }
 
