@@ -2784,6 +2784,8 @@ document.addEventListener('DOMContentLoaded',()=>{
       e.stopPropagation()
       _xkSendFlag = true
       this.style.opacity = '0.6'
+      var text = _xkGetInputText()
+      showToast('读到：[' + text + ']')
     }, {passive: true})
     xkSendBtnEl.addEventListener('touchend', function(){
       this.style.opacity = ''
