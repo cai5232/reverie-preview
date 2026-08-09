@@ -343,6 +343,9 @@ body{color:#1F1E1D;font-family:'GJDJCR',-apple-system,'PingFang SC',sans-serif;d
   padding:7px 13px;
   max-width:72%;
   margin:8px 0 4px;
+  word-break:break-word;line-height:1.65;
+  font-family:-apple-system,'PingFang SC',sans-serif;
+}
 
 /* 三个点：横排 */
 .xk-typing-dots{
