@@ -2812,10 +2812,11 @@ document.addEventListener('DOMContentLoaded',()=>{
     xkta.addEventListener('input',function(){
       this.style.height='auto'
       this.style.height=Math.min(this.scrollHeight,120)+'px'
+      _xkMaybeSendFromTrailingNewline(this)
     })
     let _composing=false
-    xkta.addEventListener('compositionstart',()=>_composing=true)
-    xkta.addEventListener('compositionend',()=>_composing=false)
+    xkta.addEventListener('compositionstart',()=>{_composing=true;xtka._composing=true})
+    xkta.addEventListener('compositionend',()=>{_composing=false;xtka._composing=false})
     xkta.addEventListener('keydown',function(e){
       if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing&&!_composing){
         e.preventDefault()
