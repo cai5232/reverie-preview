@@ -2985,9 +2985,17 @@ document.addEventListener('DOMContentLoaded',()=>{
     const box=document.getElementById('xkStream')
     xkHistory.forEach(m=>{
       try{
-        // 跳过 tool 消息和 tool_calls 中间过程消息（content为null）
+        // tool 结果消息跳过（内容已经在工具行里展示了）
         if(m.role==='tool')return
-        if(m.role==='assistant'&&m.tool_calls)return
+        // assistant 带 tool_calls：渲染工具调用行，不渲染气泡
+        if(m.role==='assistant'&&m.tool_calls){
+          xkToolGroupStart()
+          m.tool_calls.forEach(tc=>{
+            xkShowToolStatus(tc.function?.name||'tool','done','')
+          })
+          xkToolGroupEnd()
+          return
+        }
         if(m.role==='user'){
           xkAppendUser(m.content)
         }else if(m.role==='assistant'){
