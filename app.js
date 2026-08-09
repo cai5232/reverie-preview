@@ -2960,7 +2960,7 @@ document.addEventListener('DOMContentLoaded',()=>{
             if(hm2){heart=hm2[1].trim();body=raw.slice(hm2.index+hm2[0].length).trim()}
           }
           const block=xkRenderAI(body||'',heart||null)
-          if(block)xkAddActions(block,m.tokens||0)
+          if(block){xkApplyMarkdown(block);xkAddActions(block,m.tokens||0)}
         }
       }catch(e){console.warn('[history restore]',e)}
     })
