@@ -43,68 +43,7 @@ function _fixThinkText(tw){
   }
 }
 
-// ── 发送按钮兜底绑定（不用 passive:false，不 preventDefault） ──
-window.addEventListener('load', function(){
-  function tryBindSend(){
-    var btn = document.getElementById('xkSendBtn')
-    if(!btn) return
-    if(typeof xkBusy !== 'undefined') window.xkBusy = false
-    btn.removeAttribute('disabled')
-
-    // 启动时探测 xkSendBtn 位置上最顶层的元素，showToast 告知
-    setTimeout(function(){
-      var rect = btn.getBoundingClientRect()
-      var cx = rect.left + rect.width/2
-      var cy = rect.top + rect.height/2
-      var top = document.elementFromPoint(cx, cy)
-      var info = top ? (top.tagName||'')+'#'+(top.id||'')+' .'+(typeof top.className==='string'?top.className.split(' ')[0]:'') : 'null'
-      if(typeof showToast==='function') showToast('顶层:'+info)
-    }, 800)
-
-    var _pendingText = ''
-    btn.ontouchstart = function(e){
-      e.stopPropagation()
-      btn.style.background = 'rgba(255,255,255,0.75)'
-      // 提前在 touchstart 里读好内容，touchend 里直接用
-      var el = document.getElementById('xkInput')
-      _pendingText = el ? (el.innerText||el.textContent||'').replace(/\n+$/,'').trim() : ''
-    }
-    btn.ontouchend = function(e){
-      e.preventDefault()
-      e.stopPropagation()
-      btn.style.background = ''
-      if(typeof xkBusy !== 'undefined') window.xkBusy = false
-      btn.removeAttribute('disabled')
-      var text = _pendingText
-      _pendingText = ''
-      if(!text){
-        // fallback: 再读一次
-        var el2 = document.getElementById('xkInput')
-        text = el2 ? (el2.innerText||el2.textContent||'').replace(/\n+$/,'').trim() : ''
-      }
-      if(text){
-        var el3 = document.getElementById('xkInput')
-        if(el3){ el3.innerHTML=''; el3.classList.add('xk-empty') }
-        if(typeof _xkDirectSend === 'function'){
-          _xkDirectSend(text)
-        }else if(typeof xkForceSend === 'function'){
-          xkForceSend()
-        }
-      }
-    }
-    btn.ontouchcancel = function(){
-      btn.style.background = ''
-    }
-    btn.onclick = function(){
-      if(typeof xkBusy !== 'undefined') window.xkBusy = false
-      btn.removeAttribute('disabled')
-      if(typeof xkForceSend === 'function') xkForceSend()
-      else if(typeof xkSend === 'function') xkSend()
-    }
-  }
-  tryBindSend()
-  setTimeout(tryBindSend, 600)
-})
+// 发送按钮绑定已移至 app.js DOMContentLoaded，fix.js 不再重复绑定
 
 // MutationObserver 修正 think text
 ;(function(){
