@@ -2367,7 +2367,6 @@ function xkForceSend(){
   const el=document.getElementById('xkInput')
   if(!el)return
   const text=_xkGetInputText()
-  showToast('txt:「'+text.slice(0,15)+'」len='+text.length)
   if(text){
     el.blur()
     _xkDirectSend(text)
