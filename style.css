@@ -174,9 +174,9 @@ body{color:#1F1E1D;font-family:'GJDJCR',-apple-system,'PingFang SC',sans-serif;d
 .xk-attach-preview-file{
   position:relative;flex-shrink:0;
   display:flex;align-items:center;gap:7px;
-  background:#EBE8DF;border-radius:10px;
+  background:#FFFFFF;border-radius:10px;
   padding:8px 30px 8px 10px;
-  max-width:180px;min-width:120px;
+  width:100%;box-sizing:border-box;
 }
 .xk-attach-preview-file-icon{
   width:28px;height:28px;border-radius:6px;background:#D8D8D6;
