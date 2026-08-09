@@ -2808,8 +2808,19 @@ document.addEventListener('DOMContentLoaded',()=>{
     xkta.addEventListener('keydown',function(e){
       if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing&&!_composing){
         e.preventDefault()
-        const text=_xkGetInputText()
-        if(text){_xkClearInput();_xkDirectSend(text)}
+        e.stopPropagation()
+        _xkRequestSendFromInput()
+      }
+    })
+    xkta.addEventListener('beforeinput',function(e){
+      if(e.inputType==='insertLineBreak'&&!_composing){
+        e.preventDefault()
+        _xkRequestSendFromInput()
+      }
+    })
+    xkta.addEventListener('blur',function(){
+      if(this._pendingSend){
+        setTimeout(()=>_xkConsumePendingSend(this),0)
       }
     })
   }
