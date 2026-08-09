@@ -2191,16 +2191,14 @@ function xkApplyMarkdown(block){
       return
     }
 
-    // ── 检测 HTML 代码块 → 预览卡片 ──
+    // ── 检测 HTML 代码块 → 文件气泡样式（不预览，点击全屏）──
     const htmlCodeM=raw.match(/```html\s*([\s\S]+?)```/i)
     const htmlDocM=!htmlCodeM&&raw.match(/(<!DOCTYPE\s+html[\s\S]+?<\/html>)/i)
     const htmlCode=htmlCodeM?htmlCodeM[1]:htmlDocM?htmlDocM[1]:null
     if(htmlCode){
       const card=document.createElement('div')
-      card.className='xk-html-bubble'
-      card.style.cssText='border-radius:16px;overflow:hidden;border:1px solid #EBE8DF;max-width:300px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.06)'
-      const encoded=htmlCode.replace(/"/g,'&quot;')
-      card.innerHTML=`<iframe srcdoc="${encoded}" sandbox="allow-scripts allow-same-origin" style="width:100%;height:200px;border:none;display:block;pointer-events:none"></iframe><div style="display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:#FAF8F4;border-top:.5px solid #EBE8DF"><span style="font-size:12px;color:#A6A39A">HTML 预览</span><span style="font-size:12px;color:#5C6BC0;font-weight:600">全屏 ›</span></div>`
+      card.style.cssText='display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #EBE8DF;border-radius:16px;padding:12px 16px;cursor:pointer;max-width:260px;box-shadow:0 1px 4px rgba(0,0,0,.06)'
+      card.innerHTML=`<div style="width:36px;height:36px;background:#ECEFFE;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="14" height="14" rx="2.5" stroke="#5C6BC0" stroke-width="1.3"/><path d="M5 7h8M5 10h5" stroke="#5C6BC0" stroke-width="1.2" stroke-linecap="round"/></svg></div><div style="min-width:0"><div style="font-size:14px;font-weight:600;color:#1F1E1D">HTML 页面</div><div style="font-size:11px;color:#A6A39A;margin-top:2px">点击全屏查看</div></div>`
       const _code=htmlCode
       card.onclick=()=>xkOpenHtml(_code)
       p.replaceWith(card)
