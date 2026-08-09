@@ -3099,9 +3099,17 @@ document.addEventListener('DOMContentLoaded',()=>{
                 el.innerHTML=`<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="2.5" stroke="#A6A39A" stroke-width="1.2"/><circle cx="4.5" cy="4.5" r="1" fill="#A6A39A"/><path d="M1 10l3-3 2.5 2.5 2-2 3 3" stroke="#A6A39A" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>图片`
                 w.appendChild(el);box.appendChild(w)
               }else if(p.type==='text'&&p.text){
-                const w=document.createElement('div');w.className='xk-user-wrap'
-                const el=document.createElement('div');el.className='xk-user-msg'
-                el.textContent=p.text;w.appendChild(el);box.appendChild(w)
+                if(p.text==='[图片]'){
+                  const w=document.createElement('div');w.className='xk-user-wrap'
+                  const el=document.createElement('div')
+                  el.style.cssText='background:#EBE8DF;border-radius:14px;padding:10px 14px;font-size:13px;color:#A6A39A;display:flex;align-items:center;gap:6px'
+                  el.innerHTML=`<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="2.5" stroke="#A6A39A" stroke-width="1.2"/><circle cx="4.5" cy="4.5" r="1" fill="#A6A39A"/><path d="M1 10l3-3 2.5 2.5 2-2 3 3" stroke="#A6A39A" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>图片`
+                  w.appendChild(el);box.appendChild(w)
+                }else{
+                  const w=document.createElement('div');w.className='xk-user-wrap'
+                  const el=document.createElement('div');el.className='xk-user-msg'
+                  el.textContent=p.text;w.appendChild(el);box.appendChild(w)
+                }
               }
             })
           }else{
