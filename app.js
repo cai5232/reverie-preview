@@ -2642,15 +2642,17 @@ async function xkAgenticLoop(sendOptions, mcpServerMap, round){
   const typing = xkTypingEl()
 
   try{
-    // 发给API时把历史里的base64图片剔掉，只保留idb:key占位或文字，避免超token
+    // 发给API时把历史里的base64/idb:图片剔掉，但保留最后一条（当前消息）里的base64用于识图
     function stripBase64FromHistory(history){
-      return history.map(m=>{
+      return history.map((m,idx)=>{
         if(!m.content||typeof m.content==='string')return m
         if(Array.isArray(m.content)){
+          // 最后一条是当前发送的消息，保留base64让AI能识图
+          if(idx===history.length-1)return m
           const parts=m.content.filter(p=>{
             if(p&&p.type==='image_url'){
               const url=p.image_url?.url||''
-              if(url.startsWith('data:'))return false
+              if(url.startsWith('data:')||url.startsWith('idb:'))return false
             }
             return true
           })
