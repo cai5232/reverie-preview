@@ -333,6 +333,7 @@ body{color:#1F1E1D;font-family:'GJDJCR',-apple-system,'PingFang SC',sans-serif;d
   mask-image:linear-gradient(to bottom,transparent 0%,black 60px,black calc(100% - 60px),transparent 100%);
 }
 .xk-stream::-webkit-scrollbar{display:none}
+.xk-stream{padding-top:calc(env(safe-area-inset-top,0px) + 54px)!important;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 16px)!important}
 
 .xk-user-msg{
   align-self:flex-end;
