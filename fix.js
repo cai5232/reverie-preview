@@ -65,11 +65,13 @@ window.addEventListener('load', function(){
     btn.ontouchstart = function(e){
       e.stopPropagation()
       btn.style.background = 'rgba(255,255,255,0.75)'
+      alert('touchstart!')
     }
     btn.ontouchend = function(e){
       e.preventDefault()
       e.stopPropagation()
       btn.style.background = ''
+      alert('touchend! will send now')
       const el2=document.getElementById('xkInput')
       const raw2=el2?(el2.innerText||el2.textContent||el2.innerHTML||''):'NO_EL'
       if(typeof showToast==='function') showToast('el:'+!!el2+' raw:「'+String(raw2).slice(0,12)+'」len='+String(raw2).length)
