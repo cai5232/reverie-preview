@@ -2648,14 +2648,12 @@ async function xkAgenticLoop(sendOptions, mcpServerMap, round){
       return history.map(m=>{
         if(!m.content||typeof m.content==='string')return m
         if(Array.isArray(m.content)){
-          const parts=m.content.map(p=>{
+          const parts=m.content.filter(p=>{
             if(p&&p.type==='image_url'){
               const url=p.image_url?.url||''
-              if(url.startsWith('data:')){
-                return{type:'text',text:'[图片]'}
-              }
+              if(url.startsWith('data:'))return false
             }
-            return p
+            return true
           })
           return{...m,content:parts}
         }
