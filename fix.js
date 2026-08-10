@@ -110,10 +110,12 @@ async function mem2Load(force){
           const cleanName=rawName.replace(/^📌\s*/,'').trim()
           if(!cleanName)return
           const{date,title}=mem2ParseName(cleanName)
+          // 如果 title 只是时间戳 xx-xx-xx，当做无标题
+          const isTimestamp=/^\d{2}-\d{2}-\d{2}$/.test(title)
           rows.push({
             bucket_id:cleanName,
             name:cleanName,
-            display_title:title||(date?date:''),
+            display_title:isTimestamp?'':title,
             date:date,
             domain:parts[1]||'',
             importance:parseInt(parts[2])||0,
