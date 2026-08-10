@@ -163,21 +163,18 @@ function mem2Render(){
 }
 
 function mem2CardHTML(b,i){
-  const{date,title}=mem2ParseName(b.name||b.bucket_id||'')
-  let displayTitle=title
-  if(!displayTitle||mem2LooksLikeId(displayTitle)){
-    displayTitle=(b.domain||'').split(',')[0].trim()||(b.bucket_id||'').slice(-8)||'未命名'
-  }
+  const displayTitle=b.display_title||b.name||'未命名'
+  const date=b.date||''
   const imp=Math.min(10,Math.max(0,parseInt(b.importance)||0))
   const dots=Array.from({length:9},(_,k)=>`<div class="mem2-dot-item${k<imp?'':' empty'}"></div>`).join('')
-  const tags=(b.domain||'').split(',').map(t=>t.trim()).filter(Boolean).slice(0,3)
+  const tags=(b.domain||'').split(',').map(t=>t.trim()).filter(t=>t&&t!=='未分类').slice(0,3)
   const tagsHTML=tags.map(t=>`<div class="mem2-tag">${escHtml(t)}</div>`).join('')
   const badge=mem2DomainBadge(b)
   const color=mem2BadgeColor(badge)
   const timeDisplay=date?date.replace(/^(\d{4})-(\d{2})-(\d{2})$/,'$2/$3'):''
   return`<div class="mem2-card" onclick="mem2OpenDetail(${i})">
     <div class="mem2-card-head"><span class="mem2-card-type" style="color:${color}">${escHtml(badge)}</span>${timeDisplay?`<span class="mem2-card-time">${escHtml(timeDisplay)}</span>`:''}</div>
-    <div class="mem2-card-title">${b.pinned?'\uD83D\uDCCC ':''} ${escHtml(displayTitle)}</div>
+    <div class="mem2-card-title">${b.pinned?'📌 ':''}${escHtml(displayTitle)}</div>
     <div class="mem2-card-footer"><div class="mem2-dots">${dots}</div><svg class="mem2-heart" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 12S1.5 8.5 1.5 5a2.5 2.5 0 015 0 2.5 2.5 0 015 0C11.5 8.5 7 12 7 12z" stroke="#E5E5EA" stroke-width="1.2"/></svg><div class="mem2-card-tags">${tagsHTML}</div></div>
   </div>`
 }
