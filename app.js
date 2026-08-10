@@ -148,6 +148,7 @@ function navTo(name){
   if(target)target.classList.add('active')
   closeSidebar()
   if(name==='setting')renderSetting()
+  if(name==='memory2')mem2Load()
 }
 function openSidebar(){
   document.getElementById('sidebar').classList.add('open')
