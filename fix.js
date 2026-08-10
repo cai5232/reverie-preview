@@ -271,13 +271,19 @@ async function mem2CheckAndLoad(){
     if(count!==lastCount){
       localStorage.setItem('mem2_last_count',String(count))
       _mem2All=[]
-      // 直接用已拉到的 blocks 填充，不再发第二次请求
       const rows=[]
       blocks.forEach(b=>{
         (b.text||'').split('\n').forEach(line=>{
           const parts=line.split('|').map(s=>s.trim())
-          if(parts.length>=2&&parts[0]&&!/^工具/.test(parts[0])){
-            rows.push({bucket_id:parts[0],name:parts[1]||parts[0],domain:parts[2]||'',importance:parseInt(parts[3])||0})
+          if(parts.length>=1&&parts[0]){
+            const rawName=parts[0]
+            if(/^工具|^名称|^===|^---/.test(rawName))return
+            const isPinned=rawName.startsWith('📌')
+            const cleanName=rawName.replace(/^📌\s*/,'').trim()
+            if(!cleanName)return
+            const{date,title}=mem2ParseName(cleanName)
+            const isTimestamp=/^\d{2}-\d{2}-\d{2}$/.test(title)
+            rows.push({bucket_id:cleanName,name:cleanName,display_title:isTimestamp?'':title,date:date,domain:parts[1]||'',importance:parseInt(parts[2])||0,pinned:isPinned})
           }
         })
       })
