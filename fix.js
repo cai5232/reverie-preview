@@ -58,15 +58,24 @@ async function mem2McpCall(toolName,args){
 // ===== 新增 / 编辑记忆 =====
 let _mem2EditBucket = null  // null = 新增，有值 = 编辑
 
+function mem2SelectCat(el){
+  document.querySelectorAll('#mem2EditCatRow .mem2-edit-cat').forEach(e=>e.classList.remove('active'))
+  el.classList.add('active')
+}
+
 function mem2ShowAdd(){
   _mem2EditBucket = null
   document.getElementById('mem2EditSheetTitle').textContent = '新增记忆'
+  document.getElementById('mem2EditTitle').value = ''
   document.getElementById('mem2EditContent').value = ''
   document.getElementById('mem2EditTags').value = ''
   document.getElementById('mem2EditImportance').value = '5'
   document.getElementById('mem2EditImpVal').textContent = '5'
+  document.querySelectorAll('#mem2EditCatRow .mem2-edit-cat').forEach(e=>e.classList.remove('active'))
+  const def=document.querySelector('#mem2EditCatRow [data-cat="dynamic"]')
+  if(def)def.classList.add('active')
   document.getElementById('mem2EditOverlay').classList.add('open')
-  setTimeout(()=>document.getElementById('mem2EditContent').focus(), 150)
+  setTimeout(()=>document.getElementById('mem2EditTitle').focus(), 150)
 }
 
 function mem2ShowEdit(i){
@@ -75,11 +84,19 @@ function mem2ShowEdit(i){
   if(!b) return
   _mem2EditBucket = b
   document.getElementById('mem2EditSheetTitle').textContent = '编辑记忆'
+  document.getElementById('mem2EditTitle').value = b.display_title||''
   document.getElementById('mem2EditContent').value = b._content || ''
   document.getElementById('mem2EditTags').value = (b.domain||'').split(',').map(t=>t.trim()).filter(t=>t&&t!=='未分类').join(', ')
   const imp = Math.min(10,Math.max(1,parseInt(b.importance)||5))
   document.getElementById('mem2EditImportance').value = String(imp)
   document.getElementById('mem2EditImpVal').textContent = String(imp)
+  document.querySelectorAll('#mem2EditCatRow .mem2-edit-cat').forEach(e=>e.classList.remove('active'))
+  let cat = 'dynamic'
+  if(b.pinned) cat = 'pinned'
+  else if(b.resolved) cat = 'resolved'
+  else if((b.importance||0)>=9) cat = 'permanent'
+  const catEl=document.querySelector('#mem2EditCatRow [data-cat="'+cat+'"]')
+  if(catEl)catEl.classList.add('active')
   document.getElementById('mem2EditOverlay').classList.add('open')
   setTimeout(()=>document.getElementById('mem2EditContent').focus(), 150)
 }
@@ -90,34 +107,48 @@ function mem2CloseEdit(){
 }
 
 async function mem2SaveEdit(){
+  const title = document.getElementById('mem2EditTitle').value.trim()
   const content = document.getElementById('mem2EditContent').value.trim()
-  if(!content){ showToast('内容不能为空'); return }
+  if(!content && !title){ showToast('内容不能为空'); return }
   const tags = document.getElementById('mem2EditTags').value.trim()
   const importance = parseInt(document.getElementById('mem2EditImportance').value)||5
+  const catEl = document.querySelector('#mem2EditCatRow .mem2-edit-cat.active')
+  const cat = catEl ? catEl.dataset.cat : 'dynamic'
   const btn = document.getElementById('mem2EditSaveBtn')
   btn.textContent = '保存中…'
   btn.style.opacity = '0.6'
   try{
     if(_mem2EditBucket){
-      await mem2McpCall('trace', {
+      const args = {
         bucket_id: _mem2EditBucket.bucket_id || _mem2EditBucket.name,
-        content: content,
         importance,
-        ...(tags ? {tags} : {})
-      })
-      _mem2EditBucket._content = content
+        ...(content ? {content} : {}),
+        ...(tags ? {tags} : {}),
+        ...(title ? {name: title} : {}),
+        ...(cat==='pinned'||cat==='permanent' ? {pinned:1} : {pinned:0}),
+        ...(cat==='resolved' ? {resolved:1} : {resolved:0}),
+      }
+      await mem2McpCall('trace', args)
+      if(content) _mem2EditBucket._content = content
       _mem2EditBucket.importance = importance
+      _mem2EditBucket.pinned = cat==='pinned'||cat==='permanent'
+      _mem2EditBucket.resolved = cat==='resolved'
       if(tags) _mem2EditBucket.domain = tags
-      const first = content.split('\n')[0]
-      _mem2EditBucket.display_title = first.slice(0,28) + (first.length>28?'…':'')
+      if(title) _mem2EditBucket.display_title = title
+      else if(content){
+        const first = content.split('\n')[0]
+        _mem2EditBucket.display_title = first.slice(0,28)+(first.length>28?'…':'')
+      }
       mem2SaveCache()
       mem2Render()
       showToast('已更新')
     } else {
+      const finalContent = title ? (title + '\n' + content) : content
       await mem2McpCall('hold', {
-        content,
+        content: finalContent,
         importance,
-        ...(tags ? {tags} : {})
+        ...(tags ? {tags} : {}),
+        ...(cat==='pinned'||cat==='permanent' ? {pinned:true} : {}),
       })
       mem2ClearCache()
       _mem2All = []
