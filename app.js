@@ -896,15 +896,14 @@ async function mem2Load(){
   document.getElementById('mem2StatusDot').style.background='#FF9500'
   try{
     const proxyBase=(cfg.api||'').replace(/\/v1\/?$/,'')+'/internal/mcp-proxy'
-    // catalog模式：每桶一行 name|domain|importance，name干净可读
-    const args=_mem2Tab==='feel'?{tags:'feel',catalog:true,max_results:60}:_mem2Tab==='plan'?{domain:'plan',catalog:true,max_results:60}:{catalog:true,max_results:60}
-    const res=await fetch(proxyBase,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key},body:JSON.stringify({url:'https://caiovo.zeabur.app/mcp',method:'POST',headers:{},body:{jsonrpc:'2.0',id:Date.now(),method:'tools/call',params:{name:'breath_advanced',arguments:args}}})})
+    // 一次拉全部，catalog模式
+    const res=await fetch(proxyBase,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key},body:JSON.stringify({url:'https://caiovo.zeabur.app/mcp',method:'POST',headers:{},body:{jsonrpc:'2.0',id:Date.now(),method:'tools/call',params:{name:'breath_advanced',arguments:{catalog:true,max_results:60}}}})})
     const j=await res.json()
     const raw=j?.data?.result?.content||[]
     const text=Array.isArray(raw)?raw.map(c=>c.text||'').join('\n'):''
     _mem2Data=mem2ParseResponse(text)
     document.getElementById('mem2StatusDot').style.background='#34C759'
-    document.getElementById('mem2StatusText').textContent='Ombre · '+_mem2Data.length+' memories'
+    document.getElementById('mem2StatusText').textContent='Memory · '+_mem2Data.length+' records'
     mem2Render()
   }catch(e){
     list.innerHTML='<div class="mem2-empty">加载失败：'+escHtml(e.message)+'</div>'
