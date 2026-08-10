@@ -949,20 +949,66 @@ function mem2Render(){
   if(!data.length){list.innerHTML='<div class="mem2-empty">没有找到相关记忆</div>';return}
   list.innerHTML=data.map((b,i)=>mem2CardHTML(b,i)).join('')
 }
+// 把domain映射成卡片左上角的分类badge
+function mem2DomainBadge(domain){
+  if(!domain)return'OMBRE'
+  const d=domain.toLowerCase()
+  if(d.includes('feel')||d.includes('感受'))return'FEEL'
+  if(d.includes('plan')||d.includes('待办')||d.includes('承诺'))return'PLAN'
+  return'OMBRE'
+}
 function mem2CardHTML(b,i){
   const{date,title}=mem2ParseName(b.name||b.bucket_id||'')
   const displayTitle=title||(b.name||'未命名')
   const imp=Math.min(10,Math.max(0,parseInt(b.importance)||0))
   const dots=Array.from({length:10},(_,k)=>`<div class="mem2-dot-item${k>=imp?' empty':''}"></div>`).join('')
-  const tags=(b.domain||'').split(',').map(t=>t.trim()).filter(Boolean).slice(0,2)
+  // tags从domain字段拆（catalog模式domain是逗号分隔的多个域）
+  const tags=(b.domain||'').split(',').map(t=>t.trim()).filter(Boolean).slice(0,3)
   const tagsHTML=tags.map(t=>`<div class="mem2-tag">${escHtml(t)}</div>`).join('')
-  const pinIcon=b.pinned?'📌 ':''
-  const typeLabel=b.domain?b.domain.toUpperCase():'DYNAMIC'
+  const badge=mem2DomainBadge(b.domain||'')
+  const pinEmoji=b.pinned?'📌 ':''
   return`<div class="mem2-card" onclick="mem2OpenDetail(${i})">
-    <div class="mem2-card-head"><span class="mem2-card-type">${escHtml(typeLabel)}</span>${date?`<span class="mem2-card-time">${escHtml(date)}</span>`:''}</div>
-    <div class="mem2-card-title">${pinIcon}${escHtml(displayTitle||date||'未命名')}</div>
+    <div class="mem2-card-head"><span class="mem2-card-type">${escHtml(badge)}</span>${date?`<span class="mem2-card-time">${escHtml(date)}</span>`:''}</div>
+    <div class="mem2-card-title">${pinEmoji}${escHtml(displayTitle||date||'未命名')}</div>
     <div class="mem2-card-footer"><div class="mem2-dots">${dots}</div><div class="mem2-card-tags">${tagsHTML}</div></div>
   </div>`
+}
+async function mem2OpenDetail(i){
+  const b=_mem2Filtered[i]
+  if(!b)return
+  const overlay=document.getElementById('mem2Overlay')
+  const body=document.getElementById('mem2SheetBody')
+  const{date,title}=mem2ParseName(b.name||'')
+  const displayTitle=title||(b.name||'未命名')
+  const badge=mem2DomainBadge(b.domain||'')
+  const imp=Math.min(10,Math.max(0,parseInt(b.importance)||0))
+  const dots=Array.from({length:10},(_,k)=>`<div class="mem2-dot-item${k>=imp?' empty':''}"></div>`).join('')
+  body.innerHTML=`
+    <div class="mem2-sheet-title">${b.pinned?'📌 ':''}${escHtml(displayTitle||date||'未命名')}</div>
+    <div class="mem2-sheet-meta">${escHtml(badge)}${date?' · '+escHtml(date):''}</div>
+    <div class="mem2-sheet-divider"></div>
+    <div id="mem2SheetContent"><div class="mem2-loading" style="font-size:13px;padding:10px 0">加载内容…</div></div>
+    <div class="mem2-sheet-divider"></div>
+    <div class="mem2-sheet-row"><span>importance</span><div class="mem2-dots">${dots}</div></div>
+    <button class="mem2-close-btn" onclick="mem2CloseDetail()">关闭</button>
+    <div class="mem2-sheet-id">ID: ${escHtml(b.bucket_id||b.name||'')} · tap to copy</div>
+  `
+  overlay.classList.add('open')
+  // 异步拉取内容
+  try{
+    const proxyBase=(cfg.api||'').replace(/\/v1\/?$/,'')+'/internal/mcp-proxy'
+    const res=await fetch(proxyBase,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key},body:JSON.stringify({url:'https://caiovo.zeabur.app/mcp',method:'POST',headers:{},body:{jsonrpc:'2.0',id:Date.now(),method:'tools/call',params:{name:'breath_search',arguments:{query:b.name||b.bucket_id||'',max_results:1}}}})})
+    const j=await res.json()
+    const raw=j?.data?.result?.content||[]
+    const text=Array.isArray(raw)?raw.map(c=>c.text||'').join('\n').trim():''
+    const el=document.getElementById('mem2SheetContent')
+    if(el)el.innerHTML=text
+      ?`<div class="mem2-sheet-content">${escHtml(text)}</div>`
+      :'<div class="mem2-sheet-content" style="color:#aaa">（无内容）</div>'
+  }catch(e){
+    const el=document.getElementById('mem2SheetContent')
+    if(el)el.innerHTML=`<div class="mem2-sheet-content" style="color:#f66">加载失败</div>`
+  }
 }
 async function mem2OpenDetail(idx){
   const b=_mem2Data[idx];if(!b)return
