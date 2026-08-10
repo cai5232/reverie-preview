@@ -375,6 +375,10 @@ function mem2CloseDetail(){
   const o=document.getElementById('mem2Overlay')
   if(o)o.classList.remove('open')
 }
+function mem2CloseDetailAndEdit(i){
+  mem2CloseDetail()
+  setTimeout(()=>mem2ShowEdit(i), 150)
+}
 
 function mem2OnSearch(val){
   _mem2Query=(val||'').trim()
