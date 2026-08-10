@@ -386,6 +386,25 @@ function mem2CloseDetail(){
   const o=document.getElementById('mem2Overlay')
   if(o)o.classList.remove('open')
 }
+async function mem2DeleteBucket(i){
+  const arr=_mem2Filtered.length?_mem2Filtered:_mem2All
+  const b=arr[i]
+  if(!b)return
+  const title=b.display_title||b.name||'这条记忆'
+  if(!confirm('确定删除「'+title+'」？此操作不可撤销。'))return
+  mem2CloseDetail()
+  try{
+    await mem2McpCall('trace',{bucket_id:b.bucket_id||b.name,delete:true,delete_reason:'用户在小窝手动删除'})
+    // 从本地移除
+    _mem2All=_mem2All.filter(x=>x!==b)
+    mem2SaveCache()
+    localStorage.setItem('mem2_last_count',String(_mem2All.length))
+    mem2Render()
+    showToast('已删除')
+  }catch(e){
+    showToast('删除失败：'+(e.message||''))
+  }
+}
 function mem2CloseDetailAndEdit(i){
   mem2CloseDetail()
   setTimeout(()=>mem2ShowEdit(i), 150)
