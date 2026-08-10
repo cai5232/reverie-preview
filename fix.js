@@ -100,9 +100,9 @@ async function mem2Load(force){
         if(parts.length>=2&&parts[0]&&!/^工具/.test(parts[0])){
           rows.push({
             bucket_id:parts[0],
-            name:parts[1]||parts[0],
-            domain:parts[2]||'',
-            importance:parseInt(parts[3])||0
+            name:parts[0],
+            domain:parts[1]||'',
+            importance:parseInt(parts[2])||0
           })
         }
       })
