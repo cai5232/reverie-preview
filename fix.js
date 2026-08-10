@@ -203,14 +203,22 @@ async function mem2OpenDetail(i){
   try{
     const blocks=await mem2McpCall('breath_search',{query:b.name||b.bucket_id,max_results:1})
     const raw=blocks.map(c=>c.text||'').join('\n')
-    const lines=raw.split('\n').filter(l=>{
-      const t=l.trim()
-      if(!t||t==='---')return false
-      if(/^\[[\w_.]+\]/.test(t))return false
-      if(/^(bucket_id|name|domain|importance|tags|created|updated|resolved|pinned)\s*[:=]/i.test(t))return false
-      return true
-    })
-    const cleaned=lines.join('\n').trim()
+    // 1. 去掉所有 [key:value] 格式的 OB 元数据 token
+    // 2. 去掉 Footprint 行
+    // 3. 去掉纯 emoji+tag 行（如 📌 [核心准则]）
+    const cleaned=raw
+      .replace(/\[[^\]\n]*:[^\]\n]*\]/g,'')   // [bucket_id:xxx] [content_role:yyy] 等
+      .replace(/🦶\s*Footprint[^\n]*/g,'')
+      .split('\n')
+      .map(l=>l.trim())
+      .filter(l=>{
+        if(!l||l==='---')return false
+        // 剩下只有 emoji 或方括号标签的行也去掉
+        if(/^[\[\]📌🦶\s]*$/.test(l))return false
+        return true
+      })
+      .join('\n')
+      .trim()
     const el=document.getElementById('mem2SheetContent')
     if(el)el.textContent=cleaned||'（无内容）'
   }catch(e){
