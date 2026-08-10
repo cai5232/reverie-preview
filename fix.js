@@ -175,27 +175,49 @@ async function mem2OpenDetail(i){
   if(!b)return
   const overlay=document.getElementById('mem2Overlay')
   const body=document.getElementById('mem2SheetBody')
-  const{date,title}=mem2ParseName(b.name||'')
-  let displayTitle=title
-  if(!displayTitle||mem2LooksLikeId(displayTitle)){
-    displayTitle=(b.domain||'').split(',')[0].trim()||(b.bucket_id||'').slice(-8)||'未命名'
-  }
+  const{date,title}=mem2ParseName(b.name||b.bucket_id||'')
+  let displayTitle=title||b.name||'未命名'
   const badge=mem2DomainBadge(b)
   const color=mem2BadgeColor(badge)
   const imp=Math.min(10,Math.max(0,parseInt(b.importance)||0))
   const dots=Array.from({length:10},(_,k)=>`<div class="mem2-dot-item${k<imp?'':' empty'}"></div>`).join('')
   const tags=(b.domain||'').split(',').map(t=>t.trim()).filter(Boolean)
-  const tagsHTML=tags.map(t=>`<div class="mem2-tag" style="font-size:12px;padding:3px 9px">${escHtml(t)}</div>`).join('')
+  const tagsHTML=tags.map(t=>`<span style="font-size:11px;color:#8E8E93;background:#F2F2F7;border-radius:6px;padding:2px 8px">${escHtml(t)}</span>`).join('')
   body.innerHTML=`
-    <div class="mem2-sheet-title">${b.pinned?'\uD83D\uDCCC ':''} ${escHtml(displayTitle)}</div>
-    <div class="mem2-sheet-meta" style="color:${color}">${escHtml(badge)}${date?' · '+escHtml(date):''}</div>
-    <div class="mem2-sheet-div"></div>
-    <div style="display:flex;flex-wrap:wrap;gap:6px;margin:8px 0">${tagsHTML||'<span style="color:#C7C7CC;font-size:13px">无标签</span>'}</div>
-    <div class="mem2-sheet-div"></div>
-    <div class="mem2-meta-row"><span class="mem2-meta-label">importance</span><div class="mem2-dots">${dots}</div></div>
-    <button class="mem2-rest-btn" onclick="mem2CloseDetail()">关闭</button>
-    <div class="mem2-sheet-id" onclick="navigator.clipboard&&navigator.clipboard.writeText('${escHtml(b.bucket_id||b.name||'')}').then(function(){showToast('已复制')})">${escHtml(b.bucket_id||b.name||'')} · tap to copy</div>`
+    <div style="font-size:18px;font-weight:700;color:#1C1C1E;line-height:1.4;margin-bottom:6px">${b.pinned?'📌 ':''}${escHtml(displayTitle)}</div>
+    <div style="font-size:13px;color:${color};margin-bottom:12px">${escHtml(badge)}${date?' · '+escHtml(date):''}</div>
+    <div style="height:.5px;background:#E5E5EA;margin-bottom:12px"></div>
+    <div id="mem2SheetContent" style="font-size:13px;line-height:1.75;color:#3A3A3C;white-space:pre-wrap;word-break:break-word;margin-bottom:12px">加载中…</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">${tagsHTML}</div>
+    <div style="height:.5px;background:#E5E5EA;margin-bottom:12px"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <span style="font-size:12px;color:#8E8E93">importance</span>
+      <div style="display:flex;gap:3px">${dots}</div>
+    </div>
+    <div onclick="mem2CloseDetail()" style="width:100%;padding:14px 0;text-align:center;background:#F2F2F7;border-radius:12px;font-size:15px;color:#1C1C1E;cursor:pointer;-webkit-tap-highlight-color:transparent;position:relative;z-index:10;touch-action:manipulation">关闭</div>
+  `
   if(overlay)overlay.classList.add('open')
+  try{
+    const blocks=await mem2McpCall('breath_search',{query:b.name||b.bucket_id,max_results:1})
+    const raw=blocks.map(c=>c.text||'').join('\n')
+    const lines=raw.split('\n').filter(l=>{
+      const t=l.trim()
+      if(!t||t==='---')return false
+      if(/^\[[\w_.]+\]/.test(t))return false
+      if(/^(bucket_id|name|domain|importance|tags|created|updated|resolved|pinned)\s*[:=]/i.test(t))return false
+      return true
+    })
+    const cleaned=lines.join('\n').trim()
+    const el=document.getElementById('mem2SheetContent')
+    if(el)el.textContent=cleaned||'（无内容）'
+  }catch(e){
+    const el=document.getElementById('mem2SheetContent')
+    if(el)el.textContent='加载失败'
+  }
+}
+function mem2CloseDetail(){
+  const o=document.getElementById('mem2Overlay')
+  if(o)o.classList.remove('open')
 }
 
 function mem2OnSearch(val){
