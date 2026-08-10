@@ -1026,47 +1026,6 @@ async function mem2OpenDetail(i){
     if(el)el.innerHTML=`<div class="mem2-sheet-content" style="color:#f66">加载失败: ${escHtml(e.message)}</div>`
   }
 }
-
-
-  const b=_mem2Data[idx];if(!b)return
-  const overlay=document.getElementById('mem2Overlay'),body=document.getElementById('mem2SheetBody')
-  let full=b
-  if(b._catalog&&!b.content){
-    body.innerHTML='<div class="mem2-loading" style="padding:40px 0">加载中…</div>'
-    overlay.classList.add('open')
-    try{
-      const proxyBase=(cfg.api||'').replace(/\/v1\/?$/,'')+'/internal/mcp-proxy'
-      const res=await fetch(proxyBase,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key},body:JSON.stringify({url:'https://caiovo.zeabur.app/mcp',method:'POST',headers:{},body:{jsonrpc:'2.0',id:Date.now(),method:'tools/call',params:{name:'breath_search',arguments:{query:b.name,max_results:1}}}})})
-      const j=await res.json()
-      const raw=j?.data?.result?.content||[]
-      const text=Array.isArray(raw)?raw.map(c=>c.text||'').join('\n'):''
-      const parsed=mem2ParseResponse(text)
-      if(parsed.length)full={...b,...parsed[0]}
-    }catch{}
-  }else{overlay.classList.add('open')}
-  const imp=Math.min(10,Math.max(0,parseInt(full.importance)||0))
-  const dots=Array.from({length:10},(_,k)=>`<div class="mem2-dot-item${k>=imp?' empty':''}" style="width:9px;height:9px"></div>`).join('')
-  const tags=(full.tags||'').split(',').map(t=>t.trim()).filter(Boolean)
-  const tagsHTML=tags.map(t=>`<div class="mem2-tag">${escHtml(t)}</div>`).join('')
-  const fmt=d=>d?new Date(d).toLocaleString('zh-CN',{year:'numeric',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'—'
-  const bid=escHtml(full.bucket_id||'')
-  body.innerHTML=`
-    <div class="mem2-sheet-title">${escHtml(full.name||full.bucket_id||'未命名')}</div>
-    <div class="mem2-sheet-type">${escHtml(full.domain||'dynamic')}</div>
-    <div class="mem2-sheet-div"></div>
-    <div class="mem2-sheet-content">${escHtml(full.content||'（无内容）')}</div>
-    <div class="mem2-sheet-div"></div>
-    ${full.recall_count!=null?`<div class="mem2-meta-row"><span class="mem2-meta-label">被想起</span><span class="mem2-meta-val">${full.recall_count} 次</span></div>`:''}
-    <div class="mem2-meta-row"><span class="mem2-meta-label">创建于</span><span class="mem2-meta-val">${fmt(full.created_at)}</span></div>
-    <div class="mem2-meta-row"><span class="mem2-meta-label">最近激活</span><span class="mem2-meta-val">${fmt(full.last_active)}</span></div>
-    <div class="mem2-meta-row"><span class="mem2-meta-label">importance</span><span class="mem2-meta-val"><div class="mem2-dots">${dots}</div></span></div>
-    ${full.valence!=null?`<div class="mem2-meta-row"><span class="mem2-meta-label">valence</span><span class="mem2-meta-val">${full.valence}</span></div>`:''}
-    ${full.arousal!=null?`<div class="mem2-meta-row"><span class="mem2-meta-label">arousal</span><span class="mem2-meta-val">${full.arousal}</span></div>`:''}
-    ${full.score!=null?`<div class="mem2-meta-row"><span class="mem2-meta-label">score</span><span class="mem2-meta-val">${typeof full.score==='number'?full.score.toFixed(4):full.score}</span></div>`:''}
-    ${tags.length?`<div class="mem2-sheet-tags">${tagsHTML}</div>`:''}
-    <button class="mem2-rest-btn" onclick="mem2CloseDetail()">关闭</button>
-    <div class="mem2-sheet-id" onclick="navigator.clipboard&&navigator.clipboard.writeText('${bid}').then(()=>showToast('已复制'))">ID: ${bid} · tap to copy</div>`
-}
 function mem2CloseDetail(){document.getElementById('mem2Overlay').classList.remove('open')}
 async function mem2Search(q){
   const list=document.getElementById('mem2List')
