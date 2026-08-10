@@ -715,7 +715,9 @@ function navTo(name){
 <script src="app.js?v=220"></script>
 <script src="fix.js?v=17"></script>
 <script>
-(function(){var _n=navTo;navTo=function(name){_n(name);if(name==='memory2'&&typeof mem2Load==='function')mem2Load();};})();
+document.addEventListener('DOMContentLoaded',function(){
+  if(typeof mem2CheckAndLoad==='function')mem2CheckAndLoad();
+});
 </script>
 <style>
 .mem2-overlay{pointer-events:none!important}
