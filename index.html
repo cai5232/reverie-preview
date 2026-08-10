@@ -716,6 +716,11 @@ function navTo(name){
       <textarea id="mem2EditContent" style="width:100%;min-height:120px;border:.5px solid #E5E5EA;border-radius:12px;padding:10px 12px;font-size:14px;font-family:-apple-system,'PingFang SC',sans-serif;color:#1C1C1E;background:#F9F9F9;resize:none;box-sizing:border-box;outline:none;-webkit-appearance:none;line-height:1.6" placeholder="输入记忆内容…"></textarea>
       <div style="font-size:12px;color:#8E8E93;margin:10px 0 4px">标签（逗号分隔，可选）</div>
       <input id="mem2EditTags" style="width:100%;border:.5px solid #E5E5EA;border-radius:10px;padding:9px 12px;font-size:14px;font-family:-apple-system,'PingFang SC',sans-serif;color:#1C1C1E;background:#F9F9F9;box-sizing:border-box;outline:none;-webkit-appearance:none" placeholder="如：事务, 数字">
+      <div style="font-size:12px;color:#8E8E93;margin:10px 0 6px">重要度</div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <input type="range" id="mem2EditImportance" min="1" max="10" value="5" style="flex:1;accent-color:#C8956A;height:4px" oninput="document.getElementById('mem2EditImpVal').textContent=this.value">
+        <span id="mem2EditImpVal" style="font-size:14px;font-weight:600;color:#1C1C1E;min-width:18px;text-align:right">5</span>
+      </div>
       <div style="display:flex;gap:10px;margin-top:16px">
         <div onclick="mem2CloseEdit()" style="flex:1;padding:13px 0;text-align:center;background:#F2F2F7;border-radius:12px;font-size:15px;color:#1C1C1E;cursor:pointer;-webkit-tap-highlight-color:transparent">取消</div>
         <div id="mem2EditSaveBtn" onclick="mem2SaveEdit()" style="flex:1;padding:13px 0;text-align:center;background:#1C1C1E;border-radius:12px;font-size:15px;color:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent;font-weight:600">保存</div>
