@@ -868,7 +868,146 @@ function urlBase64ToUint8Array(base64String){
   return Uint8Array.from([...raw].map(c=>c.charCodeAt(0)))
 }
 
-// Memory 页
+// ── Memory2 ──
+let _mem2Data=[]
+let _mem2Tab='ombre'
+let _mem2Filter='all'
+let _mem2SearchTimer=null
+
+function mem2SetTab(el,tab){
+  document.querySelectorAll('.mem2-tab').forEach(t=>t.classList.remove('active'))
+  el.classList.add('active');_mem2Tab=tab;_mem2Filter='all'
+  document.querySelectorAll('.mem2-filter-pill').forEach((p,i)=>p.classList.toggle('active',i===0))
+  mem2Load()
+}
+function mem2SetFilter(el,f){
+  document.querySelectorAll('.mem2-filter-pill').forEach(p=>p.classList.remove('active'))
+  el.classList.add('active');_mem2Filter=f;mem2Render()
+}
+function mem2OnSearch(q){
+  clearTimeout(_mem2SearchTimer)
+  if(!q.trim()){mem2Render();return}
+  _mem2SearchTimer=setTimeout(()=>mem2Search(q.trim()),400)
+}
+async function mem2Load(){
+  const list=document.getElementById('mem2List')
+  list.innerHTML='<div class="mem2-loading">加载中…</div>'
+  document.getElementById('mem2StatusDot').style.background='#FF9500'
+  try{
+    const proxyBase=(cfg.api||'').replace(/\/v1\/?$/,'')+'/internal/mcp-proxy'
+    const args=_mem2Tab==='feel'?{tags:'feel',max_results:40}:_mem2Tab==='plan'?{domain:'plan',max_results:40}:{catalog:true,max_results:40}
+    const res=await fetch(proxyBase,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key},body:JSON.stringify({url:'https://caiovo.zeabur.app/mcp',method:'POST',headers:{},body:{jsonrpc:'2.0',id:Date.now(),method:'tools/call',params:{name:'breath_advanced',arguments:args}}})})
+    const j=await res.json()
+    const raw=j?.data?.result?.content||[]
+    const text=Array.isArray(raw)?raw.map(c=>c.text||'').join('\n'):''
+    _mem2Data=mem2ParseResponse(text)
+    document.getElementById('mem2StatusDot').style.background='#34C759'
+    document.getElementById('mem2StatusText').textContent='Ombre · '+_mem2Data.length+' memories'
+    mem2Render()
+  }catch(e){
+    list.innerHTML='<div class="mem2-empty">加载失败：'+escHtml(e.message)+'</div>'
+    document.getElementById('mem2StatusDot').style.background='#FF3B30'
+  }
+}
+function mem2ParseResponse(text){
+  try{const j=JSON.parse(text);if(Array.isArray(j))return j}catch{}
+  const lines=text.split('\n').map(l=>l.trim()).filter(Boolean)
+  const result=[]
+  for(const line of lines){
+    if(line.startsWith('#')||line.startsWith('bucket')||line.startsWith('名称')||line.startsWith('---'))continue
+    if(line.startsWith('{')){try{result.push(JSON.parse(line));continue}catch{}}
+    const parts=line.split('|')
+    if(parts.length>=1){
+      const name=parts[0].trim(),domain=(parts[1]||'').trim(),imp=parseInt(parts[2])||0
+      if(name)result.push({name,domain,importance:imp,bucket_id:name,_catalog:true})
+    }
+  }
+  return result
+}
+function mem2Render(){
+  const list=document.getElementById('mem2List')
+  let data=_mem2Data
+  if(_mem2Filter==='dynamic')data=data.filter(b=>!b.pinned&&!b.resolved)
+  else if(_mem2Filter==='permanent')data=data.filter(b=>b.pinned||(b.importance||0)>=9)
+  else if(_mem2Filter==='resolved')data=data.filter(b=>b.resolved)
+  else if(_mem2Filter==='pinned')data=data.filter(b=>b.pinned)
+  if(!data.length){list.innerHTML='<div class="mem2-empty">没有找到相关记忆</div>';return}
+  list.innerHTML=data.map((b,i)=>mem2CardHTML(b,i)).join('')
+}
+function mem2CardHTML(b,i){
+  const name=b.name||b.bucket_id||'未命名'
+  const content=b.content||''
+  const preview=content.slice(0,120)+(content.length>120?'…':'')
+  const imp=Math.min(10,Math.max(0,parseInt(b.importance)||0))
+  const dots=Array.from({length:10},(_,k)=>`<div class="mem2-dot-item${k>=imp?' empty':''}"></div>`).join('')
+  const tags=(b.tags||'').split(',').map(t=>t.trim()).filter(Boolean).slice(0,3)
+  const tagsHTML=tags.map(t=>`<div class="mem2-tag">${escHtml(t)}</div>`).join('')
+  const time=b.created_at?new Date(b.created_at).toLocaleDateString('zh-CN',{month:'numeric',day:'numeric'}):'';
+  const typeLabel=b.pinned?'PINNED':b.resolved?'RESOLVED':b.domain?b.domain.toUpperCase():'DYNAMIC'
+  return`<div class="mem2-card" onclick="mem2OpenDetail(${i})">
+    <div class="mem2-card-head"><span class="mem2-card-type">${escHtml(typeLabel)}</span><span class="mem2-card-time">${escHtml(time)}</span></div>
+    <div class="mem2-card-title">${escHtml(name)}</div>
+    ${preview?`<div class="mem2-card-preview">${escHtml(preview)}</div>`:''}
+    <div class="mem2-card-footer"><div class="mem2-dots">${dots}</div>${tagsHTML}${b.resolved?'<div class="mem2-resolved">resolved</div>':''}</div>
+  </div>`
+}
+async function mem2OpenDetail(idx){
+  const b=_mem2Data[idx];if(!b)return
+  const overlay=document.getElementById('mem2Overlay'),body=document.getElementById('mem2SheetBody')
+  let full=b
+  if(b._catalog&&!b.content){
+    body.innerHTML='<div class="mem2-loading" style="padding:40px 0">加载中…</div>'
+    overlay.classList.add('open')
+    try{
+      const proxyBase=(cfg.api||'').replace(/\/v1\/?$/,'')+'/internal/mcp-proxy'
+      const res=await fetch(proxyBase,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key},body:JSON.stringify({url:'https://caiovo.zeabur.app/mcp',method:'POST',headers:{},body:{jsonrpc:'2.0',id:Date.now(),method:'tools/call',params:{name:'breath_search',arguments:{query:b.name,max_results:1}}}})})
+      const j=await res.json()
+      const raw=j?.data?.result?.content||[]
+      const text=Array.isArray(raw)?raw.map(c=>c.text||'').join('\n'):''
+      const parsed=mem2ParseResponse(text)
+      if(parsed.length)full={...b,...parsed[0]}
+    }catch{}
+  }else{overlay.classList.add('open')}
+  const imp=Math.min(10,Math.max(0,parseInt(full.importance)||0))
+  const dots=Array.from({length:10},(_,k)=>`<div class="mem2-dot-item${k>=imp?' empty':''}" style="width:9px;height:9px"></div>`).join('')
+  const tags=(full.tags||'').split(',').map(t=>t.trim()).filter(Boolean)
+  const tagsHTML=tags.map(t=>`<div class="mem2-tag">${escHtml(t)}</div>`).join('')
+  const fmt=d=>d?new Date(d).toLocaleString('zh-CN',{year:'numeric',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'—'
+  const bid=escHtml(full.bucket_id||'')
+  body.innerHTML=`
+    <div class="mem2-sheet-title">${escHtml(full.name||full.bucket_id||'未命名')}</div>
+    <div class="mem2-sheet-type">${escHtml(full.domain||'dynamic')}</div>
+    <div class="mem2-sheet-div"></div>
+    <div class="mem2-sheet-content">${escHtml(full.content||'（无内容）')}</div>
+    <div class="mem2-sheet-div"></div>
+    ${full.recall_count!=null?`<div class="mem2-meta-row"><span class="mem2-meta-label">被想起</span><span class="mem2-meta-val">${full.recall_count} 次</span></div>`:''}
+    <div class="mem2-meta-row"><span class="mem2-meta-label">创建于</span><span class="mem2-meta-val">${fmt(full.created_at)}</span></div>
+    <div class="mem2-meta-row"><span class="mem2-meta-label">最近激活</span><span class="mem2-meta-val">${fmt(full.last_active)}</span></div>
+    <div class="mem2-meta-row"><span class="mem2-meta-label">importance</span><span class="mem2-meta-val"><div class="mem2-dots">${dots}</div></span></div>
+    ${full.valence!=null?`<div class="mem2-meta-row"><span class="mem2-meta-label">valence</span><span class="mem2-meta-val">${full.valence}</span></div>`:''}
+    ${full.arousal!=null?`<div class="mem2-meta-row"><span class="mem2-meta-label">arousal</span><span class="mem2-meta-val">${full.arousal}</span></div>`:''}
+    ${full.score!=null?`<div class="mem2-meta-row"><span class="mem2-meta-label">score</span><span class="mem2-meta-val">${typeof full.score==='number'?full.score.toFixed(4):full.score}</span></div>`:''}
+    ${tags.length?`<div class="mem2-sheet-tags">${tagsHTML}</div>`:''}
+    <button class="mem2-rest-btn" onclick="mem2CloseDetail()">关闭</button>
+    <div class="mem2-sheet-id" onclick="navigator.clipboard&&navigator.clipboard.writeText('${bid}').then(()=>showToast('已复制'))">ID: ${bid} · tap to copy</div>`
+}
+function mem2CloseDetail(){document.getElementById('mem2Overlay').classList.remove('open')}
+async function mem2Search(q){
+  const list=document.getElementById('mem2List')
+  list.innerHTML='<div class="mem2-loading">搜索中…</div>'
+  try{
+    const proxyBase=(cfg.api||'').replace(/\/v1\/?$/,'')+'/internal/mcp-proxy'
+    const res=await fetch(proxyBase,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key},body:JSON.stringify({url:'https://caiovo.zeabur.app/mcp',method:'POST',headers:{},body:{jsonrpc:'2.0',id:Date.now(),method:'tools/call',params:{name:'breath_search',arguments:{query:q,max_results:20}}}})})
+    const j=await res.json()
+    const raw=j?.data?.result?.content||[]
+    const text=Array.isArray(raw)?raw.map(c=>c.text||'').join('\n'):''
+    _mem2Data=mem2ParseResponse(text)
+    document.getElementById('mem2StatusText').textContent='搜索到 '+_mem2Data.length+' 条'
+    mem2Render()
+  }catch(e){list.innerHTML='<div class="mem2-empty">搜索失败：'+escHtml(e.message)+'</div>'}
+}
+
+// ── Memory 页
 let memCurrentTab='记忆'
 function memTab(el,name){
   document.querySelectorAll('.mem-tab').forEach(t=>t.classList.remove('active'))
