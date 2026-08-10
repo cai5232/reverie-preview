@@ -63,6 +63,8 @@ function mem2ShowAdd(){
   document.getElementById('mem2EditSheetTitle').textContent = '新增记忆'
   document.getElementById('mem2EditContent').value = ''
   document.getElementById('mem2EditTags').value = ''
+  document.getElementById('mem2EditImportance').value = '5'
+  document.getElementById('mem2EditImpVal').textContent = '5'
   document.getElementById('mem2EditOverlay').classList.add('open')
   setTimeout(()=>document.getElementById('mem2EditContent').focus(), 150)
 }
@@ -75,6 +77,9 @@ function mem2ShowEdit(i){
   document.getElementById('mem2EditSheetTitle').textContent = '编辑记忆'
   document.getElementById('mem2EditContent').value = b._content || ''
   document.getElementById('mem2EditTags').value = (b.domain||'').split(',').map(t=>t.trim()).filter(t=>t&&t!=='未分类').join(', ')
+  const imp = Math.min(10,Math.max(1,parseInt(b.importance)||5))
+  document.getElementById('mem2EditImportance').value = String(imp)
+  document.getElementById('mem2EditImpVal').textContent = String(imp)
   document.getElementById('mem2EditOverlay').classList.add('open')
   setTimeout(()=>document.getElementById('mem2EditContent').focus(), 150)
 }
