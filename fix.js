@@ -138,7 +138,27 @@ function mem2SaveCache(){
   try{localStorage.setItem('mem2_data',JSON.stringify(_mem2All))}catch(e){}
 }
 function mem2ReadCache(){
-  try{const s=localStorage.getItem('mem2_data');if(s)return JSON.parse(s)}catch(e){}
+  try{
+    const s=localStorage.getItem('mem2_data')
+    if(!s)return null
+    const arr=JSON.parse(s)
+    // 清洗旧缓存里残留的 meaning 前缀
+    arr.forEach(b=>{
+      if(b.display_title){
+        b.display_title=b.display_title
+          .replace(/^💭\s*meaning:\s*/i,'')
+          .replace(/^meaning:\s*/i,'').trim()
+      }
+      if(b._content){
+        b._content=b._content
+          .replace(/💭\s*meaning:[^\n]*/gi,'')
+          .replace(/^meaning:[^\n]*/gim,'')
+          .replace(/🦶[^\n]*/g,'')
+          .split('\n').map(l=>l.trim()).filter(l=>l&&l!=='---').join('\n').trim()
+      }
+    })
+    return arr
+  }catch(e){}
   return null
 }
 function mem2ClearCache(){
