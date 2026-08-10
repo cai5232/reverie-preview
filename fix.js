@@ -144,16 +144,37 @@ async function mem2SaveEdit(){
       showToast('已更新')
     } else {
       const finalContent = title ? (title + '\n' + content) : content
-      await mem2McpCall('hold', {
+      const holdRes = await mem2McpCall('hold', {
         content: finalContent,
         importance,
         ...(tags ? {tags} : {}),
         ...(cat==='pinned'||cat==='permanent' ? {pinned:true} : {}),
       })
-      mem2ClearCache()
-      _mem2All = []
-      showToast('已添加，正在刷新…')
-      mem2Load(true)
+      // 解析 hold 返回的 bucket_id（如果有）
+      let newBucketId = 'new-' + Date.now()
+      try{
+        const txt = (holdRes||[]).map(c=>c.text||'').join('\n')
+        const m = txt.match(/bucket_id[:\s]+([a-f0-9\-]{8,})/i)
+        if(m) newBucketId = m[1]
+      }catch(e){}
+      // 构造本地 bucket 直接插入，不全量刷新
+      const displayT = title || (content.split('\n')[0]||'').slice(0,28) + (content.length>28?'…':'')
+      const newBucket = {
+        bucket_id: newBucketId,
+        name: newBucketId,
+        display_title: displayT,
+        date: new Date().toISOString().slice(0,10),
+        domain: tags||'',
+        importance: importance,
+        pinned: cat==='pinned'||cat==='permanent',
+        resolved: cat==='resolved',
+        _content: finalContent
+      }
+      _mem2All.unshift(newBucket)
+      localStorage.setItem('mem2_last_count', String(_mem2All.length))
+      mem2SaveCache()
+      mem2Render()
+      showToast('已添加')
     }
   }catch(e){
     showToast('保存失败：' + (e.message||''))
