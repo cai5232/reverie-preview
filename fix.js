@@ -367,22 +367,10 @@ async function mem2Load(force){
 
 async function mem2CheckAndLoad(){
   try{
-    const [b1,b2,b3,b4] = await Promise.all([
-      mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_to:'2026-07-24'}),
-      mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_from:'2026-07-25',date_to:'2026-07-31'}),
-      mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_from:'2026-08-01',date_to:'2026-08-07'}),
-      mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_from:'2026-08-08',date_to:'2026-08-10'}),
-    ])
-    const b5 = await mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_from:'2026-08-11'})
-    const seen = new Set()
-    let count = 0
-    for(const r of [...mem2ParseCatalog(b1),...mem2ParseCatalog(b2),...mem2ParseCatalog(b3),...mem2ParseCatalog(b4),...mem2ParseCatalog(b5)]){
-      const key = r.bucket_id||r.name
-      if(key && !seen.has(key)){seen.add(key);count++}
-    }
+    const raw = await mem2FetchAllBuckets()
+    const count = raw.length
     const lastCount=parseInt(localStorage.getItem('mem2_last_count')||'0')
     if(count!==lastCount){
-      // 新记忆，清缓存重拉
       mem2ClearCache()
       _mem2All=[]
       mem2Load(true)
