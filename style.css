@@ -1055,7 +1055,7 @@ body{color:#1F1E1D;font-family:'GJDJCR',-apple-system,'PingFang SC',sans-serif;d
 .mem2-card{background:#fff;border-radius:14px;padding:14px 16px;margin-bottom:10px;cursor:pointer;-webkit-tap-highlight-color:transparent;border:.5px solid #E5E5EA}
 .mem2-card:active{background:#F9F9F9}
 .mem2-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
-.mem2-card-type{font-size:10px;font-weight:700;letter-spacing:.8px;color:#8E8E93;font-family:-apple-system,'PingFang SC',sans-serif;text-transform:uppercase}
+.mem2-card-type{font-size:10px;font-weight:600;letter-spacing:.8px;color:#8E8E93;font-family:-apple-system,'PingFang SC',sans-serif;text-transform:uppercase}
 .mem2-card-time{font-size:12px;color:#C7C7CC;font-family:-apple-system,'PingFang SC',sans-serif}
 .mem2-card-title{font-size:14px;font-weight:500;color:#1C1C1E;margin-bottom:5px;line-height:1.35;font-family:-apple-system,'PingFang SC',sans-serif}
 .mem2-card-preview{font-size:13px;color:#3A3A3C;line-height:1.6;margin-bottom:10px;font-family:-apple-system,'PingFang SC',sans-serif;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
