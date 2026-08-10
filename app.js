@@ -950,6 +950,15 @@ function mem2StateBadge(b){
   return'DYNAMIC'
 }
 // badge颜色
+// badge映射：DYNAMIC/PERMANENT/RESOLVED/PLAN，对应filter行
+function mem2DomainBadge(b){
+  if(typeof b==='string'){const d=b.toLowerCase();return d.includes('plan')?'PLAN':'DYNAMIC'}
+  if(!b)return'DYNAMIC'
+  if(b.pinned||(b.importance||0)>=9)return'PERMANENT'
+  if(b.resolved)return'RESOLVED'
+  if((b.domain||'').toLowerCase().includes('plan'))return'PLAN'
+  return'DYNAMIC'
+}
 function mem2BadgeColor(badge){
   if(badge==='PERMANENT')return'#C8956A'
   if(badge==='RESOLVED')return'#8E8E93'
