@@ -103,12 +103,21 @@ async function mem2Load(force){
     blocks.forEach(b=>{
       (b.text||'').split('\n').forEach(line=>{
         const parts=line.split('|').map(s=>s.trim())
-        if(parts.length>=2&&parts[0]&&!/^工具/.test(parts[0])){
+        if(parts.length>=1&&parts[0]){
+          const rawName=parts[0]
+          if(/^工具|^名称|^===|^---/.test(rawName))return
+          const isPinned=rawName.startsWith('📌')
+          const cleanName=rawName.replace(/^📌\s*/,'').trim()
+          if(!cleanName)return
+          const{date,title}=mem2ParseName(cleanName)
           rows.push({
-            bucket_id:parts[0],
-            name:parts[0],
+            bucket_id:cleanName,
+            name:cleanName,
+            display_title:title||(date?date:''),
+            date:date,
             domain:parts[1]||'',
-            importance:parseInt(parts[2])||0
+            importance:parseInt(parts[2])||0,
+            pinned:isPinned
           })
         }
       })
