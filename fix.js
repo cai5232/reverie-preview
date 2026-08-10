@@ -187,7 +187,8 @@ async function mem2OpenDetail(i){
   if(!b)return
   const overlay=document.getElementById('mem2Overlay')
   const body=document.getElementById('mem2SheetBody')
-  const displayTitle=b.display_title||b.name||'未命名'
+  const domainFallback=(b.domain||'').split(',').map(t=>t.trim()).filter(t=>t&&t!=='未分类')[0]||''
+  const displayTitle=b.display_title||domainFallback||'未命名'
   const date=b.date||''
   const badge=mem2DomainBadge(b)
   const color=mem2BadgeColor(badge)
