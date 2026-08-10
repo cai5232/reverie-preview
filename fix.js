@@ -325,7 +325,9 @@ async function mem2Load(force){
         const s = line.trim()
         if(!s) return
         if(/总占用|衰减引擎|^\s*[📊📈💾⚙️]/.test(s)) return
-        if(/^(固化|动态|归档|feel|plan|letter|总计|状态|运行|占用|数量)\s*[:：\d]/.test(s)) return
+        if(/^(固化|动态|归档|feel|plan|letter|总计|状态|运行|占用|数量)[桶\s:：\d]/.test(s)) return
+        if(/桶[:：]\s*\d/.test(s)) return
+        if(/^\d+\s*[条个封桶]/.test(s)) return
         if(/^\s*[-=]{3,}/.test(s)) return
         const isPinned = s.startsWith('📌')
         let rest = s.replace(/^📌\s*/,'').trim()
