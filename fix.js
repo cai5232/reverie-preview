@@ -210,27 +210,48 @@ async function mem2OpenDetail(i){
     <div onclick="mem2CloseDetail()" style="width:100%;padding:14px 0;text-align:center;background:#F2F2F7;border-radius:12px;font-size:15px;color:#1C1C1E;cursor:pointer;-webkit-tap-highlight-color:transparent;position:relative;z-index:10;touch-action:manipulation">关闭</div>
   `
   if(overlay)overlay.classList.add('open')
+  // 已缓存直接用
+  if(b._content!=null){
+    const el=document.getElementById('mem2SheetContent')
+    if(el)el.textContent=b._content||'（无内容）'
+    return
+  }
   try{
     const blocks=await mem2McpCall('breath_search',{query:b.name||b.bucket_id,max_results:1})
     const raw=blocks.map(c=>c.text||'').join('\n')
-    // 1. 去掉所有 [key:value] 格式的 OB 元数据 token
-    // 2. 去掉 Footprint 行
-    // 3. 去掉纯 emoji+tag 行（如 📌 [核心准则]）
     const cleaned=raw
-      .replace(/\[[^\]\n]*:[^\]\n]*\]/g,'')   // [bucket_id:xxx] [content_role:yyy] 等
+      .replace(/\[[^\]\n]*:[^\]\n]*\]/g,'')
       .replace(/🦶\s*Footprint[^\n]*/g,'')
       .split('\n')
       .map(l=>l.trim())
       .filter(l=>{
         if(!l||l==='---')return false
-        // 剩下只有 emoji 或方括号标签的行也去掉
         if(/^[\[\]📌🦶\s]*$/.test(l))return false
         return true
       })
       .join('\n')
       .trim()
+    // 缓存到桶对象，下次不再请求
+    b._content=cleaned
     const el=document.getElementById('mem2SheetContent')
     if(el)el.textContent=cleaned||'（无内容）'
+    // 无标题时用内容第一行做标题，更新卡片
+    if(!b.display_title&&cleaned){
+      const firstLine=cleaned.split('\n')[0].slice(0,24)
+      b.display_title=firstLine+(cleaned.split('\n')[0].length>24?'…':'')
+      // 更新卡片 DOM
+      const idx=(_mem2Filtered.length?_mem2Filtered:_mem2All).indexOf(b)
+      if(idx>=0){
+        const card=document.querySelectorAll('.mem2-card')[idx]
+        if(card){
+          const titleEl=card.querySelector('.mem2-card-title')
+          if(titleEl)titleEl.textContent=(b.pinned?'📌 ':'')+b.display_title
+        }
+        // 同步更新弹窗标题
+        const sheetTitle=body.querySelector('div[style*="font-weight:700"]')
+        if(sheetTitle)sheetTitle.textContent=(b.pinned?'📌 ':'')+b.display_title
+      }
+    }
   }catch(e){
     const el=document.getElementById('mem2SheetContent')
     if(el)el.textContent='加载失败'
