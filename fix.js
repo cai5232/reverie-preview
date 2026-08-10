@@ -314,74 +314,19 @@ async function mem2Load(force){
   if(statusText)statusText.textContent='Loading…'
   if(list)list.innerHTML='<div class="mem2-loading">加载中…</div>'
   try{
-    // 优先用 pulse 拿全量桶列表，OB的pulse不受max_results限制
-    let rows = []
-    try{
-      const pulseBlocks = await mem2McpCall('pulse', {})
-      const pulseText = pulseBlocks.map(c=>c.text||'').join('\n')
-      const pulseRows = []
-      const seenP = new Set()
-      pulseText.split('\n').forEach(line=>{
-        const s = line.trim()
-        if(!s) return
-        if(/总占用|衰减引擎|^\s*[📊📈💾⚙️]/.test(s)) return
-        if(/^(固化|动态|归档|feel|plan|letter|总计|状态|运行|占用|数量)[桶\s:：\d]/.test(s)) return
-        if(/桶[:：]\s*\d/.test(s)) return
-        if(/^\d+\s*[条个封桶]/.test(s)) return
-        if(/^\s*[-=]{3,}/.test(s)) return
-        const isPinned = s.startsWith('📌')
-        let rest = s.replace(/^📌\s*/,'').trim()
-        // 尝试提取 [id] 前缀（可选）
-        let bucketId = ''
-        const idM = rest.match(/^\[([^\]]{4,20})\]\s*/)
-        if(idM){ bucketId = idM[1]; rest = rest.slice(idM[0].length).trim() }
-        // 提取《书名》或直接用第一段文字做标题
-        let title = ''
-        const titleM = rest.match(/^《(.+?)》/)
-        if(titleM){
-          title = titleM[1].trim()
-          rest = rest.slice(titleM[0].length).trim()
-        } else {
-          title = rest.split(/\s{2,}|\s+主题:|\s+标签:|\s+重要:|\s+权重:/)[0].trim().slice(0,40)
-        }
-        if(!title || title.length < 2) return
-        // 去重key：优先用id，没有id则用标题
-        const dedupeKey = bucketId || title
-        if(seenP.has(dedupeKey)) return
-        seenP.add(dedupeKey)
-        const domainM = rest.match(/主题[:：]\s*([^\s,，]+)/)
-        const domain = domainM ? domainM[1] : ''
-        const impM = rest.match(/重要[:：]\s*(\d+)/)
-        const importance = impM ? parseInt(impM[1]) : 0
-        const {date} = mem2ParseName(title)
-        const cleanTitle = title.replace(/^\d{4}-\d{2}-\d{2}\s+\d{2}-\d{2}-\d{2}\s*/,'').trim()
-        pulseRows.push({
-          bucket_id: bucketId || title,
-          name: bucketId || title,
-          display_title: cleanTitle || title,
-          date, domain, importance,
-          pinned: isPinned || importance >= 9,
-          _content: null
-        })
-      })
-      if(pulseRows.length > 0) rows = pulseRows
-    }catch(e){}
-
-    // pulse 没拿到，降级用 catalog 按时间分段拉（早期 + 近期）
-    if(rows.length === 0){
-      const [b1, b2, b3] = await Promise.all([
-        mem2McpCall('breath_advanced',{catalog:true,max_results:50}),
-        mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_to:'2026-07-25'}),
-        mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_from:'2026-08-01'}),
-      ])
-      const seen = new Set()
-      for(const r of [...mem2ParseCatalog(b1),...mem2ParseCatalog(b2),...mem2ParseCatalog(b3)]){
-        const key = r.bucket_id||r.name
-        if(key && !seen.has(key)){seen.add(key);rows.push(r)}
-      }
+    // catalog 单次上限50，按日期四段切片去重，覆盖全量
+    const [b1,b2,b3,b4] = await Promise.all([
+      mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_to:'2026-07-24'}),
+      mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_from:'2026-07-25',date_to:'2026-07-31'}),
+      mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_from:'2026-08-01',date_to:'2026-08-07'}),
+      mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_from:'2026-08-08'}),
+    ])
+    const seen = new Set()
+    const rows = []
+    for(const r of [...mem2ParseCatalog(b1),...mem2ParseCatalog(b2),...mem2ParseCatalog(b3),...mem2ParseCatalog(b4)]){
+      const key = r.bucket_id||r.name
+      if(key && !seen.has(key)){seen.add(key);rows.push(r)}
     }
-
-    _mem2All=rows
     localStorage.setItem('mem2_last_count',String(rows.length))
     if(statusDot)statusDot.style.background='#34C759'
     if(statusText)statusText.textContent='Memory · '+rows.length+' records'
