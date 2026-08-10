@@ -353,8 +353,11 @@ async function mem2OpenDetail(i){
       <span style="font-size:12px;color:#8E8E93">importance</span>
       <div style="display:flex;gap:3px">${dots}</div>
     </div>
-    <div onclick="mem2CloseDetail()" style="width:100%;padding:14px 0;text-align:center;background:#F2F2F7;border-radius:12px;font-size:15px;color:#1C1C1E;cursor:pointer;-webkit-tap-highlight-color:transparent;position:relative;z-index:10;touch-action:manipulation">关闭</div>
-    <div onclick="mem2CloseDetailAndEdit(${i})" style="width:100%;padding:14px 0;text-align:center;background:#1C1C1E;border-radius:12px;font-size:15px;color:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent;position:relative;z-index:10;touch-action:manipulation;margin-top:8px;font-weight:600">编辑</div>
+    <div style="display:flex;gap:8px;margin-top:0">
+      <div onclick="mem2CloseDetail()" style="flex:1;padding:14px 0;text-align:center;background:#F2F2F7;border-radius:12px;font-size:15px;color:#1C1C1E;cursor:pointer;-webkit-tap-highlight-color:transparent;position:relative;z-index:10;touch-action:manipulation">关闭</div>
+      <div onclick="mem2CloseDetailAndEdit(${i})" style="flex:1;padding:14px 0;text-align:center;background:#1C1C1E;border-radius:12px;font-size:15px;color:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent;position:relative;z-index:10;touch-action:manipulation;font-weight:600">编辑</div>
+    </div>
+    <div onclick="mem2DeleteBucket(${i})" style="width:100%;padding:12px 0;text-align:center;background:transparent;border-radius:12px;font-size:14px;color:#FF3B30;cursor:pointer;-webkit-tap-highlight-color:transparent;position:relative;z-index:10;touch-action:manipulation;margin-top:4px">删除这条记忆</div>
   `
   if(overlay)overlay.classList.add('open')
   // 已有缓存直接返回
