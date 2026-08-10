@@ -319,19 +319,53 @@ async function mem2Load(force){
     try{
       const pulseBlocks = await mem2McpCall('pulse', {})
       const pulseText = pulseBlocks.map(c=>c.text||'').join('\n')
-      // pulse 返回的桶列表格式：每行一个桶，解析 name|domain|importance
       const pulseRows = []
+      const seen = new Set()
       pulseText.split('\n').forEach(line=>{
-        const parts = line.split('|').map(s=>s.trim())
-        if(!parts[0]) return
-        const rawName = parts[0]
-        if(/^工具|^名称|^===|^---|\d+ (条|个)|固化|动态|归档|feel|plan|letter/.test(rawName)) return
-        const isPinned = rawName.startsWith('📌')
-        const cleanName = rawName.replace(/^📌\s*/,'').trim()
-        if(!cleanName || cleanName.length < 2) return
-        const {date, title} = mem2ParseName(cleanName)
-        const cleanTitle = title.replace(/^💭\s*meaning:\s*/i,'').replace(/^meaning:\s*/i,'').trim()
-        pulseRows.push({bucket_id:cleanName,name:cleanName,display_title:cleanTitle,date,domain:parts[1]||'',importance:parseInt(parts[2])||0,pinned:isPinned,_content:null})
+        const s = line.trim()
+        if(!s) return
+        // 过滤系统摘要行
+        if(/总占用|衰减引擎|固化\d|动态\d|归档\d|feel\d|plan\d|letter\d|^\d+\s*[条个桶]|^[📊📈💾⚙️#]/.test(s)) return
+        if(/^(固化|动态|归档|feel|plan|letter|总计|状态|运行|占用|数量)/.test(s)) return
+        // 桶行格式：📌? [id] 《标题》 主题:... 或 📌? [id] 标题
+        const isPinned = s.startsWith('📌')
+        const clean = s.replace(/^📌\s*/,'').trim()
+        // 提取id和标题
+        const idM = clean.match(/^\[([a-f0-9]{6,12})\]\s*/)
+        if(!idM) return  // 没有id的行不是桶
+        const bucketId = idM[1]
+        if(seen.has(bucketId)) return
+        seen.add(bucketId)
+        let rest = clean.slice(idM[0].length).trim()
+        // 提取《书名》格式标题
+        let title = ''
+        const titleM = rest.match(/^《(.+?)》/)
+        if(titleM){
+          title = titleM[1].trim()
+          rest = rest.slice(titleM[0].length).trim()
+        } else {
+          // 取第一段（空格前或整行，去掉元数据）
+          title = rest.split(/\s+主题:|标签:|重要:|权重:|情感:|标记:/)[0].trim().slice(0,40)
+        }
+        // 提取domain
+        const domainM = rest.match(/主题[:：]\s*([^\s]+)/)
+        const domain = domainM ? domainM[1] : ''
+        // 提取importance
+        const impM = rest.match(/重要[:：]\s*(\d+)/)
+        const importance = impM ? parseInt(impM[1]) : 0
+        // 提取日期
+        const dateM = title.match(/^(\d{4}-\d{2}-\d{2})/) || rest.match(/(\d{4}-\d{2}-\d{2})/)
+        const date = dateM ? dateM[1] : ''
+        const cleanTitle = title.replace(/^\d{4}-\d{2}-\d{2}\s+\d{2}-\d{2}-\d{2}\s*/,'').trim()
+        if(!cleanTitle && !title) return
+        pulseRows.push({
+          bucket_id: bucketId,
+          name: bucketId,
+          display_title: cleanTitle || title,
+          date, domain, importance,
+          pinned: isPinned || importance >= 9,
+          _content: null
+        })
       })
       if(pulseRows.length > 0) rows = pulseRows
     }catch(e){}
