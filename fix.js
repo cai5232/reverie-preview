@@ -314,8 +314,20 @@ async function mem2Load(force){
   if(statusText)statusText.textContent='Loading…'
   if(list)list.innerHTML='<div class="mem2-loading">加载中…</div>'
   try{
-    const blocks=await mem2McpCall('breath_advanced',{catalog:true,max_results:100})
-    const rows=mem2ParseCatalog(blocks)
+    // OB 单次上限50，分两批拉再去重：第一批不限，第二批按importance降序取
+    const [blocks1, blocks2] = await Promise.all([
+      mem2McpCall('breath_advanced',{catalog:true,max_results:50}),
+      mem2McpCall('breath_advanced',{catalog:true,max_results:50,importance_min:1})
+    ])
+    const rows1 = mem2ParseCatalog(blocks1)
+    const rows2 = mem2ParseCatalog(blocks2)
+    // 去重：以 bucket_id 为 key
+    const seen = new Set()
+    const rows = []
+    for(const r of [...rows1,...rows2]){
+      const key = r.bucket_id||r.name
+      if(key && !seen.has(key)){seen.add(key);rows.push(r)}
+    }
     _mem2All=rows
     localStorage.setItem('mem2_last_count',String(rows.length))
     if(statusDot)statusDot.style.background='#34C759'
