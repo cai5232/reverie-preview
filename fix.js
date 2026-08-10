@@ -497,6 +497,26 @@ function mem2CloseDetailAndEdit(i){
   setTimeout(()=>mem2ShowEdit(i), 150)
 }
 
+// tab 切换
+let _mem2CurrentTab = 'ombre'
+function mem2SwitchTab(tab){
+  _mem2CurrentTab = tab
+  const tabs = ['ombre','impression','plan']
+  const panes = {ombre:'mem2PaneOmbre',impression:'mem2PaneImpression',plan:'mem2PanePlan'}
+  const tabEls = {ombre:'mem2TabOmbre',impression:'mem2TabImpression',plan:'mem2TabPlan'}
+  tabs.forEach(t=>{
+    const te = document.getElementById(tabEls[t])
+    const pe = document.getElementById(panes[t])
+    if(te){
+      te.style.color = t===tab ? '#1C1C1E' : '#8E8E93'
+      te.style.borderBottom = t===tab ? '2px solid #1C1C1E' : '2px solid transparent'
+    }
+    if(pe){
+      pe.style.display = t===tab ? (t==='ombre'?'flex':'block') : 'none'
+    }
+  })
+}
+
 function mem2OnSearch(val){
   _mem2Query=(val||'').trim()
   mem2Render()
