@@ -55,7 +55,80 @@ async function mem2McpCall(toolName,args){
   return j?.data?.result?.content||[]
 }
 
-// ===== localStorage 持久化 =====
+// ===== 新增 / 编辑记忆 =====
+let _mem2EditBucket = null  // null = 新增，有值 = 编辑
+
+function mem2ShowAdd(){
+  _mem2EditBucket = null
+  document.getElementById('mem2EditSheetTitle').textContent = '新增记忆'
+  document.getElementById('mem2EditContent').value = ''
+  document.getElementById('mem2EditTags').value = ''
+  document.getElementById('mem2EditOverlay').classList.add('open')
+  setTimeout(()=>document.getElementById('mem2EditContent').focus(), 150)
+}
+
+function mem2ShowEdit(i){
+  const arr = _mem2Filtered.length ? _mem2Filtered : _mem2All
+  const b = arr[i]
+  if(!b) return
+  _mem2EditBucket = b
+  document.getElementById('mem2EditSheetTitle').textContent = '编辑记忆'
+  document.getElementById('mem2EditContent').value = b._content || ''
+  document.getElementById('mem2EditTags').value = (b.domain||'').split(',').map(t=>t.trim()).filter(t=>t&&t!=='未分类').join(', ')
+  document.getElementById('mem2EditOverlay').classList.add('open')
+  setTimeout(()=>document.getElementById('mem2EditContent').focus(), 150)
+}
+
+function mem2CloseEdit(){
+  document.getElementById('mem2EditOverlay').classList.remove('open')
+  _mem2EditBucket = null
+}
+
+async function mem2SaveEdit(){
+  const content = document.getElementById('mem2EditContent').value.trim()
+  if(!content){ showToast('内容不能为空'); return }
+  const tags = document.getElementById('mem2EditTags').value.trim()
+  const btn = document.getElementById('mem2EditSaveBtn')
+  btn.textContent = '保存中…'
+  btn.style.opacity = '0.6'
+  try{
+    if(_mem2EditBucket){
+      // 编辑已有桶：用 trace old_str/new_str
+      await mem2McpCall('trace', {
+        bucket_id: _mem2EditBucket.bucket_id || _mem2EditBucket.name,
+        content: content,
+        ...(tags ? {tags} : {})
+      })
+      _mem2EditBucket._content = content
+      if(tags) _mem2EditBucket.domain = tags
+      const first = content.split('\n')[0]
+      _mem2EditBucket.display_title = first.slice(0,28) + (first.length>28?'…':'')
+      mem2SaveCache()
+      mem2Render()
+      showToast('已更新')
+    } else {
+      // 新增：用 hold
+      await mem2McpCall('hold', {
+        content,
+        ...(tags ? {tags} : {}),
+        importance: 5
+      })
+      // 清缓存让下次刷新时重拉
+      mem2ClearCache()
+      _mem2All = []
+      showToast('已添加，正在刷新…')
+      mem2Load(true)
+    }
+  }catch(e){
+    showToast('保存失败：' + (e.message||''))
+  }finally{
+    btn.textContent = '保存'
+    btn.style.opacity = '1'
+    mem2CloseEdit()
+  }
+}
+
+
 function mem2SaveCache(){
   try{localStorage.setItem('mem2_data',JSON.stringify(_mem2All))}catch(e){}
 }
