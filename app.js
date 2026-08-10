@@ -2906,7 +2906,7 @@ async function xkAgenticLoop(sendOptions, mcpServerMap, round, memCtx){
 
       localStorage.setItem('xk_history',JSON.stringify(xkHistory))
       // 继续下一轮（不带 tools，让模型直接输出最终回复）
-      await xkAgenticLoop({}, mcpServerMap, round+1)
+      await xkAgenticLoop({}, mcpServerMap, round+1, memCtx)
       return
     }
 
