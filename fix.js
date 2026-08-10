@@ -327,6 +327,7 @@ async function mem2Load(force){
       const key = r.bucket_id||r.name
       if(key && !seen.has(key)){seen.add(key);rows.push(r)}
     }
+    _mem2All=rows
     localStorage.setItem('mem2_last_count',String(rows.length))
     if(statusDot)statusDot.style.background='#34C759'
     if(statusText)statusText.textContent='Memory · '+rows.length+' records'
