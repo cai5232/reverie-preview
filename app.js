@@ -896,7 +896,8 @@ async function mem2Load(){
   document.getElementById('mem2StatusDot').style.background='#FF9500'
   try{
     const proxyBase=(cfg.api||'').replace(/\/v1\/?$/,'')+'/internal/mcp-proxy'
-    const args=_mem2Tab==='feel'?{tags:'feel',max_results:40}:_mem2Tab==='plan'?{domain:'plan',max_results:40}:{catalog:true,max_results:40}
+    // 用 breath_advanced 拉完整桶数据（不用 catalog 模式，catalog 只返回一行文字目录）
+    const args=_mem2Tab==='feel'?{tags:'feel',max_results:30}:_mem2Tab==='plan'?{domain:'plan',max_results:30}:{max_results:30,importance_min:1}
     const res=await fetch(proxyBase,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key},body:JSON.stringify({url:'https://caiovo.zeabur.app/mcp',method:'POST',headers:{},body:{jsonrpc:'2.0',id:Date.now(),method:'tools/call',params:{name:'breath_advanced',arguments:args}}})})
     const j=await res.json()
     const raw=j?.data?.result?.content||[]
@@ -911,16 +912,19 @@ async function mem2Load(){
   }
 }
 function mem2ParseResponse(text){
-  try{const j=JSON.parse(text);if(Array.isArray(j))return j}catch{}
+  // 尝试整体JSON数组
+  try{const j=JSON.parse(text.trim());if(Array.isArray(j))return j}catch{}
+  // 逐行尝试JSON对象（breath 返回格式）
   const lines=text.split('\n').map(l=>l.trim()).filter(Boolean)
   const result=[]
   for(const line of lines){
-    if(line.startsWith('#')||line.startsWith('bucket')||line.startsWith('名称')||line.startsWith('---'))continue
     if(line.startsWith('{')){try{result.push(JSON.parse(line));continue}catch{}}
+    // catalog fallback: name|domain|importance
+    if(line.startsWith('#')||line.startsWith('---')||line.startsWith('bucket')||line.startsWith('名称'))continue
     const parts=line.split('|')
     if(parts.length>=1){
       const name=parts[0].trim(),domain=(parts[1]||'').trim(),imp=parseInt(parts[2])||0
-      if(name)result.push({name,domain,importance:imp,bucket_id:name,_catalog:true})
+      if(name&&name.length>1)result.push({name,domain,importance:imp,bucket_id:name,_catalog:true})
     }
   }
   return result
