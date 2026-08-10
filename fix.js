@@ -34,14 +34,25 @@ let _mem2Query=''
 let _mem2Loading=false
 let _mem2Prefetching=false
 
-function mem2ProxyBase(){
+function mem2ApiBase(){
   const c=typeof cfg!=='undefined'?cfg:(window._cfg||{})
-  return(c.api||'').replace(/\/v1\/?$/,'')+'/internal/mcp-proxy'
+  return(c.api||'').replace(/\/v1\/?$/,'')
 }
 function mem2Headers(){
   const c=typeof cfg!=='undefined'?cfg:(window._cfg||{})
   return{'Content-Type':'application/json','Authorization':'Bearer '+(c.key||'')}
 }
+// Dashboard API：全量拉桶（走 xiaoke /internal/ombre-buckets）
+async function mem2FetchAllBuckets(){
+  const res=await fetch(mem2ApiBase()+'/internal/ombre-buckets',{
+    method:'GET',headers:mem2Headers()
+  })
+  if(!res.ok) throw new Error('HTTP '+res.status)
+  const j=await res.json()
+  return j.buckets||[]
+}
+// MCP proxy：仍用于 hold/trace/breath_search 等写操作和内容查询
+function mem2ProxyBase(){return mem2ApiBase()+'/internal/mcp-proxy'}
 async function mem2McpCall(toolName,args){
   const res=await fetch(mem2ProxyBase(),{
     method:'POST',headers:mem2Headers(),
