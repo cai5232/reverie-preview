@@ -973,43 +973,7 @@ function mem2CardHTML(b,i){
     <div class="mem2-card-footer"><div class="mem2-dots">${dots}</div><div class="mem2-card-tags">${tagsHTML}</div></div>
   </div>`
 }
-async function mem2OpenDetail(i){
-  const b=_mem2Filtered[i]
-  if(!b)return
-  const overlay=document.getElementById('mem2Overlay')
-  const body=document.getElementById('mem2SheetBody')
-  const{date,title}=mem2ParseName(b.name||'')
-  const displayTitle=title||(b.name||'未命名')
-  const badge=mem2DomainBadge(b.domain||'')
-  const imp=Math.min(10,Math.max(0,parseInt(b.importance)||0))
-  const dots=Array.from({length:10},(_,k)=>`<div class="mem2-dot-item${k>=imp?' empty':''}"></div>`).join('')
-  body.innerHTML=`
-    <div class="mem2-sheet-title">${b.pinned?'📌 ':''}${escHtml(displayTitle||date||'未命名')}</div>
-    <div class="mem2-sheet-meta">${escHtml(badge)}${date?' · '+escHtml(date):''}</div>
-    <div class="mem2-sheet-divider"></div>
-    <div id="mem2SheetContent"><div class="mem2-loading" style="font-size:13px;padding:10px 0">加载内容…</div></div>
-    <div class="mem2-sheet-divider"></div>
-    <div class="mem2-sheet-row"><span>importance</span><div class="mem2-dots">${dots}</div></div>
-    <button class="mem2-close-btn" onclick="mem2CloseDetail()">关闭</button>
-    <div class="mem2-sheet-id">ID: ${escHtml(b.bucket_id||b.name||'')} · tap to copy</div>
-  `
-  overlay.classList.add('open')
-  // 异步拉取内容
-  try{
-    const proxyBase=(cfg.api||'').replace(/\/v1\/?$/,'')+'/internal/mcp-proxy'
-    const res=await fetch(proxyBase,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key},body:JSON.stringify({url:'https://caiovo.zeabur.app/mcp',method:'POST',headers:{},body:{jsonrpc:'2.0',id:Date.now(),method:'tools/call',params:{name:'breath_search',arguments:{query:b.name||b.bucket_id||'',max_results:1}}}})})
-    const j=await res.json()
-    const raw=j?.data?.result?.content||[]
-    const text=Array.isArray(raw)?raw.map(c=>c.text||'').join('\n').trim():''
-    const el=document.getElementById('mem2SheetContent')
-    if(el)el.innerHTML=text
-      ?`<div class="mem2-sheet-content">${escHtml(text)}</div>`
-      :'<div class="mem2-sheet-content" style="color:#aaa">（无内容）</div>'
-  }catch(e){
-    const el=document.getElementById('mem2SheetContent')
-    if(el)el.innerHTML=`<div class="mem2-sheet-content" style="color:#f66">加载失败</div>`
-  }
-}
+
 async function mem2OpenDetail(idx){
   const b=_mem2Data[idx];if(!b)return
   const overlay=document.getElementById('mem2Overlay'),body=document.getElementById('mem2SheetBody')
