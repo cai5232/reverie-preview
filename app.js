@@ -2317,6 +2317,23 @@ function xkApplyMarkdown(block){
       return
     }
 
+    // ── <!--HOLD:--> 记忆指令：折叠显示为"添加记忆"工具行 ──
+    if(raw.includes('<!--HOLD:')){
+      const holdM=raw.match(/<!--HOLD:\s*([\s\S]*?)-->/)
+      const holdContent=holdM?holdM[1].trim():''
+      const row=document.createElement('div')
+      row.className='xk-tool-row'
+      row.style.cssText='cursor:pointer;margin:2px 0'
+      row._toolName='添加记忆'
+      row._args={}
+      row._result=holdContent
+      row._state='done'
+      row.innerHTML=xkToolRowHTML('添加记忆','done')
+      row.onclick=()=>xkOpenToolDetail(row)
+      p.replaceWith(row)
+      return
+    }
+
     // ── 普通 markdown ──
     p.innerHTML=xkMd(raw)
   })
