@@ -224,3 +224,40 @@ function mem2Refresh(){
   _mem2All=[]
   mem2Load(true)
 }
+
+// 打开小窝时调：轻量拉一次 catalog 对比条数，有新记忆才刷新
+async function mem2CheckAndLoad(){
+  try{
+    const blocks=await mem2McpCall('breath_advanced',{catalog:true,max_results:100})
+    let count=0
+    blocks.forEach(b=>{
+      (b.text||'').split('\n').forEach(line=>{
+        const parts=line.split('|').map(s=>s.trim())
+        if(parts.length>=2&&parts[0]&&!/^工具/.test(parts[0]))count++
+      })
+    })
+    const lastCount=parseInt(localStorage.getItem('mem2_last_count')||'0')
+    if(count!==lastCount){
+      localStorage.setItem('mem2_last_count',String(count))
+      _mem2All=[]
+      // 直接用已拉到的 blocks 填充，不再发第二次请求
+      const rows=[]
+      blocks.forEach(b=>{
+        (b.text||'').split('\n').forEach(line=>{
+          const parts=line.split('|').map(s=>s.trim())
+          if(parts.length>=2&&parts[0]&&!/^工具/.test(parts[0])){
+            rows.push({bucket_id:parts[0],name:parts[1]||parts[0],domain:parts[2]||'',importance:parseInt(parts[3])||0})
+          }
+        })
+      })
+      _mem2All=rows
+      const statusDot=document.getElementById('mem2StatusDot')
+      const statusText=document.getElementById('mem2StatusText')
+      if(statusDot)statusDot.style.background='#34C759'
+      if(statusText)statusText.textContent='Memory · '+rows.length+' records'
+      mem2Render()
+    }
+  }catch(e){
+    // 静默失败，不影响主界面
+  }
+}
