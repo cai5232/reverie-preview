@@ -942,18 +942,21 @@ function mem2Render(){
 function mem2CardHTML(b,i){
   const name=b.name||b.bucket_id||'未命名'
   const content=b.content||''
-  const preview=content.slice(0,120)+(content.length>120?'…':'')
+  // 截取预览文字（去掉首行如果是标题重复）
+  const preview=content.replace(/^.{0,40}\n/,'').trim().slice(0,100)+(content.length>100?'…':'')
   const imp=Math.min(10,Math.max(0,parseInt(b.importance)||0))
+  // importance dots
   const dots=Array.from({length:10},(_,k)=>`<div class="mem2-dot-item${k>=imp?' empty':''}"></div>`).join('')
   const tags=(b.tags||'').split(',').map(t=>t.trim()).filter(Boolean).slice(0,3)
   const tagsHTML=tags.map(t=>`<div class="mem2-tag">${escHtml(t)}</div>`).join('')
-  const time=b.created_at?new Date(b.created_at).toLocaleDateString('zh-CN',{month:'numeric',day:'numeric'}):'';
-  const typeLabel=b.pinned?'PINNED':b.resolved?'RESOLVED':b.domain?b.domain.toUpperCase():'DYNAMIC'
+  // 格式化时间：月/日
+  const time=b.created_at?new Date(b.created_at).toLocaleDateString('zh-CN',{month:'numeric',day:'numeric'}):''
+  const typeLabel=(b.pinned?'PINNED':b.domain?b.domain.toUpperCase():'DYNAMIC')
   return`<div class="mem2-card" onclick="mem2OpenDetail(${i})">
     <div class="mem2-card-head"><span class="mem2-card-type">${escHtml(typeLabel)}</span><span class="mem2-card-time">${escHtml(time)}</span></div>
     <div class="mem2-card-title">${escHtml(name)}</div>
     ${preview?`<div class="mem2-card-preview">${escHtml(preview)}</div>`:''}
-    <div class="mem2-card-footer"><div class="mem2-dots">${dots}</div>${tagsHTML}${b.resolved?'<div class="mem2-resolved">resolved</div>':''}</div>
+    <div class="mem2-card-footer"><div class="mem2-dots">${dots}</div><div class="mem2-card-tags">${tagsHTML}</div></div>
   </div>`
 }
 async function mem2OpenDetail(idx){
