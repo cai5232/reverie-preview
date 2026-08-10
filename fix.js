@@ -200,7 +200,7 @@ async function mem2OpenDetail(i){
     <div style="font-size:18px;font-weight:700;color:#1C1C1E;line-height:1.4;margin-bottom:6px">${b.pinned?'📌 ':''}${escHtml(displayTitle)}</div>
     <div style="font-size:13px;color:${color};margin-bottom:12px">${escHtml(badge)}${date?' · '+escHtml(date):''}</div>
     <div style="height:.5px;background:#E5E5EA;margin-bottom:12px"></div>
-    <div id="mem2SheetContent" style="font-size:13px;line-height:1.75;color:#3A3A3C;white-space:pre-wrap;word-break:break-word;margin-bottom:12px">加载中…</div>
+    <div id="mem2SheetContent" style="font-size:13px;line-height:1.75;color:#3A3A3C;white-space:pre-wrap;word-break:break-word;margin-bottom:12px">${b._content!=null?escHtml(b._content):'加载中…'}</div>
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">${tagsHTML}</div>
     <div style="height:.5px;background:#E5E5EA;margin-bottom:12px"></div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
