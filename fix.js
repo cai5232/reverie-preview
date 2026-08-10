@@ -16,12 +16,15 @@ function mem2DomainBadge(b){
   return'DYNAMIC'
 }
 function mem2ParseName(name){
-  // 格式: 2026-07-24 22-52-55 dylan-heartbeat部署总结
-  const m=(name||'').match(/^(\d{4}-\d{2}-\d{2})\s+\d{2}-\d{2}-\d{2}\s+(.+)$/)
+  // 先剥 📌 前缀
+  let s=(name||'').replace(/^[\uD83D\uDCCC\s]+/,'').replace(/^📌\s*/,'').trim()
+  // 格式: 2026-07-24 08-31-37 标题
+  const m=s.match(/^(\d{4}-\d{2}-\d{2})\s+\d{2}-\d{2}-\d{2}\s+(.+)$/)
   if(m)return{date:m[1],title:m[2].trim()}
-  const m2=(name||'').match(/^(\d{4}-\d{2}-\d{2})[_\s-]*(.+)$/)
+  // 格式: 2026-07-24 标题
+  const m2=s.match(/^(\d{4}-\d{2}-\d{2})[_\s-]+(.+)$/)
   if(m2)return{date:m2[1],title:m2[2].trim()}
-  return{date:'',title:name||''}
+  return{date:'',title:s}
 }
 function mem2LooksLikeId(s){
   return /^[\d\-]+$/.test((s||'').trim())
