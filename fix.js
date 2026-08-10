@@ -165,7 +165,8 @@ function mem2Render(){
 }
 
 function mem2CardHTML(b,i){
-  const displayTitle=b.display_title||b.name||'未命名'
+  const domainFallback=(b.domain||'').split(',').map(t=>t.trim()).filter(t=>t&&t!=='未分类')[0]||''
+  const displayTitle=b.display_title||domainFallback||'未命名'
   const date=b.date||''
   const imp=Math.min(10,Math.max(0,parseInt(b.importance)||0))
   const dots=Array.from({length:9},(_,k)=>`<div class="mem2-dot-item${k<imp?'':' empty'}"></div>`).join('')
