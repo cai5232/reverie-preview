@@ -171,10 +171,12 @@ function mem2ParseCatalog(blocks){
 function mem2CleanContent(raw){
   return raw
     .replace(/\[[^\]\n]*:[^\]\n]*\]/g,'')
-    .replace(/🦶\s*Footprint[^\n]*/g,'')
+    .replace(/🦶[^\n]*/g,'')
+    .replace(/💭\s*meaning:[^\n]*/gi,'')
+    .replace(/^meaning:[^\n]*/gim,'')
     .split('\n').map(l=>l.trim()).filter(l=>{
       if(!l||l==='---')return false
-      if(/^[\[\]📌🦶\s]*$/.test(l))return false
+      if(/^[\[\]📌🦶💭\s]*$/.test(l))return false
       return true
     }).join('\n').trim()
 }
