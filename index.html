@@ -703,8 +703,6 @@ function navTo(name){
     <div class="mem2-filter-pill" onclick="mem2SetFilter(this,'resolved')">Resolved</div>
     <div class="mem2-filter-pill" onclick="mem2SetFilter(this,'pinned')">Pinned</div>
   </div>
-  <div style="padding:0 16px 8px;display:flex;gap:8px">
-  </div>
   <div class="mem2-list" id="mem2List"><div class="mem2-loading">加载中…</div></div>
 </div>
 <!-- Memory2 详情 sheet -->
@@ -717,9 +715,7 @@ function navTo(name){
 <script src="app.js?v=220"></script>
 <script src="fix.js?v=17"></script>
 <script>
-document.addEventListener('DOMContentLoaded',function(){
-  if(typeof mem2Load==='function')mem2Load();
-});
+(function(){var _n=navTo;navTo=function(name){_n(name);if(name==='memory2'&&typeof mem2Load==='function')mem2Load();};})();
 </script>
 <style>
 .mem2-overlay{pointer-events:none!important}
