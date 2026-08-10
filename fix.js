@@ -1,4 +1,4 @@
-// fix.js v16 — catalog列表 + 详情按需拉
+// fix.js v17 — debug helpers + current mem2Load
 function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 
 function mem2BadgeColor(b){
@@ -24,13 +24,11 @@ function mem2LooksLikeId(s){
   return /^[\d\-]+$/.test((s||'').trim())
 }
 
-// ─ 全局状态 ─
-// catalog数据（当次会话内缓存）
 let _mem2All=[]
 let _mem2Filtered=[]
 let _mem2Filter='all'
 let _mem2Query=''
-let _mem2Loading=false   // 追踪加载状态
+let _mem2Loading=false
 
 function mem2ProxyBase(){
   const c=typeof cfg!=='undefined'?cfg:(window._cfg||{})
@@ -53,9 +51,37 @@ async function mem2McpCall(toolName,args){
   return j?.data?.result?.content||[]
 }
 
-// ─ 全量加载（只拉 catalog，轻量） ─
+// 调试：看 breath_advanced 原始返回
+async function mem2DebugRaw(){
+  const box=document.getElementById('mem2DebugBox')
+  if(!box)return
+  box.style.display='block'
+  box.textContent='拉取中…'
+  try{
+    const blocks=await mem2McpCall('breath_advanced',{max_results:3,max_tokens:2000})
+    box.textContent='=== breath_advanced(max_results=3) ===\n\nblocks.length: '+blocks.length+'\n\n'+
+      blocks.map((b,i)=>'--- block['+i+'] type='+b.type+' ---\n'+(b.text||'(empty)')).join('\n\n')
+  }catch(e){
+    box.textContent='ERROR: '+String(e)
+  }
+}
+
+// 调试：看 catalog 原始返回
+async function mem2DebugCatalog(){
+  const box=document.getElementById('mem2DebugBox')
+  if(!box)return
+  box.style.display='block'
+  box.textContent='拉取中…'
+  try{
+    const blocks=await mem2McpCall('breath_advanced',{catalog:true,max_results:5})
+    box.textContent='=== breath_advanced(catalog=true, max_results=5) ===\n\nblocks.length: '+blocks.length+'\n\n'+
+      blocks.map((b,i)=>'--- block['+i+'] type='+b.type+' ---\n'+(b.text||'(empty)')).join('\n\n')
+  }catch(e){
+    box.textContent='ERROR: '+String(e)
+  }
+}
+
 async function mem2Load(force){
-  // 如果已有数据且不是强制刷新，直接渲染
   if(!force&&_mem2All.length>0){mem2Render();return}
   if(_mem2Loading)return
   _mem2Loading=true
@@ -71,9 +97,7 @@ async function mem2Load(force){
     blocks.forEach(b=>{
       (b.text||'').split('\n').forEach(line=>{
         const parts=line.split('|').map(s=>s.trim())
-        // catalog 行格式: bucket_id | name | domain | importance
-        // bucket_id 不是标题，跳过工具行 / 带“工具”的头行
-        if(parts.length>=2&&parts[0]&&!parts[0].startsWith('工具')){
+        if(parts.length>=2&&parts[0]&&!/^工具/.test(parts[0])){
           rows.push({
             bucket_id:parts[0],
             name:parts[1]||parts[0],
@@ -88,7 +112,6 @@ async function mem2Load(force){
     if(statusText)statusText.textContent='Memory · '+rows.length+' records'
     mem2Render()
   }catch(e){
-    console.error(e)
     if(statusDot)statusDot.style.background='#FF3B30'
     if(statusText)statusText.textContent='加载失败'
     if(list)list.innerHTML='<div class="mem2-loading" style="color:#f66">'+escHtml(String(e))+'</div>'
@@ -97,7 +120,6 @@ async function mem2Load(force){
   }
 }
 
-// ─ 过滤 + 渲染 ─
 function mem2Render(){
   const list=document.getElementById('mem2List')
   if(!list)return
@@ -112,52 +134,39 @@ function mem2Render(){
     const q=_mem2Query.toLowerCase()
     arr=arr.filter(b=>{
       const{title}=mem2ParseName(b.name||'')
-      return (b.name||'').toLowerCase().includes(q)||
+      return(b.name||'').toLowerCase().includes(q)||
         title.toLowerCase().includes(q)||
         (b.domain||'').toLowerCase().includes(q)
     })
   }
   _mem2Filtered=arr
   if(!arr.length){
-    list.innerHTML='<div class="mem2-loading">'+((_mem2All.length?'没有匹配的记忆':'点右上角刷新加载'))+'</div>'
+    list.innerHTML='<div class="mem2-loading">'+(_mem2All.length?'没有匹配的记忆':'点上方“查看目录数据”按鈕调试')+'</div>'
     return
   }
   list.innerHTML=arr.map((b,i)=>mem2CardHTML(b,i)).join('')
 }
 
-// ─ 卡片 HTML（仅基于 catalog 数据） ─
 function mem2CardHTML(b,i){
   const{date,title}=mem2ParseName(b.name||b.bucket_id||'')
-  // 如果 name 像ID，用 domain 或 bucket_id 尾部做展示
   let displayTitle=title
   if(!displayTitle||mem2LooksLikeId(displayTitle)){
-    displayTitle=(b.domain||'').split(',')[0].trim()||b.bucket_id.slice(-8)||'未命名'
+    displayTitle=(b.domain||'').split(',')[0].trim()||(b.bucket_id||'').slice(-8)||'未命名'
   }
   const imp=Math.min(10,Math.max(0,parseInt(b.importance)||0))
-  const dots=Array.from({length:9},(_,k)=>
-    `<div class="mem2-dot-item${k<imp?'':' empty'}"></div>`).join('')
+  const dots=Array.from({length:9},(_,k)=>`<div class="mem2-dot-item${k<imp?'':' empty'}"></div>`).join('')
   const tags=(b.domain||'').split(',').map(t=>t.trim()).filter(Boolean).slice(0,3)
   const tagsHTML=tags.map(t=>`<div class="mem2-tag">${escHtml(t)}</div>`).join('')
   const badge=mem2DomainBadge(b)
   const color=mem2BadgeColor(badge)
   const timeDisplay=date?date.replace(/^(\d{4})-(\d{2})-(\d{2})$/,'$2/$3'):''
   return`<div class="mem2-card" onclick="mem2OpenDetail(${i})">
-    <div class="mem2-card-head">
-      <span class="mem2-card-type" style="color:${color}">${escHtml(badge)}</span>
-      ${timeDisplay?`<span class="mem2-card-time">${escHtml(timeDisplay)}</span>`:''}
-    </div>
-    <div class="mem2-card-title">${b.pinned?'📌 ':''} ${escHtml(displayTitle)}</div>
-    <div class="mem2-card-footer">
-      <div class="mem2-dots">${dots}</div>
-      <svg class="mem2-heart" width="14" height="14" viewBox="0 0 14 14" fill="none">
-        <path d="M7 12S1.5 8.5 1.5 5a2.5 2.5 0 015 0 2.5 2.5 0 015 0C11.5 8.5 7 12 7 12z" stroke="#E5E5EA" stroke-width="1.2"/>
-      </svg>
-      <div class="mem2-card-tags">${tagsHTML}</div>
-    </div>
+    <div class="mem2-card-head"><span class="mem2-card-type" style="color:${color}">${escHtml(badge)}</span>${timeDisplay?`<span class="mem2-card-time">${escHtml(timeDisplay)}</span>`:''}</div>
+    <div class="mem2-card-title">${b.pinned?'\uD83D\uDCCC ':''} ${escHtml(displayTitle)}</div>
+    <div class="mem2-card-footer"><div class="mem2-dots">${dots}</div><svg class="mem2-heart" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 12S1.5 8.5 1.5 5a2.5 2.5 0 015 0 2.5 2.5 0 015 0C11.5 8.5 7 12 7 12z" stroke="#E5E5EA" stroke-width="1.2"/></svg><div class="mem2-card-tags">${tagsHTML}</div></div>
   </div>`
 }
 
-// ─ 打开详情（按需拉内容） ─
 async function mem2OpenDetail(i){
   const b=(_mem2Filtered.length?_mem2Filtered[i]:_mem2All[i])
   if(!b)return
@@ -166,49 +175,31 @@ async function mem2OpenDetail(i){
   const{date,title}=mem2ParseName(b.name||'')
   let displayTitle=title
   if(!displayTitle||mem2LooksLikeId(displayTitle)){
-    displayTitle=(b.domain||'').split(',')[0].trim()||b.bucket_id.slice(-8)||'未命名'
+    displayTitle=(b.domain||'').split(',')[0].trim()||(b.bucket_id||'').slice(-8)||'未命名'
   }
   const badge=mem2DomainBadge(b)
   const color=mem2BadgeColor(badge)
   const imp=Math.min(10,Math.max(0,parseInt(b.importance)||0))
   const dots=Array.from({length:10},(_,k)=>`<div class="mem2-dot-item${k<imp?'':' empty'}"></div>`).join('')
-
-  // 先显示 loading
   body.innerHTML=`
-    <div class="mem2-sheet-title">${b.pinned?'📌 ':''} ${escHtml(displayTitle)}</div>
+    <div class="mem2-sheet-title">${b.pinned?'\uD83D\uDCCC ':''} ${escHtml(displayTitle)}</div>
     <div class="mem2-sheet-meta" style="color:${color}">${escHtml(badge)}${date?' · '+escHtml(date):''}</div>
     <div class="mem2-sheet-div"></div>
     <div id="mem2SheetContent"><div class="mem2-loading" style="font-size:13px;padding:10px 0">加载内容…</div></div>
     <div class="mem2-sheet-div"></div>
     <div class="mem2-meta-row"><span class="mem2-meta-label">importance</span><div class="mem2-dots">${dots}</div></div>
     <button class="mem2-rest-btn" onclick="mem2CloseDetail()">关闭</button>
-    <div class="mem2-sheet-id" onclick="navigator.clipboard&&navigator.clipboard.writeText('${escHtml(b.bucket_id||'')}')">${escHtml(b.bucket_id||b.name||'')} · tap to copy</div>`
+    <div class="mem2-sheet-id">${escHtml(b.bucket_id||b.name||'')} · tap to copy</div>`
   if(overlay)overlay.classList.add('open')
-
-  // 异步拉内容
   try{
     const blocks=await mem2McpCall('breath_search',{query:b.name||b.bucket_id,max_results:1})
-    // 过滤元数据行
     const raw=blocks.map(c=>c.text||'').join('\n')
     const cleaned=raw.split('\n').filter(l=>{
       const t=l.trim()
       if(!t||t==='---')return false
-      // 整行都是 [key:val] 片段的过滤掉
-      if(/^(\[[\w_:.[^\]]*\]\s*)+$/.test(t))return false
-      // meaning: / Footprint: 行保留
+      if(/^(\[[\w_.:[^\]]*\]\s*)+$/.test(t))return false
       return true
     }).join('\n').trim()
-    // 再次提引标题（如果正文首行比 catalog 更好）
-    if(cleaned&&mem2LooksLikeId(displayTitle)){
-      const firstLine=cleaned.split('\n').find(l=>l.trim())
-      if(firstLine){
-        const t=firstLine.trim().replace(/^\u3010.*?\u3011/,'').trim().slice(0,40)
-        if(t){
-          const titleEl=body.querySelector('.mem2-sheet-title')
-          if(titleEl)titleEl.textContent=(b.pinned?'📌 ':' ')+t
-        }
-      }
-    }
     const el=document.getElementById('mem2SheetContent')
     if(el)el.innerHTML=cleaned
       ?`<div class="mem2-sheet-content">${escHtml(cleaned)}</div>`
@@ -229,8 +220,6 @@ function mem2SetFilter(el,val){
   _mem2Filter=val
   mem2Render()
 }
-
-// 刷新按鈕（强制重引）
 function mem2Refresh(){
   _mem2All=[]
   mem2Load(true)
