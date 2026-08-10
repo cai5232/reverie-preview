@@ -127,8 +127,8 @@ async function mem2Prefetch(){
         }
       }
     }catch(e){}
-    await new Promise(r=>setTimeout(r,400))
-    if((i+1)%5===0)mem2SaveCache()
+    await new Promise(r=>setTimeout(r,100))
+    if((i+1)%10===0)mem2SaveCache()
   }
   mem2SaveCache()
   _mem2Prefetching=false
