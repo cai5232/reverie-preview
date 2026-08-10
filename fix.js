@@ -58,25 +58,15 @@ async function mem2McpCall(toolName,args){
 // ===== 新增 / 编辑记忆 =====
 let _mem2EditBucket = null  // null = 新增，有值 = 编辑
 
-function mem2SelectCat(el){
-  document.querySelectorAll('#mem2EditCatRow .mem2-edit-cat').forEach(e=>e.classList.remove('active'))
-  el.classList.add('active')
-}
-
 function mem2ShowAdd(){
   _mem2EditBucket = null
   document.getElementById('mem2EditSheetTitle').textContent = '新增记忆'
-  document.getElementById('mem2EditTitle').value = ''
   document.getElementById('mem2EditContent').value = ''
   document.getElementById('mem2EditTags').value = ''
   document.getElementById('mem2EditImportance').value = '5'
   document.getElementById('mem2EditImpVal').textContent = '5'
-  // 分类重置
-  document.querySelectorAll('#mem2EditCatRow .mem2-edit-cat').forEach(e=>e.classList.remove('active'))
-  const def=document.querySelector('#mem2EditCatRow [data-cat="dynamic"]')
-  if(def)def.classList.add('active')
   document.getElementById('mem2EditOverlay').classList.add('open')
-  setTimeout(()=>document.getElementById('mem2EditTitle').focus(), 150)
+  setTimeout(()=>document.getElementById('mem2EditContent').focus(), 150)
 }
 
 function mem2ShowEdit(i){
@@ -85,21 +75,11 @@ function mem2ShowEdit(i){
   if(!b) return
   _mem2EditBucket = b
   document.getElementById('mem2EditSheetTitle').textContent = '编辑记忆'
-  // 标题：从 display_title 填入
-  document.getElementById('mem2EditTitle').value = b.display_title||''
   document.getElementById('mem2EditContent').value = b._content || ''
   document.getElementById('mem2EditTags').value = (b.domain||'').split(',').map(t=>t.trim()).filter(t=>t&&t!=='未分类').join(', ')
   const imp = Math.min(10,Math.max(1,parseInt(b.importance)||5))
   document.getElementById('mem2EditImportance').value = String(imp)
   document.getElementById('mem2EditImpVal').textContent = String(imp)
-  // 分类
-  document.querySelectorAll('#mem2EditCatRow .mem2-edit-cat').forEach(e=>e.classList.remove('active'))
-  let cat = 'dynamic'
-  if(b.pinned) cat = 'pinned'
-  else if(b.resolved) cat = 'resolved'
-  else if((b.importance||0)>=9) cat = 'permanent'
-  const catEl=document.querySelector('#mem2EditCatRow [data-cat="'+cat+'"]')
-  if(catEl)catEl.classList.add('active')
   document.getElementById('mem2EditOverlay').classList.add('open')
   setTimeout(()=>document.getElementById('mem2EditContent').focus(), 150)
 }
@@ -110,52 +90,35 @@ function mem2CloseEdit(){
 }
 
 async function mem2SaveEdit(){
-  const title = document.getElementById('mem2EditTitle').value.trim()
-  let content = document.getElementById('mem2EditContent').value.trim()
-  if(!content && !title){ showToast('内容不能为空'); return }
-  // 标题拼进内容第一行（新增时）或作为 name 传入（编辑时）
+  const content = document.getElementById('mem2EditContent').value.trim()
+  if(!content){ showToast('内容不能为空'); return }
   const tags = document.getElementById('mem2EditTags').value.trim()
   const importance = parseInt(document.getElementById('mem2EditImportance').value)||5
-  const catEl = document.querySelector('#mem2EditCatRow .mem2-edit-cat.active')
-  const cat = catEl ? catEl.dataset.cat : 'dynamic'
   const btn = document.getElementById('mem2EditSaveBtn')
   btn.textContent = '保存中…'
   btn.style.opacity = '0.6'
   try{
     if(_mem2EditBucket){
-      const args = {
+      await mem2McpCall('trace', {
         bucket_id: _mem2EditBucket.bucket_id || _mem2EditBucket.name,
-        content: content || _mem2EditBucket._content || '',
+        content: content,
         importance,
-        ...(tags ? {tags} : {}),
-        ...(title ? {name: title} : {}),
-        ...(cat==='pinned'||cat==='permanent' ? {pinned:1} : {pinned:0}),
-        ...(cat==='resolved' ? {resolved:1} : {resolved:0}),
-      }
-      await mem2McpCall('trace', args)
-      _mem2EditBucket._content = content || _mem2EditBucket._content
+        ...(tags ? {tags} : {})
+      })
+      _mem2EditBucket._content = content
       _mem2EditBucket.importance = importance
-      _mem2EditBucket.pinned = cat==='pinned'||cat==='permanent'
-      _mem2EditBucket.resolved = cat==='resolved'
       if(tags) _mem2EditBucket.domain = tags
-      if(title) _mem2EditBucket.display_title = title
-      else {
-        const first = (_mem2EditBucket._content||'').split('\n')[0]
-        _mem2EditBucket.display_title = first.slice(0,28)+(first.length>28?'…':'')
-      }
+      const first = content.split('\n')[0]
+      _mem2EditBucket.display_title = first.slice(0,28) + (first.length>28?'…':'')
       mem2SaveCache()
       mem2Render()
       showToast('已更新')
     } else {
-      // 新增：标题拼到内容顶部
-      const finalContent = title ? (title + '\n' + content) : content
-      const args = {
-        content: finalContent,
+      await mem2McpCall('hold', {
+        content,
         importance,
-        ...(tags ? {tags} : {}),
-        ...(cat==='pinned'||cat==='permanent' ? {pinned:true} : {}),
-      }
-      await mem2McpCall('hold', args)
+        ...(tags ? {tags} : {})
+      })
       mem2ClearCache()
       _mem2All = []
       showToast('已添加，正在刷新…')
@@ -448,18 +411,33 @@ async function mem2DeleteBucket(i){
   const b=arr[i]
   if(!b)return
   const title=b.display_title||b.name||'这条记忆'
-  if(!confirm('确定删除「'+title+'」？此操作不可撤销。'))return
-  mem2CloseDetail()
-  try{
-    await mem2McpCall('trace',{bucket_id:b.bucket_id||b.name,delete:true,delete_reason:'用户在小窝手动删除'})
-    // 从本地移除
-    _mem2All=_mem2All.filter(x=>x!==b)
-    mem2SaveCache()
-    localStorage.setItem('mem2_last_count',String(_mem2All.length))
-    mem2Render()
-    showToast('已删除')
-  }catch(e){
-    showToast('删除失败：'+(e.message||''))
+  // 在 sheet 里替换成确认 UI
+  const body=document.getElementById('mem2SheetBody')
+  if(!body)return
+  const confirmHtml=`
+    <div style="text-align:center;padding:8px 0 16px">
+      <div style="font-size:16px;font-weight:700;color:#1C1C1E;margin-bottom:8px">确认删除？</div>
+      <div style="font-size:13px;color:#8E8E93;line-height:1.6;margin-bottom:20px">「${escHtml(title)}」<br>删除后无法恢复</div>
+      <div onclick="mem2CloseDetail()" style="width:100%;padding:14px 0;text-align:center;background:#F2F2F7;border-radius:12px;font-size:15px;color:#1C1C1E;cursor:pointer;margin-bottom:10px;-webkit-tap-highlight-color:transparent">取消</div>
+      <div id="mem2ConfirmDelBtn" style="width:100%;padding:14px 0;text-align:center;background:#FF3B30;border-radius:12px;font-size:15px;color:#fff;cursor:pointer;font-weight:600;-webkit-tap-highlight-color:transparent">确认删除</div>
+    </div>
+  `
+  body.innerHTML=confirmHtml
+  document.getElementById('mem2ConfirmDelBtn').onclick=async()=>{
+    document.getElementById('mem2ConfirmDelBtn').textContent='删除中…'
+    document.getElementById('mem2ConfirmDelBtn').style.opacity='0.6'
+    try{
+      await mem2McpCall('trace',{bucket_id:b.bucket_id||b.name,delete:true,delete_reason:'用户在小窝手动删除'})
+      _mem2All=_mem2All.filter(x=>x!==b)
+      mem2SaveCache()
+      localStorage.setItem('mem2_last_count',String(_mem2All.length))
+      mem2Render()
+      mem2CloseDetail()
+      showToast('已删除')
+    }catch(e){
+      showToast('删除失败：'+(e.message||''))
+      mem2CloseDetail()
+    }
   }
 }
 function mem2CloseDetailAndEdit(i){
