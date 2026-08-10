@@ -314,20 +314,42 @@ async function mem2Load(force){
   if(statusText)statusText.textContent='Loading…'
   if(list)list.innerHTML='<div class="mem2-loading">加载中…</div>'
   try{
-    // OB 单次上限50，分两批拉再去重：第一批不限，第二批按importance降序取
-    const [blocks1, blocks2] = await Promise.all([
-      mem2McpCall('breath_advanced',{catalog:true,max_results:50}),
-      mem2McpCall('breath_advanced',{catalog:true,max_results:50,importance_min:1})
-    ])
-    const rows1 = mem2ParseCatalog(blocks1)
-    const rows2 = mem2ParseCatalog(blocks2)
-    // 去重：以 bucket_id 为 key
-    const seen = new Set()
-    const rows = []
-    for(const r of [...rows1,...rows2]){
-      const key = r.bucket_id||r.name
-      if(key && !seen.has(key)){seen.add(key);rows.push(r)}
+    // 优先用 pulse 拿全量桶列表，OB的pulse不受max_results限制
+    let rows = []
+    try{
+      const pulseBlocks = await mem2McpCall('pulse', {})
+      const pulseText = pulseBlocks.map(c=>c.text||'').join('\n')
+      // pulse 返回的桶列表格式：每行一个桶，解析 name|domain|importance
+      const pulseRows = []
+      pulseText.split('\n').forEach(line=>{
+        const parts = line.split('|').map(s=>s.trim())
+        if(!parts[0]) return
+        const rawName = parts[0]
+        if(/^工具|^名称|^===|^---|\d+ (条|个)|固化|动态|归档|feel|plan|letter/.test(rawName)) return
+        const isPinned = rawName.startsWith('📌')
+        const cleanName = rawName.replace(/^📌\s*/,'').trim()
+        if(!cleanName || cleanName.length < 2) return
+        const {date, title} = mem2ParseName(cleanName)
+        const cleanTitle = title.replace(/^💭\s*meaning:\s*/i,'').replace(/^meaning:\s*/i,'').trim()
+        pulseRows.push({bucket_id:cleanName,name:cleanName,display_title:cleanTitle,date,domain:parts[1]||'',importance:parseInt(parts[2])||0,pinned:isPinned,_content:null})
+      })
+      if(pulseRows.length > 0) rows = pulseRows
+    }catch(e){}
+
+    // pulse 没拿到，降级用 catalog 按时间分段拉（早期 + 近期）
+    if(rows.length === 0){
+      const [b1, b2, b3] = await Promise.all([
+        mem2McpCall('breath_advanced',{catalog:true,max_results:50}),
+        mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_to:'2026-07-31'}),
+        mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_from:'2026-08-01'}),
+      ])
+      const seen = new Set()
+      for(const r of [...mem2ParseCatalog(b1),...mem2ParseCatalog(b2),...mem2ParseCatalog(b3)]){
+        const key = r.bucket_id||r.name
+        if(key && !seen.has(key)){seen.add(key);rows.push(r)}
+      }
     }
+
     _mem2All=rows
     localStorage.setItem('mem2_last_count',String(rows.length))
     if(statusDot)statusDot.style.background='#34C759'
