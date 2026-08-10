@@ -2705,7 +2705,7 @@ async function xkCallAI(){
 }
 
 // 单轮：流式拿模型输出，检测tool_calls，调工具，递归下一轮
-async function xkAgenticLoop(sendOptions, mcpServerMap, round){
+async function xkAgenticLoop(sendOptions, mcpServerMap, round, memCtx){
   if(round > 8) return
 
   const typing = xkTypingEl()
