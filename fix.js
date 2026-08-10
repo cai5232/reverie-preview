@@ -351,11 +351,12 @@ async function mem2CheckAndLoad(){
       mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_to:'2026-07-24'}),
       mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_from:'2026-07-25',date_to:'2026-07-31'}),
       mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_from:'2026-08-01',date_to:'2026-08-07'}),
-      mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_from:'2026-08-08'}),
+      mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_from:'2026-08-08',date_to:'2026-08-10'}),
     ])
+    const b5 = await mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_from:'2026-08-11'})
     const seen = new Set()
     let count = 0
-    for(const r of [...mem2ParseCatalog(b1),...mem2ParseCatalog(b2),...mem2ParseCatalog(b3),...mem2ParseCatalog(b4)]){
+    for(const r of [...mem2ParseCatalog(b1),...mem2ParseCatalog(b2),...mem2ParseCatalog(b3),...mem2ParseCatalog(b4),...mem2ParseCatalog(b5)]){
       const key = r.bucket_id||r.name
       if(key && !seen.has(key)){seen.add(key);count++}
     }
