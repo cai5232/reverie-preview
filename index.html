@@ -703,6 +703,11 @@ function navTo(name){
     <div class="mem2-filter-pill" onclick="mem2SetFilter(this,'resolved')">Resolved</div>
     <div class="mem2-filter-pill" onclick="mem2SetFilter(this,'pinned')">Pinned</div>
   </div>
+  <div style="padding:0 16px 8px;display:flex;gap:8px">
+    <div onclick="mem2DebugRaw()" style="font-size:12px;color:#fff;background:#C8956A;border-radius:8px;padding:6px 14px;cursor:pointer;-webkit-tap-highlight-color:transparent">查看原始数据</div>
+    <div onclick="mem2DebugCatalog()" style="font-size:12px;color:#fff;background:#5C6BC0;border-radius:8px;padding:6px 14px;cursor:pointer;-webkit-tap-highlight-color:transparent">查看目录数据</div>
+  </div>
+  <div id="mem2DebugBox" style="display:none;margin:0 16px 12px;background:#f5f5f5;border-radius:10px;padding:10px;font-size:11px;color:#333;white-space:pre-wrap;word-break:break-all;max-height:300px;overflow-y:auto"></div>
   <div class="mem2-list" id="mem2List"><div class="mem2-loading">点击右上角刷新加载记忆</div></div>
 </div>
 <!-- Memory2 详情 sheet -->
