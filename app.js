@@ -973,23 +973,71 @@ function mem2CardHTML(b,i){
   const{date,title}=mem2ParseName(b.name||b.bucket_id||'')
   const displayTitle=title||(b.name||'未命名')
   const imp=Math.min(10,Math.max(0,parseInt(b.importance)||0))
-  // 只显示9个dot，和参考图一致
   const dotCount=9
   const dots=Array.from({length:dotCount},(_,k)=>`<div class="mem2-dot-item${k>=imp?' empty':''}"></div>`).join('')
+  // tags从domain字段拆
   const tags=(b.domain||'').split(',').map(t=>t.trim()).filter(Boolean).slice(0,3)
   const tagsHTML=tags.map(t=>`<div class="mem2-tag">${escHtml(t)}</div>`).join('')
-  const badge=mem2DomainBadge(b.domain||'')
-  // 时间格式：月/日 时:分（catalog没有时分，只有日期就显示月/日）
-  const timeDisplay=date?date.replace(/^(\d{4})-(\d{2})-(\d{2})$/,'$2/$3'):'';
+  const badge=mem2StateBadge(b)
+  const badgeColor=mem2BadgeColor(badge)
+  const timeDisplay=date?date.replace(/^(\d{4})-(\d{2})-(\d{2})$/,'$2/$3'):''
   const pinEmoji=b.pinned?'📌 ':''
-  // preview: catalog模式没有content，留空位（点开才加载）
-  const preview=b.preview||''
   return`<div class="mem2-card" onclick="mem2OpenDetail(${i})">
-    <div class="mem2-card-head"><span class="mem2-card-type">${escHtml(badge)}</span>${timeDisplay?`<span class="mem2-card-time">${escHtml(timeDisplay)}</span>`:''}</div>
+    <div class="mem2-card-head"><span class="mem2-card-type" style="color:${badgeColor}">${escHtml(badge)}</span>${timeDisplay?`<span class="mem2-card-time">${escHtml(timeDisplay)}</span>`:''}</div>
     <div class="mem2-card-title">${pinEmoji}${escHtml(displayTitle||date||'未命名')}</div>
-    ${preview?`<div class="mem2-card-preview">${escHtml(preview)}</div>`:''}
-    <div class="mem2-card-footer"><div class="mem2-dots">${dots}</div><svg class="mem2-heart" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 12S1.5 8.5 1.5 5a2.5 2.5 0 015-0c.1-.9.9-1.5 1.5-1.5a2.5 2.5 0 012.5 2.5C10.5 8.5 7 12 7 12z" stroke="#E5E5EA" stroke-width="1.2"/></svg><div class="mem2-card-tags">${tagsHTML}</div></div>
+    <div class="mem2-card-footer"><div class="mem2-dots">${dots}</div><svg class="mem2-heart" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 11.5S2 8.2 2 5a2.5 2.5 0 015 0 2.5 2.5 0 015 0c0 3.2-5 6.5-5 6.5z" stroke="#E5E5EA" stroke-width="1.2"/></svg><div class="mem2-card-tags">${tagsHTML}</div></div>
   </div>`
+}
+let _mem2Filtered=[]
+function mem2Render(){
+  const list=document.getElementById('mem2List')
+  let data=[..._mem2Data]
+  if(_mem2Filter==='dynamic')data=data.filter(b=>!b.pinned&&!b.resolved&&(b.importance||0)<9)
+  else if(_mem2Filter==='permanent')data=data.filter(b=>b.pinned||(b.importance||0)>=9)
+  else if(_mem2Filter==='resolved')data=data.filter(b=>b.resolved)
+  else if(_mem2Filter==='pinned')data=data.filter(b=>b.pinned)
+  _mem2Filtered=data
+  if(!data.length){list.innerHTML='<div class="mem2-empty">没有找到相关记忆</div>';return}
+  list.innerHTML=data.map((b,i)=>mem2CardHTML(b,i)).join('')
+}
+async function mem2OpenDetail(i){
+  const b=_mem2Filtered[i]
+  if(!b)return
+  const overlay=document.getElementById('mem2Overlay')
+  const body=document.getElementById('mem2SheetBody')
+  const{date,title}=mem2ParseName(b.name||'')
+  const displayTitle=title||(b.name||'未命名')
+  const badge=mem2StateBadge(b)
+  const badgeColor=mem2BadgeColor(badge)
+  const imp=Math.min(10,Math.max(0,parseInt(b.importance)||0))
+  const dots=Array.from({length:10},(_,k)=>`<div class="mem2-dot-item${k>=imp?' empty':''}"></div>`).join('')
+  body.innerHTML=`
+    <div class="mem2-sheet-title">${b.pinned?'📌 ':''}${escHtml(displayTitle||date||'未命名')}</div>
+    <div class="mem2-sheet-meta" style="color:${badgeColor}">${escHtml(badge)}${date?' · '+escHtml(date):''}</div>
+    <div class="mem2-sheet-div"></div>
+    <div id="mem2SheetContent"><div class="mem2-loading" style="font-size:13px;padding:10px 0">加载中…</div></div>
+    <div class="mem2-sheet-div"></div>
+    <div class="mem2-meta-row"><span class="mem2-meta-label">importance</span><span class="mem2-meta-val"><div class="mem2-dots">${dots}</div></span></div>
+    <button class="mem2-rest-btn" onclick="mem2CloseDetail()">关闭</button>
+    <div class="mem2-sheet-id" onclick="navigator.clipboard&&navigator.clipboard.writeText(this.dataset.id).then(()=>showToast('已复制'))" data-id="${escHtml(b.bucket_id||b.name||'')}">ID: ${escHtml(b.bucket_id||b.name||'')} · tap to copy</div>
+  `
+  overlay.classList.add('open')
+  try{
+    const proxyBase=(cfg.api||'').replace(/\/v1\/?$/,'')+'/internal/mcp-proxy'
+    // 用完整name做精确搜索
+    const queryStr=b.name||b.bucket_id||''
+    const res=await fetch(proxyBase,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key},body:JSON.stringify({url:'https://caiovo.zeabur.app/mcp',method:'POST',headers:{},body:{jsonrpc:'2.0',id:Date.now(),method:'tools/call',params:{name:'breath_search',arguments:{query:queryStr,max_results:3}}}})})
+    const j=await res.json()
+    const raw=j?.data?.result?.content||[]
+    const fullText=Array.isArray(raw)?raw.map(c=>c.text||'').join('\n').trim():''
+    const el=document.getElementById('mem2SheetContent')
+    if(el)el.innerHTML=fullText
+      ?`<div class="mem2-sheet-content">${escHtml(fullText)}</div>`
+      :'<div class="mem2-sheet-content" style="color:#aaa">（无内容）</div>'
+  }catch(e){
+    const el=document.getElementById('mem2SheetContent')
+    if(el)el.innerHTML=`<div class="mem2-sheet-content" style="color:#f66">加载失败: ${escHtml(e.message)}</div>`
+  }
 }
 
 let _mem2Filtered=[]
