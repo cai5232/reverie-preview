@@ -1076,7 +1076,7 @@ body{color:#1F1E1D;font-family:'GJDJCR',-apple-system,'PingFang SC',sans-serif;d
 .mem2-sheet-handle{width:36px;height:4px;background:#D1D1D6;border-radius:2px}
 .mem2-sheet-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 20px 16px}
 .mem2-sheet-body::-webkit-scrollbar{display:none}
-.mem2-sheet-title{font-size:22px;font-weight:700;color:#000;line-height:1.3;margin-bottom:3px;font-family:-apple-system,'PingFang SC',sans-serif}
+.mem2-sheet-title{font-size:22px;font-weight:500;color:#000;line-height:1.3;margin-bottom:3px;font-family:-apple-system,'PingFang SC',sans-serif}
 .mem2-sheet-type{font-size:13px;color:#8E8E93;margin-bottom:14px;font-family:-apple-system,'PingFang SC',sans-serif}
 .mem2-sheet-div{height:.5px;background:#E5E5EA;margin:12px 0}
 .mem2-sheet-content{font-size:15px;color:#1C1C1E;line-height:1.75;white-space:pre-wrap;word-break:break-word;font-family:-apple-system,'PingFang SC',sans-serif;margin-bottom:16px}
