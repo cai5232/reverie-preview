@@ -706,6 +706,23 @@ function navTo(name){
   </div>
   <div class="mem2-list" id="mem2List"><div class="mem2-loading">加载中…</div></div>
 </div>
+<!-- Memory2 新增/编辑 sheet -->
+<div class="mem2-overlay" id="mem2EditOverlay" onclick="mem2CloseEdit()">
+  <div class="mem2-sheet" onclick="event.stopPropagation()" style="max-height:80vh!important">
+    <div class="mem2-sheet-handle-wrap"><div class="mem2-sheet-handle"></div></div>
+    <div style="padding:0 20px 20px" id="mem2EditBody">
+      <div style="font-size:16px;font-weight:700;color:#1C1C1E;margin-bottom:16px" id="mem2EditSheetTitle">新增记忆</div>
+      <div style="font-size:12px;color:#8E8E93;margin-bottom:4px">内容</div>
+      <textarea id="mem2EditContent" style="width:100%;min-height:120px;border:.5px solid #E5E5EA;border-radius:12px;padding:10px 12px;font-size:14px;font-family:-apple-system,'PingFang SC',sans-serif;color:#1C1C1E;background:#F9F9F9;resize:none;box-sizing:border-box;outline:none;-webkit-appearance:none;line-height:1.6" placeholder="输入记忆内容…"></textarea>
+      <div style="font-size:12px;color:#8E8E93;margin:10px 0 4px">标签（逗号分隔，可选）</div>
+      <input id="mem2EditTags" style="width:100%;border:.5px solid #E5E5EA;border-radius:10px;padding:9px 12px;font-size:14px;font-family:-apple-system,'PingFang SC',sans-serif;color:#1C1C1E;background:#F9F9F9;box-sizing:border-box;outline:none;-webkit-appearance:none" placeholder="如：事务, 数字">
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <div onclick="mem2CloseEdit()" style="flex:1;padding:13px 0;text-align:center;background:#F2F2F7;border-radius:12px;font-size:15px;color:#1C1C1E;cursor:pointer;-webkit-tap-highlight-color:transparent">取消</div>
+        <div id="mem2EditSaveBtn" onclick="mem2SaveEdit()" style="flex:1;padding:13px 0;text-align:center;background:#1C1C1E;border-radius:12px;font-size:15px;color:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent;font-weight:600">保存</div>
+      </div>
+    </div>
+  </div>
+</div>
 <!-- Memory2 详情 sheet -->
 <div class="mem2-overlay" id="mem2Overlay" onclick="mem2CloseDetail()">
   <div class="mem2-sheet" onclick="event.stopPropagation()">
