@@ -939,13 +939,15 @@ function mem2ParseName(raw){
   if(m3)return{date:m3[1],title:''}
   return{date:'',title:raw}
 }
+let _mem2Filtered=[]
 function mem2Render(){
   const list=document.getElementById('mem2List')
-  let data=_mem2Data
+  let data=[..._mem2Data]
   if(_mem2Filter==='dynamic')data=data.filter(b=>!b.pinned&&!b.resolved)
   else if(_mem2Filter==='permanent')data=data.filter(b=>b.pinned||(b.importance||0)>=9)
   else if(_mem2Filter==='resolved')data=data.filter(b=>b.resolved)
   else if(_mem2Filter==='pinned')data=data.filter(b=>b.pinned)
+  _mem2Filtered=data
   if(!data.length){list.innerHTML='<div class="mem2-empty">没有找到相关记忆</div>';return}
   list.innerHTML=data.map((b,i)=>mem2CardHTML(b,i)).join('')
 }
