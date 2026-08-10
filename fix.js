@@ -346,14 +346,23 @@ async function mem2Load(force){
 
 async function mem2CheckAndLoad(){
   try{
-    const blocks=await mem2McpCall('breath_advanced',{catalog:true,max_results:100})
-    let count=0
-    blocks.forEach(b=>{
-      (b.text||'').split('\n').forEach(line=>{
-        const p=line.split('|').map(s=>s.trim())
-        if(p[0]&&!/^工具|^名称|^===|^---/.test(p[0]))count++
+    const [blocks1, blocks2] = await Promise.all([
+      mem2McpCall('breath_advanced',{catalog:true,max_results:50}),
+      mem2McpCall('breath_advanced',{catalog:true,max_results:50,importance_min:1})
+    ])
+    const seen = new Set()
+    let count = 0
+    for(const blocks of [blocks1, blocks2]){
+      blocks.forEach(b=>{
+        (b.text||'').split('\n').forEach(line=>{
+          const p=line.split('|').map(s=>s.trim())
+          if(p[0]&&!/^工具|^名称|^===|^---/.test(p[0])){
+            const key = p[0].replace(/^📌\s*/,'').trim()
+            if(key && !seen.has(key)){seen.add(key);count++}
+          }
+        })
       })
-    })
+    }
     const lastCount=parseInt(localStorage.getItem('mem2_last_count')||'0')
     if(count!==lastCount){
       // 新记忆，清缓存重拉
