@@ -2640,6 +2640,31 @@ function xkSend(){
   return xkHandleSubmit()
 }
 
+// 从 OB 搜索相关记忆（通过 xiaoke mcp-proxy 代理）
+async function xkFetchOBMemory(query){
+  try{
+    const proxyBase=(cfg.api||'').replace(/\/v1\/?$/,'')+'/internal/mcp-proxy'
+    const res=await fetch(proxyBase,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key},
+      body:JSON.stringify({
+        url:'https://caiovo.zeabur.app/mcp',
+        method:'POST',
+        headers:{},
+        body:{jsonrpc:'2.0',id:Date.now(),method:'tools/call',params:{name:'breath_search',arguments:{query,max_results:5}}}
+      })
+    })
+    const j=await res.json()
+    const content=j?.data?.result?.content||[]
+    if(Array.isArray(content)){
+      return content.map(c=>c.text||'').filter(Boolean).join('\n\n').slice(0,2000)
+    }
+    return ''
+  }catch(e){
+    return ''
+  }
+}
+
 // 前端 agentic loop：流式输出 + 检测tool_call + 调MCP + 继续
 async function xkCallAI(){
   xkBusy=true
@@ -2652,6 +2677,13 @@ async function xkCallAI(){
   if(xkWebSearchOn) allTools.push(WEB_SEARCH_TOOL)
   if(allTools.length) sendOptions.tools = allTools
 
+  // 拉 OB 相关记忆
+  const lastUserMsg=xkHistory.filter(m=>m.role==='user').slice(-1)[0]
+  let memCtx=''
+  if(lastUserMsg&&typeof lastUserMsg.content==='string'&&lastUserMsg.content.trim()){
+    memCtx=await xkFetchOBMemory(lastUserMsg.content.slice(0,200))
+  }
+
   // 如果本轮有真实图片内容（含base64），发给API时用真实内容，但不恢复（历史已是idb:key版本）
   if(xkCurrentMsgContent !== null){
     const realContent = xkCurrentMsgContent
@@ -2660,12 +2692,12 @@ async function xkCallAI(){
     const lastIdx = xkHistory.length - 1
     const storedMsg = xkHistory[lastIdx]
     xkHistory[lastIdx] = {role:'user', content: realContent}
-    await xkAgenticLoop(sendOptions, mcp_servers, 0)
+    await xkAgenticLoop(sendOptions, mcp_servers, 0, memCtx)
     // 恢复回idb:key版本（历史存储用）
     xkHistory[lastIdx] = storedMsg
     localStorage.setItem('xk_history', JSON.stringify(xkHistory))
   } else {
-    await xkAgenticLoop(sendOptions, mcp_servers, 0)
+    await xkAgenticLoop(sendOptions, mcp_servers, 0, memCtx)
   }
 
   xkBusy=false
