@@ -93,18 +93,20 @@ async function mem2SaveEdit(){
   const content = document.getElementById('mem2EditContent').value.trim()
   if(!content){ showToast('内容不能为空'); return }
   const tags = document.getElementById('mem2EditTags').value.trim()
+  const importance = parseInt(document.getElementById('mem2EditImportance').value)||5
   const btn = document.getElementById('mem2EditSaveBtn')
   btn.textContent = '保存中…'
   btn.style.opacity = '0.6'
   try{
     if(_mem2EditBucket){
-      // 编辑已有桶：用 trace old_str/new_str
       await mem2McpCall('trace', {
         bucket_id: _mem2EditBucket.bucket_id || _mem2EditBucket.name,
         content: content,
+        importance,
         ...(tags ? {tags} : {})
       })
       _mem2EditBucket._content = content
+      _mem2EditBucket.importance = importance
       if(tags) _mem2EditBucket.domain = tags
       const first = content.split('\n')[0]
       _mem2EditBucket.display_title = first.slice(0,28) + (first.length>28?'…':'')
@@ -112,13 +114,11 @@ async function mem2SaveEdit(){
       mem2Render()
       showToast('已更新')
     } else {
-      // 新增：用 hold
       await mem2McpCall('hold', {
         content,
-        ...(tags ? {tags} : {}),
-        importance: 5
+        importance,
+        ...(tags ? {tags} : {})
       })
-      // 清缓存让下次刷新时重拉
       mem2ClearCache()
       _mem2All = []
       showToast('已添加，正在刷新…')
