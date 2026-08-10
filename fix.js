@@ -155,7 +155,8 @@ function mem2ParseCatalog(blocks){
       if(!cleanName)return
       const{date,title}=mem2ParseName(cleanName)
       const isTimestamp=/^\d{2}-\d{2}-\d{2}$/.test(title)
-      rows.push({bucket_id:cleanName,name:cleanName,display_title:isTimestamp?'':title,date:date,domain:parts[1]||'',importance:parseInt(parts[2])||0,pinned:isPinned,_content:null})
+      const cleanTitle=title.replace(/^💭\s*meaning:\s*/i,'').replace(/^meaning:\s*/i,'').trim()
+      rows.push({bucket_id:cleanName,name:cleanName,display_title:isTimestamp?'':cleanTitle,date:date,domain:parts[1]||'',importance:parseInt(parts[2])||0,pinned:isPinned,_content:null})
     })
   })
   return rows
