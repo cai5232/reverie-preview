@@ -982,6 +982,7 @@ function mem2CardHTML(b,i){
   </div>`
 }
 
+let _mem2Filtered=[]
 async function mem2OpenDetail(idx){
   const b=_mem2Data[idx];if(!b)return
   const overlay=document.getElementById('mem2Overlay'),body=document.getElementById('mem2SheetBody')
