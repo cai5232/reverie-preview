@@ -2730,9 +2730,10 @@ async function xkAgenticLoop(sendOptions, mcpServerMap, round, memCtx){
         return m
       })
     }
+    const systemPrompt = SYSTEM_PROMPT + (memCtx ? '\n\n【相关记忆（来自OB）】\n'+memCtx : '')
     const body = {
       model: cfg.model,
-      messages: [{role:'system',content:SYSTEM_PROMPT},...stripBase64FromHistory(xkHistory)],
+      messages: [{role:'system',content:systemPrompt},...stripBase64FromHistory(xkHistory)],
       stream: true,
       stream_options: {include_usage: true},
       temperature: cfg.temp,
