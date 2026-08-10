@@ -184,13 +184,13 @@ async function mem2OpenDetail(i){
   if(!b)return
   const overlay=document.getElementById('mem2Overlay')
   const body=document.getElementById('mem2SheetBody')
-  const{date,title}=mem2ParseName(b.name||b.bucket_id||'')
-  let displayTitle=title||b.name||'未命名'
+  const displayTitle=b.display_title||b.name||'未命名'
+  const date=b.date||''
   const badge=mem2DomainBadge(b)
   const color=mem2BadgeColor(badge)
   const imp=Math.min(10,Math.max(0,parseInt(b.importance)||0))
   const dots=Array.from({length:10},(_,k)=>`<div class="mem2-dot-item${k<imp?'':' empty'}"></div>`).join('')
-  const tags=(b.domain||'').split(',').map(t=>t.trim()).filter(Boolean)
+  const tags=(b.domain||'').split(',').map(t=>t.trim()).filter(t=>t&&t!=='未分类')
   const tagsHTML=tags.map(t=>`<span style="font-size:11px;color:#8E8E93;background:#F2F2F7;border-radius:6px;padding:2px 8px">${escHtml(t)}</span>`).join('')
   body.innerHTML=`
     <div style="font-size:18px;font-weight:700;color:#1C1C1E;line-height:1.4;margin-bottom:6px">${b.pinned?'📌 ':''}${escHtml(displayTitle)}</div>
