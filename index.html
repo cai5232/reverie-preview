@@ -680,7 +680,48 @@ function navTo(name){
   </div>
 </div>
 
+<!-- Memory2 -->
+<div class="page" id="page-memory2">
+  <div class="mem2-topbar">
+    <div class="mem2-menu-btn" onclick="openSidebar()"><svg width="18" height="14" viewBox="0 0 18 14" fill="none"><path d="M1 1h16M1 7h11M1 13h7" stroke="#1C1C1E" stroke-width="1.7" stroke-linecap="round"/></svg></div>
+    <div class="mem2-title">Memory</div>
+    <div class="mem2-title-spacer"></div>
+  </div>
+  <div class="mem2-tabs">
+    <div class="mem2-tab active" onclick="mem2SetTab(this,'ombre')">Ombre</div>
+    <div class="mem2-tab" onclick="mem2SetTab(this,'feel')">Feel</div>
+    <div class="mem2-tab" onclick="mem2SetTab(this,'plan')">Plan</div>
+  </div>
+  <div class="mem2-status-row">
+    <div class="mem2-status-dot" id="mem2StatusDot"></div>
+    <span class="mem2-status-text" id="mem2StatusText">Ombre · 0 memories</span>
+  </div>
+  <div class="mem2-search-wrap">
+    <div class="mem2-search-bar">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="#C7C7CC" stroke-width="1.5"/><path d="M13 13l-2.5-2.5" stroke="#C7C7CC" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <input class="mem2-search-input" id="mem2SearchInput" placeholder="search memories..." oninput="mem2OnSearch(this.value)">
+    </div>
+  </div>
+  <div class="mem2-filter-row" id="mem2FilterRow">
+    <div class="mem2-filter-pill active" onclick="mem2SetFilter(this,'all')">All</div>
+    <div class="mem2-filter-pill" onclick="mem2SetFilter(this,'dynamic')">Dynamic</div>
+    <div class="mem2-filter-pill" onclick="mem2SetFilter(this,'permanent')">Permanent</div>
+    <div class="mem2-filter-pill" onclick="mem2SetFilter(this,'resolved')">Resolved</div>
+    <div class="mem2-filter-pill" onclick="mem2SetFilter(this,'pinned')">Pinned</div>
+  </div>
+  <div class="mem2-list" id="mem2List"><div class="mem2-loading">点击右上角刷新加载记忆</div></div>
+</div>
+<!-- Memory2 详情 sheet -->
+<div class="mem2-overlay" id="mem2Overlay" onclick="mem2CloseDetail()">
+  <div class="mem2-sheet" onclick="event.stopPropagation()">
+    <div class="mem2-sheet-handle-wrap"><div class="mem2-sheet-handle"></div></div>
+    <div class="mem2-sheet-body" id="mem2SheetBody"></div>
+  </div>
+</div>
 <script src="fix.js?v=26"></script>
+<script src="app.js?v=206"></script>
+</body>
+</html>
 <script src="app.js?v=205"></script>
 </body>
 </html>
