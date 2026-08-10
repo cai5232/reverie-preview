@@ -896,8 +896,8 @@ async function mem2Load(){
   document.getElementById('mem2StatusDot').style.background='#FF9500'
   try{
     const proxyBase=(cfg.api||'').replace(/\/v1\/?$/,'')+'/internal/mcp-proxy'
-    // 用 breath_advanced 拉完整桶数据（不用 catalog 模式，catalog 只返回一行文字目录）
-    const args=_mem2Tab==='feel'?{tags:'feel',max_results:30}:_mem2Tab==='plan'?{domain:'plan',max_results:30}:{max_results:30,importance_min:1}
+    // catalog模式：每桶一行 name|domain|importance，name干净可读
+    const args=_mem2Tab==='feel'?{tags:'feel',catalog:true,max_results:60}:_mem2Tab==='plan'?{domain:'plan',catalog:true,max_results:60}:{catalog:true,max_results:60}
     const res=await fetch(proxyBase,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key},body:JSON.stringify({url:'https://caiovo.zeabur.app/mcp',method:'POST',headers:{},body:{jsonrpc:'2.0',id:Date.now(),method:'tools/call',params:{name:'breath_advanced',arguments:args}}})})
     const j=await res.json()
     const raw=j?.data?.result?.content||[]
@@ -911,23 +911,34 @@ async function mem2Load(){
     document.getElementById('mem2StatusDot').style.background='#FF3B30'
   }
 }
+// catalog格式: name|domain|importance，每桶一行
+// 跳过 ===头部、说明行、空行
 function mem2ParseResponse(text){
-  // 尝试整体JSON数组
-  try{const j=JSON.parse(text.trim());if(Array.isArray(j))return j}catch{}
-  // 逐行尝试JSON对象（breath 返回格式）
   const lines=text.split('\n').map(l=>l.trim()).filter(Boolean)
   const result=[]
   for(const line of lines){
-    if(line.startsWith('{')){try{result.push(JSON.parse(line));continue}catch{}}
-    // catalog fallback: name|domain|importance
-    if(line.startsWith('#')||line.startsWith('---')||line.startsWith('bucket')||line.startsWith('名称'))continue
+    if(line.startsWith('=')||line.startsWith('先看')||line.startsWith('breath')||line.startsWith('#')||line.startsWith('---')||line.startsWith('名称'))continue
+    if(!line.includes('|'))continue
     const parts=line.split('|')
-    if(parts.length>=1){
-      const name=parts[0].trim(),domain=(parts[1]||'').trim(),imp=parseInt(parts[2])||0
-      if(name&&name.length>1)result.push({name,domain,importance:imp,bucket_id:name,_catalog:true})
-    }
+    const rawName=parts[0].trim()
+    const domain=(parts[1]||'').trim()
+    const imp=parseInt(parts[2])||0
+    if(!rawName||rawName.length<1)continue
+    const pinned=rawName.startsWith('📌')
+    const name=rawName.replace(/^📌\s*/,'').trim()
+    result.push({name,domain,importance:imp,pinned,bucket_id:name,_catalog:true})
   }
   return result
+}
+// 从 "2026-07-24 08-31-37 日常记录习惯" 里提取日期和人类可读标题
+function mem2ParseName(raw){
+  const m=raw.match(/^(\d{4}-\d{2}-\d{2})\s+\d{2}-\d{2}-\d{2}\s+(.+)$/)
+  if(m)return{date:m[1],title:m[2]}
+  const m2=raw.match(/^(\d{4}-\d{2}-\d{2})\s+(.+)$/)
+  if(m2)return{date:m2[1],title:m2[2]}
+  const m3=raw.match(/^(\d{4}-\d{2}-\d{2})\s+(\d{2}-\d{2}-\d{2})$/)
+  if(m3)return{date:m3[1],title:''}
+  return{date:'',title:raw}
 }
 function mem2Render(){
   const list=document.getElementById('mem2List')
