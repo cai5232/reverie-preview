@@ -374,7 +374,7 @@ async function mem2Load(force){
     if(rows.length === 0){
       const [b1, b2, b3] = await Promise.all([
         mem2McpCall('breath_advanced',{catalog:true,max_results:50}),
-        mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_to:'2026-07-31'}),
+        mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_to:'2026-07-25'}),
         mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_from:'2026-08-01'}),
       ])
       const seen = new Set()
