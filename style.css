@@ -1057,9 +1057,10 @@ body{color:#1F1E1D;font-family:'GJDJCR',-apple-system,'PingFang SC',sans-serif;d
 .mem2-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
 .mem2-card-type{font-size:10px;font-weight:700;letter-spacing:.8px;color:#8E8E93;font-family:-apple-system,'PingFang SC',sans-serif;text-transform:uppercase}
 .mem2-card-time{font-size:12px;color:#C7C7CC;font-family:-apple-system,'PingFang SC',sans-serif}
-.mem2-card-title{font-size:16px;font-weight:600;color:#000;margin-bottom:5px;line-height:1.4;font-family:-apple-system,'PingFang SC',sans-serif}
+.mem2-card-title{font-size:16px;font-weight:400;color:#000;margin-bottom:5px;line-height:1.4;font-family:-apple-system,'PingFang SC',sans-serif}
 .mem2-card-preview{font-size:13.5px;color:#48484A;line-height:1.55;margin-bottom:10px;font-family:-apple-system,'PingFang SC',sans-serif;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.mem2-card-footer{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.mem2-card-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:nowrap;gap:8px}
+.mem2-card-tags{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
 .mem2-dots{display:flex;gap:3px;align-items:center}
 .mem2-dot-item{width:7px;height:7px;border-radius:50%;background:#1C1C1E;flex-shrink:0}
 .mem2-dot-item.empty{background:#E5E5EA}
