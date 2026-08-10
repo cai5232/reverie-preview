@@ -963,16 +963,22 @@ function mem2CardHTML(b,i){
   const{date,title}=mem2ParseName(b.name||b.bucket_id||'')
   const displayTitle=title||(b.name||'未命名')
   const imp=Math.min(10,Math.max(0,parseInt(b.importance)||0))
-  const dots=Array.from({length:10},(_,k)=>`<div class="mem2-dot-item${k>=imp?' empty':''}"></div>`).join('')
-  // tags从domain字段拆（catalog模式domain是逗号分隔的多个域）
+  // 只显示9个dot，和参考图一致
+  const dotCount=9
+  const dots=Array.from({length:dotCount},(_,k)=>`<div class="mem2-dot-item${k>=imp?' empty':''}"></div>`).join('')
   const tags=(b.domain||'').split(',').map(t=>t.trim()).filter(Boolean).slice(0,3)
   const tagsHTML=tags.map(t=>`<div class="mem2-tag">${escHtml(t)}</div>`).join('')
   const badge=mem2DomainBadge(b.domain||'')
+  // 时间格式：月/日 时:分（catalog没有时分，只有日期就显示月/日）
+  const timeDisplay=date?date.replace(/^(\d{4})-(\d{2})-(\d{2})$/,'$2/$3'):'';
   const pinEmoji=b.pinned?'📌 ':''
+  // preview: catalog模式没有content，留空位（点开才加载）
+  const preview=b.preview||''
   return`<div class="mem2-card" onclick="mem2OpenDetail(${i})">
-    <div class="mem2-card-head"><span class="mem2-card-type">${escHtml(badge)}</span>${date?`<span class="mem2-card-time">${escHtml(date)}</span>`:''}</div>
+    <div class="mem2-card-head"><span class="mem2-card-type">${escHtml(badge)}</span>${timeDisplay?`<span class="mem2-card-time">${escHtml(timeDisplay)}</span>`:''}</div>
     <div class="mem2-card-title">${pinEmoji}${escHtml(displayTitle||date||'未命名')}</div>
-    <div class="mem2-card-footer"><div class="mem2-dots">${dots}</div><div class="mem2-card-tags">${tagsHTML}</div></div>
+    ${preview?`<div class="mem2-card-preview">${escHtml(preview)}</div>`:''}
+    <div class="mem2-card-footer"><div class="mem2-dots">${dots}</div><svg class="mem2-heart" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 12S1.5 8.5 1.5 5a2.5 2.5 0 015-0c.1-.9.9-1.5 1.5-1.5a2.5 2.5 0 012.5 2.5C10.5 8.5 7 12 7 12z" stroke="#E5E5EA" stroke-width="1.2"/></svg><div class="mem2-card-tags">${tagsHTML}</div></div>
   </div>`
 }
 
