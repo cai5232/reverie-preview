@@ -325,21 +325,30 @@ async function mem2Load(force){
   if(statusText)statusText.textContent='Loading…'
   if(list)list.innerHTML='<div class="mem2-loading">加载中…</div>'
   try{
-    // catalog 单次上限50，按日期四段切片去重，覆盖全量
-    const [b1,b2,b3,b4] = await Promise.all([
-      mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_to:'2026-07-24'}),
-      mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_from:'2026-07-25',date_to:'2026-07-31'}),
-      mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_from:'2026-08-01',date_to:'2026-08-07'}),
-      mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_from:'2026-08-08',date_to:'2026-08-10'}),
-    ])
-    // 8月11日至今单独拉，防止近期数据超50条被截断
-    const b5 = await mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_from:'2026-08-11'})
-    const seen = new Set()
-    const rows = []
-    for(const r of [...mem2ParseCatalog(b1),...mem2ParseCatalog(b2),...mem2ParseCatalog(b3),...mem2ParseCatalog(b4),...mem2ParseCatalog(b5)]){
-      const key = r.bucket_id||r.name
-      if(key && !seen.has(key)){seen.add(key);rows.push(r)}
-    }
+    // 直接调 OB Dashboard API，无50条限制
+    const raw = await mem2FetchAllBuckets()
+    const rows = raw.map(b=>{
+      const nameRaw = String(b.name||b.id||b.bucket_id||'')
+      const isPinned = nameRaw.startsWith('📌') || Boolean(b.pinned)
+      const cleanName = nameRaw.replace(/^📌\s*/,'').trim()
+      const {date,title} = mem2ParseName(cleanName)
+      const contentRaw = String(b.content||b.text||b.body||b.content_preview||b.contentPreview||'')
+      const displayTitle = title && !/^\d{2}-\d{2}-\d{2}$/.test(title) ? title : (contentRaw.split('\n')[0]||'').slice(0,28)
+      const domainRaw = b.domain||b.domains||(b.meta&&(b.meta.domain||b.meta.domains))||''
+      const domain = Array.isArray(domainRaw)?domainRaw.join(','):String(domainRaw)
+      const content = mem2CleanContent(contentRaw)
+      return {
+        bucket_id: String(b.id||b.bucket_id||cleanName),
+        name: cleanName,
+        display_title: displayTitle.replace(/^💭\s*meaning:\s*/i,'').replace(/^meaning:\s*/i,'').trim(),
+        date,
+        domain,
+        importance: parseInt(b.importance||(b.meta&&b.meta.importance)||0)||0,
+        pinned: isPinned,
+        resolved: Boolean(b.resolved||(b.meta&&b.meta.resolved)),
+        _content: content||null,
+      }
+    })
     _mem2All=rows
     localStorage.setItem('mem2_last_count',String(rows.length))
     if(statusDot)statusDot.style.background='#34C759'
