@@ -344,39 +344,17 @@ async function mem2Load(force){
 
 async function mem2CheckAndLoad(){
   try{
+    const [b1,b2,b3,b4] = await Promise.all([
+      mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_to:'2026-07-24'}),
+      mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_from:'2026-07-25',date_to:'2026-07-31'}),
+      mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_from:'2026-08-01',date_to:'2026-08-07'}),
+      mem2McpCall('breath_advanced',{catalog:true,max_results:50,date_from:'2026-08-08'}),
+    ])
+    const seen = new Set()
     let count = 0
-    try{
-      const pulseBlocks = await mem2McpCall('pulse', {})
-      const pulseText = pulseBlocks.map(c=>c.text||'').join('\n')
-      // 从 pulse 文本里找"动态/固化 N 条"之类的总数
-      const totalM = pulseText.match(/总[计共].{0,4}?(\d+)\s*[条个桶]/) ||
-                     pulseText.match(/(\d+)\s*[条个桶].{0,4}?[总共计]/) ||
-                     pulseText.match(/共\s*(\d+)/)
-      if(totalM) count = parseInt(totalM[1])
-      else{
-        // 数行
-        pulseText.split('\n').forEach(line=>{
-          const parts = line.split('|').map(s=>s.trim())
-          if(!parts[0]) return
-          const rawName = parts[0]
-          if(/^工具|^名称|^===|^---|\d+ (条|个)|固化|动态|归档|feel|plan|letter/.test(rawName)) return
-          const cleanName = rawName.replace(/^📌\s*/,'').trim()
-          if(cleanName && cleanName.length >= 2) count++
-        })
-      }
-    }catch(e){
-      // pulse失败，用catalog计数
-      const blocks = await mem2McpCall('breath_advanced',{catalog:true,max_results:50})
-      const seen = new Set()
-      blocks.forEach(b=>{
-        (b.text||'').split('\n').forEach(line=>{
-          const p=line.split('|').map(s=>s.trim())
-          if(p[0]&&!/^工具|^名称|^===|^---/.test(p[0])){
-            const key = p[0].replace(/^📌\s*/,'').trim()
-            if(key && !seen.has(key)){seen.add(key);count++}
-          }
-        })
-      })
+    for(const r of [...mem2ParseCatalog(b1),...mem2ParseCatalog(b2),...mem2ParseCatalog(b3),...mem2ParseCatalog(b4)]){
+      const key = r.bucket_id||r.name
+      if(key && !seen.has(key)){seen.add(key);count++}
     }
     const lastCount=parseInt(localStorage.getItem('mem2_last_count')||'0')
     if(count!==lastCount){
