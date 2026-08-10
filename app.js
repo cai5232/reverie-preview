@@ -952,13 +952,22 @@ function mem2Render(){
   if(!data.length){list.innerHTML='<div class="mem2-empty">没有找到相关记忆</div>';return}
   list.innerHTML=data.map((b,i)=>mem2CardHTML(b,i)).join('')
 }
-// 把domain映射成卡片左上角的分类badge
-function mem2DomainBadge(domain){
-  if(!domain)return'OMBRE'
-  const d=domain.toLowerCase()
-  if(d.includes('feel')||d.includes('感受'))return'FEEL'
-  if(d.includes('plan')||d.includes('待办')||d.includes('承诺'))return'PLAN'
-  return'OMBRE'
+// 把记忆状态映射成卡片左上角badge（对应filter行的分类）
+function mem2StateBadge(b){
+  if(b.pinned)return'PERMANENT'
+  if((b.importance||0)>=9)return'PERMANENT'
+  if(b.resolved)return'RESOLVED'
+  // domain含plan
+  const d=(b.domain||'').toLowerCase()
+  if(d.includes('plan')||d.includes('待办'))return'PLAN'
+  return'DYNAMIC'
+}
+// badge颜色
+function mem2BadgeColor(badge){
+  if(badge==='PERMANENT')return'#C8956A'
+  if(badge==='RESOLVED')return'#8E8E93'
+  if(badge==='PLAN')return'#5C6BC0'
+  return'#8E8E93'
 }
 function mem2CardHTML(b,i){
   const{date,title}=mem2ParseName(b.name||b.bucket_id||'')
