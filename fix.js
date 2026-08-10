@@ -181,33 +181,18 @@ async function mem2OpenDetail(i){
   const color=mem2BadgeColor(badge)
   const imp=Math.min(10,Math.max(0,parseInt(b.importance)||0))
   const dots=Array.from({length:10},(_,k)=>`<div class="mem2-dot-item${k<imp?'':' empty'}"></div>`).join('')
+  const tags=(b.domain||'').split(',').map(t=>t.trim()).filter(Boolean)
+  const tagsHTML=tags.map(t=>`<div class="mem2-tag" style="font-size:12px;padding:3px 9px">${escHtml(t)}</div>`).join('')
   body.innerHTML=`
     <div class="mem2-sheet-title">${b.pinned?'\uD83D\uDCCC ':''} ${escHtml(displayTitle)}</div>
     <div class="mem2-sheet-meta" style="color:${color}">${escHtml(badge)}${date?' · '+escHtml(date):''}</div>
     <div class="mem2-sheet-div"></div>
-    <div id="mem2SheetContent"><div class="mem2-loading" style="font-size:13px;padding:10px 0">加载内容…</div></div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin:8px 0">${tagsHTML||'<span style="color:#C7C7CC;font-size:13px">无标签</span>'}</div>
     <div class="mem2-sheet-div"></div>
     <div class="mem2-meta-row"><span class="mem2-meta-label">importance</span><div class="mem2-dots">${dots}</div></div>
     <button class="mem2-rest-btn" onclick="mem2CloseDetail()">关闭</button>
-    <div class="mem2-sheet-id">${escHtml(b.bucket_id||b.name||'')} · tap to copy</div>`
+    <div class="mem2-sheet-id" onclick="navigator.clipboard&&navigator.clipboard.writeText('${escHtml(b.bucket_id||b.name||'')}').then(function(){showToast('已复制')})">${escHtml(b.bucket_id||b.name||'')} · tap to copy</div>`
   if(overlay)overlay.classList.add('open')
-  try{
-    const blocks=await mem2McpCall('breath_search',{query:b.name||b.bucket_id,max_results:1})
-    const raw=blocks.map(c=>c.text||'').join('\n')
-    const cleaned=raw.split('\n').filter(l=>{
-      const t=l.trim()
-      if(!t||t==='---')return false
-      if(/^(\[[\w_.:[^\]]*\]\s*)+$/.test(t))return false
-      return true
-    }).join('\n').trim()
-    const el=document.getElementById('mem2SheetContent')
-    if(el)el.innerHTML=cleaned
-      ?`<div class="mem2-sheet-content">${escHtml(cleaned)}</div>`
-      :'<div class="mem2-sheet-content" style="color:#aaa">（无内容）</div>'
-  }catch(e){
-    const el=document.getElementById('mem2SheetContent')
-    if(el)el.innerHTML=`<div class="mem2-sheet-content" style="color:#f66">内容加载失败</div>`
-  }
 }
 
 function mem2OnSearch(val){
