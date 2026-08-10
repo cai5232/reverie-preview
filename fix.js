@@ -58,7 +58,15 @@ async function mem2OpenDetail(i){
     const res=await fetch(proxyBase,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key},body:JSON.stringify({url:'https://caiovo.zeabur.app/mcp',method:'POST',headers:{},body:{jsonrpc:'2.0',id:Date.now(),method:'tools/call',params:{name:'breath_search',arguments:{query,max_results:1}}}})})
     const j=await res.json()
     const raw=j?.data?.result?.content||[]
-    const text=Array.isArray(raw)?raw.map(c=>c.text||'').join('\n').trim():''
+    const raw2=Array.isArray(raw)?raw.map(c=>c.text||'').join('\n'):''
+    // 过滤OB元数据行：[bucket_id:...] [content_role:...] 等
+    const text=raw2.split('\n').filter(l=>{
+      const t=l.trim()
+      if(!t)return false
+      if(/^\[[\w_]+:[^\]]*\]$/.test(t))return false  // 纯元数据行如 [bucket_id:xxx]
+      if(/^\[[\w_]+:[^\]]*\]\s*\[[\w_]+:[^\]]*\]/.test(t))return false  // 多个元数据连在一行
+      return true
+    }).join('\n').trim()
     const el=document.getElementById('mem2SheetContent')
     if(el)el.innerHTML=text?`<div class="mem2-sheet-content">${escHtml(text)}</div>`:'<div class="mem2-sheet-content" style="color:#aaa">（无内容）</div>'
   }catch(e){
