@@ -948,6 +948,7 @@ function mem2Render(){
   else if(_mem2Filter==='resolved')data=data.filter(b=>b.resolved)
   else if(_mem2Filter==='pinned')data=data.filter(b=>b.pinned)
   _mem2Filtered=data
+  _mem2Filtered=data
   if(!data.length){list.innerHTML='<div class="mem2-empty">没有找到相关记忆</div>';return}
   list.innerHTML=data.map((b,i)=>mem2CardHTML(b,i)).join('')
 }
