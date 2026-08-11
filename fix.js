@@ -1,4 +1,26 @@
 // fix.js v18 — localStorage persist + prefetch
+// ── marked patch：让 appendMsg 气泡支持 Markdown 渲染 ──
+;(function(){
+  function waitMarked(cb){
+    if(typeof marked!=='undefined')cb()
+    else setTimeout(()=>waitMarked(cb),200)
+  }
+  waitMarked(()=>{
+    const _orig=window.appendMsg
+    if(typeof _orig!=='function')return
+    window.appendMsg=function(side,text,thinking,imgSrc,quoteText,noScroll,noTail,fullContent){
+      const row=_orig.apply(this,arguments)
+      if(row&&!imgSrc){
+        const textNode=row.querySelector('.bubble div')
+        if(textNode&&typeof marked.parse==='function'){
+          const raw=textNode.textContent||''
+          if(raw)textNode.innerHTML=marked.parse(raw)
+        }
+      }
+      return row
+    }
+  })
+})()
 function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 
 function mem2BadgeColor(b){
