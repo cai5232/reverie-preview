@@ -601,7 +601,55 @@ body{color:#1F1E1D;font-family:'GJDJCR',-apple-system,'PingFang SC',sans-serif;d
 .xk-cb-icon:active{background:#F0EEE8}
 
 .xk-blur-top{display:none}
-/* end xk styles */
+/* ── Markdown 视觉层级 ── */
+.xk-ai-block{
+  width:100%;
+  max-width:92%;
+  align-self:flex-start;
+}
+.xk-ai-para h1,.xk-ai-para h2,.xk-ai-para h3,
+.xk-ai-para h4,.xk-ai-para h5,.xk-ai-para h6{
+  color:#8B5E5E;
+  font-family:-apple-system,'PingFang SC',sans-serif;
+  line-height:1.35;
+  margin:0 0 .55em;
+  font-weight:600;
+}
+.xk-ai-para h1{font-size:1.65em}
+.xk-ai-para h2{font-size:1.45em}
+.xk-ai-para h3{font-size:1.28em}
+.xk-ai-para h4{font-size:1.15em}
+.xk-ai-para h5{font-size:1.05em}
+.xk-ai-para h6{font-size:1em}
+/* 不使用浏览器默认黑点；列表内容和普通文本保持同一左边界 */
+.xk-ai-para ul,.xk-ai-para ol{
+  list-style:none;
+  padding-left:0;
+  margin:4px 0 8px;
+}
+.xk-ai-para li{margin:0 0 4px;padding-left:0}
+.xk-ai-para li::before{content:none}
+.xk-ai-para blockquote{
+  margin:5px 0 8px;
+  padding:5px 10px;
+  border-left:2px solid #D8C9C9;
+  color:#8B7777;
+  background:rgba(139,94,94,.045);
+  border-radius:0 6px 6px 0;
+}
+.xk-user-msg h1,.xk-user-msg h2,.xk-user-msg h3,
+.xk-user-msg h4,.xk-user-msg h5,.xk-user-msg h6{
+  line-height:1.35;
+  margin:0 0 .55em;
+  font-weight:600;
+}
+.xk-user-msg h1{font-size:1.65em}.xk-user-msg h2{font-size:1.45em}
+.xk-user-msg h3{font-size:1.28em}.xk-user-msg h4{font-size:1.15em}
+.xk-user-msg h5{font-size:1.05em}.xk-user-msg h6{font-size:1em}
+.xk-user-msg ul,.xk-user-msg ol{list-style:none;padding-left:0;margin:4px 0 8px}
+.xk-user-msg li{margin:0 0 4px;padding-left:0}
+.xk-user-msg li::before{content:none}
+
 .nv-header{display:flex;align-items:center;padding:calc(env(safe-area-inset-top,0px) + 14px) 18px 12px;background:#fff;border-bottom:.5px solid #e8e8e8;flex-shrink:0}
 .nv-header-left{cursor:pointer;padding:2px;margin-right:12px}
 .nv-header-title{flex:1;font-size:17px;font-weight:700;color:#111;letter-spacing:.2px}
