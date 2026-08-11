@@ -3241,7 +3241,7 @@ document.addEventListener('DOMContentLoaded',()=>{
                 }else{
                   const w=document.createElement('div');w.className='xk-user-wrap'
                   const el=document.createElement('div');el.className='xk-user-msg'
-                  el.textContent=p.text;w.appendChild(el);box.appendChild(w)
+                  el.innerHTML=xkMd(p.text);w.appendChild(el);box.appendChild(w)
                 }
               }
             })
