@@ -601,7 +601,28 @@ body{color:#1F1E1D;font-family:'GJDJCR',-apple-system,'PingFang SC',sans-serif;d
 .xk-cb-icon:active{background:#F0EEE8}
 
 .xk-blur-top{display:none}
-/* ── Markdown 视觉层级 ── */
+/* Markdown 由 div 承载，块级标签不再被 p 自动移出 */
+.xk-ai-block>.xk-ai-para{display:block}
+.xk-ai-para>p{margin:0 0 1.1em}
+.xk-ai-para>p:last-child{margin-bottom:0}
+.xk-ai-para>h1,.xk-ai-para>h2,.xk-ai-para>h3,
+.xk-ai-para>h4,.xk-ai-para>h5,.xk-ai-para>h6{
+  display:block;color:#8B5E5E;font-family:-apple-system,'PingFang SC',sans-serif;
+  line-height:1.35;margin:0 0 .55em;font-weight:600;
+}
+.xk-ai-para>h1{font-size:1.65em}.xk-ai-para>h2{font-size:1.45em}
+.xk-ai-para>h3{font-size:1.28em}.xk-ai-para>h4{font-size:1.15em}
+.xk-ai-para>h5{font-size:1.05em}.xk-ai-para>h6{font-size:1em}
+.xk-ai-para>ul,.xk-ai-para>ol{
+  list-style:none!important;padding:0!important;margin:4px 0 8px!important;
+}
+.xk-ai-para>ul>li,.xk-ai-para>ol>li{list-style:none!important;margin:0 0 4px;padding:0}
+.xk-ai-para>ul>li::before,.xk-ai-para>ol>li::before{content:none!important}
+.xk-ai-para>blockquote{
+  margin:5px 0 8px;padding:5px 10px;border-left:2px solid #D8C9C9;
+  color:#8B7777;background:rgba(139,94,94,.045);border-radius:0 6px 6px 0;
+}
+
 .xk-ai-block{
   width:100%;
   max-width:92%;
