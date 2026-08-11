@@ -2546,7 +2546,8 @@ function xkStreamAppend(block, chunk){
   const cursor=block._cursor
   let curPara=block._curPara
 
-  const clean=chunk.replace(/^#+\s*/gm,'')
+  // 保留原始 Markdown，尤其不能删除行首 #，否则标题无法在结束时渲染成 h1-h6
+  const clean=String(chunk)
 
   const parts=clean.split(/\n\n/)
   parts.forEach((part,i)=>{
