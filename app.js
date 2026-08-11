@@ -2436,10 +2436,11 @@ function xkAppendUser(text){
           if(fileContent){const _f=fname,_c=fileContent;bub.onclick=()=>xkViewFile(_f,_c)}
           w.appendChild(bub);box.appendChild(w)
         }else{
-          // 普通文字气泡
+          // 普通文字气泡：使用 xkMd 渲染 Markdown，避免 > 原样外漏
           const w=document.createElement('div');w.className='xk-user-wrap'
           const el=document.createElement('div');el.className='xk-user-msg'
-          el.textContent=t;w.appendChild(el);box.appendChild(w)
+          el.innerHTML=xkMd(t)
+          w.appendChild(el);box.appendChild(w)
         }      }
     })
     box.scrollTop=box.scrollHeight
