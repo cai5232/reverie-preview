@@ -2452,7 +2452,7 @@ function xkAppendUser(text){
   wrap.className='xk-user-wrap'
   const el=document.createElement('div')
   el.className='xk-user-msg'
-  el.textContent=text||''
+  el.innerHTML=xkMd(text||'')
   // 长按删除
   let _lpMsg=null
   wrap.addEventListener('touchstart',()=>{_lpMsg=setTimeout(()=>{if(confirm('删除这条消息？'))xkDeleteRound(wrap)},500)},{passive:true})
