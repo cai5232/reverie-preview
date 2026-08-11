@@ -2340,29 +2340,19 @@ function xkApplyMarkdown(block){
 }
 
 function xkMd(raw){
-  let s=raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-  // code block
-  s=s.replace(/```[\w]*\n?([\s\S]*?)```/g,(_,c)=>`<pre>${c.trim()}</pre>`)
-  // inline code
-  s=s.replace(/`([^`]+)`/g,'<code>$1</code>')
-  // heading → bold
-  s=s.replace(/^#{1,6}\s+(.+)$/gm,'<strong>$1</strong>')
-  // bold
-  s=s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-  // italic
-  s=s.replace(/\*([^*\n]+?)\*/g,'<em>$1</em>')
-  // hr
-  s=s.replace(/^---+$/gm,'<hr>')
-  // blockquote
-  s=s.replace(/^&gt;\s?(.+)$/gm,'<blockquote>$1</blockquote>')
-  // ul
-  s=s.replace(/^[\-\*]\s+(.+)$/gm,'<li>$1</li>')
-  s=s.replace(/(<li>[\s\S]+?<\/li>)/g,'<ul>$1</ul>')
-  // ol
-  s=s.replace(/^\d+\.\s+(.+)$/gm,'<li>$1</li>')
-  // links
-  s=s.replace(/\[([^\]]+)\]\((https?[^)]+)\)/g,'<a href="$2" target="_blank">$1</a>')
-  return s
+  const text=String(raw==null?'':raw)
+  // marked 已在 index.html 中加载：保留真正的 h1-h6、ul/ol、blockquote、pre 等结构，
+  // 不再把标题压成 strong，也不再用正则制造嵌套错误的列表。
+  if(typeof marked!=='undefined'&&typeof marked.parse==='function'){
+    return marked.parse(text,{
+      gfm:true,
+      breaks:true,
+      headerIds:false,
+      mangle:false
+    })
+  }
+  // marked 加载失败时的安全降级
+  return escHtml(text).replace(/\n/g,'<br>')
 }
 
 // ── 联网搜索注入（在 SYSTEM_PROMPT 后加提示）──
