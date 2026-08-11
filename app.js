@@ -2334,8 +2334,12 @@ function xkApplyMarkdown(block){
       return
     }
 
-    // ── 普通 markdown ──
-    p.innerHTML=xkMd(raw)
+    // Markdown 可能生成 h1、ul、blockquote 等块级元素，不能塞进 p；
+    // 用 div 承载，避免浏览器自动把块级元素移到容器外导致 CSS 失效。
+    const rendered=document.createElement('div')
+    rendered.className='xk-ai-para'
+    rendered.innerHTML=xkMd(raw)
+    p.replaceWith(rendered)
   })
 }
 
