@@ -3175,6 +3175,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   // 恢复历史
   if(xkHistory.length){
     const box=document.getElementById('xkStream')
+    box.innerHTML=''  // 先清空，避免重复渲染
     xkHistory.forEach((m,mi)=>{
       try{
         // 跳过 tool 消息（内容已在工具行里展示）
