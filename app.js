@@ -3257,13 +3257,15 @@ document.addEventListener('DOMContentLoaded',()=>{
           const raw=m.content||''
           if(!raw)return
           let heart='',body=raw
-          const hm=raw.match(/\[THINK\]([\s\S]*?)\[\/THINK\]/)
+          // 兼容 [THINK]...[/THINK] 和 [THINK]...[/THINK> 两种闭合格式
+          const hm=raw.match(/\[THINK\]([\s\S]*?)\[\/THINK[\]>]/)
           if(hm){heart=hm[1].trim();body=raw.slice(hm.index+hm[0].length).trim()}
           else{
             const hm2=raw.match(/\[心声\]([\s\S]*?)\[\/心声\]/)
             if(hm2){heart=hm2[1].trim();body=raw.slice(hm2.index+hm2[0].length).trim()}
           }
-          const block=xkRenderAI(body||'',heart||null)
+          if(!body.trim())return  // 跳过空回复，避免渲染空块
+          const block=xkRenderAI(body,heart||null)
           if(block){xkApplyMarkdown(block);xkAddActions(block,m.tokens||0)}
         }
       }catch(e){console.warn('[history restore]',e)}
