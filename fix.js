@@ -609,3 +609,33 @@ async function mem2DebugCatalog(){
     box.textContent='ERROR: '+String(e)
   }
 }
+// ── State 页：情绪驱动力条 ──
+const ST_META={attachment:{zh:'想念',en:'attachment'},tenderness:{zh:'心软',en:'tenderness'},heartache:{zh:'心疼',en:'heartache'},curiosity:{zh:'好奇',en:'curiosity'},mischief:{zh:'促狭',en:'mischief'},restless:{zh:'躁动',en:'restless'},regret:{zh:'后悔',en:'regret'},desire:{zh:'欲望',en:'desire'},gloom:{zh:'低落',en:'gloom'},jealousy:{zh:'吃醋',en:'jealousy'}}
+function stApiBase(){const c=typeof cfg!=='undefined'?cfg:{};return(c.api||'').replace(/\/v1\/?$/,'')}
+function stHeaders(){const c=typeof cfg!=='undefined'?cfg:{};return{'Content-Type':'application/json','Authorization':'Bearer '+(c.key||'')}}
+async function stLoadDrives(){
+  const barsEl=document.getElementById('stBars'),heroSub=document.getElementById('stHeroSub')
+  if(barsEl)barsEl.innerHTML='<div class="st-loading">加载中…</div>'
+  if(heroSub)heroSub.textContent='加载中…'
+  try{
+    const res=await fetch(stApiBase()+'/internal/drives',{headers:stHeaders()})
+    if(!res.ok)throw new Error('HTTP '+res.status)
+    stRender((await res.json()).drives||{})
+  }catch(e){
+    if(barsEl)barsEl.innerHTML='<div class="st-loading" style="color:#e88">加载失败，请刷新重试</div>'
+    if(heroSub)heroSub.textContent='连接失败'
+  }
+}
+function stRender(drives){
+  const barsEl=document.getElementById('stBars'),heroSub=document.getElementById('stHeroSub')
+  if(!barsEl)return
+  const sorted=Object.entries(drives).sort((a,b)=>b[1]-a[1])
+  if(!sorted.length){barsEl.innerHTML='<div class="st-loading">暂无数据</div>';return}
+  const[topKey,topVal]=sorted[0],topMeta=ST_META[topKey]||{zh:topKey}
+  if(heroSub)heroSub.textContent=topMeta.zh+' · '+Math.round(topVal*100)+'%'
+  barsEl.innerHTML=sorted.map(([key,val])=>{
+    const m=ST_META[key]||{zh:key,en:key},pct=Math.round(val*100)
+    return`<div class="st-row"><div class="st-row-label"><span class="st-row-zh">${m.zh}</span><span class="st-row-en">/ ${m.en}</span></div><div class="st-bar-wrap"><div class="st-bar-track"><div class="st-bar-fill" style="width:${pct}%"></div></div></div><div class="st-row-pct">${pct}%</div></div>`
+  }).join('')
+}
+;(function(){const _o=window.navTo;window.navTo=function(n){if(typeof _o==='function')_o(n);if(n==='state')stLoadDrives()}})()
