@@ -3898,7 +3898,7 @@ function initCoupleWidget(){
   dateEl.value=savedDate
   daysEl.textContent=String(coupleDaysSince(savedDate))
   a.src=localStorage.getItem('reverie_couple_avatar_a') || 'https://i.ibb.co/Q7Lcr1yw/IMG-6805.jpg'
-  b.src=localStorage.getItem('reverie_couple_avatar_b') || ''
+  b.src=localStorage.getItem('reverie_couple_avatar_b') || 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='
   b.parentElement.classList.toggle('couple-avatar-empty', !b.src)
   dateEl.title='可直接修改确定关系日期'
 }
