@@ -845,10 +845,9 @@ function liveStateBars(drives){
     const value=Math.max(0, Math.min(10, Number(drives && drives[key]) || 0))
     const percent=Math.round(value * 10)
     return '<div class="state-bar-row">'+
-      '<span class="state-cn">'+label+'</span>'+
-      '<span class="state-en">'+english+'</span>'+
+      '<div class="state-drive"><span class="state-cn">'+label+'</span><span class="state-en">/ '+english+'</span></div>'+
       '<span class="state-track"><i style="width:'+percent+'%"></i></span>'+
-      '<b>'+value.toFixed(1)+'</b>'+
+      '<b>'+percent+'%</b>'+
     '</div>'
   }).join('')
 }
@@ -859,7 +858,7 @@ function liveStateHeadline(drives){
   }).sort(function(a,b){return b.value-a.value})
   const first=ranked[0] || {label:'平静',value:0}
   const second=ranked[1]
-  return second && second.value > 0 ? '此刻是 '+first.label+'，也带着一点 '+second.label : '此刻的情绪很平静'
+  return second && second.value > 0 ? first.label+' 为主，也有一点 '+second.label : '此刻很平静'
 }
 
 function liveStateLatest(log){
