@@ -3926,3 +3926,24 @@ function changeCoupleAvatar(event,which){
   reader.readAsDataURL(file)
   event.target.value=''
 }
+
+
+function switchStateTab(name,button){
+  document.querySelectorAll('.state-tab').forEach(function(tab){
+    const active=tab===button
+    tab.classList.toggle('active',active)
+    tab.setAttribute('aria-selected',active?'true':'false')
+  })
+  const emotion=document.getElementById('stateEmotionPanel')
+  const calendar=document.getElementById('stateCalendarPanel')
+  if(emotion) emotion.hidden=name!=='emotion'
+  if(calendar) calendar.hidden=name!=='calendar'
+  if(name==='calendar') renderStateCalendar()
+}
+function renderStateCalendar(){
+  const now=new Date()
+  const month=document.getElementById('stateCalendarMonth')
+  const date=document.getElementById('stateCalendarDate')
+  if(month) month.textContent=now.toLocaleDateString('zh-CN',{year:'numeric',month:'long'})
+  if(date) date.textContent=String(now.getDate()).padStart(2,'0')
+}
