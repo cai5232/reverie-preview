@@ -895,7 +895,7 @@ async function loadLiveState(){
     headline.textContent=liveStateHeadline(drives)
     const stamp=new Date().toISOString()
     localStorage.setItem('reverie_state_last_sync',stamp)
-    updated.textContent='刚刚刷新 · 已同步'
+    updated.textContent=new Date(stamp).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})+' · 已同步'
     dot.style.background='#B8DDBE'
     const latest=liveStateLatest(payload.log || payload.data?.log)
     const latestEl=document.getElementById('stateLatest')
