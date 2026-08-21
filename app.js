@@ -880,7 +880,6 @@ async function loadLiveState(){
   const updated=document.getElementById('stateUpdated')
   const dot=document.getElementById('stateLiveDot')
   if(!bars || !headline || !updated || !dot) return
-  const demoDrives={attachment:8.2,tenderness:6.7,heartache:5.8,curiosity:7.6,mischief:4.3,restless:6.1,regret:3.2,desire:7.3,gloom:2.8,jealousy:4.9}
   try{
     const base=liveStateApiBase()
     const key=typeof cfg!=='undefined' ? String(cfg.key||'') : ''
@@ -894,17 +893,18 @@ async function loadLiveState(){
     const drives=payload.drives || payload.data?.drives || payload
     bars.innerHTML=liveStateBars(drives)
     headline.textContent=liveStateHeadline(drives)
-    updated.textContent='已同步'
+    const stamp=new Date().toISOString()
+    localStorage.setItem('reverie_state_last_sync',stamp)
+    updated.textContent='刚刚刷新 · 已同步'
     dot.style.background='#B8DDBE'
     const latest=liveStateLatest(payload.log || payload.data?.log)
     const latestEl=document.getElementById('stateLatest')
     if(latestEl) latestEl.textContent=latest.text
-    return
   }catch(e){
-    bars.innerHTML=liveStateBars(demoDrives)
-    headline.textContent='情绪状态'
-    updated.textContent='预览模式'
-    dot.style.background='#E5B4C2'
+    const stamp=localStorage.getItem('reverie_state_last_sync')
+    const label=stamp ? new Date(stamp).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}) : '暂无'
+    updated.textContent='上次 '+label+' · 刷新失败'
+    dot.style.background='#E47D86'
   }
 }
 function showToast(msg){
