@@ -3949,3 +3949,19 @@ function renderStateCalendar(){
   if(month) month.textContent=now.toLocaleDateString('zh-CN',{year:'numeric',month:'long'})
   if(date) date.textContent=String(now.getDate()).padStart(2,'0')
 }
+
+
+function initMemoWidget(){
+  const input=document.getElementById('stateMemoInput')
+  if(input) input.value=localStorage.getItem('reverie_state_memo') || ''
+}
+function saveStateMemo(){
+  const input=document.getElementById('stateMemoInput')
+  if(!input) return
+  localStorage.setItem('reverie_state_memo',input.value.trim())
+  const hint=document.getElementById('memoSavedHint')
+  if(hint){
+    hint.textContent='已保存'
+    setTimeout(()=>{hint.textContent='保存在这台设备'},1400)
+  }
+}
