@@ -830,7 +830,7 @@ const LIVE_DRIVE_META = [
 
 function liveStateApiBase(){
   const raw = (typeof cfg !== 'undefined' && cfg.api ? cfg.api : '').trim()
-  return raw.replace(/\\/+$/, '').replace(/\\/v1$/, '')
+  return raw.replace(/\/+$/, '').replace(/\/v1$/, '')
 }
 
 function liveStateEscape(value){
