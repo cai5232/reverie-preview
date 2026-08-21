@@ -2927,6 +2927,33 @@ async function xkAgenticLoop(sendOptions, mcpServerMap, round, memCtx){
       setTimeout(()=>{if(thinkLiveEl&&thinkLiveEl.parentNode)thinkLiveEl.parentNode.removeChild(thinkLiveEl);thinkLiveEl=null;thinkLivePara=null},260)
     }
 
+    let mailboxKind=null, mailboxPending=''
+    function filterMailboxText(input){
+      let source=mailboxPending+(input||''), out=''
+      mailboxPending=''
+      while(source){
+        if(mailboxKind){
+          const close='[/'+mailboxKind+']'
+          const end=source.toUpperCase().indexOf(close)
+          if(end<0)return out
+          source=source.slice(end+close.length); mailboxKind=null; continue
+        }
+        const match=source.match(/\\[(MAIL|REGRET|TRASH)\\]/i)
+        if(!match){
+          let keep=0
+          for(let n=1;n<Math.min(source.length,8);n++){
+            const tail=source.slice(-n).toUpperCase()
+            if(['[MAIL]','[REGRET]','[TRASH]'].some(tag=>tag.startsWith(tail)))keep=n
+          }
+          out+=source.slice(0,source.length-keep); mailboxPending=source.slice(source.length-keep)
+          return out
+        }
+        out+=source.slice(0,match.index); mailboxKind=match[1].toUpperCase()
+        source=source.slice(match.index+match[0].length)
+      }
+      return out
+    }
+
     let pendingThink='',thinkRafId=null
     const flushThink=()=>{
       if(pendingThink&&thinkLivePara){
@@ -2975,7 +3002,7 @@ async function xkAgenticLoop(sendOptions, mcpServerMap, round, memCtx){
         }
 
         // 正文
-        const text=delta.content||''
+        const text=filterMailboxText(delta.content||'')
         if(!text)continue
         if(!thinkDone){
           let t=text.replace(/\[THINK\]/gi,'<think>').replace(/\[\/THINK\]/gi,'</think>')
