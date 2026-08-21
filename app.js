@@ -4096,8 +4096,12 @@ function completeTodo(index){
   item.done=true
   item.completedAt=new Date().toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})
   meta[index]=item; todoMetaSave(meta)
+  const history=JSON.parse(localStorage.getItem('reverie_state_todo_history') || '[]')
+  history.unshift({text:item.text,createdAt:item.createdAt||'',completedAt:item.completedAt})
+  localStorage.setItem('reverie_state_todo_history',JSON.stringify(history.slice(0,50)))
   const check=document.getElementById('todoCheck'+index)
   if(check) check.classList.add('is-done')
+  renderTodoHistoryScreen()
 }
 function openTodoHistory(){
   const screen=document.getElementById('todoHistoryScreen')
