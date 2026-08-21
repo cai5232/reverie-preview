@@ -4212,7 +4212,7 @@ function mailboxItems(type){
 }
 function renderMailboxItems(type){
   const items=mailboxItems(type)
-  const listIds={mail:['mailInlineList','mailScreenList'],regret:['regretInlineList','regretScreenList'],trash:['trashScreenList']}
+  const listIds={mail:['mailScreenList'],regret:['regretScreenList'],trash:['trashScreenList'],recent:['mailInlineList']}
   const html=items.length ? items.map(function(item){
     return '<article class="mail-entry"><div class="mail-entry-head"><span>'+liveStateEscape(item.subject||item.title||'未命名')+'</span><time>'+liveStateEscape(item.created_at||'')+'</time></div><p>'+liveStateEscape(item.body||item.content||item.note||'')+'</p></article>'
   }).join('') : '<div class="mailbox-empty">暂时没有内容。</div>'
@@ -4247,6 +4247,6 @@ async function syncMailboxKind(kind,base,key){
     if(!res.ok) throw new Error('mailbox '+res.status)
     const data=await res.json(), items=data.items||[]
     localStorage.setItem('reverie_mailbox_'+kind,JSON.stringify(items))
-    renderMailboxItems(kind)
+    renderMailboxItems(kind); renderMailboxItems('recent')
   }catch(e){}
 }
