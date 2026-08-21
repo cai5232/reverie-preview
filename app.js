@@ -4254,7 +4254,7 @@ function renderMailboxItems(type){
   const listIds={mail:['mailScreenList'],regret:['regretScreenList'],trash:['trashScreenList'],recent:['mailInlineList']}
   const html=items.length ? items.map(function(item){
     const pv=mailboxPreview(item)
-    return '<article class="mail-entry" role="button" tabindex="0" onclick="openRecentEntry(\\''+liveStateEscape(item.id||'')+'\\')"><div class="mail-entry-head"><span>'+liveStateEscape(item.subject||item.title||'未命名')+'</span><div class="mail-entry-meta"><span>'+liveStateEscape(pv.sender)+'</span><time>'+liveStateEscape(formatMailboxDate(item.created_at||item.updated_at))+'</time></div></div><p>'+liveStateEscape(pv.preview)+'</p></article>'
+    return '<article class="mail-entry" role="button" tabindex="0" onclick="openRecentEntry(\'+liveStateEscape(item.id||'')+'\\')"><div class="mail-entry-head"><span>'+liveStateEscape(item.subject||item.title||'未命名')+'</span><div class="mail-entry-meta"><span>'+liveStateEscape(pv.sender)+'</span><time>'+liveStateEscape(formatMailboxDate(item.created_at||item.updated_at))+'</time></div></div><p>'+liveStateEscape(pv.preview)+'</p></article>'
   }).join('') : '<div class="mailbox-empty">暂时没有内容。</div>'
   ;(listIds[type]||[]).forEach(function(id){const el=document.getElementById(id);if(el)el.innerHTML=html})
   const count=document.getElementById(type==='mail'?'mailCount':type==='regret'?'regretCount':'trashCount')
