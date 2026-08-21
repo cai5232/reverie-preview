@@ -881,7 +881,7 @@ async function loadLiveState(){
   const latest=document.getElementById('stateLatest')
   const source=document.getElementById('stateSource')
   const dot=document.getElementById('stateLiveDot')
-  if(!bars || !headline || !updated || !latest || !source || !dot) return
+  if(!bars || !headline || !updated || !dot) return
   const base=liveStateApiBase()
   if(!base){
     dot.style.background='#F5CDD6'
@@ -902,14 +902,14 @@ async function loadLiveState(){
     bars.innerHTML=liveStateBars(drives)
     headline.textContent=liveStateHeadline(drives)
     const detail=liveStateLatest(payload.log)
-    latest.textContent=detail.text
-    source.textContent=detail.source
+    if(latest) latest.textContent=detail.text
+    if(source) source.textContent=detail.source
     updated.textContent='已同步 · 刚刚更新'
     dot.style.background='#B8DDBE'
   }catch(error){
     dot.style.background='#F5CDD6'
     headline.textContent='暂时无法同步情绪状态'
-    latest.textContent='请确认小克服务在线，并检查 Setting 里的 API 地址和密钥。'
+    if(latest) latest.textContent='请确认小克服务在线，并检查 Setting 里的 API 地址和密钥。'
     source.textContent=''
     updated.textContent='同步失败'
   }
