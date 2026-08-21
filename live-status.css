@@ -155,3 +155,16 @@
 
 
 .todo-history-head span{font-size:17px!important;font-weight:600!important;letter-spacing:.3px}
+
+
+.mailbox-page{background:#fcfbfc;color:#363238;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif}
+.mailbox-header{display:flex;align-items:center;gap:12px!important;padding-left:16px!important;color:#4a454b;font-size:15px;font-weight:600}
+.mailbox-content{width:min(680px,calc(100% - 32px));margin:0 auto;padding:28px 0}
+.mailbox-kicker{color:#aaa5ac;font-size:10px;letter-spacing:2px;font-weight:600}.mailbox-content h1{margin:7px 0 4px;font-size:28px;font-weight:600}.mailbox-desc{margin:0;color:#aaa5ac;font-size:12px}
+.mailbox-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:28px}
+.mailbox-card{position:relative;min-height:150px;padding:16px 14px;border:1px solid #e9e6e9;border-radius:18px;background:#fff;text-align:left;color:#403b40;cursor:pointer;box-shadow:none;transition:transform .18s,background .18s}
+.mailbox-card:before{content:"";position:absolute;left:0;top:18px;bottom:18px;width:3px;border-radius:0 3px 3px 0;background:#d9d7db}.mailbox-card:nth-child(2):before{background:#e5b4c2}
+.mailbox-icon{display:grid;place-items:center;width:31px;height:31px;border:1px solid #d9d7db;border-radius:10px;color:#817a83;font-size:17px}.mailbox-icon-pink{border-color:#efcbd4;color:#dfa8b7}
+.mailbox-card-title{display:block;margin-top:18px;font-size:16px;font-weight:600}.mailbox-card small{display:block;margin-top:5px;color:#aaa5ac;font-size:10px;line-height:1.4}.mailbox-card b{position:absolute;right:14px;top:17px;color:#aaa5ac;font-size:12px;font-weight:400}.mailbox-card:active{transform:translateY(1px);background:#faf3f5}
+.mailbox-empty{margin-top:18px;padding:30px 0;text-align:center;color:#b2acb3;font-size:11px}
+@media(max-width:600px){.mailbox-content{width:calc(100% - 28px);padding-top:20px}.mailbox-cards{gap:8px;margin-top:22px}.mailbox-card{min-height:132px;padding:13px 11px}.mailbox-card-title{margin-top:14px;font-size:14px}.mailbox-card small{font-size:9px}}
