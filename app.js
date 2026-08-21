@@ -4187,7 +4187,7 @@ function renderMailboxItems(type){
   const items=mailboxItems(type)
   const listIds={mail:['mailInlineList','mailScreenList'],regret:['regretInlineList','regretScreenList'],trash:['trashScreenList']}
   const html=items.length ? items.map(function(item){
-    return '<article class="mail-entry"><div class="mail-entry-head"><span>'+liveStateEscape(item.subject||item.title||'未命名')+'</span><time>'+liveStateEscape(item.created_at||'')+'</time></div><p>'+liveStateEscape(item.body||item.note||'')+'</p></article>'
+    return '<article class="mail-entry"><div class="mail-entry-head"><span>'+liveStateEscape(item.subject||item.title||'未命名')+'</span><time>'+liveStateEscape(item.created_at||'')+'</time></div><p>'+liveStateEscape(item.body||item.content||item.note||'')+'</p></article>'
   }).join('') : '<div class="mailbox-empty">暂时没有内容。</div>'
   ;(listIds[type]||[]).forEach(function(id){const el=document.getElementById(id);if(el)el.innerHTML=html})
   const count=document.getElementById(type==='mail'?'mailCount':type==='regret'?'regretCount':'trashCount')
@@ -4202,3 +4202,19 @@ function closeMailboxScreen(){
   document.querySelectorAll('.mailbox-screen').forEach(function(screen){screen.hidden=true})
 }
 
+
+
+function initMailboxPage(){
+  renderMailboxItems('mail'); renderMailboxItems('regret'); renderMailboxItems('trash')
+  const base=liveStateApiBase(), key=typeof cfg!=='undefined'?String(cfg.key||''):''
+  if(base && key){ syncMailboxKind('mail',base,key); syncMailboxKind('regret',base,key); syncMailboxKind('trash',base,key) }
+}
+async function syncMailboxKind(kind,base,key){
+  try{
+    const res=await fetch(base+'/internal/mailbox?kind='+encodeURIComponent(kind),{headers:{Authorization:'Bearer '+key}})
+    if(!res.ok) throw new Error('mailbox '+res.status)
+    const data=await res.json(), items=data.items||[]
+    localStorage.setItem('reverie_mailbox_'+kind,JSON.stringify(items))
+    renderMailboxItems(kind)
+  }catch(e){}
+}
