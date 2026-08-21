@@ -3236,6 +3236,7 @@ function closeToolDetail(overlay){
 
 document.addEventListener('DOMContentLoaded',()=>{
   loadHeaderAvatar()
+  initMailboxPage()
 
   mcpInitDefaults()
   mcpRenderList()
