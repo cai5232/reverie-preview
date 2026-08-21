@@ -4246,7 +4246,7 @@ function closeMailboxScreen(){
 
 let _mailboxTimer=null
 function initMailboxPage(){
-  renderMailboxItems('mail'); renderMailboxItems('regret'); renderMailboxItems('trash')
+  renderMailboxItems('mail'); renderMailboxItems('regret'); renderMailboxItems('trash'); renderMailboxItems('recent')
   const base=liveStateApiBase(), key=typeof cfg!=='undefined'?String(cfg.key||''):''
   if(base && key){
     const syncAll=()=>{syncMailboxKind('mail',base,key);syncMailboxKind('regret',base,key);syncMailboxKind('trash',base,key)}
