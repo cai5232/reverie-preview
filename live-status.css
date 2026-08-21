@@ -78,3 +78,15 @@
 .state-note-card span{display:block;font-size:13px;font-weight:600}.state-note-card small{display:block;margin-top:5px;color:#aaa5ab;font-size:9px}
 .state-note-card:active{background:#faf1f4}
 @media(max-width:600px){.state-content{max-width:100%!important;padding-left:20px!important;padding-right:20px!important}.state-note-cards{gap:8px;margin-top:14px}.state-note-card{min-height:62px;padding:11px 12px}}
+
+
+/* Custom note modules */
+.state-note-cards{gap:12px;margin-top:22px}
+.state-note-card{position:relative;min-height:116px;padding:15px 16px 13px;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;border:1px solid #e8e5e8;border-radius:18px;background:#fbfafb;text-align:left;transition:transform .18s ease,background .18s ease}
+.state-note-card:before{content:"";position:absolute;left:0;top:16px;bottom:16px;width:3px;border-radius:0 3px 3px 0;background:#d9d7db}
+.state-note-card:nth-child(2):before{background:#e5b4c2}
+.state-note-icon{display:grid;place-items:center;width:28px;height:28px;margin-bottom:10px;border:1px solid #d9d7db;border-radius:9px;color:#8f8b91;font-size:16px;line-height:1}
+.state-note-icon-pink{border-color:#efcbd4;color:#dfa8b7}
+.state-note-title{font-size:15px!important;font-weight:600!important;letter-spacing:.5px}.state-note-card small{margin-top:4px!important;font-size:10px!important;color:#a29da4!important}.state-note-card b{position:absolute;right:15px;top:17px;color:#b0abb1;font-size:14px;font-weight:400}
+.state-note-card:active{transform:translateY(1px);background:#f8f3f5}
+@media(max-width:600px){.state-note-cards{gap:9px;margin-top:18px}.state-note-card{min-height:104px;padding:13px 13px 11px}.state-note-icon{width:25px;height:25px;margin-bottom:8px}.state-note-title{font-size:14px!important}}
