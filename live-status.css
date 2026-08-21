@@ -233,3 +233,11 @@
 .mail-detail-toolbar button:active{opacity:.45}
 .mail-detail{padding-bottom:104px!important}
 .mail-detail-meta{margin-bottom:4px!important;padding-bottom:10px!important}
+
+/* pin email metadata directly above the action bar */
+.mail-detail-meta{position:fixed!important;left:0;right:0;bottom:76px;z-index:4;box-sizing:border-box;width:100%!important;align-self:initial!important;display:flex!important;justify-content:flex-end!important;gap:8px!important;padding:8px 20px!important;margin:0!important;border-top:1px solid #dedde0!important;border-bottom:0!important;background:#f7f7f8!important;text-align:right!important}
+.mail-detail-meta div{display:flex!important;gap:5px!important;font-size:11px!important;justify-content:flex-end!important;white-space:nowrap}
+.mail-detail-meta b{font-size:11px!important}
+.mail-detail-meta span{font-size:11px!important}
+.mail-detail-body{padding-bottom:110px!important}
+.mail-detail-toolbar button svg{width:25px;height:25px;display:block}
