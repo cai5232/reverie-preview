@@ -4254,7 +4254,7 @@ function renderMailboxItems(type){
   const listIds={mail:['mailScreenList'],regret:['regretScreenList'],trash:['trashScreenList'],recent:['mailInlineList']}
   const html=items.length ? items.map(function(item){
     const pv=mailboxPreview(item)
-    return '<article class="mail-entry" role="button" tabindex="0" onclick="openRecentEntry(\''+liveStateEscape(item.id||'')+'\')"><div class="mail-entry-head"><span>'+liveStateEscape(item.subject||item.title||'未命名')+'</span><div class="mail-entry-meta"><span>'+liveStateEscape(pv.sender)+'</span><time>'+liveStateEscape(formatMailboxDate(item.created_at||item.updated_at))+'</time></div></div><p>'+liveStateEscape(pv.preview)+'</p></article>'
+    return '<article class="mail-entry" role="button" tabindex="0" onclick="openRecentEntry(\''+liveStateEscape(item.id||'')+'\')"><div class="mail-entry-head"><span>'+liveStateEscape(item.subject||item.title||'未命名')+'</span><time>'+liveStateEscape(formatMailboxDate(item.created_at||item.updated_at))+'</time></div><p>'+liveStateEscape(pv.preview)+'</p><div class="mail-entry-footer"><span>'+liveStateEscape(pv.sender)+'</span></div></article>'
   }).join('') : '<div class="mailbox-empty">暂时没有内容。</div>'
   ;(listIds[type]||[]).forEach(function(id){const el=document.getElementById(id);if(el)el.innerHTML=html})
   const count=document.getElementById(type==='mail'?'mailCount':type==='regret'?'regretCount':'trashCount')
@@ -4266,7 +4266,9 @@ function openRecentEntry(id){
   const screen=document.getElementById('mailScreen'), list=document.getElementById('mailScreenList')
   if(!screen||!list)return
   const p=parseMailboxContent(item.content||'')
-  list.innerHTML='<article class="mail-detail"><h1>'+liveStateEscape(p.subject||item.subject||'未命名')+'</h1><div class="mail-detail-meta"><div><b>发件人</b><span>'+liveStateEscape(p.from||'未知')+'</span></div><div><b>收件人</b><span>'+liveStateEscape(p.to||'言言')+'</span></div><div><b>日期</b><span>'+liveStateEscape(formatMailboxDate(p.date||item.created_at||''))+'</span></div></div><div class="mail-detail-body">'+liveStateEscape(p.body||item.content||'').replace(/\n/g,'<br>')+'</div></article>'
+  const detailDate=formatMailboxDate(p.date||item.created_at||'')
+  const detailBody=liveStateEscape(p.body||item.content||'').replace(/\n/g,'<br>')
+  list.innerHTML='<article class="mail-detail"><div class="mail-detail-body">'+detailBody+'</div><div class="mail-detail-meta"><div><b>发件人</b><span>'+liveStateEscape(p.from||'未知')+'</span></div><div><b>收件人</b><span>'+liveStateEscape(p.to||'言言')+'</span></div><div><b>日期</b><span>'+liveStateEscape(detailDate)+'</span></div></div></article>'
   const heading=document.getElementById('mailScreenTitle'); if(heading) heading.textContent=p.subject||item.subject||'邮件'
   screen.hidden=false
 }
