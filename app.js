@@ -4227,11 +4227,19 @@ function renderMailboxItems(type){
   const items=mailboxItems(type)
   const listIds={mail:['mailScreenList'],regret:['regretScreenList'],trash:['trashScreenList'],recent:['mailInlineList']}
   const html=items.length ? items.map(function(item){
-    return '<article class="mail-entry"><div class="mail-entry-head"><span>'+liveStateEscape(item.subject||item.title||'未命名')+'</span><time>'+liveStateEscape(item.created_at||'')+'</time></div><p>'+liveStateEscape(item.body||item.content||item.note||'')+'</p></article>'
+    return '<article class="mail-entry" role="button" tabindex="0" onclick="openRecentEntry(\\''+liveStateEscape(item.id||'')+'\\')"><div class="mail-entry-head"><span>'+liveStateEscape(item.subject||item.title||'未命名')+'</span><time>'+liveStateEscape(item.created_at||'')+'</time></div><p>'+liveStateEscape(item.body||item.content||item.note||'')+'</p></article>'
   }).join('') : '<div class="mailbox-empty">暂时没有内容。</div>'
   ;(listIds[type]||[]).forEach(function(id){const el=document.getElementById(id);if(el)el.innerHTML=html})
   const count=document.getElementById(type==='mail'?'mailCount':type==='regret'?'regretCount':'trashCount')
   if(count) count.textContent=items.length
+}
+function openRecentEntry(id){
+  const all=mailboxItems('recent'), item=all.find(function(x){return String(x.id||'')===String(id)})
+  if(!item)return
+  const screen=document.getElementById('mailScreen'), list=document.getElementById('mailScreenList')
+  if(!screen||!list)return
+  list.innerHTML='<article class="mail-entry mail-entry-detail"><div class="mail-entry-head"><span>'+liveStateEscape(item.subject||'未命名')+'</span><time>'+liveStateEscape(item.created_at||'')+'</time></div><p>'+liveStateEscape(item.content||'')+'</p></article>'
+  screen.hidden=false
 }
 function openMailboxCard(type){
   renderMailboxItems(type)
