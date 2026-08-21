@@ -4070,7 +4070,10 @@ function initMemoWidget(){
     const input=document.getElementById('todoInput'+i), check=document.getElementById('todoCheck'+i)
     const item=meta[i] || {}
     if(item.done && item.text){
-      history.unshift({text:item.text,createdAt:item.createdAt||'',completedAt:item.completedAt||''})
+      const exists=history.some(function(entry){
+        return entry.text===item.text && entry.completedAt===item.completedAt
+      })
+      if(!exists) history.unshift({text:item.text,createdAt:item.createdAt||'',completedAt:item.completedAt||''})
       meta[i]={}; changed=true
     }
     if(input) input.value=item.done?'':(item.text||'')
