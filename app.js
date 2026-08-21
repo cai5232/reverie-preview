@@ -874,47 +874,22 @@ function liveStateLatest(log){
   return {text:text, source:note ? '来自最近一次对话' : ''}
 }
 
-async function loadLiveState(){
+function loadLiveState(){
   const bars=document.getElementById('stateBars')
   const headline=document.getElementById('stateHeadline')
   const updated=document.getElementById('stateUpdated')
-  const latest=document.getElementById('stateLatest')
-  const source=document.getElementById('stateSource')
   const dot=document.getElementById('stateLiveDot')
   if(!bars || !headline || !updated || !dot) return
-  const base=liveStateApiBase()
-  if(!base){
-    dot.style.background='#F5CDD6'
-    headline.textContent='还没有连接情绪系统'
-    latest.textContent='请先在 Setting 中填写小克的 API 地址。'
-    source.textContent=''
-    return
+  /* Preview mode: use representative values until Murmur sync is enabled. */
+  const demoDrives={
+    attachment:8.2,tenderness:6.7,heartache:5.8,curiosity:7.6,mischief:4.3,
+    restless:6.1,regret:3.2,desire:7.3,gloom:2.8,jealousy:4.9
   }
-  dot.style.background='#F5CDD6'
-  updated.textContent='正在同步…'
-  try{
-    const res=await fetch(base+'/internal/drives',{
-      headers:{'Authorization':'Bearer '+(cfg.key || '')}
-    })
-    if(!res.ok) throw new Error('HTTP '+res.status)
-    const payload=await res.json()
-    const drives=payload.drives || {}
-    bars.innerHTML=liveStateBars(drives)
-    headline.textContent=liveStateHeadline(drives)
-    const detail=liveStateLatest(payload.log)
-    if(latest) latest.textContent=detail.text
-    if(source) source.textContent=detail.source
-    updated.textContent='已同步 · 刚刚更新'
-    dot.style.background='#B8DDBE'
-  }catch(error){
-    dot.style.background='#F5CDD6'
-    headline.textContent='暂时无法同步情绪状态'
-    if(latest) latest.textContent='请确认小克服务在线，并检查 Setting 里的 API 地址和密钥。'
-    source.textContent=''
-    updated.textContent='同步失败'
-  }
+  bars.innerHTML=liveStateBars(demoDrives)
+  headline.textContent='情绪状态'
+  updated.textContent='预览模式'
+  dot.style.background='#B8DDBE'
 }
-
 function showToast(msg){
   let t=document.getElementById('toast')
   if(!t){
