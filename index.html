@@ -654,7 +654,7 @@ function navTo(name){
 <div class="page" id="page-shop"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Shop</div><div class="sub-desc">小克的小店</div><div class="card">待开发</div></div></div>
 <div class="page" id="page-diary"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Diary</div><div class="sub-desc">日记</div><div class="card">待开发</div></div></div>
 <div class="page mailbox-page" id="page-letter">
-  <div class="header-sub mailbox-header"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div><button class="mailbox-refresh" type="button" onclick="refreshMailbox()">刷新</button></div>
+  <div class="header-sub mailbox-header"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div><button class="mailbox-refresh" type="button" aria-label="刷新" onclick="refreshMailbox()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 11a8 8 0 1 0 2 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M20 4v7h-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
   <main class="mailbox-content">
     <div class="mailbox-kicker">YOUR INBOX</div>
     <h1>邮箱</h1>
@@ -672,7 +672,7 @@ function navTo(name){
       
     </section>
   </main>
-  <section class="mailbox-screen" id="mailScreen" hidden><div class="mailbox-screen-head"><button type="button" onclick="closeMailboxScreen()">‹</button><span>邮件</span></div><div id="mailScreenList"></div></section>
+  <section class="mailbox-screen" id="mailScreen" hidden><div class="mailbox-screen-head"><button type="button" onclick="closeMailboxScreen()">‹</button><span id="mailScreenTitle">邮件</span></div><div id="mailScreenList"></div></section>
   <section class="mailbox-screen" id="regretScreen" hidden><div class="mailbox-screen-head"><button type="button" onclick="closeMailboxScreen()">‹</button><span>检讨书</span></div><div id="regretScreenList"></div></section>
   <section class="mailbox-screen" id="trashScreen" hidden><div class="mailbox-screen-head"><button type="button" onclick="closeMailboxScreen()">‹</button><span>垃圾桶</span></div><div id="trashScreenList"></div></section>
 </div>
