@@ -4178,3 +4178,10 @@ function closeGrudgeBook(){
   const screen=document.getElementById('grudgeScreen')
   if(screen) screen.hidden=true
 }
+
+
+function openMailboxCard(type){
+  const labels={mail:'邮件',regret:'检讨书',trash:'垃圾桶'}
+  const empty=document.getElementById('mailboxEmpty')
+  if(empty) empty.textContent=labels[type]+' 暂时还没有内容。'
+}
