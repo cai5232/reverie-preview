@@ -4219,9 +4219,18 @@ function closeGrudgeBook(){
 
 function mailboxItems(type){
   if(type==='recent'){
-    return ['mail','regret','trash'].flatMap(function(k){try{return JSON.parse(localStorage.getItem('reverie_mailbox_'+k)||'[]')}catch(e){return []}}).sort(function(a,b){return String(b.created_at||'').localeCompare(String(a.created_at||''))})
+    const cutoff=Date.now()-7*24*60*60*1000
+    return ['mail','regret'].flatMap(function(k){try{return JSON.parse(localStorage.getItem('reverie_mailbox_'+k)||'[]')}catch(e){return []}}).filter(function(item){
+      const t=Date.parse(item.created_at||item.updated_at||'')
+      return !Number.isFinite(t)||t>=cutoff
+    }).sort(function(a,b){return String(b.created_at||'').localeCompare(String(a.created_at||''))})
   }
   try{return JSON.parse(localStorage.getItem('reverie_mailbox_'+type) || '[]')}catch(e){return[]}
+}
+function formatMailboxDate(value){
+  const d=new Date(value||'')
+  if(Number.isNaN(d.getTime())) return String(value||'').slice(0,10)
+  return d.toISOString().slice(0,10)
 }
 function parseMailboxContent(content){
   const raw=String(content||''), lines=raw.split(/\r?\n/)
@@ -4244,7 +4253,7 @@ function renderMailboxItems(type){
   const listIds={mail:['mailScreenList'],regret:['regretScreenList'],trash:['trashScreenList'],recent:['mailInlineList']}
   const html=items.length ? items.map(function(item){
     const pv=mailboxPreview(item)
-    return '<article class="mail-entry" role="button" tabindex="0" onclick="openRecentEntry(\''+liveStateEscape(item.id||'')+'\')"><div class="mail-entry-head"><span>'+liveStateEscape(item.subject||item.title||'未命名')+'</span><time>'+liveStateEscape(item.created_at||'')+'</time></div><p>'+liveStateEscape(pv.preview)+'</p><div class="mail-entry-sender">'+liveStateEscape(pv.sender)+'</div></article>'
+    return '<article class="mail-entry" role="button" tabindex="0" onclick="openRecentEntry(\\''+liveStateEscape(item.id||'')+'\\')"><div class="mail-entry-head"><span>'+liveStateEscape(item.subject||item.title||'未命名')+'</span><div class="mail-entry-meta"><span>'+liveStateEscape(pv.sender)+'</span><time>'+liveStateEscape(formatMailboxDate(item.created_at||item.updated_at))+'</time></div></div><p>'+liveStateEscape(pv.preview)+'</p></article>'
   }).join('') : '<div class="mailbox-empty">暂时没有内容。</div>'
   ;(listIds[type]||[]).forEach(function(id){const el=document.getElementById(id);if(el)el.innerHTML=html})
   const count=document.getElementById(type==='mail'?'mailCount':type==='regret'?'regretCount':'trashCount')
