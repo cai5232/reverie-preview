@@ -4083,3 +4083,14 @@ function renderTodoHistoryScreen(){
     ? history.map(item=>'<div class="todo-history-item"><span>'+liveStateEscape(item.text)+'</span><div><time>创建 '+liveStateEscape(item.createdAt||'—')+'</time><time>完成 '+liveStateEscape(item.completedAt||'—')+'</time></div></div>').join('')
     : '<div class="todo-history-empty">还没有完成记录</div>'
 }
+
+
+let _stateSyncTimer=null
+function startStateSync(){
+  loadLiveState()
+  clearInterval(_stateSyncTimer)
+  _stateSyncTimer=setInterval(function(){
+    const page=document.getElementById('page-state')
+    if(page && page.classList.contains('active')) loadLiveState()
+  },30000)
+}
