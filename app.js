@@ -4208,6 +4208,9 @@ function closeGrudgeBook(){
 
 
 function mailboxItems(type){
+  if(type==='recent'){
+    return ['mail','regret','trash'].flatMap(function(k){try{return JSON.parse(localStorage.getItem('reverie_mailbox_'+k)||'[]')}catch(e){return []}}).sort(function(a,b){return String(b.created_at||'').localeCompare(String(a.created_at||''))})
+  }
   try{return JSON.parse(localStorage.getItem('reverie_mailbox_'+type) || '[]')}catch(e){return[]}
 }
 function renderMailboxItems(type){
