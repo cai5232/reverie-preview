@@ -289,7 +289,24 @@ function navTo(name){
 </div>
 
 <!-- 其他页面 -->
-<div class="page" id="page-state"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">State</div><div class="sub-desc">小克现在的状态</div><div class="card">待开发</div></div></div>
+<div class="page state-page" id="page-state">
+  <div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div>
+  <div class="state-heading">
+    <div><div class="sub-title">State</div><div class="sub-desc">小克此刻的情绪</div></div>
+    <div class="state-live-dot" id="stateLiveDot" title="正在同步"></div>
+  </div>
+  <div class="state-report">
+    <h2 id="stateHeadline">正在读取情绪状态…</h2>
+    <div id="stateBars" aria-live="polite"></div>
+    <div class="state-heart">♡</div>
+    <p id="stateUpdated">与小克同步中</p>
+  </div>
+  <div class="state-latest">
+    <div class="state-latest-label">LATEST CHANGE</div>
+    <div id="stateLatest">稍等一下，正在读取最新状态。</div>
+    <span id="stateSource"></span>
+  </div>
+</div>
 <div class="page" id="page-moments"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Moments</div><div class="sub-desc">朋友圈</div><div class="card">待开发</div></div></div>
 <div class="page" id="page-forum"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Forum</div><div class="sub-desc">论坛</div><div class="card">待开发</div></div></div>
 <div class="page" id="page-memo"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Memo</div><div class="sub-desc">备忘录</div><div class="card">待开发</div></div></div>
