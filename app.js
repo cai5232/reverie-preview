@@ -4268,8 +4268,8 @@ function openRecentEntry(id){
   const p=parseMailboxContent(item.content||'')
   const detailDate=formatMailboxDate(p.date||item.created_at||'')
   const detailBody=liveStateEscape(p.body||item.content||'').replace(/\n/g,'<br>')
-  list.innerHTML='<article class="mail-detail"><div class="mail-detail-body">'+detailBody+'</div><div class="mail-detail-meta"><div><b>发件人</b><span>'+liveStateEscape(p.from||'未知')+'</span></div><div><b>收件人</b><span>'+liveStateEscape(p.to||'言言')+'</span></div><div><b>日期</b><span>'+liveStateEscape(detailDate)+'</span></div></div></article>'
-  const heading=document.getElementById('mailScreenTitle'); if(heading) heading.textContent=p.subject||item.subject||'邮件'
+  list.innerHTML='<article class="mail-detail"><h1>'+liveStateEscape(p.subject||item.subject||'未命名')+'</h1><div class="mail-detail-body">'+detailBody+'</div><div class="mail-detail-meta"><div><b>发件人</b><span>'+liveStateEscape(p.from||'未知')+'</span></div><div><b>收件人</b><span>'+liveStateEscape(p.to||'言言')+'</span></div><div><b>时间</b><span>'+liveStateEscape(detailDate)+'</span></div></div></article>'
+  const heading=document.getElementById('mailScreenTitle'); if(heading) heading.textContent='邮箱'
   screen.hidden=false
 }
 
