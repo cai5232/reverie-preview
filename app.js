@@ -839,10 +839,15 @@ function liveStateEscape(value){
   })
 }
 
+function liveStateValue(raw){
+  const n=Number(raw)
+  if(!Number.isFinite(n)) return 0
+  return n>10 ? n/10 : n
+}
 function liveStateBars(drives){
   return LIVE_DRIVE_META.map(function(meta){
     const key=meta[0], label=meta[1], english=meta[2]
-    const value=Math.max(0, Math.min(10, Number(drives && drives[key]) || 0))
+    const value=Math.max(0, Math.min(10, liveStateValue(drives && drives[key])))
     const percent=Math.round(value * 10)
     return '<div class="state-bar-row">'+
       '<div class="state-drive"><span class="state-cn">'+label+'</span><span class="state-en">/ '+english+'</span></div>'+
@@ -854,7 +859,7 @@ function liveStateBars(drives){
 
 function liveStateHeadline(drives){
   const ranked=LIVE_DRIVE_META.map(function(meta){
-    return {label:meta[1], value:Number(drives && drives[meta[0]]) || 0}
+    return {label:meta[1], value:liveStateValue(drives && drives[meta[0]])}
   }).sort(function(a,b){return b.value-a.value})
   const first=ranked[0] || {label:'平静',value:0}
   const second=ranked[1]
@@ -874,12 +879,34 @@ function liveStateLatest(log){
   return {text:text, source:note ? '来自最近一次对话' : ''}
 }
 
+function stateSyncTime(stamp){
+  return new Date(stamp).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})
+}
+function renderCachedState(){
+  const bars=document.getElementById('stateBars')
+  const headline=document.getElementById('stateHeadline')
+  const updated=document.getElementById('stateUpdated')
+  const dot=document.getElementById('stateLiveDot')
+  const raw=localStorage.getItem('reverie_state_last_drives')
+  const stamp=localStorage.getItem('reverie_state_last_sync')
+  if(!raw) return false
+  try{
+    const drives=JSON.parse(raw)
+    if(bars) bars.innerHTML=liveStateBars(drives)
+    if(headline) headline.textContent=liveStateHeadline(drives)
+    if(updated) updated.textContent=(stamp?'上次 '+stateSyncTime(stamp):'上次数据')+' · 同步中'
+    if(dot) dot.style.background='#B8DDBE'
+    return true
+  }catch(e){return false}
+}
 async function loadLiveState(){
   const bars=document.getElementById('stateBars')
   const headline=document.getElementById('stateHeadline')
   const updated=document.getElementById('stateUpdated')
   const dot=document.getElementById('stateLiveDot')
   if(!bars || !headline || !updated || !dot) return
+  const hasCached=renderCachedState()
+  if(!hasCached) updated.textContent='等待首次同步'
   try{
     const base=liveStateApiBase()
     const key=typeof cfg!=='undefined' ? String(cfg.key||'') : ''
@@ -891,19 +918,19 @@ async function loadLiveState(){
     if(!res.ok) throw new Error('drives '+res.status)
     const payload=await res.json()
     const drives=payload.drives || payload.data?.drives || payload
-    bars.innerHTML=liveStateBars(drives)
-    headline.textContent=liveStateHeadline(drives)
+    localStorage.setItem('reverie_state_last_drives',JSON.stringify(drives))
     const stamp=new Date().toISOString()
     localStorage.setItem('reverie_state_last_sync',stamp)
-    updated.textContent=new Date(stamp).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})+' · 已同步'
+    bars.innerHTML=liveStateBars(drives)
+    headline.textContent=liveStateHeadline(drives)
+    updated.textContent=stateSyncTime(stamp)+' · 已同步'
     dot.style.background='#B8DDBE'
     const latest=liveStateLatest(payload.log || payload.data?.log)
     const latestEl=document.getElementById('stateLatest')
     if(latestEl) latestEl.textContent=latest.text
   }catch(e){
     const stamp=localStorage.getItem('reverie_state_last_sync')
-    const label=stamp ? new Date(stamp).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}) : '暂无'
-    updated.textContent='上次 '+label+' · 刷新失败'
+    updated.textContent=stamp ? '上次 '+stateSyncTime(stamp)+' · 刷新失败' : '暂无数据 · 刷新失败'
     dot.style.background='#E47D86'
   }
 }
