@@ -3874,3 +3874,54 @@ function mcpSaveServer(){
     mcpRenderList()
   })
 }
+
+
+/* ── State couple anniversary preview ── */
+function coupleLocalDate(){
+  const d=new Date()
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')
+}
+function coupleDaysSince(dateValue){
+  const start=new Date(dateValue+'T00:00:00')
+  if(!dateValue || Number.isNaN(start.getTime())) return 1
+  const today=new Date()
+  const todayStart=new Date(today.getFullYear(),today.getMonth(),today.getDate())
+  return Math.max(1, Math.floor((todayStart-start)/86400000)+1)
+}
+function initCoupleWidget(){
+  const dateEl=document.getElementById('coupleDate')
+  const daysEl=document.getElementById('coupleDays')
+  const a=document.getElementById('coupleAvatarA')
+  const b=document.getElementById('coupleAvatarB')
+  if(!dateEl || !daysEl || !a || !b) return
+  const savedDate=localStorage.getItem('reverie_couple_date') || coupleLocalDate()
+  dateEl.value=savedDate
+  daysEl.textContent=String(coupleDaysSince(savedDate))
+  a.src=localStorage.getItem('reverie_couple_avatar_a') || 'https://i.ibb.co/Q7Lcr1yw/IMG-6805.jpg'
+  b.src=localStorage.getItem('reverie_couple_avatar_b') || ''
+  b.parentElement.classList.toggle('couple-avatar-empty', !b.src)
+  dateEl.title='可直接修改确定关系日期'
+}
+function saveCoupleDate(value){
+  if(!value) return
+  localStorage.setItem('reverie_couple_date',value)
+  const days=document.getElementById('coupleDays')
+  if(days) days.textContent=String(coupleDaysSince(value))
+}
+function openCoupleAvatar(which){
+  const input=document.getElementById(which==='b'?'coupleAvatarInputB':'coupleAvatarInputA')
+  if(input) input.click()
+}
+function changeCoupleAvatar(event,which){
+  const file=event && event.target && event.target.files && event.target.files[0]
+  if(!file) return
+  const reader=new FileReader()
+  reader.onload=function(){
+    const key='reverie_couple_avatar_'+which
+    localStorage.setItem(key,reader.result)
+    const img=document.getElementById(which==='b'?'coupleAvatarB':'coupleAvatarA')
+    if(img){img.src=reader.result;img.parentElement.classList.remove('couple-avatar-empty')}
+  }
+  reader.readAsDataURL(file)
+  event.target.value=''
+}
