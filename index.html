@@ -290,22 +290,41 @@ function navTo(name){
 
 <!-- 其他页面 -->
 <div class="page state-page" id="page-state">
-  <div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div>
-  <div class="state-heading">
-    <div><div class="sub-title">State</div><div class="sub-desc">小克此刻的情绪</div></div>
-    <div class="state-live-dot" id="stateLiveDot" title="正在同步"></div>
+  <div class="header-sub state-nav">
+    <button class="header-sub-menu state-menu-button" type="button" aria-label="打开侧边栏" onclick="openSidebar()">
+      <svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <span class="state-nav-title">STATE</span>
+    <span class="state-nav-spacer"></span>
   </div>
-  <div class="state-report">
-    <h2 id="stateHeadline">正在读取情绪状态…</h2>
-    <div id="stateBars" aria-live="polite"></div>
-    <div class="state-heart">♡</div>
-    <p id="stateUpdated">与小克同步中</p>
-  </div>
-  <div class="state-latest">
-    <div class="state-latest-label">LATEST CHANGE</div>
-    <div id="stateLatest">稍等一下，正在读取最新状态。</div>
-    <span id="stateSource"></span>
-  </div>
+  <main class="state-content">
+    <section class="state-hero">
+      <p class="state-kicker">MURMUR · LIVE STATE</p>
+      <h1>10 个驱动力<br><em>持续运转</em></h1>
+      <div class="state-sync" id="stateSync">
+        <span class="state-live-dot" id="stateLiveDot" aria-hidden="true"></span>
+        <span id="stateUpdated">正在连接小克的情绪系统</span>
+      </div>
+    </section>
+    <section class="state-report" aria-live="polite">
+      <div class="state-report-head">
+        <div>
+          <span class="state-report-label">EMOTIONAL WEATHER</span>
+          <h2 id="stateHeadline">正在读取情绪状态…</h2>
+        </div>
+        <span class="state-report-heart" aria-hidden="true">♡</span>
+      </div>
+      <div class="state-bars-caption"><span>DRIVE</span><span>INTENSITY</span></div>
+      <div id="stateBars"></div>
+      <div class="state-pulse" aria-hidden="true"><i></i><b>♥</b><i></i></div>
+      <p class="state-caption">情绪会随对话与时间缓慢变化</p>
+    </section>
+    <section class="state-latest">
+      <div class="state-latest-top"><span class="state-latest-label">LATEST CHANGE</span><span class="state-latest-mark">LIVE</span></div>
+      <div id="stateLatest">稍等一下，正在读取最新状态。</div>
+      <span id="stateSource"></span>
+    </section>
+  </main>
 </div>
 <div class="page" id="page-moments"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Moments</div><div class="sub-desc">朋友圈</div><div class="card">待开发</div></div></div>
 <div class="page" id="page-forum"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Forum</div><div class="sub-desc">论坛</div><div class="card">待开发</div></div></div>
