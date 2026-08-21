@@ -24,6 +24,7 @@ function navTo(name){
   if(t)t.classList.add('active');
   closeSidebar();
   if(name==='setting'&&typeof renderSetting==='function')renderSetting();
+  if(name==='state'&&typeof initCoupleWidget==='function')initCoupleWidget();
 }
 </script>
 <style>
