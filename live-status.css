@@ -65,3 +65,16 @@
 .state-activity-panel[hidden]{display:none!important}
 .activity-mark{color:#e5b4c2;font-size:18px}.state-activity-panel p{margin:0;color:#aaa6ab;font-size:10px}
 @media(max-width:600px){.state-report{padding-top:12px!important}.state-tabs{margin-bottom:10px}}
+
+
+/* Narrow centered content and note cards */
+.state-content{max-width:760px!important}
+.state-tabs{border-bottom:0!important}
+.state-tab.active:after{display:none!important}
+.state-tab.active{color:#dfa8b7!important}
+.state-report .state-bars-top{border-bottom:0!important}
+.state-note-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:17px 0 3px}
+.state-note-card{min-height:68px;padding:13px 14px;border:1px solid #ece9ec;border-radius:15px;background:rgba(255,255,255,.42);text-align:left;cursor:pointer;color:#383439;box-shadow:none}
+.state-note-card span{display:block;font-size:13px;font-weight:600}.state-note-card small{display:block;margin-top:5px;color:#aaa5ab;font-size:9px}
+.state-note-card:active{background:#faf1f4}
+@media(max-width:600px){.state-content{max-width:100%!important;padding-left:20px!important;padding-right:20px!important}.state-note-cards{gap:8px;margin-top:14px}.state-note-card{min-height:62px;padding:11px 12px}}
