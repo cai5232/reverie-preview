@@ -4265,7 +4265,8 @@ function openRecentEntry(id){
   const screen=document.getElementById('mailScreen'), list=document.getElementById('mailScreenList')
   if(!screen||!list)return
   const p=parseMailboxContent(item.content||'')
-  list.innerHTML='<article class="mail-detail"><h1>'+liveStateEscape(p.subject||item.subject||'未命名')+'</h1><div class="mail-detail-meta"><div><b>发件人</b><span>'+liveStateEscape(p.from||'未知')+'</span></div><div><b>收件人</b><span>'+liveStateEscape(p.to||'言言')+'</span></div><div><b>日期</b><span>'+liveStateEscape(p.date||item.created_at||'')+'</span></div></div><div class="mail-detail-body">'+liveStateEscape(p.body||item.content||'').replace(/\n/g,'<br>')+'</div></article>'
+  list.innerHTML='<article class="mail-detail"><h1>'+liveStateEscape(p.subject||item.subject||'未命名')+'</h1><div class="mail-detail-meta"><div><b>发件人</b><span>'+liveStateEscape(p.from||'未知')+'</span></div><div><b>收件人</b><span>'+liveStateEscape(p.to||'言言')+'</span></div><div><b>日期</b><span>'+liveStateEscape(formatMailboxDate(p.date||item.created_at||''))+'</span></div></div><div class="mail-detail-body">'+liveStateEscape(p.body||item.content||'').replace(/\n/g,'<br>')+'</div></article>'
+  const heading=document.getElementById('mailScreenTitle'); if(heading) heading.textContent=p.subject||item.subject||'邮件'
   screen.hidden=false
 }
 
