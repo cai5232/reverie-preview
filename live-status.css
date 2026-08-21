@@ -214,3 +214,15 @@
 .mail-detail{display:flex!important;flex-direction:column!important}
 .mail-detail-body{order:1!important;margin-bottom:24px}
 .mail-detail-meta{order:2!important;margin-top:0!important}
+
+/* final mailbox spacing and scrolling */
+#page-letter{height:100dvh!important;min-height:100dvh!important;overflow-y:auto!important;overflow-x:hidden!important;touch-action:pan-y!important;-webkit-overflow-scrolling:touch!important}
+#page-letter .mailbox-content{min-height:max-content!important;padding-bottom:120px!important}
+.mail-entry-footer{justify-content:flex-end!important;text-align:right!important}
+.mailbox-screen{height:100dvh!important;box-sizing:border-box!important;overflow-y:scroll!important;overflow-x:hidden!important;touch-action:pan-y!important;-webkit-overflow-scrolling:touch!important}
+.mail-detail{padding-top:24px!important;padding-bottom:72px!important;background:transparent!important;border:0!important;border-radius:0!important}
+.mail-detail h1{display:block!important;margin:0 0 34px!important;font-size:30px!important;line-height:1.25!important;color:#17151a!important}
+.mail-detail-body{margin-bottom:44px!important}
+.mail-detail-meta{align-self:flex-end!important;width:min(100%,420px)!important;margin-top:0!important;margin-bottom:0!important;text-align:right!important}
+.mail-detail-meta div{justify-content:flex-end!important;gap:14px!important}
+.mail-detail-meta b{width:auto!important;color:#77737b!important}
