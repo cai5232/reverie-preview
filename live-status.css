@@ -101,3 +101,12 @@
 .state-pulse,.state-caption{display:none!important}
 .state-note-cards{margin-top:16px!important}
 @media(max-width:600px){.state-page .state-nav{padding-left:12px!important}.state-tabs{padding-top:9px;padding-bottom:8px}.state-note-cards{margin-top:13px!important}}
+
+
+/* Memo widget */
+.memo-card{margin:0 0 17px;padding:15px 16px 12px;border:1px solid #e9e6e9;border-radius:17px;background:#fbfafb}
+.memo-card-head,.memo-card-foot{display:flex;align-items:center;justify-content:space-between}
+.memo-eyebrow{color:#aaa5ac;font-size:9px;letter-spacing:1.5px;font-weight:600}.memo-dot{width:7px;height:7px;border-radius:50%;background:#e5b4c2}
+.memo-input{display:block;width:100%;margin:13px 0 10px;padding:0;border:0;outline:0;resize:none;background:transparent;color:#383439;font:500 15px/1.55 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif}
+.memo-input::placeholder{color:#b5b0b6}.memo-card-foot{color:#aaa5ac;font-size:9px}.memo-card-foot button{padding:5px 11px;border:1px solid #e8c6cf;border-radius:10px;background:#fff7f9;color:#d99eae;font:500 10px -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;cursor:pointer}
+@media(max-width:600px){.memo-card{margin-bottom:13px;padding:13px 14px 10px}.memo-input{margin:11px 0 9px;font-size:14px}}
