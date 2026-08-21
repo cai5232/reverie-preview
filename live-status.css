@@ -1,5 +1,5 @@
 /* Live Murmur status report */
-.state-page{background:#fff!important;padding-bottom:32px!important}
+.state-page{background:#fff!important;padding-bottom:32px!important;overflow-y:auto!important}
 .state-heading{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 0}
 .state-heading .sub-title{padding:0 0 4px}
 .state-heading .sub-desc{padding:0;color:#9b9b9f}
