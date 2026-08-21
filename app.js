@@ -4180,8 +4180,25 @@ function closeGrudgeBook(){
 }
 
 
-function openMailboxCard(type){
-  const labels={mail:'邮件',regret:'检讨书',trash:'垃圾桶'}
-  const empty=document.getElementById('mailboxEmpty')
-  if(empty) empty.textContent=labels[type]+' 暂时还没有内容。'
+function mailboxItems(type){
+  try{return JSON.parse(localStorage.getItem('reverie_mailbox_'+type) || '[]')}catch(e){return[]}
 }
+function renderMailboxItems(type){
+  const items=mailboxItems(type)
+  const listIds={mail:['mailInlineList','mailScreenList'],regret:['regretInlineList','regretScreenList'],trash:['trashScreenList']}
+  const html=items.length ? items.map(function(item){
+    return '<article class="mail-entry"><div class="mail-entry-head"><span>'+liveStateEscape(item.subject||item.title||'未命名')+'</span><time>'+liveStateEscape(item.created_at||'')+'</time></div><p>'+liveStateEscape(item.body||item.note||'')+'</p></article>'
+  }).join('') : '<div class="mailbox-empty">暂时没有内容。</div>'
+  ;(listIds[type]||[]).forEach(function(id){const el=document.getElementById(id);if(el)el.innerHTML=html})
+  const count=document.getElementById(type==='mail'?'mailCount':type==='regret'?'regretCount':'trashCount')
+  if(count) count.textContent=items.length
+}
+function openMailboxCard(type){
+  renderMailboxItems(type)
+  const screen=document.getElementById(type+'Screen')
+  if(screen) screen.hidden=false
+}
+function closeMailboxScreen(){
+  document.querySelectorAll('.mailbox-screen').forEach(function(screen){screen.hidden=true})
+}
+
