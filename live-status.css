@@ -249,3 +249,26 @@
 .mail-detail-meta b,.mail-detail-meta span{font-size:12px!important}
 .mail-detail-edit{margin-left:auto;width:32px;height:32px;padding:5px;border:0;background:transparent;color:#242226;display:grid;place-items:center}
 .mail-detail-edit svg{width:22px;height:22px;display:block}
+
+/* final pure monochrome State palette */
+.state-page{--ink:#000!important;--muted:#777!important;--line:#e5e5e5!important;--paper:#fff!important;--pink:#777!important;background:#fff!important;color:#000!important}
+.state-page .state-nav{background:#fff!important;color:#000!important;border-color:#e5e5e5!important}
+.state-page .state-nav-title,.state-page .state-bars-top h1,.state-page .state-cn,.state-page .state-tab.active{color:#000!important}
+.state-page .state-kicker,.state-page .state-en,.state-page .state-bars-caption,.state-page .state-sync,.state-page .state-caption,.state-page .state-tab{color:#777!important}
+.state-page .state-live-dot{background:#000!important;box-shadow:0 0 0 4px rgba(0,0,0,.1)!important}
+.state-page .state-track{background:#e5e5e5!important}
+.state-page .state-track i{background:#000!important}
+.state-page .state-tabs{border-color:#e5e5e5!important}
+.state-page .state-tab.active:after{background:#000!important}
+.state-page .state-note-cards{gap:16px!important}
+.state-page .state-note-card,.state-page .memo-card{background:#fff!important;border-color:#e5e5e5!important;color:#000!important}
+.state-page .state-note-card:before,.state-page .state-note-card:nth-child(2):before{background:#000!important}
+.state-page .state-note-icon,.state-page .state-note-icon-pink{border-color:#000!important;color:#000!important}
+.state-page .state-note-card small,.state-page .memo-eyebrow,.state-page .memo-card-foot{color:#777!important}
+.state-page .memo-dot{background:#000!important}
+.state-page .todo-row{border-color:#e5e5e5!important}.state-page .todo-check{border-color:#000!important}.state-page .todo-check.is-done{background:#000!important;box-shadow:inset 0 0 0 4px #fff!important}
+.state-page .couple-link,.state-page .activity-mark{color:#000!important}.state-page .couple-link i,.state-page .couple-link i:last-child{background:#000!important}
+/* separate cards on the three mailbox detail screens */
+.mailbox-screen>div:last-child{display:grid;gap:18px!important}
+.mailbox-screen>div:last-child .mail-entry{margin:0!important}
+.mail-detail-meta{gap:7px!important}
