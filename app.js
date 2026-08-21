@@ -874,21 +874,38 @@ function liveStateLatest(log){
   return {text:text, source:note ? '来自最近一次对话' : ''}
 }
 
-function loadLiveState(){
+async function loadLiveState(){
   const bars=document.getElementById('stateBars')
   const headline=document.getElementById('stateHeadline')
   const updated=document.getElementById('stateUpdated')
   const dot=document.getElementById('stateLiveDot')
   if(!bars || !headline || !updated || !dot) return
-  /* Preview mode: use representative values until Murmur sync is enabled. */
-  const demoDrives={
-    attachment:8.2,tenderness:6.7,heartache:5.8,curiosity:7.6,mischief:4.3,
-    restless:6.1,regret:3.2,desire:7.3,gloom:2.8,jealousy:4.9
+  const demoDrives={attachment:8.2,tenderness:6.7,heartache:5.8,curiosity:7.6,mischief:4.3,restless:6.1,regret:3.2,desire:7.3,gloom:2.8,jealousy:4.9}
+  try{
+    const base=liveStateApiBase()
+    const key=typeof cfg!=='undefined' ? String(cfg.key||'') : ''
+    if(!base || !key) throw new Error('missing api config')
+    const controller=new AbortController()
+    const timer=setTimeout(()=>controller.abort(),7000)
+    const res=await fetch(base+'/internal/drives',{headers:{Authorization:'Bearer '+key},signal:controller.signal})
+    clearTimeout(timer)
+    if(!res.ok) throw new Error('drives '+res.status)
+    const payload=await res.json()
+    const drives=payload.drives || payload.data?.drives || payload
+    bars.innerHTML=liveStateBars(drives)
+    headline.textContent=liveStateHeadline(drives)
+    updated.textContent='已同步'
+    dot.style.background='#B8DDBE'
+    const latest=liveStateLatest(payload.log || payload.data?.log)
+    const latestEl=document.getElementById('stateLatest')
+    if(latestEl) latestEl.textContent=latest.text
+    return
+  }catch(e){
+    bars.innerHTML=liveStateBars(demoDrives)
+    headline.textContent='情绪状态'
+    updated.textContent='预览模式'
+    dot.style.background='#E5B4C2'
   }
-  bars.innerHTML=liveStateBars(demoDrives)
-  headline.textContent='情绪状态'
-  updated.textContent='预览模式'
-  dot.style.background='#B8DDBE'
 }
 function showToast(msg){
   let t=document.getElementById('toast')
