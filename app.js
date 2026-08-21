@@ -4254,6 +4254,11 @@ function initMailboxPage(){
     clearInterval(_mailboxTimer); _mailboxTimer=setInterval(syncAll,30000)
   }
 }
+function refreshMailbox(){
+  const base=liveStateApiBase(), key=typeof cfg!=='undefined'?String(cfg.key||''):''
+  if(!base){return}
+  ;['mail','regret','trash'].forEach(function(kind){syncMailboxKind(kind,base,key)})
+}
 async function syncMailboxKind(kind,base,key){
   try{
     const res=await fetch(base+'/internal/mailbox?kind='+encodeURIComponent(kind),{headers:{Authorization:'Bearer '+key}})
