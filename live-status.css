@@ -146,3 +146,9 @@
 .grudge-head button{width:28px;height:28px;border:0;border-radius:50%;background:#f0edf0;color:#77717a;font-size:21px;line-height:20px;cursor:pointer}.grudge-head small{margin-left:auto;color:#aaa4ac;font-size:10px;font-weight:400}
 #grudgeList{max-width:760px;margin:0 auto}.grudge-entry{padding:13px 14px;margin-bottom:10px;border:1px solid #ece7ea;border-left:3px solid #e5b4c2;border-radius:14px;background:#fff}
 .grudge-entry-top{display:flex;align-items:center;justify-content:space-between;gap:8px}.grudge-entry-top span{color:#d99ead;font-size:11px;font-weight:600}.grudge-entry-top time{color:#aaa4ac;font-size:9px}.grudge-entry p{margin:8px 0 0;color:#5f5961;font-size:12px;line-height:1.55}.grudge-empty{padding:40px 10px;text-align:center;color:#ada7ae;font-size:11px;line-height:1.6}
+
+
+.todo-history-item{align-items:center!important;padding:12px 0!important;font-size:14px!important;color:#504a52!important}
+.todo-history-item>span{font-size:14px!important;line-height:1.5}
+.todo-history-item>button{flex:none;padding:5px 10px;border:1px solid #ead7dc;border-radius:9px;background:#fff7f9;color:#d79ead;font:500 11px -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;cursor:pointer}
+.todo-history-empty{font-size:13px!important}
