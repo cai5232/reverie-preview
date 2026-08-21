@@ -226,3 +226,10 @@
 .mail-detail-meta{align-self:flex-end!important;width:min(100%,420px)!important;margin-top:0!important;margin-bottom:0!important;text-align:right!important}
 .mail-detail-meta div{justify-content:flex-end!important;gap:14px!important}
 .mail-detail-meta b{width:auto!important;color:#77737b!important}
+
+/* email detail bottom action bar */
+.mail-detail-toolbar{position:fixed;left:0;right:0;bottom:0;z-index:3;height:76px;padding:8px max(18px,env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left));box-sizing:border-box;display:grid;grid-template-columns:repeat(4,1fr);align-items:center;border-top:1px solid #dedde0;background:#f7f7f8;color:#242226}
+.mail-detail-toolbar button{border:0;background:transparent;color:#242226;font:400 26px/1 -apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;min-height:48px;display:grid;place-items:center}
+.mail-detail-toolbar button:active{opacity:.45}
+.mail-detail{padding-bottom:104px!important}
+.mail-detail-meta{margin-bottom:4px!important;padding-bottom:10px!important}
