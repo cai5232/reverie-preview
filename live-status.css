@@ -241,3 +241,11 @@
 .mail-detail-meta span{font-size:11px!important}
 .mail-detail-body{padding-bottom:110px!important}
 .mail-detail-toolbar button svg{width:25px;height:25px;display:block}
+
+/* email detail metadata and list spacing */
+.mailbox-inline-list{gap:16px!important}
+.mail-detail-meta{display:flex!important;flex-direction:column!important;align-items:flex-end!important;gap:7px!important;width:100%!important}
+.mail-detail-meta div{width:100%!important;justify-content:flex-end!important;gap:10px!important}
+.mail-detail-meta b,.mail-detail-meta span{font-size:12px!important}
+.mail-detail-edit{margin-left:auto;width:32px;height:32px;padding:5px;border:0;background:transparent;color:#242226;display:grid;place-items:center}
+.mail-detail-edit svg{width:22px;height:22px;display:block}
