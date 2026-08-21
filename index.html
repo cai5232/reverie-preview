@@ -97,7 +97,7 @@ function navTo(name){
 }
 </style>
 <link rel="stylesheet" href="style.css?v=143">
-<link rel="stylesheet" href="live-status.css?v=6">
+<link rel="stylesheet" href="live-status.css?v=7">
 </head>
 <body>
 
@@ -325,8 +325,16 @@ function navTo(name){
       <div class="state-pulse" aria-hidden="true"><i></i><b>♥</b><i></i></div>
       <p class="state-caption">情绪会随对话与时间缓慢变化</p>
       <div class="state-note-cards">
-        <button class="state-note-card" type="button"><span>留白</span><small>给心情一点空间</small></button>
-        <button class="state-note-card" type="button"><span>记仇本</span><small>记录那些小情绪</small></button>
+        <button class="state-note-card" type="button">
+          <span class="state-note-icon" aria-hidden="true">○</span>
+          <span class="state-note-title">留白</span>
+          <small>给心情一点空间</small><b aria-hidden="true">↗</b>
+        </button>
+        <button class="state-note-card" type="button">
+          <span class="state-note-icon state-note-icon-pink" aria-hidden="true">♡</span>
+          <span class="state-note-title">记仇本</span>
+          <small>记录那些小情绪</small><b aria-hidden="true">↗</b>
+        </button>
       </div>
     </section>
     <section class="state-calendar-panel" id="stateCalendarPanel" hidden>
