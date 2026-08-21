@@ -298,10 +298,14 @@ function navTo(name){
     <span class="state-nav-title">State</span>
   </div>
   <main class="state-content state-bars-only">
-    <section class="memo-card" aria-label="备忘录">
-      <div class="memo-card-head"><span class="memo-eyebrow">TODAY'S NOTE</span><span class="memo-dot" aria-hidden="true"></span></div>
-      <textarea id="stateMemoInput" class="memo-input" rows="2" placeholder="写下一件想记住的事…"></textarea>
-      <div class="memo-card-foot"><span id="memoSavedHint">保存在这台设备</span><button type="button" onclick="saveStateMemo()">保存</button></div>
+    <section class="memo-card todo-card" aria-label="今日待办">
+      <div class="memo-card-head"><span class="memo-eyebrow">TODAY'S TASKS</span><button class="todo-history-btn" type="button" onclick="toggleTodoHistory()">历史</button></div>
+      <div class="todo-list" id="todoList">
+        <div class="todo-row"><input id="todoInput0" maxlength="80" placeholder="写下一件要做的事…"><button type="button" class="todo-check" onclick="completeTodo(0)" aria-label="完成待办"></button></div>
+        <div class="todo-row"><input id="todoInput1" maxlength="80" placeholder="再记一件…"><button type="button" class="todo-check" onclick="completeTodo(1)" aria-label="完成待办"></button></div>
+        <div class="todo-row"><input id="todoInput2" maxlength="80" placeholder="还有什么要记得…"><button type="button" class="todo-check" onclick="completeTodo(2)" aria-label="完成待办"></button></div>
+      </div>
+      <div class="todo-history" id="todoHistory" hidden></div>
     </section>
     <div class="state-tabs" role="tablist" aria-label="State sections">
       <button class="state-tab active" type="button" role="tab" aria-selected="true" onclick="switchStateTab('emotion',this)">情绪</button>
