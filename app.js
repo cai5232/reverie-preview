@@ -906,7 +906,7 @@ async function loadLiveState(){
   const dot=document.getElementById('stateLiveDot')
   if(!bars || !headline || !updated || !dot) return
   const hasCached=renderCachedState()
-  if(!hasCached) updated.textContent='等待首次同步'
+  if(!hasCached){ bars.innerHTML=''; updated.textContent='等待首次同步' }
   try{
     const base=liveStateApiBase()
     const key=typeof cfg!=='undefined' ? String(cfg.key||'') : ''
