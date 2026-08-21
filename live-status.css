@@ -204,3 +204,13 @@
 .mail-detail h1{font-size:27px!important;color:#17151a!important}
 .mail-detail-meta{border-top:1px solid #d8d6da!important;border-bottom:1px solid #d8d6da!important}
 .mail-detail-body{color:#2e2b32!important}
+
+/* mailbox metadata alignment */
+.mail-entry-head{align-items:center!important}
+.mail-entry-head time{font-size:10px!important;color:#929099!important;white-space:nowrap}
+.mail-entry-meta{display:none!important}
+.mail-entry-footer{display:flex;align-items:center;justify-content:flex-start;margin-top:7px;color:#68636b;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mail-entry-footer span{overflow:hidden;text-overflow:ellipsis}
+.mail-detail{display:flex!important;flex-direction:column!important}
+.mail-detail-body{order:1!important;margin-bottom:24px}
+.mail-detail-meta{order:2!important;margin-top:0!important}
