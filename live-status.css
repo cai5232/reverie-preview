@@ -133,3 +133,8 @@
 .todo-history-screen{position:fixed;inset:0;z-index:30;margin:0;padding:calc(env(safe-area-inset-top,0px) + 20px) 20px 24px;background:#fcfbfc;overflow-y:auto}
 .todo-history-head{max-width:760px;margin:0 auto 18px;padding-bottom:14px;border-bottom:1px solid #ecebed}
 .todo-history-screen #todoHistoryList{max-width:760px;margin:0 auto}
+
+
+.state-live-note{margin:16px 0 0;padding:11px 13px;border-left:2px solid #e5b4c2;background:#fbfafb}
+.state-live-note-head{display:flex;align-items:center;justify-content:space-between;color:#a39da5;font-size:9px;letter-spacing:1px}.state-live-note-head small{font-size:9px;letter-spacing:0;color:#b3adb4}
+.state-live-note p{margin:7px 0 0;color:#5f5961;font-size:11px;line-height:1.5}
