@@ -97,7 +97,7 @@ function navTo(name){
 }
 </style>
 <link rel="stylesheet" href="style.css?v=143">
-<link rel="stylesheet" href="live-status.css?v=2">
+<link rel="stylesheet" href="live-status.css?v=3">
 </head>
 <body>
 
@@ -294,19 +294,19 @@ function navTo(name){
   <div class="header-sub state-nav">
     <button class="state-menu-button" type="button" aria-label="打开侧边栏" onclick="openSidebar()">
       <svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18M2 8h14M2 14h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      <span class="state-nav-title">STATE</span>
+      <span class="state-nav-title">State</span>
     </button>
   </div>
   <main class="state-content state-bars-only">
     <section class="couple-card" aria-label="恋爱纪念">
       <div class="couple-days"><strong id="coupleDays">1</strong><span>天</span></div>
       <div class="couple-avatars">
-        <button class="couple-avatar" type="button" ondblclick="openCoupleAvatar('a')" aria-label="双击更换头像"><img id="coupleAvatarA" alt="头像一"></button>
+        <button class="couple-avatar" type="button" onclick="openCoupleAvatar('a')" ondblclick="openCoupleAvatar('a')" aria-label="更换头像"><img id="coupleAvatarA" alt="头像一"></button>
         <span class="couple-link" aria-hidden="true"><i></i><b>♥</b><i></i></span>
-        <button class="couple-avatar couple-avatar-empty" type="button" ondblclick="openCoupleAvatar('b')" aria-label="双击更换头像"><img id="coupleAvatarB" alt="头像二"></button>
+        <button class="couple-avatar couple-avatar-empty" type="button" onclick="openCoupleAvatar('b')" ondblclick="openCoupleAvatar('b')" aria-label="更换头像"><img id="coupleAvatarB" alt="头像二"></button>
       </div>
       <div class="couple-title">恋爱纪念</div>
-      <label class="couple-date"><span>确定关系</span><input id="coupleDate" type="date" onchange="saveCoupleDate(this.value)"></label>
+      <label class="couple-date"><input id="coupleDate" type="date" aria-label="确定关系日期" onchange="saveCoupleDate(this.value)"></label>
       <input id="coupleAvatarInputA" class="state-hidden" type="file" accept="image/*" onchange="changeCoupleAvatar(event,'a')">
       <input id="coupleAvatarInputB" class="state-hidden" type="file" accept="image/*" onchange="changeCoupleAvatar(event,'b')">
     </section>
