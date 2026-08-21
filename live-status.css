@@ -32,3 +32,13 @@
 .couple-link{display:flex;align-items:center;gap:3px;color:#e5a8b8}.couple-link i{display:block;width:21px;height:1px;background:linear-gradient(90deg,transparent,#e9b4c2)}.couple-link i:last-child{background:linear-gradient(90deg,#e9b4c2,transparent)}.couple-link b{font-size:14px;font-weight:400}
 .couple-title{font-size:17px;line-height:1.2;font-weight:600;color:#403b40;letter-spacing:1px}.couple-date{display:inline-flex;align-items:center;gap:7px;margin-top:7px;color:#aaa1a9;font-size:10px;letter-spacing:.5px}.couple-date input{width:112px;padding:4px 7px;border:1px solid #eee9ed;border-radius:9px;background:rgba(255,255,255,.75);color:#777078;font:inherit;outline:none}
 @media(max-width:600px){.state-page .state-nav{padding-left:12px!important}.state-menu-button{min-width:108px;height:40px;padding-left:12px!important}.state-nav-title{font-size:15px!important}.couple-card{margin-bottom:13px;padding:9px 10px 10px}.couple-days strong{font-size:36px}.couple-avatars{gap:13px;margin:6px 0}.couple-avatar{width:65px;height:65px}.couple-link i{width:15px}.couple-title{font-size:15px}.couple-date{font-size:9px}.couple-date input{width:106px}}
+
+
+/* Minimal monochrome State refinements */
+.state-nav-title{font-weight:500!important;letter-spacing:1.8px!important;text-transform:none!important}
+.couple-card{margin:0 0 16px;padding:7px 0 8px;border:0;background:transparent;box-shadow:none;border-radius:0}
+.couple-avatar{cursor:pointer;touch-action:manipulation}
+.couple-date{margin-top:8px}.couple-date input{border:0;background:transparent;padding:2px 0;color:#9b959b}
+.state-track{background:#e8e7e9!important}
+.state-track i{background:#d9d7db!important}
+.couple-link{color:#e3b4bf}.couple-link i{background:#dddadd!important}.couple-link i:last-child{background:#dddadd!important}
