@@ -813,6 +813,108 @@ function saveCfg(){
   showToast('已保存')
 }
 
+
+/* ── State：同步 xiaoke Murmur 情绪系统 ── */
+const LIVE_DRIVE_META = [
+  ['attachment', '想念', 'attachment'],
+  ['tenderness', '心软', 'tenderness'],
+  ['heartache', '心疼', 'heartache'],
+  ['curiosity', '好奇', 'curiosity'],
+  ['mischief', '促狭', 'mischief'],
+  ['restless', '躁动', 'restless'],
+  ['regret', '后悔', 'regret'],
+  ['desire', '欲望', 'desire'],
+  ['gloom', '低落', 'gloom'],
+  ['jealousy', '吃醋', 'jealousy']
+]
+
+function liveStateApiBase(){
+  const raw = (typeof cfg !== 'undefined' && cfg.api ? cfg.api : '').trim()
+  return raw.replace(/\/+$/, '').replace(/\/v1$/, '')
+}
+
+function liveStateEscape(value){
+  return String(value == null ? '' : value).replace(/[&<>"']/g, function(char){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]
+  })
+}
+
+function liveStateBars(drives){
+  return LIVE_DRIVE_META.map(function(meta){
+    const key=meta[0], label=meta[1], english=meta[2]
+    const value=Math.max(0, Math.min(10, Number(drives && drives[key]) || 0))
+    const percent=Math.round(value * 10)
+    return '<div class="state-bar-row">'+
+      '<div class="state-drive"><span class="state-cn">'+label+'</span><span class="state-en">/ '+english+'</span></div>'+
+      '<span class="state-track"><i style="width:'+percent+'%"></i></span>'+
+      '<b>'+percent+'%</b>'+
+    '</div>'
+  }).join('')
+}
+
+function liveStateHeadline(drives){
+  const ranked=LIVE_DRIVE_META.map(function(meta){
+    return {label:meta[1], value:Number(drives && drives[meta[0]]) || 0}
+  }).sort(function(a,b){return b.value-a.value})
+  const first=ranked[0] || {label:'平静',value:0}
+  const second=ranked[1]
+  return second && second.value > 0 ? first.label+' 为主，也有一点 '+second.label : '此刻很平静'
+}
+
+function liveStateLatest(log){
+  if(!Array.isArray(log) || !log.length) return {text:'还没有记录到明显的情绪波动。', source:''}
+  const latest=log[0] || {}
+  const names=(latest.deltas && typeof latest.deltas==='object' ? Object.keys(latest.deltas) : [])
+    .map(function(key){
+      const item=LIVE_DRIVE_META.find(function(meta){return meta[0]===key})
+      return item ? item[1] : key
+    })
+  const note=String(latest.note || '').trim()
+  const text=names.length ? '刚刚被触动的是：'+names.join('、')+'。' : '刚刚完成了一次情绪更新。'
+  return {text:text, source:note ? '来自最近一次对话' : ''}
+}
+
+async function loadLiveState(){
+  const bars=document.getElementById('stateBars')
+  const headline=document.getElementById('stateHeadline')
+  const updated=document.getElementById('stateUpdated')
+  const latest=document.getElementById('stateLatest')
+  const source=document.getElementById('stateSource')
+  const dot=document.getElementById('stateLiveDot')
+  if(!bars || !headline || !updated || !latest || !source || !dot) return
+  const base=liveStateApiBase()
+  if(!base){
+    dot.style.background='#F5CDD6'
+    headline.textContent='还没有连接情绪系统'
+    latest.textContent='请先在 Setting 中填写小克的 API 地址。'
+    source.textContent=''
+    return
+  }
+  dot.style.background='#F5CDD6'
+  updated.textContent='正在同步…'
+  try{
+    const res=await fetch(base+'/internal/drives',{
+      headers:{'Authorization':'Bearer '+(cfg.key || '')}
+    })
+    if(!res.ok) throw new Error('HTTP '+res.status)
+    const payload=await res.json()
+    const drives=payload.drives || {}
+    bars.innerHTML=liveStateBars(drives)
+    headline.textContent=liveStateHeadline(drives)
+    const detail=liveStateLatest(payload.log)
+    latest.textContent=detail.text
+    source.textContent=detail.source
+    updated.textContent='已同步 · 刚刚更新'
+    dot.style.background='#B8DDBE'
+  }catch(error){
+    dot.style.background='#F5CDD6'
+    headline.textContent='暂时无法同步情绪状态'
+    latest.textContent='请确认小克服务在线，并检查 Setting 里的 API 地址和密钥。'
+    source.textContent=''
+    updated.textContent='同步失败'
+  }
+}
+
 function showToast(msg){
   let t=document.getElementById('toast')
   if(!t){
