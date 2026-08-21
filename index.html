@@ -299,13 +299,16 @@ function navTo(name){
   </div>
   <main class="state-content state-bars-only">
     <section class="memo-card todo-card" aria-label="今日待办">
-      <div class="memo-card-head"><span class="memo-eyebrow">TODAY'S TASKS</span><button class="todo-history-btn" type="button" onclick="toggleTodoHistory()">历史</button></div>
+      <div class="memo-card-head"><span class="memo-eyebrow">TODAY'S TASKS</span><button class="todo-history-btn" type="button" onclick="openTodoHistory()">历史</button></div>
       <div class="todo-list" id="todoList">
-        <div class="todo-row"><input id="todoInput0" maxlength="80" placeholder="写下一件要做的事…"><button type="button" class="todo-check" onclick="completeTodo(0)" aria-label="完成待办"></button></div>
-        <div class="todo-row"><input id="todoInput1" maxlength="80" placeholder="再记一件…"><button type="button" class="todo-check" onclick="completeTodo(1)" aria-label="完成待办"></button></div>
-        <div class="todo-row"><input id="todoInput2" maxlength="80" placeholder="还有什么要记得…"><button type="button" class="todo-check" onclick="completeTodo(2)" aria-label="完成待办"></button></div>
+        <div class="todo-row"><input id="todoInput0" maxlength="80" placeholder="写下一件要做的事…" oninput="saveTodoDraft(0,this.value)"><button type="button" class="todo-check" id="todoCheck0" onclick="completeTodo(0)" aria-label="完成待办"></button></div>
+        <div class="todo-row"><input id="todoInput1" maxlength="80" placeholder="再记一件…" oninput="saveTodoDraft(1,this.value)"><button type="button" class="todo-check" id="todoCheck1" onclick="completeTodo(1)" aria-label="完成待办"></button></div>
+        <div class="todo-row"><input id="todoInput2" maxlength="80" placeholder="还有什么要记得…" oninput="saveTodoDraft(2,this.value)"><button type="button" class="todo-check" id="todoCheck2" onclick="completeTodo(2)" aria-label="完成待办"></button></div>
       </div>
-      <div class="todo-history" id="todoHistory" hidden></div>
+      <section class="todo-history-screen" id="todoHistoryScreen" hidden>
+        <div class="todo-history-head"><button type="button" onclick="closeTodoHistory()">‹</button><span>完成历史</span></div>
+        <div id="todoHistoryList"></div>
+      </section>
     </section>
     <div class="state-tabs" role="tablist" aria-label="State sections">
       <button class="state-tab active" type="button" role="tab" aria-selected="true" onclick="switchStateTab('emotion',this)">情绪</button>
