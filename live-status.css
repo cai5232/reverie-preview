@@ -152,3 +152,6 @@
 .todo-history-item>span{font-size:14px!important;line-height:1.5}
 .todo-history-item>button{flex:none;padding:5px 10px;border:1px solid #ead7dc;border-radius:9px;background:#fff7f9;color:#d79ead;font:500 11px -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;cursor:pointer}
 .todo-history-empty{font-size:13px!important}
+
+
+.todo-history-head span{font-size:17px!important;font-weight:600!important;letter-spacing:.3px}
