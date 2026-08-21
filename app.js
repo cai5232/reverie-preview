@@ -925,6 +925,7 @@ async function loadLiveState(){
     headline.textContent=liveStateHeadline(drives)
     updated.textContent=stateSyncTime(stamp)+' · 已同步'
     dot.style.background='#B8DDBE'
+    syncGrudgeBook(base,key)
     const latest=liveStateLatest(payload.log || payload.data?.log)
     const latestEl=document.getElementById('stateLatest')
     if(latestEl) latestEl.textContent=latest.text
@@ -4124,4 +4125,40 @@ function startStateSync(){
     const page=document.getElementById('page-state')
     if(page && page.classList.contains('active')) loadLiveState()
   },30000)
+}
+
+
+function renderGrudgeBook(items){
+  const list=document.getElementById('grudgeList')
+  const count=document.getElementById('grudgeCount')
+  if(!list) return
+  const rows=Array.isArray(items)?items:[]
+  if(count) count.textContent=rows.length+' 条'
+  list.innerHTML=rows.length ? rows.map(function(item){
+    return '<article class="grudge-entry"><div class="grudge-entry-top"><span>'+liveStateEscape(item.trigger||item.drive||'情绪')+'</span><time>'+liveStateEscape(item.created_at||'')+'</time></div><p>'+liveStateEscape(item.note||'Murmur 记下了这次情绪波动。')+'</p></article>'
+  }).join('') : '<div class="grudge-empty">还没有记下什么。Murmur 会在情绪足够强烈时自主记录。</div>'
+}
+async function syncGrudgeBook(base,key){
+  try{
+    const res=await fetch(base+'/internal/grudges?limit=50',{headers:{Authorization:'Bearer '+key}})
+    if(!res.ok) throw new Error('grudges '+res.status)
+    const data=await res.json()
+    const items=data.grudges || []
+    localStorage.setItem('reverie_grudges',JSON.stringify(items))
+    renderGrudgeBook(items)
+  }catch(e){
+    renderGrudgeBook(JSON.parse(localStorage.getItem('reverie_grudges') || '[]'))
+  }
+}
+function openGrudgeBook(){
+  const screen=document.getElementById('grudgeScreen')
+  if(!screen) return
+  screen.hidden=false
+  renderGrudgeBook(JSON.parse(localStorage.getItem('reverie_grudges') || '[]'))
+  const base=liveStateApiBase(), key=typeof cfg!=='undefined'?String(cfg.key||''):''
+  if(base && key) syncGrudgeBook(base,key)
+}
+function closeGrudgeBook(){
+  const screen=document.getElementById('grudgeScreen')
+  if(screen) screen.hidden=true
 }
