@@ -4223,24 +4223,43 @@ function mailboxItems(type){
   }
   try{return JSON.parse(localStorage.getItem('reverie_mailbox_'+type) || '[]')}catch(e){return[]}
 }
+function parseMailboxContent(content){
+  const raw=String(content||''), lines=raw.split(/\\r?\\n/)
+  const fields={}, body=[]
+  let inBody=false
+  lines.forEach(function(line){
+    const m=line.match(/^(From|To|Date|Subject|Body):\\s*(.*)$/i)
+    if(m){const key=m[1].toLowerCase();if(key==='body'){inBody=true}else fields[key]=m[2];return}
+    if(inBody)body.push(line)
+  })
+  return {from:fields.from||'',to:fields.to||'',date:fields.date||'',subject:fields.subject||'',body:body.join('\\n').trim()||raw}
+}
+function mailboxPreview(item){
+  const p=parseMailboxContent(item.content||item.body||'')
+  return {sender:p.from||'xiaoke@caiwi.ai',preview:(p.body||'').replace(/\\s+/g,' ').trim().slice(0,90)}
+}
+
 function renderMailboxItems(type){
   const items=mailboxItems(type)
   const listIds={mail:['mailScreenList'],regret:['regretScreenList'],trash:['trashScreenList'],recent:['mailInlineList']}
   const html=items.length ? items.map(function(item){
-    return '<article class="mail-entry" role="button" tabindex="0" onclick="openRecentEntry(\''+liveStateEscape(item.id||'')+'\')"><div class="mail-entry-head"><span>'+liveStateEscape(item.subject||item.title||'未命名')+'</span><time>'+liveStateEscape(item.created_at||'')+'</time></div><p>'+liveStateEscape(item.body||item.content||item.note||'')+'</p></article>'
+    const pv=mailboxPreview(item)
+    return '<article class="mail-entry" role="button" tabindex="0" onclick="openRecentEntry(\''+liveStateEscape(item.id||'')+'\')"><div class="mail-entry-head"><span>'+liveStateEscape(item.subject||item.title||'未命名')+'</span><time>'+liveStateEscape(item.created_at||'')+'</time></div><div class="mail-entry-sender">'+liveStateEscape(pv.sender)+'</div><p>'+liveStateEscape(pv.preview)+'</p></article>'
   }).join('') : '<div class="mailbox-empty">暂时没有内容。</div>'
   ;(listIds[type]||[]).forEach(function(id){const el=document.getElementById(id);if(el)el.innerHTML=html})
   const count=document.getElementById(type==='mail'?'mailCount':type==='regret'?'regretCount':'trashCount')
   if(count) count.textContent=items.length
 }
 function openRecentEntry(id){
-  const all=mailboxItems('recent'), item=all.find(function(x){return String(x.id||'')===String(id)})
+  const item=mailboxItems('recent').find(function(x){return String(x.id||'')===String(id)})
   if(!item)return
   const screen=document.getElementById('mailScreen'), list=document.getElementById('mailScreenList')
   if(!screen||!list)return
-  list.innerHTML='<article class="mail-entry mail-entry-detail"><div class="mail-entry-head"><span>'+liveStateEscape(item.subject||'未命名')+'</span><time>'+liveStateEscape(item.created_at||'')+'</time></div><p>'+liveStateEscape(item.content||'')+'</p></article>'
+  const p=parseMailboxContent(item.content||'')
+  list.innerHTML='<article class="mail-detail"><h1>'+liveStateEscape(p.subject||item.subject||'未命名')+'</h1><div class="mail-detail-meta"><div><b>发件人</b><span>'+liveStateEscape(p.from||'未知')+'</span></div><div><b>收件人</b><span>'+liveStateEscape(p.to||'言言')+'</span></div><div><b>日期</b><span>'+liveStateEscape(p.date||item.created_at||'')+'</span></div></div><div class="mail-detail-body">'+liveStateEscape(p.body||item.content||'').replace(/\\n/g,'<br>')+'</div></article>'
   screen.hidden=false
 }
+
 function openMailboxCard(type){
   renderMailboxItems(type)
   const screen=document.getElementById(type+'Screen')
