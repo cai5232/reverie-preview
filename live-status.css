@@ -176,3 +176,7 @@
 
 /* Mailbox: neutral monochrome Instagram-style palette */
 .mailbox-page{--mail-pink:#8c8890!important;color:#353239!important}.mailbox-card:nth-child(2):before,.mailbox-card:before{background:#c9c6cb!important}.mailbox-icon-pink{border-color:#cbc8ce!important;color:#77727b!important}.mailbox-card:active{background:#f4f3f4!important}.mailbox-card,.mail-entry{border-color:#dedcdf!important}.mailbox-inline-head,.mailbox-screen-head{color:#353239!important}.mail-entry p{color:#68636b!important}
+
+.mailbox-header{position:relative}.mailbox-refresh{margin-left:auto;margin-right:16px;border:1px solid #d8d6da;border-radius:999px;background:#fff;color:#55515a;padding:6px 12px;font:500 11px -apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif}.mailbox-refresh:active{background:#f0eff1}
+/* State neutral palette */
+.state-page{--pink:#a9a7ab!important}.state-live-dot{background:#aaa8ad!important;box-shadow:0 0 0 4px rgba(170,168,173,.18)!important}.state-track i,.state-track i{background:#8e8b92!important}.state-pulse{color:#8e8b92!important}.state-pulse i,.state-pulse i:last-child{background:#c7c5c9!important}.state-tab.active:after{background:#8e8b92!important}.state-note-card:nth-child(2):before{background:#b8b5bb!important}.state-note-icon-pink{border-color:#c6c3c8!important;color:#77737b!important}
