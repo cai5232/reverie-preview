@@ -97,7 +97,7 @@ function navTo(name){
 }
 </style>
 <link rel="stylesheet" href="style.css?v=143">
-<link rel="stylesheet" href="live-status.css?v=4">
+<link rel="stylesheet" href="live-status.css?v=5">
 </head>
 <body>
 
@@ -313,6 +313,7 @@ function navTo(name){
     <div class="state-tabs" role="tablist" aria-label="State sections">
       <button class="state-tab active" type="button" role="tab" aria-selected="true" onclick="switchStateTab('emotion',this)">情绪</button>
       <button class="state-tab" type="button" role="tab" aria-selected="false" onclick="switchStateTab('calendar',this)">日历</button>
+      <button class="state-tab" type="button" role="tab" aria-selected="false" onclick="switchStateTab('activity',this)">动态</button>
     </div>
     <section class="state-report" id="stateEmotionPanel" aria-live="polite">
       <div class="state-bars-top">
@@ -328,6 +329,10 @@ function navTo(name){
       <div class="calendar-month" id="stateCalendarMonth"></div>
       <div class="calendar-date-large" id="stateCalendarDate"></div>
       <p>把重要的日子，留在这里。</p>
+    </section>
+    <section class="state-calendar-panel state-activity-panel" id="stateActivityPanel" hidden>
+      <div class="activity-mark">♥</div>
+      <p>还没有新的动态</p>
     </section>
     <span id="stateLatest" class="state-hidden"></span><span id="stateSource" class="state-hidden"></span>
   </main>
