@@ -515,7 +515,7 @@ async function callAI(){
       let text=input||'',out=''
       while(text){
         if(mailboxMode){const close='[/'+mailboxMode+']';const end=text.toUpperCase().indexOf(close);if(end<0)return out;text=text.slice(end+close.length);mailboxMode='';continue}
-        const m=text.match(/\\[(MAIL|REGRET|TRASH)\\]/i);if(!m){out+=text;break}
+        const m=text.match(/\[(MAIL|REGRET|TRASH)\]/i);if(!m){out+=text;break}
         out+=text.slice(0,m.index);mailboxMode=m[1].toUpperCase();text=text.slice(m.index+m[0].length)
       }
       return out
@@ -2948,7 +2948,7 @@ async function xkAgenticLoop(sendOptions, mcpServerMap, round, memCtx){
           if(end<0)return out
           source=source.slice(end+close.length); mailboxKind=null; continue
         }
-        const match=source.match(/\\[(MAIL|REGRET|TRASH)\\]/i)
+        const match=source.match(/\[(MAIL|REGRET|TRASH)\]/i)
         if(!match){
           let keep=0
           for(let n=1;n<Math.min(source.length,8);n++){
