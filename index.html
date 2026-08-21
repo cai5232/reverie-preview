@@ -25,6 +25,7 @@ function navTo(name){
   closeSidebar();
   if(name==='setting'&&typeof renderSetting==='function')renderSetting();
   if(name==='state'&&typeof initMemoWidget==='function')initMemoWidget();
+  if(name==='state'&&typeof startStateSync==='function')startStateSync();
 }
 </script>
 <style>
@@ -97,7 +98,7 @@ function navTo(name){
 }
 </style>
 <link rel="stylesheet" href="style.css?v=143">
-<link rel="stylesheet" href="live-status.css?v=11">
+<link rel="stylesheet" href="live-status.css?v=12">
 </head>
 <body>
 
