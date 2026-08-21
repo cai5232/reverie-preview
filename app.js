@@ -529,7 +529,7 @@ async function callAI(){
         if(!tok)continue
         fullRaw+=tok
         if(!thinkDone){
-          let t=tok
+          let t=tok.replace(/\[THINK\]/gi,'<think>').replace(/\[\/THINK\]/gi,'</think>')
           if(!inThink&&t.includes('<think>')){inThink=true;t=t.slice(t.indexOf('<think>')+7)}
           if(inThink){
             if(t.includes('</think>')){
@@ -2978,7 +2978,7 @@ async function xkAgenticLoop(sendOptions, mcpServerMap, round, memCtx){
         const text=delta.content||''
         if(!text)continue
         if(!thinkDone){
-          let t=text
+          let t=text.replace(/\[THINK\]/gi,'<think>').replace(/\[\/THINK\]/gi,'</think>')
           if(!inThink&&t.includes('<think>')){inThink=true;t=t.slice(t.indexOf('<think>')+7)}
           if(inThink){
             if(t.includes('</think>')){thinkBuf+=t.slice(0,t.indexOf('</think>'));const ap=t.slice(t.indexOf('</think>')+8);inThink=false;thinkDone=true;if(thinkRafId){cancelAnimationFrame(thinkRafId);flushThink()}collapseThinkLive();if(ap){bodyBuf+=ap;if(!streamBlock)streamBlock=xkStartStreamBlock(null);pendingBody+=ap;scheduleBodyFlush()}}
