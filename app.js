@@ -4112,8 +4112,17 @@ function renderTodoHistoryScreen(){
   if(!list) return
   const history=JSON.parse(localStorage.getItem('reverie_state_todo_history') || '[]')
   list.innerHTML=history.length
-    ? history.map(item=>'<div class="todo-history-item"><span>'+liveStateEscape(item.text)+'</span><div><time>创建 '+liveStateEscape(item.createdAt||'—')+'</time><time>完成 '+liveStateEscape(item.completedAt||'—')+'</time></div></div>').join('')
+    ? history.map(function(item,index){
+        return '<div class="todo-history-item"><span>'+liveStateEscape(item.text)+'</span><button type="button" onclick="deleteTodoHistory('+index+')" aria-label="删除记录">删除</button></div>'
+      }).join('')
     : '<div class="todo-history-empty">还没有完成记录</div>'
+}
+function deleteTodoHistory(index){
+  const history=JSON.parse(localStorage.getItem('reverie_state_todo_history') || '[]')
+  if(index<0 || index>=history.length) return
+  history.splice(index,1)
+  localStorage.setItem('reverie_state_todo_history',JSON.stringify(history))
+  renderTodoHistoryScreen()
 }
 
 
