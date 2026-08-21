@@ -291,12 +291,24 @@ function navTo(name){
 <!-- 其他页面 -->
 <div class="page state-page" id="page-state">
   <div class="header-sub state-nav">
-    <button class="header-sub-menu state-menu-button" type="button" aria-label="打开侧边栏" onclick="openSidebar()">
+    <button class="state-menu-button" type="button" aria-label="打开侧边栏" onclick="openSidebar()">
       <svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18M2 8h14M2 14h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span class="state-nav-title">STATE</span>
     </button>
-    <span class="state-nav-title">STATE</span><span class="state-nav-spacer"></span>
   </div>
   <main class="state-content state-bars-only">
+    <section class="couple-card" aria-label="恋爱纪念">
+      <div class="couple-days"><strong id="coupleDays">1</strong><span>天</span></div>
+      <div class="couple-avatars">
+        <button class="couple-avatar" type="button" ondblclick="openCoupleAvatar('a')" aria-label="双击更换头像"><img id="coupleAvatarA" alt="头像一"></button>
+        <span class="couple-link" aria-hidden="true"><i></i><b>♥</b><i></i></span>
+        <button class="couple-avatar couple-avatar-empty" type="button" ondblclick="openCoupleAvatar('b')" aria-label="双击更换头像"><img id="coupleAvatarB" alt="头像二"></button>
+      </div>
+      <div class="couple-title">恋爱纪念</div>
+      <label class="couple-date"><span>确定关系</span><input id="coupleDate" type="date" onchange="saveCoupleDate(this.value)"></label>
+      <input id="coupleAvatarInputA" class="state-hidden" type="file" accept="image/*" onchange="changeCoupleAvatar(event,'a')">
+      <input id="coupleAvatarInputB" class="state-hidden" type="file" accept="image/*" onchange="changeCoupleAvatar(event,'b')">
+    </section>
     <div class="state-bars-top">
       <div><span class="state-kicker">MURMUR · LIVE</span><h1 id="stateHeadline">情绪状态</h1></div>
       <div class="state-sync"><span class="state-live-dot" id="stateLiveDot"></span><span id="stateUpdated">同步中</span></div>
