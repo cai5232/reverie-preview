@@ -98,7 +98,7 @@ function navTo(name){
 }
 </style>
 <link rel="stylesheet" href="style.css?v=143">
-<link rel="stylesheet" href="live-status.css?v=13">
+<link rel="stylesheet" href="live-status.css?v=14">
 </head>
 <body>
 
@@ -335,12 +335,16 @@ function navTo(name){
           <span class="state-note-title">留白</span>
           <small>给心情一点空间</small><b aria-hidden="true">↗</b>
         </button>
-        <button class="state-note-card" type="button">
+        <button class="state-note-card" type="button" onclick="openGrudgeBook()">
           <span class="state-note-icon state-note-icon-pink" aria-hidden="true">♡</span>
           <span class="state-note-title">记仇本</span>
           <small>记录那些小情绪</small><b aria-hidden="true">↗</b>
         </button>
       </div>
+      <section class="grudge-screen" id="grudgeScreen" hidden>
+        <div class="grudge-head"><button type="button" onclick="closeGrudgeBook()">‹</button><span>记仇本</span><small id="grudgeCount">0 条</small></div>
+        <div id="grudgeList"></div>
+      </section>
     </section>
     <section class="state-calendar-panel" id="stateCalendarPanel" hidden>
       <div class="calendar-month" id="stateCalendarMonth"></div>
