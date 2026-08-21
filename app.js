@@ -928,6 +928,10 @@ async function loadLiveState(){
     const latest=liveStateLatest(payload.log || payload.data?.log)
     const latestEl=document.getElementById('stateLatest')
     if(latestEl) latestEl.textContent=latest.text
+    const noteText=document.getElementById('stateLiveNoteText')
+    const noteTime=document.getElementById('stateLiveNoteTime')
+    if(noteText) noteText.textContent=latest.text
+    if(noteTime) noteTime.textContent=(payload.log && payload.log[0] && payload.log[0].time) || '刚刚'
   }catch(e){
     const stamp=localStorage.getItem('reverie_state_last_sync')
     updated.textContent=stamp ? '上次 '+stateSyncTime(stamp)+' · 刷新失败' : '暂无数据 · 刷新失败'
