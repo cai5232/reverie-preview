@@ -3965,3 +3965,45 @@ function saveStateMemo(){
     setTimeout(()=>{hint.textContent='保存在这台设备'},1400)
   }
 }
+
+
+function initMemoWidget(){
+  const saved=JSON.parse(localStorage.getItem('reverie_state_todos') || '[]')
+  for(let i=0;i<3;i++){
+    const input=document.getElementById('todoInput'+i)
+    if(input) input.value=saved[i] || ''
+  }
+  renderTodoHistory()
+}
+function saveTodoList(){
+  const values=[]
+  for(let i=0;i<3;i++){
+    const input=document.getElementById('todoInput'+i)
+    values[i]=input ? input.value.trim() : ''
+  }
+  localStorage.setItem('reverie_state_todos',JSON.stringify(values))
+}
+function completeTodo(index){
+  const input=document.getElementById('todoInput'+index)
+  if(!input || !input.value.trim()) return
+  const history=JSON.parse(localStorage.getItem('reverie_state_todo_history') || '[]')
+  history.unshift({text:input.value.trim(),time:new Date().toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})})
+  localStorage.setItem('reverie_state_todo_history',JSON.stringify(history.slice(0,50)))
+  input.value=''
+  saveTodoList()
+  renderTodoHistory()
+}
+function toggleTodoHistory(){
+  const panel=document.getElementById('todoHistory')
+  if(!panel) return
+  panel.hidden=!panel.hidden
+  if(!panel.hidden) renderTodoHistory()
+}
+function renderTodoHistory(){
+  const panel=document.getElementById('todoHistory')
+  if(!panel) return
+  const history=JSON.parse(localStorage.getItem('reverie_state_todo_history') || '[]')
+  panel.innerHTML=history.length
+    ? '<div class="todo-history-title">已完成</div>'+history.map(item=>'<div class="todo-history-item"><span>'+liveStateEscape(item.text)+'</span><time>'+liveStateEscape(item.time)+'</time></div>').join('')
+    : '<div class="todo-history-empty">还没有完成记录</div>'
+}
