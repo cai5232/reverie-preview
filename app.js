@@ -4204,10 +4204,15 @@ function closeMailboxScreen(){
 
 
 
+let _mailboxTimer=null
 function initMailboxPage(){
   renderMailboxItems('mail'); renderMailboxItems('regret'); renderMailboxItems('trash')
   const base=liveStateApiBase(), key=typeof cfg!=='undefined'?String(cfg.key||''):''
-  if(base && key){ syncMailboxKind('mail',base,key); syncMailboxKind('regret',base,key); syncMailboxKind('trash',base,key) }
+  if(base && key){
+    const syncAll=()=>{syncMailboxKind('mail',base,key);syncMailboxKind('regret',base,key);syncMailboxKind('trash',base,key)}
+    syncAll()
+    clearInterval(_mailboxTimer); _mailboxTimer=setInterval(syncAll,30000)
+  }
 }
 async function syncMailboxKind(kind,base,key){
   try{
