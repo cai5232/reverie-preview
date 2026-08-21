@@ -138,3 +138,11 @@
 .state-live-note{margin:16px 0 0;padding:11px 13px;border-left:2px solid #e5b4c2;background:#fbfafb}
 .state-live-note-head{display:flex;align-items:center;justify-content:space-between;color:#a39da5;font-size:9px;letter-spacing:1px}.state-live-note-head small{font-size:9px;letter-spacing:0;color:#b3adb4}
 .state-live-note p{margin:7px 0 0;color:#5f5961;font-size:11px;line-height:1.5}
+
+
+.grudge-screen{position:fixed;inset:0;z-index:40;padding:calc(env(safe-area-inset-top,0px) + 20px) 20px 24px;background:#fcfbfc;overflow-y:auto}
+.grudge-screen[hidden]{display:none}
+.grudge-head{max-width:760px;margin:0 auto 17px;padding-bottom:14px;border-bottom:1px solid #ecebed;display:flex;align-items:center;gap:10px;color:#403b40;font-size:15px;font-weight:600}
+.grudge-head button{width:28px;height:28px;border:0;border-radius:50%;background:#f0edf0;color:#77717a;font-size:21px;line-height:20px;cursor:pointer}.grudge-head small{margin-left:auto;color:#aaa4ac;font-size:10px;font-weight:400}
+#grudgeList{max-width:760px;margin:0 auto}.grudge-entry{padding:13px 14px;margin-bottom:10px;border:1px solid #ece7ea;border-left:3px solid #e5b4c2;border-radius:14px;background:#fff}
+.grudge-entry-top{display:flex;align-items:center;justify-content:space-between;gap:8px}.grudge-entry-top span{color:#d99ead;font-size:11px;font-weight:600}.grudge-entry-top time{color:#aaa4ac;font-size:9px}.grudge-entry p{margin:8px 0 0;color:#5f5961;font-size:12px;line-height:1.55}.grudge-empty{padding:40px 10px;text-align:center;color:#ada7ae;font-size:11px;line-height:1.6}
