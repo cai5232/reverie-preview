@@ -510,6 +510,16 @@ async function callAI(){
       rafId=null
     }
     const scheduleFlush=()=>{if(!rafId)rafId=requestAnimationFrame(flushText)}
+    let mailboxMode=''
+    const hideMailboxChunk=(input)=>{
+      let text=input||'',out=''
+      while(text){
+        if(mailboxMode){const close='[/'+mailboxMode+']';const end=text.toUpperCase().indexOf(close);if(end<0)return out;text=text.slice(end+close.length);mailboxMode='';continue}
+        const m=text.match(/\\[(MAIL|REGRET|TRASH)\\]/i);if(!m){out+=text;break}
+        out+=text.slice(0,m.index);mailboxMode=m[1].toUpperCase();text=text.slice(m.index+m[0].length)
+      }
+      return out
+    }
 
     while(true){
       const {done,value}=await reader.read()
@@ -525,7 +535,7 @@ async function callAI(){
         if(!delta)continue
         if(delta.thinking!==undefined){thinkBuf+=delta.thinking||'';continue}
         if(delta.reasoning_content!==undefined){thinkBuf+=delta.reasoning_content||'';continue}
-        const tok=delta.content||''
+        const tok=hideMailboxChunk(delta.content||'')
         if(!tok)continue
         fullRaw+=tok
         if(!thinkDone){
