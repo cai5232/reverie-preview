@@ -659,12 +659,22 @@ function navTo(name){
     <h1>邮箱</h1>
     <p class="mailbox-desc">把想说的话，放在这里。</p>
     <div class="mailbox-cards">
-      <button class="mailbox-card" type="button" onclick="openMailboxCard('mail')"><span class="mailbox-icon">✉</span><span class="mailbox-card-title">邮件</span><small>收到的信与新消息</small><b>0</b></button>
-      <button class="mailbox-card" type="button" onclick="openMailboxCard('regret')"><span class="mailbox-icon mailbox-icon-pink">↺</span><span class="mailbox-card-title">检讨书</span><small>需要认真读完的道歉</small><b>0</b></button>
-      <button class="mailbox-card" type="button" onclick="openMailboxCard('trash')"><span class="mailbox-icon">⌫</span><span class="mailbox-card-title">垃圾桶</span><small>暂时放下的内容</small><b>0</b></button>
+      <button class="mailbox-card" type="button" onclick="openMailboxCard('mail')"><span class="mailbox-icon">✉</span><span class="mailbox-card-title">邮件</span><small>收到的信与新消息</small><b id="mailCount">0</b></button>
+      <button class="mailbox-card" type="button" onclick="openMailboxCard('regret')"><span class="mailbox-icon mailbox-icon-pink">↺</span><span class="mailbox-card-title">检讨书</span><small>需要认真读完的道歉</small><b id="regretCount">0</b></button>
+      <button class="mailbox-card" type="button" onclick="openMailboxCard('trash')"><span class="mailbox-icon">⌫</span><span class="mailbox-card-title">垃圾桶</span><small>暂时放下的内容</small><b id="trashCount">0</b></button>
     </div>
-    <div class="mailbox-empty" id="mailboxEmpty">选择一个分类开始查看。</div>
+    <section class="mailbox-inline" id="mailInline">
+      <div class="mailbox-inline-head"><span>邮件</span><small>最近内容</small></div>
+      <div id="mailInlineList" class="mailbox-inline-list"><div class="mailbox-empty">暂时没有邮件。</div></div>
+    </section>
+    <section class="mailbox-inline" id="regretInline">
+      <div class="mailbox-inline-head"><span>检讨书</span><small>最近内容</small></div>
+      <div id="regretInlineList" class="mailbox-inline-list"><div class="mailbox-empty">暂时没有检讨书。</div></div>
+    </section>
   </main>
+  <section class="mailbox-screen" id="mailScreen" hidden><div class="mailbox-screen-head"><button type="button" onclick="closeMailboxScreen()">‹</button><span>邮件</span></div><div id="mailScreenList"></div></section>
+  <section class="mailbox-screen" id="regretScreen" hidden><div class="mailbox-screen-head"><button type="button" onclick="closeMailboxScreen()">‹</button><span>检讨书</span></div><div id="regretScreenList"></div></section>
+  <section class="mailbox-screen" id="trashScreen" hidden><div class="mailbox-screen-head"><button type="button" onclick="closeMailboxScreen()">‹</button><span>垃圾桶</span></div><div id="trashScreenList"></div></section>
 </div>
 <div class="page" id="page-couple"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Couple Space</div><div class="sub-desc">我们的空间</div><div class="card">待开发</div></div></div>
 <div class="page" id="page-mcp" style="background:#fff">
