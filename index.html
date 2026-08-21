@@ -652,7 +652,20 @@ function navTo(name){
 <div class="page" id="page-game"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Game</div><div class="sub-desc">一起玩</div><div class="card">待开发</div></div></div>
 <div class="page" id="page-shop"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Shop</div><div class="sub-desc">小克的小店</div><div class="card">待开发</div></div></div>
 <div class="page" id="page-diary"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Diary</div><div class="sub-desc">日记</div><div class="card">待开发</div></div></div>
-<div class="page" id="page-letter"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Letter</div><div class="sub-desc">情书</div><div class="card">待开发</div></div></div>
+<div class="page mailbox-page" id="page-letter">
+  <div class="header-sub mailbox-header"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div><span>邮箱</span></div>
+  <main class="mailbox-content">
+    <div class="mailbox-kicker">YOUR INBOX</div>
+    <h1>邮箱</h1>
+    <p class="mailbox-desc">把想说的话，放在这里。</p>
+    <div class="mailbox-cards">
+      <button class="mailbox-card" type="button" onclick="openMailboxCard('mail')"><span class="mailbox-icon">✉</span><span class="mailbox-card-title">邮件</span><small>收到的信与新消息</small><b>0</b></button>
+      <button class="mailbox-card" type="button" onclick="openMailboxCard('regret')"><span class="mailbox-icon mailbox-icon-pink">↺</span><span class="mailbox-card-title">检讨书</span><small>需要认真读完的道歉</small><b>0</b></button>
+      <button class="mailbox-card" type="button" onclick="openMailboxCard('trash')"><span class="mailbox-icon">⌫</span><span class="mailbox-card-title">垃圾桶</span><small>暂时放下的内容</small><b>0</b></button>
+    </div>
+    <div class="mailbox-empty" id="mailboxEmpty">选择一个分类开始查看。</div>
+  </main>
+</div>
 <div class="page" id="page-couple"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Couple Space</div><div class="sub-desc">我们的空间</div><div class="card">待开发</div></div></div>
 <div class="page" id="page-mcp" style="background:#fff">
   <!-- 服务器列表 -->
