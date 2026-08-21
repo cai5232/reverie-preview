@@ -4007,3 +4007,62 @@ function renderTodoHistory(){
     ? '<div class="todo-history-title">已完成</div>'+history.map(item=>'<div class="todo-history-item"><span>'+liveStateEscape(item.text)+'</span><time>'+liveStateEscape(item.time)+'</time></div>').join('')
     : '<div class="todo-history-empty">还没有完成记录</div>'
 }
+
+
+function todoMetaLoad(){
+  try{return JSON.parse(localStorage.getItem('reverie_state_todo_meta') || '[{}, {}, {}]')}catch(e){return [{},{},{}]}
+}
+function todoMetaSave(meta){localStorage.setItem('reverie_state_todo_meta',JSON.stringify(meta))}
+function initMemoWidget(){
+  const meta=todoMetaLoad()
+  let history=JSON.parse(localStorage.getItem('reverie_state_todo_history') || '[]')
+  let changed=false
+  for(let i=0;i<3;i++){
+    const input=document.getElementById('todoInput'+i), check=document.getElementById('todoCheck'+i)
+    const item=meta[i] || {}
+    if(item.done && item.text){
+      history.unshift({text:item.text,createdAt:item.createdAt||'',completedAt:item.completedAt||''})
+      meta[i]={}; changed=true
+    }
+    if(input) input.value=item.done?'':(item.text||'')
+    if(check) check.classList.toggle('is-done',!!item.done)
+  }
+  if(changed){
+    localStorage.setItem('reverie_state_todo_history',JSON.stringify(history.slice(0,50)))
+    todoMetaSave(meta)
+  }
+  renderTodoHistoryScreen()
+}
+function saveTodoDraft(index,value){
+  const meta=todoMetaLoad(), item=meta[index] || {}
+  item.text=value
+  if(value.trim() && !item.createdAt) item.createdAt=new Date().toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})
+  if(!value.trim()) meta[index]={}
+  else meta[index]=item
+  todoMetaSave(meta)
+}
+function completeTodo(index){
+  const meta=todoMetaLoad(), item=meta[index]
+  if(!item || !item.text || item.done) return
+  item.done=true
+  item.completedAt=new Date().toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})
+  meta[index]=item; todoMetaSave(meta)
+  const check=document.getElementById('todoCheck'+index)
+  if(check) check.classList.add('is-done')
+}
+function openTodoHistory(){
+  const screen=document.getElementById('todoHistoryScreen')
+  if(screen){screen.hidden=false;renderTodoHistoryScreen()}
+}
+function closeTodoHistory(){
+  const screen=document.getElementById('todoHistoryScreen')
+  if(screen) screen.hidden=true
+}
+function renderTodoHistoryScreen(){
+  const list=document.getElementById('todoHistoryList')
+  if(!list) return
+  const history=JSON.parse(localStorage.getItem('reverie_state_todo_history') || '[]')
+  list.innerHTML=history.length
+    ? history.map(item=>'<div class="todo-history-item"><span>'+liveStateEscape(item.text)+'</span><div><time>创建 '+liveStateEscape(item.createdAt||'—')+'</time><time>完成 '+liveStateEscape(item.completedAt||'—')+'</time></div></div>').join('')
+    : '<div class="todo-history-empty">还没有完成记录</div>'
+}
