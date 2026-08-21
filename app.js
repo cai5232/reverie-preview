@@ -3936,8 +3936,10 @@ function switchStateTab(name,button){
   })
   const emotion=document.getElementById('stateEmotionPanel')
   const calendar=document.getElementById('stateCalendarPanel')
+  const activity=document.getElementById('stateActivityPanel')
   if(emotion) emotion.hidden=name!=='emotion'
   if(calendar) calendar.hidden=name!=='calendar'
+  if(activity) activity.hidden=name!=='activity'
   if(name==='calendar') renderStateCalendar()
 }
 function renderStateCalendar(){
