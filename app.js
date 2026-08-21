@@ -4268,7 +4268,7 @@ function openRecentEntry(id){
   const p=parseMailboxContent(item.content||'')
   const detailDate=formatMailboxDate(p.date||item.created_at||'')
   const detailBody=liveStateEscape(p.body||item.content||'').replace(/\n/g,'<br>')
-  list.innerHTML='<article class="mail-detail"><h1>'+liveStateEscape(p.subject||item.subject||'未命名')+'</h1><div class="mail-detail-body">'+detailBody+'</div><div class="mail-detail-meta"><div><b>发件人</b><span>'+liveStateEscape(p.from||'未知')+'</span></div><div><b>收件人</b><span>'+liveStateEscape(p.to||'言言')+'</span></div><div><b>时间</b><span>'+liveStateEscape(detailDate)+'</span></div></div></article>'
+  list.innerHTML='<article class="mail-detail"><h1>'+liveStateEscape(p.subject||item.subject||'未命名')+'</h1><div class="mail-detail-body">'+detailBody+'</div><div class="mail-detail-meta"><div><b>发件人</b><span>'+liveStateEscape(p.from||'未知')+'</span></div><div><b>收件人</b><span>'+liveStateEscape(p.to||'言言')+'</span></div><div><b>时间</b><span>'+liveStateEscape(detailDate)+'</span></div></div></article><nav class="mail-detail-toolbar" aria-label="邮件操作"><button type="button" aria-label="删除">⌫</button><button type="button" aria-label="分享">□↑</button><button type="button" aria-label="回复">↩</button><button type="button" aria-label="更多">•••</button></nav>';
   const heading=document.getElementById('mailScreenTitle'); if(heading) heading.textContent='邮箱'
   screen.hidden=false
 }
