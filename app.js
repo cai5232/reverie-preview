@@ -4505,3 +4505,24 @@ createMomentComment=function(main,text,target,author){
   const item={id:'c-'+Date.now()+'-'+Math.random().toString(36).slice(2,5),author:from,replyTo,text};
   const list=momentsComments(post.dataset.id);list.push(item);saveMomentsComments(post.dataset.id,list);renderStoredMomentComment(post,item);
 }
+
+/* Moments · grouped comments, self replies and long-press deletion */
+function deleteMomentComment(post,comment){
+  if(!confirm('确定删除这条评论吗？'))return;
+  const id=post.dataset.id,cid=comment.dataset.commentId;
+  saveMomentsComments(id,momentsComments(id).filter(x=>x.id!==cid));comment.remove();
+}
+function bindMomentCommentLongPress(row){
+  let timer=null;
+  row.addEventListener('touchstart',()=>{timer=setTimeout(()=>deleteMomentComment(row.closest('.moment-post'),row),650)},{passive:true});
+  ['touchend','touchmove','touchcancel'].forEach(ev=>row.addEventListener(ev,()=>{if(timer)clearTimeout(timer)},{passive:true}));
+  row.addEventListener('contextmenu',e=>{e.preventDefault();deleteMomentComment(row.closest('.moment-post'),row)});
+}
+const _renderMomentCommentGrouped=renderStoredMomentComment;
+renderStoredMomentComment=function(post,item){
+  const comments=post.querySelector('.moment-comments');if(!comments)return;
+  const author=item.author==='言言'?'Koi':(item.author||'Koi'),replyTo=item.replyTo==='言言'?'Koi':(item.replyTo||'');
+  const row=document.createElement('div');row.className='moment-cai moment-reply moment-comment-item';row.dataset.commentId=item.id;row.dataset.author=author;row.setAttribute('role','button');
+  row.textContent=replyTo?author+'回复'+replyTo+'：'+item.text:author+'：'+item.text;
+  row.onclick=()=>openMomentReplyFromComment(row);comments.appendChild(row);bindMomentCommentLongPress(row);
+}
