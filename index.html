@@ -289,6 +289,12 @@ function navTo(name){
       <div class="setting-row"><span class="setting-label">模型</span><input class="setting-input" id="cfgVisionModel" placeholder="如 gpt-4o-mini"></div>
       <div class="setting-hint">用于朋友圈图片“内容”识别，未配置时仍可查看原图。</div>
     </div></div>
+    <div class="setting-group"><div class="setting-group-label">朋友圈 AI API</div><div class="setting-card">
+      <div class="setting-row"><span class="setting-label">接口地址</span><input class="setting-input" id="cfgMomentsApi" placeholder="OpenAI 兼容 /v1/chat/completions"></div>
+      <div class="setting-row"><span class="setting-label">API 密钥</span><input class="setting-input secret" id="cfgMomentsKey" placeholder="可选"></div>
+      <div class="setting-row"><span class="setting-label">模型</span><input class="setting-input" id="cfgMomentsModel" placeholder="如 claude-sonnet-4.5"></div>
+      <div class="setting-hint">朋友圈 AI 使用独立接口，不绑定任何固定服务商；AI 身份显示为 Shenyu。</div>
+    </div></div>
     <div class="setting-group"><div class="setting-group-label">系统</div><div class="setting-card">
       <div class="setting-row"><span class="setting-label">消息通知</span><div class="toggle" id="cfgNotify" onclick="clickToggle('cfgNotify')"><div class="toggle-knob"></div></div></div>
       <div class="setting-row"><span class="setting-label">后台保活</span><div class="toggle" id="cfgKeepalive" onclick="clickToggle('cfgKeepalive')"><div class="toggle-knob"></div></div></div>
