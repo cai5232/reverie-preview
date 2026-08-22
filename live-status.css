@@ -1100,3 +1100,27 @@
   height:26px!important;
   overflow:visible!important;
 }
+
+/* Moments · keep bottom actions fully visible */
+.moment-comments .moment-comment,
+.moment-comments .moment-more{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  align-self:flex-start!important;
+  line-height:0!important;
+  overflow:visible!important;
+  clip:unset!important;
+  clip-path:none!important;
+}
+.moment-comments .moment-comment svg{
+  display:block!important;
+  width:22px!important;
+  height:22px!important;
+  overflow:visible!important;
+  flex:none!important;
+}
+.moment-comments .moment-more{
+  font-size:13px!important;
+  line-height:26px!important;
+}
