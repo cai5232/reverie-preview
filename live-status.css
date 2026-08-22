@@ -862,3 +862,30 @@
     height:calc(286px + env(safe-area-inset-top,0px))!important;
   }
 }
+
+
+/* Moments · compact avatar and author meta */
+.moment-post{gap:10px!important}
+.moment-avatar{
+  width:36px!important;
+  height:36px!important;
+  border-radius:50%!important;
+}
+.moment-main h2{
+  margin:0 0 2px!important;
+  font-size:13px!important;
+  line-height:1.25!important;
+}
+.moment-main p{
+  font-size:14px!important;
+  line-height:1.55!important;
+}
+.moment-meta{
+  margin-top:6px!important;
+  min-height:16px!important;
+  font-size:10px!important;
+}
+.moment-meta button{
+  padding:2px 7px!important;
+  font-size:10px!important;
+}
