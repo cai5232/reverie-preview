@@ -3118,7 +3118,12 @@ async function xkAgenticLoop(sendOptions, mcpServerMap, round, memCtx){
       }
     }
     if(!streamBlock&&(thinkBuf||bodyBuf)){xkRenderAI(bodyBuf||'(´・ω・`)',thinkBuf||null)}
-    const histContent=thinkBuf?`[THINK]${thinkBuf}[/THINK]${bodyBuf}`:bodyBuf
+    const momentRe=/(?:<moment>|\[MOMENT\])([\s\S]*?)(?:<\/moment>|\[\/MOMENT\])/gi
+    let cleanBody=bodyBuf
+    let mm;while((mm=momentRe.exec(bodyBuf))){if(mm[1].trim())storeAIMoment(mm[1].trim())}
+    momentRe.lastIndex=0;cleanBody=bodyBuf.replace(momentRe,'').trim()
+    // xiaoke 主聊天链路也必须保存清理后的正文
+    const histContent=thinkBuf?\`[THINK]\${thinkBuf}[/THINK]\${cleanBody}\`:cleanBody
     xkHistory.push({role:'assistant',content:histContent,tokens:totalTokens||0})
     if(xkHistory.length>60)xkHistory=xkHistory.slice(-60)
     localStorage.setItem('xk_history',JSON.stringify(xkHistory))
@@ -3435,7 +3440,9 @@ document.addEventListener('DOMContentLoaded',()=>{
         }else if(m.role==='assistant'){
           const raw=m.content||''
           if(!raw)return
-          let heart='',body=raw
+          const hmMoment=raw.match(/(?:<moment>|\[MOMENT\])([\s\S]*?)(?:<\/moment>|\[\/MOMENT\])/i)
+          if(hmMoment&&hmMoment[1].trim())storeAIMoment(hmMoment[1].trim())
+          let heart='',body=raw.replace(/(?:<moment>|\[MOMENT\])[\s\S]*?(?:<\/moment>|\[\/MOMENT\])/gi,'').trim()
           // 兼容 [THINK]...[/THINK] 和 [THINK]...[/THINK> 两种闭合格式
           const hm=raw.match(/\[THINK\]([\s\S]*?)\[\/THINK[\]>]/)
           if(hm){heart=hm[1].trim();body=raw.slice(hm.index+hm[0].length).trim()}
