@@ -7,10 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <script>
 function openSidebar(){
-  var s=document.getElementById('sidebar');
-  var o=document.getElementById('overlay');
-  if(s)s.classList.add('open');
-  if(o)o.classList.add('open');
+  if(typeof navTo==='function')navTo('home');
 }
 function closeSidebar(){
   var s=document.getElementById('sidebar');
