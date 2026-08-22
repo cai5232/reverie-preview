@@ -4524,7 +4524,7 @@ renderStoredMomentComment=function(post,item){
   const author=item.author==='言言'?'Koi':(item.author||'Koi'),replyTo=item.replyTo==='言言'?'Koi':(item.replyTo||'');
   const row=document.createElement('div');row.className='moment-cai moment-reply moment-comment-item';row.dataset.commentId=item.id;row.dataset.author=author;row.setAttribute('role','button');
   row.textContent=replyTo?author+'回复'+replyTo+'：'+item.text:author+'：'+item.text;
-  row.onclick=()=>openMomentReplyFromComment(row);comments.appendChild(row);bindMomentCommentLongPress(row);
+  row.onclick=()=>openMomentReplyFromComment(row);comments.appendChild(row);comments.classList.add('has-items');bindMomentCommentLongPress(row);
 }
 
 /* Moments · keep action icons outside the grouped comment surface */
