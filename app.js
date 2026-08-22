@@ -3123,8 +3123,10 @@ async function xkAgenticLoop(sendOptions, mcpServerMap, round, memCtx){
     let mm;while((mm=momentRe.exec(bodyBuf))){if(mm[1].trim())storeAIMoment(mm[1].trim())}
     momentRe.lastIndex=0;cleanBody=bodyBuf.replace(momentRe,'').trim()
     if(streamBlock&&cleanBody!==bodyBuf){
-      streamBlock.querySelectorAll('.xk-ai-para').forEach(p=>{p.textContent=p.textContent.replace(momentRe,'');momentRe.lastIndex=0});
-      xkApplyMarkdown(streamBlock)
+      // 标记可能跨越多个流式段落，清理后重建正文节点
+      streamBlock.querySelectorAll('.xk-ai-para').forEach(p=>p.remove());
+      const cleanPara=document.createElement('p');cleanPara.className='xk-ai-para';cleanPara.textContent=cleanBody;
+      streamBlock.appendChild(cleanPara);xkApplyMarkdown(streamBlock);
     }
     // xiaoke 主聊天链路也必须保存清理后的正文
     const histContent=thinkBuf?`[THINK]${thinkBuf}[/THINK]${cleanBody}`:cleanBody
