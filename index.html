@@ -365,7 +365,10 @@ function navTo(name){
   <header class="moments-topbar">
     <button class="moments-menu" type="button" onclick="openSidebar()" aria-label="打开侧边栏"><svg viewBox="0 0 22 16" aria-hidden="true"><path d="M2 2h18M2 8h14M2 14h10" /></svg></button>
     <span class="moments-title">朋友圈</span>
-    <button class="moments-add" type="button" onclick="openMomentComposer()" aria-label="发布动态"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></button>
+    <div class="moments-actions">
+      <button class="moments-refresh" type="button" onclick="refreshMoments()" aria-label="刷新朋友圈"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0 2 5" /><path d="M20 5v6h-6" /></svg></button>
+      <button class="moments-add" type="button" onclick="openMomentComposer()" aria-label="发布动态"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></button>
+    </div>
   </header>
   <main class="moments-scroll">
     <section class="moments-cover"><img class="moments-cover-image" src="https://i.ibb.co/5gC9JPHK/IMG-8716.jpg" alt=""><div class="moments-cover-shade"></div></section>
