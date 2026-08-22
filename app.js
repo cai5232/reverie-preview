@@ -4366,3 +4366,31 @@ if(typeof _navToMomentsOriginal==='function'){
     return _navToMomentsOriginal(name);
   };
 }
+
+/* Moments comment identity and threaded replies */
+function openMomentReplyFromComment(comment){
+  const main=comment&&comment.closest('.moment-main'); if(!main)return;
+  const target=comment.dataset.author||'Koi';
+  let box=main.querySelector('.moment-reply-editor');
+  if(!box){box=document.createElement('div');box.className='moment-reply-editor';box.innerHTML='<span class="moment-reply-target"></span><input type="text" placeholder="回复评论…" maxlength="200"><button type="button">发送</button>';box.querySelector('button').onclick=function(){sendMomentReply(this)};main.appendChild(box)}
+  box.dataset.replyTo=target; box.querySelector('.moment-reply-target').textContent='回复 '+target;
+  box.hidden=false; box.querySelector('input').focus();
+}
+const _openMomentReplyPrevious=openMomentReply;
+openMomentReply=function(button){
+  const main=button&&button.closest('.moment-main'); if(!main)return;
+  const target=(main.querySelector('.moment-line h2')?.textContent||'Koi').trim();
+  let box=main.querySelector('.moment-reply-editor');
+  if(!box){box=document.createElement('div');box.className='moment-reply-editor';box.innerHTML='<span class="moment-reply-target"></span><input type="text" placeholder="回复这条动态…" maxlength="200"><button type="button">发送</button>';box.querySelector('button').onclick=function(){sendMomentReply(this)};main.appendChild(box)}
+  box.dataset.replyTo=target; box.querySelector('.moment-reply-target').textContent='回复 '+target;
+  box.hidden=false; box.querySelector('input').focus();
+}
+const _sendMomentReplyPrevious=sendMomentReply;
+sendMomentReply=function(button){
+  const box=button&&button.closest('.moment-reply-editor'), input=box&&box.querySelector('input'), text=input&&input.value.trim();
+  if(!text)return;
+  const main=box.closest('.moment-main'), to=box.dataset.replyTo||'Koi';
+  const reply=document.createElement('div'); reply.className='moment-cai moment-reply'; reply.setAttribute('role','button'); reply.dataset.author='言言'; reply.textContent='言言回复'+to+'：'+text; reply.onclick=function(){openMomentReplyFromComment(this)};
+  main.appendChild(reply); box.remove();
+}
+window.openMomentReply=openMomentReply;window.openMomentReplyFromComment=openMomentReplyFromComment;window.sendMomentReply=sendMomentReply;
