@@ -4660,21 +4660,25 @@ const _deleteMomentStable=deleteMomentWithConfirm;
 deleteMomentWithConfirm=function(post){
   if(!post||!confirm('确定删除这条动态吗？'))return;
   const id=post.dataset.id,deleted=deletedMomentIds();
+  const deletedText=(post.querySelector('.moment-body')?.textContent||'').trim();
   if(!deleted.includes(id)){deleted.push(id);saveDeletedMomentIds(deleted)}
+  if(deletedText){const texts=deletedMomentTexts();if(!texts.includes(deletedText)){texts.push(deletedText);saveDeletedMomentTexts(texts)}}
   saveMomentsStore(momentsStore().filter(x=>x.id!==id));
   localStorage.removeItem('reverie_moment_comments_'+id);
   post.remove();
 };
 loadStoredMoments=function(){
   const feed=document.querySelector('#page-moments .moments-feed');if(!feed)return;
-  const deleted=new Set(deletedMomentIds());
+  const deleted=new Set([...deletedMomentIds(),...deletedMoments()]);
+  const deletedTexts=new Set(deletedMomentTexts());
   feed.querySelectorAll('.moment-post').forEach((post,i)=>{
     if(!post.dataset.id)post.dataset.id='seed-'+i;
-    if(deleted.has(post.dataset.id)){post.remove();return}
-    setMomentAuthor(post,post.dataset.author||'Shenyu');ensureMomentActions(post);
+    const body=(post.querySelector('.moment-body')?.textContent||'').trim();
+    if(deleted.has(post.dataset.id)||deletedTexts.has(body)){post.remove();return}
+    setMomentAuthor(post,post.dataset.author||'Koi');ensureMomentActions(post);
   });
   momentsStore().forEach(item=>{
-    if(deleted.has(item.id))return;
+    if(deleted.has(item.id)||deletedTexts.has(String(item.text||'').trim()))return;
     const existing=feed.querySelector('[data-id="'+item.id+'"]');
     if(existing){setMomentAuthor(existing,item.author||'Koi');return}
     const post=buildMomentPost(item);feed.prepend(post);ensureMomentActions(post);
@@ -4701,7 +4705,7 @@ async function requestMomentsAI(prompt){
   const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json',...(cfgM.key?{Authorization:'Bearer '+cfgM.key}:{})},body:JSON.stringify({
     model:cfgM.model||'gpt-4o-mini',
     messages:[
-      {role:'system',content:'你是 Shenyu。只有在确实有内容时才生成一条简短朋友圈动态，不要输出思考过程、标签或 JSON。'},
+      {role:'system',content:'你是 Shenyu。你可以读取当前朋友圈动态和评论；需要回答评论时直接基于上下文回答，不要说看不到。只有在确实有内容时才生成一条简短朋友圈动态，不要输出思考过程、标签或 JSON。\\n\\n'+(buildMomentsContext()||'')},
       {role:'user',content:prompt}
     ],
     temperature:0.8,
@@ -4713,7 +4717,7 @@ async function requestMomentsAI(prompt){
 }
 async function publishAIMoment(prompt,images=[]){
   const text=await requestMomentsAI(prompt);
-  if(!text)return null;
+  if(!text||deletedMomentTexts().includes(text.trim()))return null;
   const item={id:'post-'+Date.now(),author:'Shenyu',text,images:Array.isArray(images)?images:[],createdAt:new Date().toISOString()};
   const list=momentsStore();list.unshift(item);saveMomentsStore(list);
   const feed=document.querySelector('#page-moments .moments-feed');
