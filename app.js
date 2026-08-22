@@ -4626,7 +4626,7 @@ async function requestMomentsAI(prompt){
   })});
   if(!res.ok)throw new Error('Moments API HTTP '+res.status);
   const data=await res.json();
-  return String(data?.choices?.[0]?.message?.content||'').replace(/<think>[\\s\\S]*?<\\/think>/gi,'').trim();
+  return String(data?.choices?.[0]?.message?.content||'').replace(/<think>[\s\S]*?<\/think>/gi,'').trim();
 }
 async function publishAIMoment(prompt,images=[]){
   const text=await requestMomentsAI(prompt);
