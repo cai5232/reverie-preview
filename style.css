@@ -1309,14 +1309,3 @@ html,body{background:transparent!important}
 #page-xiaoke .xk-bar{bottom:74px!important;}
 #page-xiaoke>div:nth-of-type(2){overflow:hidden!important;}
 #page-xiaoke .xk-stream{overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;scroll-padding-bottom:118px!important;padding-bottom:118px!important;-webkit-overflow-scrolling:touch!important;}
-
-/* Shared milk-strawberry palette for State, Home and Setting */
-#page-state,#page-home,#page-setting,#page-setting-api,#page-memory2,#page-mcp{background:#FFF3E8!important;color:#3D3533!important;}
-#page-state .state-nav,#page-home .hub-header,#page-setting .hub-header{background:rgba(255,243,232,.88)!important;border-color:rgba(242,157,176,.28)!important;}
-#page-state .memo-card,#page-state .state-report,#page-state .state-note-card,#page-state .todo-history-screen{background:rgba(255,255,255,.72)!important;border-color:rgba(242,157,176,.35)!important;}
-#page-state .state-track{background:#FAD8DF!important} #page-state .state-track i{background:#F29DB0!important}
-#page-state .state-tab.active,#page-state .todo-history-btn{color:#F29DB0!important}
-#page-home .hub-card,#page-home .daily-card,#page-setting .setting-card{background:rgba(255,255,255,.78)!important;border-color:rgba(242,157,176,.35)!important;box-shadow:0 8px 24px rgba(242,157,176,.12)!important;}
-#page-home .hub-icon,#page-setting .setting-icon{color:#F29DB0!important}
-#page-home .hub-card-title,#page-setting .setting-card-title{color:#3D3533!important}
-#page-state input,#page-state button,#page-home button,#page-setting button{accent-color:#F29DB0!important}
