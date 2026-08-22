@@ -238,6 +238,10 @@ function renderChat(){
       let bodyText=m.content
       const hm=m.content.match(/\[心声\]([\s\S]*?)\[\/心声\]/)
       if(hm){heartText=hm[1].trim();bodyText=m.content.slice(hm.index+hm[0].length).trim()}
+      // 兼容模型返回的两种朋友圈标记，并从历史聊天中隐藏
+      const oldMomentMatches=[...bodyText.matchAll(/(?:<moment>|\[MOMENT\])([\\s\\S]*?)(?:<\\/moment>|\[\\/MOMENT\])/gi)]
+      oldMomentMatches.forEach(mo=>storeAIMoment(mo[1].trim()))
+      bodyText=bodyText.replace(/(?:<moment>|\[MOMENT\])[\\s\\S]*?(?:<\\/moment>|\[\\/MOMENT\])/gi,'').trim()
       let segs=bodyText.split(/\n\n/).map(s=>s.trim()).filter(Boolean)
       if(segs.length<2)segs=bodyText.split(/\n/).map(s=>s.trim()).filter(Boolean)
       if(!segs.length)segs=[bodyText]
