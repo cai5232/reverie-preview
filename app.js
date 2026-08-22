@@ -4326,3 +4326,31 @@ function previewMomentImages(event){const grid=document.getElementById('momentIm
 function openMomentImage(src){let overlay=document.getElementById('momentImageViewer');if(!overlay){overlay=document.createElement('div');overlay.id='momentImageViewer';overlay.className='moment-image-viewer';overlay.innerHTML='<button class="moment-viewer-close" type="button">×</button><div class="moment-viewer-tabs"><button class="active" data-view="original">原图</button><button data-view="content">内容</button></div><img class="moment-viewer-image" alt=""><p class="moment-viewer-content" hidden>识图结果将在配置识图 API 后显示。</p>';document.body.appendChild(overlay);overlay.querySelector('.moment-viewer-close').onclick=()=>overlay.remove();overlay.querySelectorAll('.moment-viewer-tabs button').forEach(btn=>btn.onclick=()=>{overlay.querySelectorAll('.moment-viewer-tabs button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');const content=btn.dataset.view==='content';overlay.querySelector('.moment-viewer-image').hidden=content;overlay.querySelector('.moment-viewer-content').hidden=!content})}overlay.querySelector('.moment-viewer-image').src=src;overlay.querySelector('.moment-viewer-content').textContent='识图结果将在配置识图 API 后显示。';overlay.style.display='flex'}
 function publishMoment(){const text=(document.getElementById('momentComposeText')?.value||'').trim();if(!text&&!momentSelectedImages.length){showToast('请先写点内容');return}const feed=document.querySelector('#page-moments .moments-feed');if(!feed)return;const post=document.createElement('article');post.className='moment-post';post.innerHTML='<img class="moment-avatar" src="https://i.ibb.co/Q7Lcr1yw/IMG-6805.jpg" alt=""><div class="moment-main"><div class="moment-line"><h2>Koi</h2><span class="moment-date"></span><time>刚刚</time></div><p class="moment-body"></p><div class="moment-post-images"></div><button class="moment-comment" type="button" aria-label="回复"><svg viewBox="0 0 24 24"><path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.4 8.4 0 0 1-3.5-.8L4 19.5 5.4 15.7A7.4 7.4 0 0 1 4.5 12 7.5 7.5 0 1 1 20 11.5Z"/></svg></button></div>';const now=new Date();post.querySelector('.moment-date').textContent=now.getFullYear()+'/'+(now.getMonth()+1)+'/'+now.getDate();post.querySelector('.moment-body').textContent=text;const images=post.querySelector('.moment-post-images');momentSelectedImages.forEach(src=>{const img=document.createElement('img');img.className='moment-post-image';img.src=src;img.alt='动态图片';img.onclick=()=>openMomentImage(src);images.appendChild(img)});post.querySelector('.moment-comment').onclick=function(){openMomentReply(this)};feed.prepend(post);momentSelectedImages=[];closeMomentComposer();showToast('已发布')}
 window.openMomentComposer=openMomentComposer;window.closeMomentComposer=closeMomentComposer;window.previewMomentImages=previewMomentImages;window.openMomentImage=openMomentImage;window.publishMoment=publishMoment;window.openMomentReply=openMomentReply;window.sendMomentReply=sendMomentReply
+
+/* Optional vision recognition for Moments */
+async function recognizeMomentImage(src, overlay){
+  const out=overlay.querySelector('.moment-viewer-content');
+  const api=(localStorage.getItem('cfg_vision_api')||'').trim();
+  if(!api){out.textContent='未配置识图 API，请到设置中填写接口地址。';return}
+  out.textContent='识图中…';
+  const key=(localStorage.getItem('cfg_vision_key')||localStorage.getItem('cfg_key')||'').trim();
+  const model=(localStorage.getItem('cfg_vision_model')||'gpt-4o-mini').trim();
+  const endpoint=api.replace(/\/$/,'').endsWith('/chat/completions')?api.replace(/\/$/,''):api.replace(/\/$/,'')+'/chat/completions';
+  try{
+    const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json',...(key?{Authorization:'Bearer '+key}:{})},body:JSON.stringify({model,messages:[{role:'user',content:[{type:'text',text:'请用中文简洁描述这张图片中的主要内容。'},{type:'image_url',image_url:{url:src}}]}],max_tokens:300})});
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    const data=await res.json(); const text=data?.choices?.[0]?.message?.content||'未返回识图结果。';
+    out.textContent=String(text).replace(/\[\s*\/?.*?\]/g,'').trim();
+  }catch(e){out.textContent='识图失败，请检查 API 地址、密钥和模型配置。'}
+}
+const _openMomentImageBase=openMomentImage;
+openMomentImage=function(src){
+  _openMomentImageBase(src);
+  const overlay=document.getElementById('momentImageViewer'); if(!overlay)return;
+  const contentBtn=overlay.querySelector('[data-view="content"]');
+  if(contentBtn && !contentBtn.dataset.visionBound){
+    contentBtn.dataset.visionBound='1';
+    contentBtn.addEventListener('click',()=>recognizeMomentImage(src,overlay));
+  }
+}
+window.openMomentImage=openMomentImage;
