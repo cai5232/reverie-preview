@@ -20,7 +20,8 @@ function navTo(name){
   var t=document.getElementById('page-'+name);
   if(t)t.classList.add('active');
   document.querySelectorAll('.bottom-nav-item').forEach(function(el){
-    var activeName=(name==='setting-api'||name==='memory2'||name==='mcp')?'setting':name;
+    var homePages=['letter','music','novel','game','dream','diary','shop','forum','couple'];
+    var activeName=(name==='setting-api'||name==='memory2'||name==='mcp')?'setting':(homePages.indexOf(name)>=0?'home':name);
     el.classList.toggle('active',el.getAttribute('data-nav')===activeName);
   });
   closeSidebar();
@@ -99,7 +100,7 @@ function navTo(name){
   white-space:pre-wrap;word-break:break-word;
 }
 </style>
-<link rel="stylesheet" href="style.css?v=148">
+<link rel="stylesheet" href="style.css?v=149">
 <link rel="stylesheet" href="live-status.css?v=38">
 </head>
 <body>
