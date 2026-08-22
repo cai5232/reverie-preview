@@ -4526,3 +4526,34 @@ renderStoredMomentComment=function(post,item){
   row.textContent=replyTo?author+'回复'+replyTo+'：'+item.text:author+'：'+item.text;
   row.onclick=()=>openMomentReplyFromComment(row);comments.appendChild(row);bindMomentCommentLongPress(row);
 }
+
+/* Moments · keep action icons outside the grouped comment surface */
+ensureMomentActions=function(post){
+  const main=post&&post.querySelector('.moment-main'); if(!main)return;
+  if(!post.dataset.id)post.dataset.id='seed-'+Math.random().toString(36).slice(2,9);
+  let comments=main.querySelector('.moment-comments');
+  if(!comments){comments=document.createElement('div');comments.className='moment-comments';main.appendChild(comments)}
+  let actions=main.querySelector('.moment-actions');
+  if(!actions){actions=document.createElement('div');actions.className='moment-actions';main.insertBefore(actions,comments)}
+  [main.querySelector(':scope > .moment-comment'),main.querySelector(':scope > .moment-more'),comments.querySelector('.moment-comment'),comments.querySelector('.moment-more')].forEach(el=>{
+    if(el)actions.appendChild(el);
+  });
+  if(!actions.querySelector('.moment-comment')){
+    const cb=document.createElement('button');cb.className='moment-comment';cb.type='button';cb.setAttribute('aria-label','评论');cb.innerHTML='<svg viewBox="0 0 24 24"><path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.4 8.4 0 0 1-3.5-.8L4 19.5l1.4-3.8A7.4 7.4 0 1 1 20 11.5Z"/></svg>';cb.onclick=()=>openMomentReply(cb);actions.appendChild(cb);
+  }
+  if(!actions.querySelector('.moment-more')){
+    const more=document.createElement('button');more.className='moment-more';more.type='button';more.setAttribute('aria-label','更多');more.textContent='•••';more.onclick=()=>openMomentMenu(post,more);actions.appendChild(more);
+  }
+  momentsComments(post.dataset.id).forEach(item=>{if(!comments.querySelector('[data-comment-id="'+item.id+'"]'))renderStoredMomentComment(post,item)});
+  comments.classList.toggle('has-items',!!comments.querySelector('.moment-comment-item'));
+};
+const _openMomentReplyStable=openMomentReply;
+openMomentReply=function(button){
+  const main=button&&button.closest('.moment-main'); if(!main)return;
+  const target=(main.querySelector('.moment-line h2')?.textContent||'Koi').trim();
+  let box=main.querySelector('.moment-reply-editor');
+  if(!box){box=document.createElement('div');box.className='moment-reply-editor';box.innerHTML='<span class="moment-reply-target"></span><input type="text" placeholder="回复这条动态…" maxlength="200"><button type="button">发送</button>';box.querySelector('button').onclick=function(){sendMomentReply(this)};main.appendChild(box)}
+  box.dataset.replyTo=target; box.dataset.replyComment=''; box.querySelector('.moment-reply-target').textContent='回复 '+target;
+  box.hidden=false; box.querySelector('input').focus();
+};
+setTimeout(()=>document.querySelectorAll('.moment-post').forEach(ensureMomentActions),0);
