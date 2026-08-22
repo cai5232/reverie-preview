@@ -1236,3 +1236,14 @@
   padding:5px 0!important;
   background:transparent!important;
 }
+
+/* Moments · compact action icons */
+.moment-actions{gap:10px!important;min-height:28px!important}
+.moment-actions .moment-comment,
+.moment-actions .moment-more{
+  width:24px!important;height:24px!important;
+  min-width:24px!important;min-height:24px!important;
+  padding:1px!important;
+}
+.moment-actions .moment-comment svg{width:19px!important;height:19px!important}
+.moment-actions .moment-more{font-size:13px!important;line-height:20px!important;letter-spacing:1px!important}
