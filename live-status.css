@@ -623,3 +623,62 @@
   background:var(--strawberry-milk)!important;
 }
 .state-page .todo-history-btn{color:#806e67!important}
+
+
+/* State · Pearl Ribbon palette */
+.state-page{
+  --pearl-pink:#F0D5DC!important;
+  --pearl-white:#F9F7FA!important;
+  --pearl-gray:#B0AFB1!important;
+  --pearl-blush:#FDE6EC!important;
+  background:var(--pearl-white)!important;
+  color:var(--pearl-gray)!important;
+}
+.state-page .state-nav,
+.state-page .state-content,
+.state-page .state-report{background:var(--pearl-white)!important}
+.state-page .state-nav{border-bottom-color:rgba(176,175,177,.22)!important}
+.state-page .state-menu-button,
+.state-page .state-nav-title,
+.state-page .state-bars-top h1,
+.state-page .state-cn,
+.state-page .state-note-title{color:var(--pearl-gray)!important}
+.state-page .state-kicker,
+.state-page .state-bars-caption,
+.state-page .state-en,
+.state-page .state-sync,
+.state-page .state-note-card small,
+.state-page .state-bar-row b{color:var(--pearl-gray)!important;opacity:.78}
+.state-page .state-tabs{
+  border-top-color:rgba(176,175,177,.28)!important;
+  border-bottom-color:rgba(176,175,177,.28)!important;
+}
+.state-page .state-tab{color:var(--pearl-gray)!important;opacity:.82}
+.state-page .state-tab.active{color:var(--pearl-gray)!important;opacity:1}
+.state-page .state-tab.active:after{background:var(--pearl-pink)!important}
+.state-page .state-live-dot{
+  background:var(--pearl-pink)!important;
+  box-shadow:0 0 0 5px rgba(240,213,220,.45)!important;
+}
+.state-page .state-track{background:rgba(176,175,177,.25)!important}
+.state-page .state-track i{background:var(--pearl-pink)!important}
+.state-page .state-note-card,
+.state-page .memo-card,
+.state-page .todo-card{
+  background:rgba(249,247,250,.74)!important;
+  border-color:rgba(176,175,177,.34)!important;
+}
+.state-page .state-note-card:before{background:rgba(176,175,177,.48)!important}
+.state-page .state-note-card:nth-child(2):before{background:var(--pearl-pink)!important}
+.state-page .state-note-icon{border-color:rgba(176,175,177,.5)!important;color:var(--pearl-gray)!important}
+.state-page .state-note-icon-pink{border-color:var(--pearl-pink)!important;color:var(--pearl-gray)!important}
+.state-page .todo-check{
+  border-color:rgba(176,175,177,.55)!important;
+  background:var(--pearl-white)!important;
+}
+.state-page .todo-check:active,
+.state-page .todo-check.is-done{
+  border-color:var(--pearl-pink)!important;
+  background:var(--pearl-pink)!important;
+}
+.state-page .todo-history-btn{color:var(--pearl-gray)!important}
