@@ -4373,7 +4373,7 @@ function openMomentReplyFromComment(comment){
   const target=comment.dataset.author||'Koi';
   let box=main.querySelector('.moment-reply-editor');
   if(!box){box=document.createElement('div');box.className='moment-reply-editor';box.innerHTML='<span class="moment-reply-target"></span><input type="text" placeholder="回复评论…" maxlength="200"><button type="button">发送</button>';box.querySelector('button').onclick=function(){sendMomentReply(this)};main.appendChild(box)}
-  box.dataset.replyTo=target; box.querySelector('.moment-reply-target').textContent='回复 '+target;
+  box.dataset.replyTo=target; box.dataset.replyComment='1'; box.querySelector('.moment-reply-target').textContent='回复 '+target;
   box.hidden=false; box.querySelector('input').focus();
 }
 const _openMomentReplyPrevious=openMomentReply;
@@ -4420,7 +4420,7 @@ sendMomentReply=function(button){
   const box=button&&button.closest('.moment-reply-editor'), input=box&&box.querySelector('input'), text=input&&input.value.trim();
   if(!text)return;
   const main=box.closest('.moment-main'), target=box.dataset.replyTo||'Koi';
-  createMomentComment(main,text,target); box.remove();
+  createMomentComment(main,text,target,undefined,box.dataset.replyComment==='1'); box.remove();
 }
 window.openMomentReplyFromComment=openMomentReplyFromComment;window.sendMomentReply=sendMomentReply;
 
@@ -4499,9 +4499,9 @@ renderStoredMomentComment=function(post,item){
   row.textContent=replyTo?author+'回复'+replyTo+'：'+item.text:author+'：'+item.text;
   row.onclick=()=>openMomentReplyFromComment(row);comments.appendChild(row);
 }
-createMomentComment=function(main,text,target,author){
+createMomentComment=function(main,text,target,author,forceReply){
   const post=main.closest('.moment-post');if(!post)return;
-  const from=author||'Koi',replyTo=target==='Koi'?'':(target||'');
+  const from=author||'Koi',replyTo=forceReply?(target||''):(target==='Koi'?'':(target||''));
   const item={id:'c-'+Date.now()+'-'+Math.random().toString(36).slice(2,5),author:from,replyTo,text};
   const list=momentsComments(post.dataset.id);list.push(item);saveMomentsComments(post.dataset.id,list);renderStoredMomentComment(post,item);
 }
