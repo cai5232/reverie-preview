@@ -4423,3 +4423,62 @@ sendMomentReply=function(button){
   createMomentComment(main,text,target); box.remove();
 }
 window.openMomentReplyFromComment=openMomentReplyFromComment;window.sendMomentReply=sendMomentReply;
+
+/* Moments · persistence, post container and actions */
+function momentsStore(){try{return JSON.parse(localStorage.getItem('reverie_moments_posts')||'[]')}catch(e){return[]}}
+function saveMomentsStore(items){localStorage.setItem('reverie_moments_posts',JSON.stringify(items))}
+function momentsComments(id){try{return JSON.parse(localStorage.getItem('reverie_moment_comments_'+id)||'[]')}catch(e){return[]}}
+function saveMomentsComments(id,items){localStorage.setItem('reverie_moment_comments_'+id,JSON.stringify(items))}
+function ensureMomentActions(post){
+  const main=post.querySelector('.moment-main'); if(!main)return;
+  if(!post.dataset.id)post.dataset.id='seed-'+Math.random().toString(36).slice(2,9);
+  let comments=main.querySelector('.moment-comments');
+  if(!comments){comments=document.createElement('div');comments.className='moment-comments';main.appendChild(comments)}
+  const oldComment=main.querySelector(':scope > .moment-comment');
+  if(oldComment){oldComment.remove();comments.appendChild(oldComment)}
+  if(!comments.querySelector('.moment-comment')){
+    const cb=document.createElement('button');cb.className='moment-comment';cb.type='button';cb.setAttribute('aria-label','评论');cb.innerHTML='<svg viewBox="0 0 24 24"><path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.4 8.4 0 0 1-3.5-.8L4 19.5l1.4-3.8A7.4 7.4 0 0 1 4.5 12 7.5 7.5 0 1 1 20 11.5Z"/></svg>';cb.onclick=()=>openMomentReply(cb);comments.appendChild(cb)
+  }
+  if(!comments.querySelector('.moment-more')){
+    const more=document.createElement('button');more.className='moment-more';more.type='button';more.setAttribute('aria-label','更多');more.textContent='•••';more.onclick=()=>deleteMomentWithConfirm(post);comments.appendChild(more)
+  }
+  momentsComments(post.dataset.id).forEach(item=>{if(!comments.querySelector('[data-comment-id="'+item.id+'"]'))renderStoredMomentComment(post,item)})
+}
+function renderStoredMomentComment(post,item){
+  const comments=post.querySelector('.moment-comments'); if(!comments)return;
+  const row=document.createElement('div');row.className='moment-cai moment-reply moment-comment-item';row.dataset.commentId=item.id;row.dataset.author=item.author;row.setAttribute('role','button');row.textContent=item.replyTo?item.author+'回复'+item.replyTo+'：'+item.text:item.author+'：'+item.text;row.onclick=()=>openMomentReplyFromComment(row);comments.appendChild(row)
+}
+function deleteMomentWithConfirm(post){
+  if(!confirm('确定删除这条动态吗？'))return;
+  const id=post.dataset.id;saveMomentsStore(momentsStore().filter(x=>x.id!==id));localStorage.removeItem('reverie_moment_comments_'+id);post.remove();
+}
+function loadStoredMoments(){
+  const feed=document.querySelector('#page-moments .moments-feed');if(!feed)return;
+  feed.querySelectorAll('.moment-post').forEach((post,i)=>{if(!post.dataset.id)post.dataset.id='seed-'+i;ensureMomentActions(post)});
+  momentsStore().forEach(item=>{if(feed.querySelector('[data-id="'+item.id+'"]'))return;const post=buildMomentPost(item);feed.prepend(post);ensureMomentActions(post)})
+}
+function buildMomentPost(item){
+  const post=document.createElement('article');post.className='moment-post';post.dataset.id=item.id;
+  post.innerHTML='<img class="moment-avatar" src="https://i.ibb.co/Q7Lcr1yw/IMG-6805.jpg" alt=""><div class="moment-main"><div class="moment-line"><h2>Koi</h2><span class="moment-date"></span><time hidden></time></div><p class="moment-body"></p><div class="moment-post-images"></div><div class="moment-comments"></div></div>';
+  const d=new Date(item.createdAt||Date.now());post.querySelector('.moment-date').textContent=d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate();post.querySelector('.moment-body').textContent=item.text||'';
+  const images=post.querySelector('.moment-post-images');(item.images||[]).forEach(src=>{const img=document.createElement('img');img.className='moment-post-image';img.src=src;img.alt='动态图片';img.onclick=()=>openMomentImage(src);images.appendChild(img)});return post
+}
+function persistCurrentComment(main,text,target){
+  const post=main.closest('.moment-post');if(!post)return;
+  const item={id:'c-'+Date.now()+'-'+Math.random().toString(36).slice(2,5),author:'言言',replyTo:target==='Koi'?'':target,text};
+  const list=momentsComments(post.dataset.id);list.push(item);saveMomentsComments(post.dataset.id,list);renderStoredMomentComment(post,item)
+}
+const _createMomentCommentOld=createMomentComment;
+createMomentComment=function(main,text,target){persistCurrentComment(main,text,target)}
+const _publishMomentOld=publishMoment;
+publishMoment=function(){
+  const text=(document.getElementById('momentComposeText')?.value||'').trim();
+  if(!text&&!momentSelectedImages.length){showToast('请先写点内容');return}
+  const item={id:'post-'+Date.now(),text,images:momentSelectedImages.slice(),createdAt:new Date().toISOString()};
+  const list=momentsStore();list.unshift(item);saveMomentsStore(list);
+  const feed=document.querySelector('#page-moments .moments-feed');if(feed){const post=buildMomentPost(item);feed.prepend(post);ensureMomentActions(post)}
+  momentSelectedImages=[];closeMomentComposer();showToast('已发布')
+}
+function initMomentsEnhancements(){loadStoredMoments()}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initMomentsEnhancements);else setTimeout(initMomentsEnhancements,0);
+window.deleteMomentWithConfirm=deleteMomentWithConfirm;
