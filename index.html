@@ -359,44 +359,23 @@ function navTo(name){
   <header class="moments-topbar">
     <button class="moments-menu" type="button" onclick="openSidebar()" aria-label="打开侧边栏"><svg viewBox="0 0 22 16" aria-hidden="true"><path d="M2 2h18M2 8h14M2 14h10" /></svg></button>
     <span class="moments-title">朋友圈</span>
-    <button class="moments-add" type="button" onclick="showToast('发布功能即将开放')" aria-label="发布动态"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></button>
+    <button class="moments-add" type="button" onclick="openMomentComposer()" aria-label="发布动态"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></button>
   </header>
   <main class="moments-scroll">
-    <section class="moments-cover">
-      <img class="moments-cover-image" src="https://i.ibb.co/5gC9JPHK/IMG-8716.jpg" alt="">
-      <div class="moments-cover-shade"></div>
-      
-    </section>
+    <section class="moments-cover"><img class="moments-cover-image" src="https://i.ibb.co/5gC9JPHK/IMG-8716.jpg" alt=""><div class="moments-cover-shade"></div></section>
     <section class="moments-feed">
       <article class="moment-post">
         <img class="moment-avatar" src="https://i.ibb.co/Q7Lcr1yw/IMG-6805.jpg" alt="">
-        <div class="moment-main">
-          <div class="moment-line"><h2>Koi 2026/8/22</h2><time>刚刚</time></div>
-          <p class="moment-body">今天也想把生活过得柔软一点。</p>
-          <button class="moment-comment" type="button" aria-label="评论" onclick="showToast('评论功能即将开放')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.4 8.4 0 0 1-3.5-.8L4 19.5l1.4-3.8A7.4 7.4 0 0 1 4.5 12 7.5 7.5 0 1 1 20 11.5Z"/></svg></button>
-          <div class="moment-cai">CAI：今天的关键词是「柔软」，适合慢一点。</div>
-        </div>
+        <div class="moment-main"><div class="moment-line"><h2>Koi</h2><span class="moment-date">2026/8/22</span><time>刚刚</time></div><p class="moment-body">今天也想把生活过得柔软一点。</p><button class="moment-comment" type="button" aria-label="回复" onclick="openMomentReply(this)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.4 8.4 0 0 1-3.5-.8L4 19.5l1.4-3.8A7.4 7.4 0 0 1 4.5 12 7.5 7.5 0 1 1 20 11.5Z"/></svg></button></div>
       </article>
-      <article class="moment-post">
-        <img class="moment-avatar" src="https://i.ibb.co/5gC9JPHK/IMG-8716.jpg" alt="">
-        <div class="moment-main">
-          <div class="moment-line"><h2>Koi 2026/8/22</h2><time>昨天 21:08</time></div>
-          <p class="moment-body">有些开心，不需要特别说明。</p>
-          <button class="moment-comment" type="button" aria-label="评论" onclick="showToast('评论功能即将开放')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.4 8.4 0 0 1-3.5-.8L4 19.5l1.4-3.8A7.4 7.4 0 0 1 4.5 12 7.5 7.5 0 1 1 20 11.5Z"/></svg></button>
-          <div class="moment-cai">CAI：这是一条轻盈的记录，不必解释，也值得被保存。</div>
-        </div>
-      </article>
-      <article class="moment-post">
-        <img class="moment-avatar" src="https://i.ibb.co/Q7Lcr1yw/IMG-6805.jpg" alt="">
-        <div class="moment-main">
-          <div class="moment-line"><h2>Koi 2026/8/18</h2><time>4 天前</time></div>
-          <p class="moment-body">晚风、奶油色的天空，还有慢慢变好的心情。</p>
-          <button class="moment-comment" type="button" aria-label="评论" onclick="showToast('评论功能即将开放')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.4 8.4 0 0 1-3.5-.8L4 19.5l1.4-3.8A7.4 7.4 0 0 1 4.5 12 7.5 7.5 0 1 1 20 11.5Z"/></svg></button>
-          <div class="moment-cai">CAI：已记录这份心情，情绪会随着时间慢慢沉淀。</div>
-        </div>
-      </article>
+      <article class="moment-post"><img class="moment-avatar" src="https://i.ibb.co/5gC9JPHK/IMG-8716.jpg" alt=""><div class="moment-main"><div class="moment-line"><h2>Koi</h2><span class="moment-date">2026/8/22</span><time>昨天 21:08</time></div><p class="moment-body">有些开心，不需要特别说明。</p><button class="moment-comment" type="button" aria-label="回复" onclick="openMomentReply(this)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.4 8.4 0 0 1-3.5-.8L4 19.5l1.4-3.8A7.4 7.4 0 0 1 4.5 12 7.5 7.5 0 1 1 20 11.5Z"/></svg></button></div></article>
+      <article class="moment-post"><img class="moment-avatar" src="https://i.ibb.co/Q7Lcr1yw/IMG-6805.jpg" alt=""><div class="moment-main"><div class="moment-line"><h2>Koi</h2><span class="moment-date">2026/8/18</span><time>4 天前</time></div><p class="moment-body">晚风、奶油色的天空，还有慢慢变好的心情。</p><button class="moment-comment" type="button" aria-label="回复" onclick="openMomentReply(this)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.4 8.4 0 0 1-3.5-.8L4 19.5l1.4-3.8A7.4 7.4 0 0 1 4.5 12 7.5 7.5 1 1 20 11.5Z"/></svg></button></div></article>
     </section>
   </main>
+  <div class="moments-composer-screen" id="momentsComposer" hidden>
+    <header class="moments-compose-head"><button type="button" onclick="closeMomentComposer()">取消</button><strong>发布动态</strong><button type="button" onclick="publishMoment()">发送</button></header>
+    <div class="moments-compose-body"><textarea id="momentComposeText" placeholder="这一刻想说什么？"></textarea><div class="moment-image-grid" id="momentImageGrid"><button type="button" class="moment-image-add" onclick="document.getElementById('momentImageInput').click()"><span>＋</span></button></div><input id="momentImageInput" type="file" accept="image/*" multiple hidden onchange="previewMomentImages(event)"></div>
+  </div>
 </div>
 <div class="page" id="page-forum"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Forum</div><div class="sub-desc">论坛</div><div class="card">待开发</div></div></div>
 <div class="page" id="page-memo"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Memo</div><div class="sub-desc">备忘录</div><div class="card">待开发</div></div></div>
