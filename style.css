@@ -1206,3 +1206,20 @@ button,input,textarea,select{
 .hub-back{appearance:none;border:0;background:transparent;padding:4px;display:grid;place-items:center;color:#242123;cursor:pointer}
 .hub-back svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 @media (min-width:600px){.hub-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.setting-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.hub-scroll{padding-left:28px;padding-right:28px}}
+
+/* Warm milk palette + floating navigation */
+:root{--milk:#FAF6F1;--linen:#F2E6D8;--strawberry:#F6C7CF;--peach:#F7D8CC;--almond:#EADED6;--ink:#3D3533;--muted:#9E9290}
+html,body{background:var(--milk)!important}
+body{color:var(--ink);background:var(--milk)!important}
+.bottom-nav{height:72px!important;flex:0 0 72px!important;margin:0 14px 12px!important;padding:6px!important;border:1px solid rgba(126,96,93,.10)!important;border-radius:38px!important;background:rgba(255,252,249,.92)!important;box-shadow:0 10px 28px rgba(113,77,76,.12)!important;backdrop-filter:blur(18px)!important;-webkit-backdrop-filter:blur(18px)!important;overflow:visible!important}
+.bottom-nav-item{position:relative!important;height:60px!important;border-radius:32px!important;color:#B0A4A2!important;font-size:10px!important;letter-spacing:.01em!important;gap:3px!important;transition:background .18s ease,color .18s ease,transform .18s ease!important}
+.bottom-nav-item svg{width:23px!important;height:23px!important;stroke-width:1.55!important}
+.bottom-nav-item.active{background:var(--strawberry)!important;color:#9B6170!important;font-weight:700!important;box-shadow:inset 0 0 0 1px rgba(177,111,126,.10)!important}
+.bottom-nav-item.active svg{stroke-width:1.9!important}
+.bottom-nav-item:active{transform:scale(.96)!important}
+.hub-page{background:linear-gradient(180deg,var(--milk) 0%,#F8EFE9 100%)!important;color:var(--ink)!important}
+.hub-header{border-bottom-color:rgba(126,96,93,.10)!important}
+.hub-kicker,.hub-card-sub,.daily-card small{color:#A99A97!important}
+.hub-card,.daily-card{border-color:rgba(126,96,93,.16)!important;background:rgba(255,252,249,.82)!important;box-shadow:0 8px 24px rgba(113,77,76,.05)!important}
+.hub-icon{color:#8E6D6B!important}
+.daily-card-index{color:#B38B91!important}
