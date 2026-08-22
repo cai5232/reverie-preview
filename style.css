@@ -1238,3 +1238,11 @@ body{color:var(--ink);background:var(--milk)!important}
 .bottom-nav-item.active{background:rgba(246,199,207,.32)!important;color:#756364!important}
 .bottom-nav-item.active svg{stroke:#F6C7CF!important;fill:none!important}
 #page-xiaoke .xk-bar{margin-bottom:0!important;padding-bottom:0!important}
+
+/* Fine tune mobile positioning and compact composer */
+.bottom-nav{margin-bottom:14px!important}
+.xk-input-row{gap:6px!important}
+.xk-input-pill{min-height:36px!important;border-radius:19px!important;padding-left:12px!important;padding-right:6px!important}
+.xk-textarea{min-height:34px!important;padding:6px 0!important;font-size:15px!important;line-height:1.35!important}
+.xk-circle-btn{width:38px!important;height:38px!important}
+.xk-emoji-in-btn{width:28px!important;height:28px!important}
