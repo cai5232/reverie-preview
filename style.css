@@ -1283,3 +1283,5 @@ body{background:var(--milk) url('https://i.ibb.co/ccLtT9Yn/IMG-8768.jpg') center
 /* Stronger milky glass separation for the floating capsule */
 .bottom-nav{background:rgba(255,255,255,.52)!important;backdrop-filter:blur(30px) saturate(1.15)!important;-webkit-backdrop-filter:blur(30px) saturate(1.15)!important;border:1px solid rgba(255,255,255,.86)!important;box-shadow:0 12px 30px rgba(74,62,62,.20),inset 0 1px 0 rgba(255,255,255,.92)!important;isolation:isolate!important}
 .bottom-nav-item.active{background:transparent!important;box-shadow:none!important}
+/* Remove the page veil so the wallpaper remains continuous behind controls */
+#page-xiaoke,#page-xiaoke>div:nth-of-type(2),#page-xiaoke .xk-stream{background:transparent!important}
