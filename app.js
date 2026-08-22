@@ -4464,6 +4464,24 @@ function loadStoredMoments(){
   feed.querySelectorAll('.moment-post').forEach((post,i)=>{if(!post.dataset.id)post.dataset.id='seed-'+i;ensureMomentActions(post)});
   momentsStore().forEach(item=>{if(feed.querySelector('[data-id="'+item.id+'"]'))return;const post=buildMomentPost(item);feed.prepend(post);ensureMomentActions(post)})
 }
+function extractMomentMarkersFromChat(){
+  const re=/(?:<moment>|\[MOMENT\])([\s\S]*?)(?:<\/moment>|\[\/MOMENT\])/gi;
+  let changed=false;
+  chatHistory=chatHistory.map(m=>{
+    if(m.role!=='assistant'||!re.test(m.content||'')){re.lastIndex=0;return m}
+    re.lastIndex=0;
+    let match;while((match=re.exec(m.content||'')){if(match[1].trim())storeAIMoment(match[1].trim())}
+    const cleaned=m.content.replace(re,'').trim();re.lastIndex=0;changed=true;
+    return {...m,content:cleaned}
+  });
+  if(changed)localStorage.setItem('chat_history',JSON.stringify(chatHistory));
+  document.querySelectorAll('#messages .bubble').forEach(el=>{
+    const raw=el.textContent||'';re.lastIndex=0;
+    if(!re.test(raw)){re.lastIndex=0;return}
+    re.lastIndex=0;let match;while((match=re.exec(raw)){if(match[1].trim())storeAIMoment(match[1].trim())}
+    el.textContent=raw.replace(re,'').trim();re.lastIndex=0;
+  });
+}
 function refreshMoments(silent=false){
   const feed=document.querySelector('#page-moments .moments-feed');if(!feed)return;
   const before=new Set([...feed.querySelectorAll('.moment-post')].map(p=>p.dataset.id));
@@ -4500,7 +4518,7 @@ publishMoment=function(){
   const feed=document.querySelector('#page-moments .moments-feed');if(feed){const post=buildMomentPost(item);feed.prepend(post);ensureMomentActions(post)}
   momentSelectedImages=[];closeMomentComposer();showToast('已发布')
 }
-function initMomentsEnhancements(){loadStoredMoments();startMomentsAutoRefresh()}
+function initMomentsEnhancements(){loadStoredMoments();startMomentsAutoRefresh();extractMomentMarkersFromChat();setInterval(extractMomentMarkersFromChat,1200)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initMomentsEnhancements);else setTimeout(initMomentsEnhancements,0);
 window.deleteMomentWithConfirm=deleteMomentWithConfirm;
 
