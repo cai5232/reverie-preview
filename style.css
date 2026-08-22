@@ -1288,3 +1288,7 @@ body{background:var(--milk) url('https://i.ibb.co/ccLtT9Yn/IMG-8768.jpg') center
 /* Keep wallpaper inside Chat only; nav rests on the app surface on every page */
 body{background:#FAF6F1!important}
 #page-xiaoke{background:url('https://i.ibb.co/ccLtT9Yn/IMG-8768.jpg') center/cover no-repeat!important}
+/* Transparent surface beneath the global floating capsule */
+html,body{background:transparent!important}
+#page-xiaoke{background:url('https://i.ibb.co/ccLtT9Yn/IMG-8768.jpg') center/cover no-repeat!important}
+.bottom-nav{background:rgba(255,255,255,.16)!important;backdrop-filter:blur(26px) saturate(1.1)!important;-webkit-backdrop-filter:blur(26px) saturate(1.1)!important}
