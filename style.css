@@ -1211,7 +1211,7 @@ button,input,textarea,select{
 :root{--milk:#FAF6F1;--linen:#F2E6D8;--strawberry:#F6C7CF;--peach:#F7D8CC;--almond:#EADED6;--ink:#3D3533;--muted:#9E9290}
 html,body{background:var(--milk)!important}
 body{color:var(--ink);background:var(--milk)!important}
-.bottom-nav{height:72px!important;flex:0 0 72px!important;margin:0 14px 12px!important;padding:6px!important;border:1px solid rgba(126,96,93,.10)!important;border-radius:38px!important;background:rgba(255,252,249,.92)!important;box-shadow:0 10px 28px rgba(113,77,76,.12)!important;backdrop-filter:blur(18px)!important;-webkit-backdrop-filter:blur(18px)!important;overflow:visible!important}
+.bottom-nav{height:72px!important;flex:0 0 72px!important;margin:0 14px calc(12px + env(safe-area-inset-bottom,0px))!important;padding:6px!important;border:1px solid rgba(126,96,93,.10)!important;border-radius:38px!important;background:rgba(255,252,249,.92)!important;box-shadow:0 10px 28px rgba(113,77,76,.12)!important;backdrop-filter:blur(18px)!important;-webkit-backdrop-filter:blur(18px)!important;overflow:visible!important}
 .bottom-nav-item{position:relative!important;height:60px!important;border-radius:32px!important;color:#B0A4A2!important;font-size:10px!important;letter-spacing:.01em!important;gap:3px!important;transition:background .18s ease,color .18s ease,transform .18s ease!important}
 .bottom-nav-item svg{width:23px!important;height:23px!important;stroke-width:1.55!important}
 .bottom-nav-item.active{background:var(--strawberry)!important;color:#9B6170!important;font-weight:700!important;box-shadow:inset 0 0 0 1px rgba(177,111,126,.10)!important}
