@@ -964,3 +964,28 @@
   border-radius:8px;background:#DEDEDE;
   color:#747176;font-size:12px;line-height:1.5;
 }
+
+
+/* Moments · smaller timestamp and comment affordance */
+.moment-line time{
+  font-size:7px!important;
+  letter-spacing:.1px!important;
+  opacity:.86;
+}
+.moment-comment{
+  display:grid;place-items:center;
+  width:22px;height:22px;
+  margin-top:7px;padding:0;
+  border:0;border-radius:50%;
+  background:transparent;color:#8F8D90;
+  cursor:pointer;
+}
+.moment-comment svg{
+  width:15px;height:15px;fill:none;
+  stroke:currentColor;stroke-width:1.5;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+.moment-comment:active{
+  background:#FDE6EC;
+  color:#8F747C;
+}
