@@ -4490,3 +4490,18 @@ function openMomentMenu(post,anchor){
   menu.appendChild(del);post.querySelector('.moment-main').appendChild(menu);
 }
 window.openMomentMenu=openMomentMenu;
+
+/* Moments · correct human/AI IDs */
+renderStoredMomentComment=function(post,item){
+  const comments=post.querySelector('.moment-comments');if(!comments)return;
+  const author=item.author==='言言'?'Koi':(item.author||'Koi'), replyTo=item.replyTo==='言言'?'Koi':(item.replyTo||'');
+  const row=document.createElement('div');row.className='moment-cai moment-reply moment-comment-item';row.dataset.commentId=item.id;row.dataset.author=author;row.setAttribute('role','button');
+  row.textContent=replyTo?author+'回复'+replyTo+'：'+item.text:author+'：'+item.text;
+  row.onclick=()=>openMomentReplyFromComment(row);comments.appendChild(row);
+}
+createMomentComment=function(main,text,target,author){
+  const post=main.closest('.moment-post');if(!post)return;
+  const from=author||'Koi',replyTo=target==='Koi'?'':(target||'');
+  const item={id:'c-'+Date.now()+'-'+Math.random().toString(36).slice(2,5),author:from,replyTo,text};
+  const list=momentsComments(post.dataset.id);list.push(item);saveMomentsComments(post.dataset.id,list);renderStoredMomentComment(post,item);
+}
