@@ -4464,6 +4464,20 @@ function loadStoredMoments(){
   feed.querySelectorAll('.moment-post').forEach((post,i)=>{if(!post.dataset.id)post.dataset.id='seed-'+i;ensureMomentActions(post)});
   momentsStore().forEach(item=>{if(feed.querySelector('[data-id="'+item.id+'"]'))return;const post=buildMomentPost(item);feed.prepend(post);ensureMomentActions(post)})
 }
+function refreshMoments(silent=false){
+  const feed=document.querySelector('#page-moments .moments-feed');if(!feed)return;
+  const before=new Set([...feed.querySelectorAll('.moment-post')].map(p=>p.dataset.id));
+  loadStoredMoments();
+  const added=[...feed.querySelectorAll('.moment-post')].filter(p=>!before.has(p.dataset.id)).length;
+  if(!silent)showToast(added?'已刷新，发现 '+added+' 条新动态':'已是最新');
+}
+window.refreshMoments=refreshMoments;
+window.addEventListener('storage',e=>{if(e.key==='reverie_moments_posts')refreshMoments(true)});
+let momentsRefreshTimer=null;
+function startMomentsAutoRefresh(){
+  if(momentsRefreshTimer)clearInterval(momentsRefreshTimer);
+  momentsRefreshTimer=setInterval(()=>refreshMoments(true),5000);
+}
 function buildMomentPost(item){
   const post=document.createElement('article');post.className='moment-post';post.dataset.id=item.id;
   post.innerHTML='<img class="moment-avatar" src="https://i.ibb.co/Q7Lcr1yw/IMG-6805.jpg" alt=""><div class="moment-main"><div class="moment-line"><h2>Koi</h2><span class="moment-date"></span><time hidden></time></div><p class="moment-body"></p><div class="moment-post-images"></div><div class="moment-comments"></div></div>';
@@ -4486,7 +4500,7 @@ publishMoment=function(){
   const feed=document.querySelector('#page-moments .moments-feed');if(feed){const post=buildMomentPost(item);feed.prepend(post);ensureMomentActions(post)}
   momentSelectedImages=[];closeMomentComposer();showToast('已发布')
 }
-function initMomentsEnhancements(){loadStoredMoments()}
+function initMomentsEnhancements(){loadStoredMoments();startMomentsAutoRefresh()}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initMomentsEnhancements);else setTimeout(initMomentsEnhancements,0);
 window.deleteMomentWithConfirm=deleteMomentWithConfirm;
 
