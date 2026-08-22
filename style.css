@@ -1303,3 +1303,9 @@ html,body{background:transparent!important}
 /* let the current page/chat wallpaper remain visible through the glass */
 .bottom-nav{background:rgba(255,255,255,.18)!important;backdrop-filter:blur(26px) saturate(1.12)!important;-webkit-backdrop-filter:blur(26px) saturate(1.12)!important;}
 #page-xiaoke .xk-bar{background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
+
+/* Chat viewport: latest message rests above composer; older messages scroll behind glass */
+.bottom-nav{bottom:14px!important;}
+#page-xiaoke .xk-bar{bottom:74px!important;}
+#page-xiaoke>div:nth-of-type(2){overflow:hidden!important;}
+#page-xiaoke .xk-stream{overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;scroll-padding-bottom:118px!important;padding-bottom:118px!important;-webkit-overflow-scrolling:touch!important;}
