@@ -1010,3 +1010,5 @@
 .moment-viewer-tabs{position:absolute;top:calc(env(safe-area-inset-top,0px) + 18px);left:50%;transform:translateX(-50%);display:flex;padding:3px;border:1px solid rgba(255,255,255,.75);border-radius:20px}
 .moment-viewer-tabs button{border:0;border-radius:16px;background:transparent;color:#fff;padding:5px 14px;font-size:12px}.moment-viewer-tabs button.active{background:#fff;color:#333}
 .moment-viewer-image{max-width:100%;max-height:78vh;object-fit:contain}.moment-viewer-content{max-width:86%;color:#fff;font-size:15px;line-height:1.7;text-align:center}
+
+.moments-composer-screen[hidden]{display:none!important}
