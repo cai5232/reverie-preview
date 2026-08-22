@@ -4607,7 +4607,7 @@ ensureMomentActions=function(post){
 const _openMomentReplyStable=openMomentReply;
 openMomentReply=function(button){
   const main=button&&button.closest('.moment-main'); if(!main)return;
-  const target=(main.querySelector('.moment-line h2')?.textContent||'Koi').trim();
+  const target='';
   let box=main.querySelector('.moment-reply-editor');
   if(!box){box=document.createElement('div');box.className='moment-reply-editor';box.innerHTML='<span class="moment-reply-target"></span><input type="text" placeholder="回复这条动态…" maxlength="200"><button type="button">发送</button>';box.querySelector('button').onclick=function(){sendMomentReply(this)};main.appendChild(box)}
   box.dataset.replyTo=target; box.dataset.replyComment=''; box.querySelector('.moment-reply-target').textContent='回复 '+target;
