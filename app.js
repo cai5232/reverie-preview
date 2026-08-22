@@ -4394,3 +4394,32 @@ sendMomentReply=function(button){
   main.appendChild(reply); box.remove();
 }
 window.openMomentReply=openMomentReply;window.openMomentReplyFromComment=openMomentReplyFromComment;window.sendMomentReply=sendMomentReply;
+
+/* Moments · exact comment format */
+function createMomentComment(main,text,toAuthor){
+  const from='言言', target=toAuthor||'Koi';
+  const row=document.createElement('div');
+  row.className='moment-cai moment-reply moment-comment-item';
+  row.setAttribute('role','button');
+  row.dataset.author=from;
+  row.dataset.replyTo=target;
+  row.textContent=target==='Koi' ? from+'：'+text : from+'回复'+target+'：'+text;
+  row.onclick=function(){openMomentReplyFromComment(this)};
+  main.appendChild(row);
+  return row;
+}
+openMomentReplyFromComment=function(comment){
+  const main=comment&&comment.closest('.moment-main'); if(!main)return;
+  const target=comment.dataset.author||'Koi';
+  let box=main.querySelector('.moment-reply-editor');
+  if(!box){box=document.createElement('div');box.className='moment-reply-editor';box.innerHTML='<span class="moment-reply-target"></span><input type="text" placeholder="写评论…" maxlength="200"><button type="button">发送</button>';box.querySelector('button').onclick=function(){sendMomentReply(this)};main.appendChild(box)}
+  box.dataset.replyTo=target; box.querySelector('.moment-reply-target').textContent='回复 '+target;
+  box.hidden=false; box.querySelector('input').focus();
+}
+sendMomentReply=function(button){
+  const box=button&&button.closest('.moment-reply-editor'), input=box&&box.querySelector('input'), text=input&&input.value.trim();
+  if(!text)return;
+  const main=box.closest('.moment-main'), target=box.dataset.replyTo||'Koi';
+  createMomentComment(main,text,target); box.remove();
+}
+window.openMomentReplyFromComment=openMomentReplyFromComment;window.sendMomentReply=sendMomentReply;
