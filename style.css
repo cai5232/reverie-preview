@@ -1260,3 +1260,12 @@ body{background:var(--milk) url('https://i.ibb.co/ccLtT9Yn/IMG-8768.jpg') center
 /* Chat content flows behind the translucent composer, like a native messenger */
 #page-xiaoke .xk-bar{position:absolute!important;left:0!important;right:0!important;bottom:0!important;z-index:120!important;background:rgba(255,252,249,.78)!important;backdrop-filter:blur(18px)!important;-webkit-backdrop-filter:blur(18px)!important}
 #page-xiaoke .xk-stream{padding-bottom:0!important}
+/* Full-bleed chat stream under composer/nav */
+#page-xiaoke{position:relative!important;overflow:hidden!important}
+#page-xiaoke>div:nth-of-type(2){position:absolute!important;inset:0!important;display:block!important;overflow:hidden!important;z-index:1!important}
+#page-xiaoke .xk-stream{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-height:none!important;padding:calc(env(safe-area-inset-top,0px) + 68px) 22px 0!important;background:rgba(249,247,250,.38)!important;-webkit-mask-image:none!important;mask-image:none!important}
+#page-xiaoke .xk-bar{position:absolute!important;left:0!important;right:0!important;bottom:0!important;z-index:120!important;background:rgba(249,247,250,.82)!important}
+.bottom-nav{background:rgba(249,247,250,.94)!important;border-color:rgba(176,175,177,.28)!important;box-shadow:0 8px 22px rgba(176,175,177,.18)!important}
+.bottom-nav-item{color:#B0AFB1!important}
+.bottom-nav-item.active{background:#F0D5DC!important;color:#3D3533!important}
+.bottom-nav-item.active svg{stroke:#FDE6EC!important}
