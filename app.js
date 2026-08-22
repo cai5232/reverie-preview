@@ -4440,7 +4440,7 @@ function ensureMomentActions(post){
     const cb=document.createElement('button');cb.className='moment-comment';cb.type='button';cb.setAttribute('aria-label','评论');cb.innerHTML='<svg viewBox="0 0 24 24"><path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.4 8.4 0 0 1-3.5-.8L4 19.5l1.4-3.8A7.4 7.4 0 0 1 4.5 12 7.5 7.5 0 1 1 20 11.5Z"/></svg>';cb.onclick=()=>openMomentReply(cb);comments.appendChild(cb)
   }
   if(!comments.querySelector('.moment-more')){
-    const more=document.createElement('button');more.className='moment-more';more.type='button';more.setAttribute('aria-label','更多');more.textContent='•••';more.onclick=()=>deleteMomentWithConfirm(post);comments.appendChild(more)
+    const more=document.createElement('button');more.className='moment-more';more.type='button';more.setAttribute('aria-label','更多');more.textContent='•••';more.onclick=()=>openMomentMenu(post,more);comments.appendChild(more)
   }
   momentsComments(post.dataset.id).forEach(item=>{if(!comments.querySelector('[data-comment-id="'+item.id+'"]'))renderStoredMomentComment(post,item)})
 }
@@ -4482,3 +4482,11 @@ publishMoment=function(){
 function initMomentsEnhancements(){loadStoredMoments()}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initMomentsEnhancements);else setTimeout(initMomentsEnhancements,0);
 window.deleteMomentWithConfirm=deleteMomentWithConfirm;
+
+function openMomentMenu(post,anchor){
+  document.querySelectorAll('.moment-action-menu').forEach(x=>x.remove());
+  const menu=document.createElement('div');menu.className='moment-action-menu';
+  const del=document.createElement('button');del.type='button';del.textContent='删除';del.onclick=()=>{menu.remove();deleteMomentWithConfirm(post)};
+  menu.appendChild(del);post.querySelector('.moment-main').appendChild(menu);
+}
+window.openMomentMenu=openMomentMenu;
