@@ -1065,3 +1065,38 @@
   line-height:1.7!important;
   min-height:190px!important;
 }
+
+/* Moments · comment block only, fully visible */
+.moment-comments{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  align-items:center!important;
+  gap:8px!important;
+  width:100%!important;
+  min-height:30px!important;
+  padding:6px 0 2px!important;
+  overflow:visible!important;
+  position:relative!important;
+  z-index:3!important;
+}
+.moment-comments .moment-cai.moment-reply{
+  display:block!important;
+  flex:0 0 100%!important;
+  width:100%!important;
+  min-height:34px!important;
+  box-sizing:border-box!important;
+  background:#eeeeee!important;
+  color:#5f5c63!important;
+  border-radius:10px!important;
+  padding:8px 12px!important;
+  margin:2px 0 0!important;
+}
+.moment-comments .moment-comment,
+.moment-comments .moment-more{
+  position:relative!important;
+  z-index:4!important;
+  flex:0 0 26px!important;
+  width:26px!important;
+  height:26px!important;
+  overflow:visible!important;
+}
