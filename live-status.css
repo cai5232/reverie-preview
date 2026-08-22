@@ -1191,3 +1191,48 @@
   max-width:none!important;
   max-height:none!important;
 }
+
+/* Moments · action row is separate from the comment panel */
+.moment-actions{
+  display:flex!important;
+  align-items:center!important;
+  gap:14px!important;
+  min-height:34px!important;
+  margin-top:8px!important;
+  padding:0!important;
+  background:transparent!important;
+  overflow:visible!important;
+}
+.moment-actions .moment-comment,
+.moment-actions .moment-more{
+  flex:0 0 auto!important;
+  width:30px!important;height:30px!important;
+  min-width:30px!important;min-height:30px!important;
+  margin:0!important;padding:2px!important;
+  background:transparent!important;
+  border:0!important;
+  color:#8e8a90!important;
+  overflow:visible!important;
+  clip:unset!important;clip-path:none!important;
+}
+.moment-actions .moment-comment svg{width:24px!important;height:24px!important;display:block!important;overflow:visible!important}
+.moment-comments:not(.has-items){
+  display:none!important;
+}
+.moment-comments.has-items{
+  display:block!important;
+  width:100%!important;
+  min-height:38px!important;
+  margin-top:8px!important;
+  padding:7px 10px!important;
+  background:#eeeeee!important;
+  border-radius:12px!important;
+  overflow:visible!important;
+}
+.moment-comments.has-items .moment-comment-item{
+  display:block!important;
+  width:100%!important;
+  margin:0!important;
+  padding:5px 0!important;
+  background:transparent!important;
+}
