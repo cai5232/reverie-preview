@@ -492,3 +492,71 @@
 @media(max-width:600px){
   .state-page .state-content{padding-bottom:96px!important}
 }
+
+
+/* State · supplied palette */
+.state-page{
+  --state-ink:#968C83!important;
+  --state-line:#D6D2C4!important;
+  --state-paper:#FFF5EA!important;
+  --state-pink:#F7DAD9!important;
+  background:var(--state-paper)!important;
+  color:var(--state-ink)!important;
+}
+.state-page .state-nav{
+  background:rgba(255,245,234,.94)!important;
+  border-bottom:1px solid var(--state-line)!important;
+}
+.state-page .state-menu-button,
+.state-page .state-nav-title,
+.state-page .state-bars-top h1,
+.state-page .state-cn,
+.state-page .state-note-title{
+  color:var(--state-ink)!important;
+}
+.state-page .state-kicker,
+.state-page .state-bars-caption,
+.state-page .state-en,
+.state-page .state-sync,
+.state-page .state-note-card small{
+  color:#968C83!important;
+  opacity:.72;
+}
+.state-page .state-content,
+.state-page .state-report{
+  background:var(--state-paper)!important;
+}
+.state-page .state-tabs{
+  border-top-color:var(--state-line)!important;
+  border-bottom-color:var(--state-line)!important;
+}
+.state-page .state-tab{color:#968C83!important;opacity:.72}
+.state-page .state-tab.active{color:#968C83!important;opacity:1}
+.state-page .state-tab.active:after{background:var(--state-pink)!important}
+.state-page .state-live-dot{
+  background:var(--state-pink)!important;
+  box-shadow:0 0 0 5px rgba(247,218,217,.48)!important;
+}
+.state-page .state-track{background:var(--state-line)!important}
+.state-page .state-track i{background:var(--state-pink)!important}
+.state-page .state-bar-row b{color:#968C83!important}
+.state-page .state-note-card,
+.state-page .memo-card,
+.state-page .todo-card{
+  background:rgba(255,245,234,.7)!important;
+  border-color:var(--state-line)!important;
+}
+.state-page .state-note-card:before{background:var(--state-line)!important}
+.state-page .state-note-card:nth-child(2):before{background:var(--state-pink)!important}
+.state-page .state-note-icon{border-color:var(--state-line)!important;color:var(--state-ink)!important}
+.state-page .state-note-icon-pink{border-color:var(--state-pink)!important;color:var(--state-ink)!important}
+.state-page .todo-check{
+  border-color:var(--state-line)!important;
+  background:var(--state-paper)!important;
+}
+.state-page .todo-check:active,
+.state-page .todo-check.is-done{
+  border-color:var(--state-pink)!important;
+  background:var(--state-pink)!important;
+}
+.state-page .todo-history-btn{color:var(--state-ink)!important}
