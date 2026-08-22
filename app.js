@@ -4454,7 +4454,7 @@ function buildMomentsContext(){
     const gone=new Set(deletedMoments());
     const posts=momentsStore().filter(p=>p&&!gone.has(p.id)).slice(0,30);
     if(!posts.length)return '';
-    const lines=['以下是当前朋友圈的可见内容（这是应用状态，不是聊天历史）：'];
+    const lines=['以下是当前朋友圈的可见内容（这是应用状态，不是聊天历史）：','你可以直接读取这些动态和评论来回答用户，不要声称看不到；只有输出[MOMENT]...[/MOMENT]才会创建新动态。'];
     posts.forEach(p=>{
       const author=p.author||'Koi';
       const date=p.createdAt?new Date(p.createdAt).toISOString().slice(0,10):'';
