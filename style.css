@@ -1285,3 +1285,6 @@ body{background:var(--milk) url('https://i.ibb.co/ccLtT9Yn/IMG-8768.jpg') center
 .bottom-nav-item.active{background:transparent!important;box-shadow:none!important}
 /* Remove the page veil so the wallpaper remains continuous behind controls */
 #page-xiaoke,#page-xiaoke>div:nth-of-type(2),#page-xiaoke .xk-stream{background:transparent!important}
+/* Keep wallpaper inside Chat only; nav rests on the app surface on every page */
+body{background:#FAF6F1!important}
+#page-xiaoke{background:url('https://i.ibb.co/ccLtT9Yn/IMG-8768.jpg') center/cover no-repeat!important}
