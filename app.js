@@ -4397,10 +4397,11 @@ function openMomentReplyFromComment(comment){
 const _openMomentReplyPrevious=openMomentReply;
 openMomentReply=function(button){
   const main=button&&button.closest('.moment-main'); if(!main)return;
-  const target=(main.querySelector('.moment-line h2')?.textContent||'Koi').trim();
+  // 点击动态本身是直接评论，不是回复作者；只有点击具体评论才设置回复目标
+  const target='';
   let box=main.querySelector('.moment-reply-editor');
   if(!box){box=document.createElement('div');box.className='moment-reply-editor';box.innerHTML='<span class="moment-reply-target"></span><input type="text" placeholder="回复这条动态…" maxlength="200"><button type="button">发送</button>';box.querySelector('button').onclick=function(){sendMomentReply(this)};main.appendChild(box)}
-  box.dataset.replyTo=target; box.querySelector('.moment-reply-target').textContent='回复 '+target;
+  box.dataset.replyTo=target; box.querySelector('.moment-reply-target').textContent='写评论';
   box.hidden=false; box.querySelector('input').focus();
 }
 const _sendMomentReplyPrevious=sendMomentReply;
