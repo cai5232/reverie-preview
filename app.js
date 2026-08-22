@@ -566,7 +566,7 @@ async function callAI(){
     }
     lastAssistantRow=placeholderRow
     // 用最终正文替换 textNode，换行转多气泡
-    const finalBody=bodyBuf.trim()
+    const rawBody=bodyBuf.trim();const momentMatches=[...rawBody.matchAll(/<moment>([\s\S]*?)<\/moment>/gi)];momentMatches.forEach(m=>storeAIMoment(m[1].trim()));const finalBody=rawBody.replace(/<moment>[\s\S]*?<\/moment>/gi,'').trim()
     if(!finalBody){placeholderBubble.innerHTML='(´・ω・`)';isGenerating=false;return}
     // 分段拆成多个气泡
     let segs=finalBody.split(/\n\n/).map(s=>s.trim()).filter(Boolean)
@@ -584,7 +584,7 @@ async function callAI(){
       await sleep(280+Math.random()*160)
     }
     // 存历史时把心声包进标签，renderChat 解析时才能找到
-    const saveContent=thinkBuf?`[心声]${thinkBuf}[/心声]${finalBody}`:(fullRaw||finalBody)
+    const saveContent=thinkBuf?`[心声]${thinkBuf}[/心声]${finalBody}`:finalBody
     saveChatHistory('assistant',saveContent)
     if(cfg.notify&&document.hidden&&Notification.permission==='granted'){
       new Notification('小克回复了',{body:segs[0].replace(/\*[^*]+\*/g,'').slice(0,50)})
@@ -4636,3 +4636,13 @@ async function publishAIMoment(prompt,images=[]){
 window.requestMomentsAI=requestMomentsAI;
 window.publishAIMoment=publishAIMoment;
 
+
+function storeAIMoment(text,images=[]){
+  const body=String(text||'').trim();if(!body)return null;
+  const item={id:'post-'+Date.now()+'-'+Math.random().toString(36).slice(2,6),author:'Shenyu',text:body,images:Array.isArray(images)?images:[],createdAt:new Date().toISOString()};
+  const list=momentsStore();list.unshift(item);saveMomentsStore(list);
+  const feed=document.querySelector('#page-moments .moments-feed');
+  if(feed){const post=buildMomentPost(item);feed.prepend(post);ensureMomentActions(post)}
+  return item;
+}
+window.storeAIMoment=storeAIMoment;
