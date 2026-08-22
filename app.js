@@ -4354,3 +4354,15 @@ openMomentImage=function(src){
   }
 }
 window.openMomentImage=openMomentImage;
+
+/* Keep Moments list as the entry point; composer is only opened by + */
+const _navToMomentsOriginal=window.navTo;
+if(typeof _navToMomentsOriginal==='function'){
+  window.navTo=function(name){
+    if(name==='moments'){
+      const composer=document.getElementById('momentsComposer');
+      if(composer) composer.hidden=true;
+    }
+    return _navToMomentsOriginal(name);
+  };
+}
