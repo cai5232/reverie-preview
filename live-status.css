@@ -803,3 +803,43 @@
   .moments-profile-avatar{width:64px;height:64px}
   .moments-feed{padding-left:16px;padding-right:16px}
 }
+
+
+/* Moments · edge-to-edge cover refinement */
+.moments-page{
+  position:relative!important;
+  background:var(--mom-white)!important;
+}
+.moments-topbar{
+  position:absolute!important;
+  top:0!important;left:0!important;right:0!important;
+  background:linear-gradient(180deg,rgba(20,18,20,.2),rgba(20,18,20,0))!important;
+  border-bottom:0!important;
+  color:#fff!important;
+}
+.moments-title,.moments-menu,.moments-add{color:#fff!important;text-shadow:0 1px 4px rgba(0,0,0,.28)}
+.moments-scroll{padding-top:0!important}
+.moments-cover{
+  height:330px!important;
+  overflow:hidden!important;
+}
+.moments-cover:after{
+  content:"";
+  position:absolute;
+  z-index:2;
+  left:0;right:0;bottom:-1px;height:118px;
+  pointer-events:none;
+  background:linear-gradient(180deg,rgba(249,247,250,0),var(--mom-white) 92%);
+}
+.moments-cover-shade{z-index:1!important}
+.moments-profile{z-index:3!important}
+.moments-profile-avatar{
+  border-radius:50%!important;
+}
+.moment-avatar{
+  border-radius:50%!important;
+}
+@media(max-width:600px){
+  .moments-cover{height:286px!important}
+  .moments-cover:after{height:104px}
+}
