@@ -1041,3 +1041,5 @@
 
 .moment-action-menu{position:absolute;right:12px;margin-top:4px;z-index:20;padding:4px;background:#fff;border:1px solid rgba(143,141,144,.22);border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
 .moment-action-menu button{border:0;background:transparent;color:#555;padding:6px 14px;font-size:12px}
+
+.moment-main{position:relative!important}
