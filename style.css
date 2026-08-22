@@ -1,7 +1,7 @@
 *{margin:0;padding:0;box-sizing:border-box}
 input,textarea,select,button,div,span,p,a,label,li,td,th,pre,code{font-family:inherit}
 html{height:100vh;overflow:hidden;background:#fff}
-body{color:#1F1E1D;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','PingFang SC','Helvetica Neue',Arial,sans-serif;display:flex;flex-direction:column;width:100%;max-width:430px;margin:0 auto;height:100vh;overflow:hidden;background:url('https://i.ibb.co/N6mj1mdx/IMG-7386.jpg') center/cover no-repeat fixed}
+body{color:#1F1E1D;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','PingFang SC','Helvetica Neue',Arial,sans-serif;display:flex;flex-direction:column;width:100%;max-width:430px;margin:0 auto;height:100vh;overflow:hidden;background:url('https://i.ibb.co/ccLtT9Yn/IMG-8768.jpg') center/cover no-repeat fixed}
 @media (min-width:430px){body{left:50%;right:auto;transform:translateX(-50%);position:absolute;top:0}}
 @media all and (display-mode:standalone){textarea,input{-webkit-user-select:text!important;user-select:text!important;pointer-events:auto!important}}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;opacity:0;pointer-events:none;transition:opacity .28s ease}
@@ -1246,3 +1246,9 @@ body{color:var(--ink);background:var(--milk)!important}
 .xk-textarea{min-height:34px!important;padding:6px 0!important;font-size:15px!important;line-height:1.35!important}
 .xk-circle-btn{width:38px!important;height:38px!important}
 .xk-emoji-in-btn{width:28px!important;height:28px!important}
+
+/* New chat background and breathing room above floating nav */
+body{background:var(--milk) url('https://i.ibb.co/ccLtT9Yn/IMG-8768.jpg') center/cover no-repeat fixed!important}
+#page-xiaoke .xk-topbar{background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+#page-xiaoke .xk-stream{background:transparent!important}
+#page-xiaoke .xk-bar{padding-bottom:10px!important;background:transparent!important}
