@@ -4602,3 +4602,53 @@ publishMoment=function(){
   momentSelectedImages=[];closeMomentComposer();showToast('已发布');
 };
 setTimeout(()=>loadStoredMoments(),50);
+
+/* Moments · provider-neutral OpenAI-compatible API */
+function momentsApiConfig(){
+  return {
+    api:(localStorage.getItem('cfg_moments_api')||'').trim(),
+    key:(localStorage.getItem('cfg_moments_key')||'').trim(),
+    model:(localStorage.getItem('cfg_moments_model')||'').trim()
+  };
+}
+async function requestMomentsAI(prompt){
+  const cfgM=momentsApiConfig();
+  if(!cfgM.api)throw new Error('未配置朋友圈 AI API');
+  const endpoint=cfgM.api.replace(/\/$/,'').endsWith('/chat/completions')?cfgM.api.replace(/\/$/,''):cfgM.api.replace(/\/$/,'')+'/chat/completions';
+  const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json',...(cfgM.key?{Authorization:'Bearer '+cfgM.key}:{})},body:JSON.stringify({
+    model:cfgM.model||'gpt-4o-mini',
+    messages:[
+      {role:'system',content:'你是 Shenyu。只有在确实有内容时才生成一条简短朋友圈动态，不要输出思考过程、标签或 JSON。'},
+      {role:'user',content:prompt}
+    ],
+    temperature:0.8,
+    max_tokens:300
+  })});
+  if(!res.ok)throw new Error('Moments API HTTP '+res.status);
+  const data=await res.json();
+  return String(data?.choices?.[0]?.message?.content||'').replace(/<think>[\\s\\S]*?<\\/think>/gi,'').trim();
+}
+async function publishAIMoment(prompt,images=[]){
+  const text=await requestMomentsAI(prompt);
+  if(!text)return null;
+  const item={id:'post-'+Date.now(),author:'Shenyu',text,images:Array.isArray(images)?images:[],createdAt:new Date().toISOString()};
+  const list=momentsStore();list.unshift(item);saveMomentsStore(list);
+  const feed=document.querySelector('#page-moments .moments-feed');
+  if(feed){const post=buildMomentPost(item);feed.prepend(post);ensureMomentActions(post)}
+  return item;
+}
+window.requestMomentsAI=requestMomentsAI;
+window.publishAIMoment=publishAIMoment;
+const _saveCfgMomentsBase=saveCfg;
+saveCfg=function(){
+  _saveCfgMomentsBase();
+  localStorage.setItem('cfg_moments_api',document.getElementById('cfgMomentsApi')?.value.trim()||'');
+  localStorage.setItem('cfg_moments_key',document.getElementById('cfgMomentsKey')?.value.trim()||'');
+  localStorage.setItem('cfg_moments_model',document.getElementById('cfgMomentsModel')?.value.trim()||'');
+};
+setTimeout(()=>{
+  const mapi=document.getElementById('cfgMomentsApi'),mkey=document.getElementById('cfgMomentsKey'),mmodel=document.getElementById('cfgMomentsModel');
+  if(mapi)mapi.value=localStorage.getItem('cfg_moments_api')||'';
+  if(mkey)mkey.value=localStorage.getItem('cfg_moments_key')||'';
+  if(mmodel)mmodel.value=localStorage.getItem('cfg_moments_model')||'';
+},0);
