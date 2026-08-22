@@ -355,7 +355,46 @@ function navTo(name){
     <span id="stateLatest" class="state-hidden"></span><span id="stateSource" class="state-hidden"></span>
   </main>
 </div>
-<div class="page" id="page-moments"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Moments</div><div class="sub-desc">朋友圈</div><div class="card">待开发</div></div></div>
+<div class="page moments-page" id="page-moments">
+  <header class="moments-topbar">
+    <button class="moments-menu" type="button" onclick="openSidebar()" aria-label="打开侧边栏"><svg viewBox="0 0 22 16" aria-hidden="true"><path d="M2 2h18M2 8h14M2 14h10" /></svg></button>
+    <span class="moments-title">朋友圈</span>
+    <button class="moments-add" type="button" onclick="showToast('发布功能即将开放')" aria-label="发布动态"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></button>
+  </header>
+  <main class="moments-scroll">
+    <section class="moments-cover">
+      <img class="moments-cover-image" src="https://i.ibb.co/d4BrNNxL/IMG-8711.jpg" alt="">
+      <div class="moments-cover-shade"></div>
+      <div class="moments-profile">
+        <div class="moments-profile-name">言言</div>
+        <img class="moments-profile-avatar" src="https://i.ibb.co/Q7Lcr1yw/IMG-6805.jpg" alt="头像">
+      </div>
+    </section>
+    <section class="moments-feed">
+      <article class="moment-post">
+        <img class="moment-avatar" src="https://i.ibb.co/Q7Lcr1yw/IMG-6805.jpg" alt="">
+        <div class="moment-main">
+          <h2>言言</h2><p>今天也想把生活过得柔软一点。</p>
+          <div class="moment-meta"><time>刚刚</time><button type="button">♡</button></div>
+        </div>
+      </article>
+      <article class="moment-post">
+        <img class="moment-avatar" src="https://i.ibb.co/d4BrNNxL/IMG-8711.jpg" alt="">
+        <div class="moment-main">
+          <h2>沈屿</h2><p>有些开心，不需要特别说明。</p>
+          <div class="moment-meta"><time>昨天 21:08</time><button type="button">♡ 2</button></div>
+        </div>
+      </article>
+      <article class="moment-post">
+        <img class="moment-avatar" src="https://i.ibb.co/Q7Lcr1yw/IMG-6805.jpg" alt="">
+        <div class="moment-main">
+          <h2>言言</h2><p>晚风、奶油色的天空，还有慢慢变好的心情。</p>
+          <div class="moment-meta"><time>08 月 18 日</time><button type="button">♡ 5</button></div>
+        </div>
+      </article>
+    </section>
+  </main>
+</div>
 <div class="page" id="page-forum"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Forum</div><div class="sub-desc">论坛</div><div class="card">待开发</div></div></div>
 <div class="page" id="page-memo"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Memo</div><div class="sub-desc">备忘录</div><div class="card">待开发</div></div></div>
 <div class="page" id="page-music"><div class="header-sub"><div class="header-sub-menu" onclick="openSidebar()"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M2 2h18" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 8h14" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M2 14h10" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg></div></div><div class="sub-page"><div class="sub-title">Music</div><div class="sub-desc">一起听</div><div class="card">待开发</div></div></div>
