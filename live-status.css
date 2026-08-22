@@ -272,3 +272,176 @@
 .mailbox-screen>div:last-child{display:grid;gap:18px!important}
 .mailbox-screen>div:last-child .mail-entry{margin:0!important}
 .mail-detail-meta{gap:7px!important}
+
+
+/* State · editorial monochrome + blush accent */
+.state-page{
+  --ink:#111111!important;
+  --muted:#8c8a90!important;
+  --line:#e8e7ea!important;
+  --paper:#ffffff!important;
+  --pink:#e6a8b9!important;
+  background:#ffffff!important;
+  color:#111111!important;
+}
+.state-page .state-nav{
+  min-height:calc(58px + env(safe-area-inset-top,0px))!important;
+  padding:env(safe-area-inset-top,0px) 20px 0!important;
+  background:#ffffff!important;
+  border-bottom:1px solid #eeeeef!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+.state-page .state-menu-button{
+  width:38px!important;height:38px!important;
+  color:#111111!important;
+}
+.state-page .state-menu-button:active{background:#f2f2f3!important}
+.state-page .state-nav-title{
+  color:#111111!important;
+  font-size:17px!important;
+  font-weight:500!important;
+  letter-spacing:2px!important;
+}
+.state-page .state-content{
+  max-width:760px!important;
+  padding:24px 22px 44px!important;
+  background:#ffffff!important;
+}
+.state-page .state-bars-top{
+  align-items:flex-end!important;
+  padding:0 0 16px!important;
+}
+.state-page .state-kicker{
+  color:#9a979e!important;
+  font-size:10px!important;
+  letter-spacing:2px!important;
+}
+.state-page .state-bars-top h1{
+  color:#111111!important;
+  font-size:28px!important;
+  font-weight:600!important;
+  letter-spacing:-.5px!important;
+}
+.state-page .state-sync{
+  color:#8c8a90!important;
+  font-size:11px!important;
+}
+.state-page .state-live-dot{
+  width:8px!important;height:8px!important;
+  background:#e6a8b9!important;
+  box-shadow:0 0 0 5px rgba(230,168,185,.18)!important;
+}
+.state-page .state-tabs{
+  margin:0 0 24px!important;
+  padding:12px 0 0!important;
+  border-top:1px solid #e8e7ea!important;
+  border-bottom:1px solid #e8e7ea!important;
+}
+.state-page .state-tab{
+  padding:0 2px 12px!important;
+  color:#8c8a90!important;
+  font-size:13px!important;
+  font-weight:500!important;
+}
+.state-page .state-tab.active{
+  color:#111111!important;
+}
+.state-page .state-tab.active:after{
+  display:block!important;
+  height:2px!important;
+  bottom:-1px!important;
+  background:#e6a8b9!important;
+}
+.state-page .state-report{
+  padding:0!important;
+  background:transparent!important;
+}
+.state-page .state-report .state-bars-top{
+  border:0!important;
+}
+.state-page .state-bars-caption{
+  padding:0 0 8px!important;
+  color:#a19ea5!important;
+  font-size:10px!important;
+  letter-spacing:1.8px!important;
+}
+.state-page .state-bar-row{
+  min-height:38px!important;
+  grid-template-columns:minmax(118px,1.05fr) minmax(80px,2.5fr) 40px!important;
+  gap:12px!important;
+}
+.state-page .state-cn{
+  color:#111111!important;
+  font-size:15px!important;
+  font-weight:600!important;
+}
+.state-page .state-en{
+  color:#99969d!important;
+  font-size:10px!important;
+}
+.state-page .state-track{
+  height:6px!important;
+  border-radius:999px!important;
+  background:#ededee!important;
+}
+.state-page .state-track i{
+  background:#e6a8b9!important;
+  border-radius:999px!important;
+}
+.state-page .state-bar-row b{
+  color:#77737b!important;
+  font-size:11px!important;
+  font-weight:500!important;
+}
+.state-page .state-note-cards{
+  gap:16px!important;
+  margin-top:28px!important;
+}
+.state-page .state-note-card{
+  min-height:122px!important;
+  padding:16px 17px!important;
+  border:1px solid #dedde1!important;
+  border-radius:18px!important;
+  background:#ffffff!important;
+  color:#111111!important;
+}
+.state-page .state-note-card:before{
+  top:18px!important;bottom:18px!important;width:3px!important;
+  background:#bdbac1!important;
+}
+.state-page .state-note-card:nth-child(2):before{
+  background:#e6a8b9!important;
+}
+.state-page .state-note-icon{
+  color:#111111!important;
+  border-color:#c9c7cc!important;
+  background:#ffffff!important;
+}
+.state-page .state-note-icon-pink{
+  color:#d894a8!important;
+  border-color:#e6a8b9!important;
+}
+.state-page .state-note-title{color:#111111!important;font-size:16px!important}
+.state-page .state-note-card small{color:#8c8a90!important;font-size:10px!important}
+.state-page .state-note-card b{color:#77737b!important}
+.state-page .memo-card,.state-page .todo-card{
+  border:1px solid #dedde1!important;
+  border-radius:18px!important;
+  background:#ffffff!important;
+}
+.state-page .memo-eyebrow{color:#9a979e!important}
+.state-page .memo-dot{background:#e6a8b9!important}
+.state-page .todo-history-btn{color:#d894a8!important}
+@media(max-width:600px){
+  .state-page .state-nav{padding-left:14px!important;padding-right:14px!important}
+  .state-page .state-content{padding:20px 16px 36px!important}
+  .state-page .state-bars-top h1{font-size:25px!important}
+  .state-page .state-tabs{margin-bottom:20px!important}
+  .state-page .state-bar-row{grid-template-columns:minmax(104px,1.1fr) minmax(60px,2fr) 34px!important;gap:8px!important;min-height:34px!important}
+  .state-page .state-cn{font-size:13px!important}
+  .state-page .state-en{font-size:9px!important}
+  .state-page .state-track{height:5px!important}
+  .state-page .state-note-cards{gap:12px!important;margin-top:22px!important}
+  .state-page .state-note-card{min-height:108px!important;padding:14px 14px!important}
+}
