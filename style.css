@@ -1280,3 +1280,6 @@ body{background:var(--milk) url('https://i.ibb.co/ccLtT9Yn/IMG-8768.jpg') center
 .bottom-nav{background:rgba(255,255,255,.20)!important;border:1px solid rgba(255,255,255,.68)!important;backdrop-filter:blur(24px) saturate(1.25)!important;-webkit-backdrop-filter:blur(24px) saturate(1.25)!important;box-shadow:0 10px 28px rgba(70,58,58,.14),inset 0 1px 0 rgba(255,255,255,.78)!important}
 .bottom-nav-item.active{background:transparent!important;color:#F0D5DC!important;box-shadow:none!important}
 .bottom-nav-item.active svg{stroke:#F0D5DC!important}
+/* Stronger milky glass separation for the floating capsule */
+.bottom-nav{background:rgba(255,255,255,.52)!important;backdrop-filter:blur(30px) saturate(1.15)!important;-webkit-backdrop-filter:blur(30px) saturate(1.15)!important;border:1px solid rgba(255,255,255,.86)!important;box-shadow:0 12px 30px rgba(74,62,62,.20),inset 0 1px 0 rgba(255,255,255,.92)!important;isolation:isolate!important}
+.bottom-nav-item.active{background:transparent!important;box-shadow:none!important}
