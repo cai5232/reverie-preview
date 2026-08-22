@@ -843,3 +843,22 @@
   .moments-cover{height:286px!important}
   .moments-cover:after{height:104px}
 }
+
+
+/* Moments · safe-area alignment */
+.moments-topbar{
+  height:calc(58px + env(safe-area-inset-top,0px))!important;
+  padding-top:env(safe-area-inset-top,0px)!important;
+  box-sizing:border-box!important;
+}
+.moments-cover{
+  height:calc(330px + env(safe-area-inset-top,0px))!important;
+}
+@media(max-width:600px){
+  .moments-topbar{
+    height:calc(54px + env(safe-area-inset-top,0px))!important;
+  }
+  .moments-cover{
+    height:calc(286px + env(safe-area-inset-top,0px))!important;
+  }
+}
