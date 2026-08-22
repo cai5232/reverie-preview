@@ -4470,7 +4470,7 @@ function extractMomentMarkersFromChat(){
   chatHistory=chatHistory.map(m=>{
     if(m.role!=='assistant'||!re.test(m.content||'')){re.lastIndex=0;return m}
     re.lastIndex=0;
-    let match;while((match=re.exec(m.content||'')){if(match[1].trim())storeAIMoment(match[1].trim())}
+    let match;while((match=re.exec(m.content||''))){if(match[1].trim())storeAIMoment(match[1].trim())}
     const cleaned=m.content.replace(re,'').trim();re.lastIndex=0;changed=true;
     return {...m,content:cleaned}
   });
@@ -4478,7 +4478,7 @@ function extractMomentMarkersFromChat(){
   document.querySelectorAll('#messages .bubble').forEach(el=>{
     const raw=el.textContent||'';re.lastIndex=0;
     if(!re.test(raw)){re.lastIndex=0;return}
-    re.lastIndex=0;let match;while((match=re.exec(raw)){if(match[1].trim())storeAIMoment(match[1].trim())}
+    re.lastIndex=0;let match;while((match=re.exec(raw))){if(match[1].trim())storeAIMoment(match[1].trim())}
     el.textContent=raw.replace(re,'').trim();re.lastIndex=0;
   });
 }
