@@ -1257,3 +1257,6 @@ body{background:var(--milk) url('https://i.ibb.co/ccLtT9Yn/IMG-8768.jpg') center
 .bottom-nav{position:relative!important;z-index:100!important;display:flex!important;background:rgba(255,252,249,.86)!important;box-shadow:0 8px 22px rgba(113,77,76,.10)!important}
 #page-xiaoke .xk-stream{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))!important}
 #page-xiaoke .xk-bar{position:relative!important;z-index:90!important}
+/* Chat content flows behind the translucent composer, like a native messenger */
+#page-xiaoke .xk-bar{position:absolute!important;left:0!important;right:0!important;bottom:0!important;z-index:120!important;background:rgba(255,252,249,.78)!important;backdrop-filter:blur(18px)!important;-webkit-backdrop-filter:blur(18px)!important}
+#page-xiaoke .xk-stream{padding-bottom:0!important}
