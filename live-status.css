@@ -889,3 +889,39 @@
   padding:2px 7px!important;
   font-size:10px!important;
 }
+
+
+/* Moments · compact cover and neutral fade */
+.moments-page{
+  --mom-white:#F1F1F1!important;
+  --mom-gray:#8F8D90!important;
+  --mom-pink:#F0D5DC!important;
+  --mom-blush:#FDE6EC!important;
+  background:#F1F1F1!important;
+}
+.moments-scroll{background:#F1F1F1!important}
+.moments-topbar{
+  background:linear-gradient(180deg,rgba(20,20,20,.18),rgba(20,20,20,0))!important;
+}
+.moments-cover{
+  height:242px!important;
+  background:#F1F1F1!important;
+}
+.moments-cover:after{
+  height:96px!important;
+  background:linear-gradient(180deg,rgba(241,241,241,0),#F1F1F1 94%)!important;
+}
+.moments-feed{
+  background:#F1F1F1!important;
+  padding-top:30px!important;
+}
+.moment-post{border-bottom-color:rgba(143,141,144,.2)!important}
+.moment-main h2,.moment-main p,.moment-meta{color:#8F8D90!important}
+.moment-meta button{background:#FDE6EC!important;color:#8F747C!important}
+@media(max-width:600px){
+  .moments-cover{
+    height:214px!important;
+  }
+  .moments-cover:after{height:82px!important}
+  .moments-feed{padding-top:26px!important}
+}
