@@ -560,3 +560,66 @@
   background:var(--state-pink)!important;
 }
 .state-page .todo-history-btn{color:var(--state-ink)!important}
+
+
+/* State · Milk Foam palette */
+.state-page{
+  --milk-foam:#FAF6F1!important;
+  --vanilla-linen:#F2E6D8!important;
+  --strawberry-milk:#F6C7CF!important;
+  --soft-peach:#F7D8CC!important;
+  --blanched-almond:#EADED6!important;
+  --milk-ink:#4D403C!important;
+  background:var(--milk-foam)!important;
+  color:var(--milk-ink)!important;
+}
+.state-page .state-nav{
+  background:rgba(250,246,241,.95)!important;
+  border-bottom-color:var(--blanched-almond)!important;
+}
+.state-page .state-content,
+.state-page .state-report{background:var(--milk-foam)!important}
+.state-page .state-menu-button,
+.state-page .state-nav-title,
+.state-page .state-bars-top h1,
+.state-page .state-cn,
+.state-page .state-note-title{color:var(--milk-ink)!important}
+.state-page .state-kicker,
+.state-page .state-bars-caption,
+.state-page .state-en,
+.state-page .state-sync,
+.state-page .state-note-card small,
+.state-page .state-bar-row b{color:#96847d!important}
+.state-page .state-tabs{
+  border-top-color:var(--blanched-almond)!important;
+  border-bottom-color:var(--blanched-almond)!important;
+}
+.state-page .state-tab{color:#96847d!important}
+.state-page .state-tab.active{color:var(--milk-ink)!important}
+.state-page .state-tab.active:after{background:var(--strawberry-milk)!important}
+.state-page .state-live-dot{
+  background:var(--strawberry-milk)!important;
+  box-shadow:0 0 0 5px rgba(246,199,207,.38)!important;
+}
+.state-page .state-track{background:var(--blanched-almond)!important}
+.state-page .state-track i{background:var(--strawberry-milk)!important}
+.state-page .state-note-card,
+.state-page .memo-card,
+.state-page .todo-card{
+  background:rgba(242,230,216,.52)!important;
+  border-color:var(--blanched-almond)!important;
+}
+.state-page .state-note-card:before{background:var(--blanched-almond)!important}
+.state-page .state-note-card:nth-child(2):before{background:var(--strawberry-milk)!important}
+.state-page .state-note-icon{border-color:var(--blanched-almond)!important;color:#806e67!important}
+.state-page .state-note-icon-pink{border-color:var(--strawberry-milk)!important;color:#806e67!important}
+.state-page .todo-check{
+  border-color:var(--blanched-almond)!important;
+  background:var(--milk-foam)!important;
+}
+.state-page .todo-check:active,
+.state-page .todo-check.is-done{
+  border-color:var(--strawberry-milk)!important;
+  background:var(--strawberry-milk)!important;
+}
+.state-page .todo-history-btn{color:#806e67!important}
