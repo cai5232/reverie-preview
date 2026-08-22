@@ -3123,7 +3123,7 @@ async function xkAgenticLoop(sendOptions, mcpServerMap, round, memCtx){
     let mm;while((mm=momentRe.exec(bodyBuf))){if(mm[1].trim())storeAIMoment(mm[1].trim())}
     momentRe.lastIndex=0;cleanBody=bodyBuf.replace(momentRe,'').trim()
     // xiaoke 主聊天链路也必须保存清理后的正文
-    const histContent=thinkBuf?\`[THINK]\${thinkBuf}[/THINK]\${cleanBody}\`:cleanBody
+    const histContent=thinkBuf?`[THINK]${thinkBuf}[/THINK]${cleanBody}`:cleanBody
     xkHistory.push({role:'assistant',content:histContent,tokens:totalTokens||0})
     if(xkHistory.length>60)xkHistory=xkHistory.slice(-60)
     localStorage.setItem('xk_history',JSON.stringify(xkHistory))
