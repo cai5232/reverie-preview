@@ -566,7 +566,7 @@ async function callAI(){
     }
     lastAssistantRow=placeholderRow
     // 用最终正文替换 textNode，换行转多气泡
-    const rawBody=bodyBuf.trim();const momentMatches=[...rawBody.matchAll(/(?:<moment>|\[MOMENT\])([\s\S]*?)(?:<\/moment>|\[\\/MOMENT\])/gi)];momentMatches.forEach(m=>storeAIMoment(m[1].trim()));const finalBody=rawBody.replace(/(?:<moment>|\[MOMENT\])[\s\S]*?(?:<\/moment>|\[\\/MOMENT\])/gi,'').trim()
+    const rawBody=bodyBuf.trim();const momentMatches=[...rawBody.matchAll(/(?:<moment>|\[MOMENT\])([\s\S]*?)(?:<\/moment>|\[\/MOMENT\])/gi)];momentMatches.forEach(m=>storeAIMoment(m[1].trim()));const finalBody=rawBody.replace(/(?:<moment>|\[MOMENT\])[\s\S]*?(?:<\/moment>|\[\/MOMENT\])/gi,'').trim()
     if(!finalBody){placeholderBubble.innerHTML='(´・ω・`)';isGenerating=false;return}
     // 分段拆成多个气泡
     let segs=finalBody.split(/\n\n/).map(s=>s.trim()).filter(Boolean)
