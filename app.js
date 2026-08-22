@@ -4450,6 +4450,8 @@ function momentsStore(){try{return JSON.parse(localStorage.getItem('reverie_mome
 function saveMomentsStore(items){localStorage.setItem('reverie_moments_posts',JSON.stringify(items))}
 function deletedMoments(){try{return JSON.parse(localStorage.getItem('reverie_moments_deleted')||'[]')}catch(e){return[]}}
 function saveDeletedMoments(items){localStorage.setItem('reverie_moments_deleted',JSON.stringify(items))}
+function deletedMomentTexts(){try{return JSON.parse(localStorage.getItem('reverie_moments_deleted_texts')||'[]')}catch(e){return[]}}
+function saveDeletedMomentTexts(items){localStorage.setItem('reverie_moments_deleted_texts',JSON.stringify(items))}
 function momentsComments(id){try{return JSON.parse(localStorage.getItem('reverie_moment_comments_'+id)||'[]')}catch(e){return[]}}
 function saveMomentsComments(id,items){localStorage.setItem('reverie_moment_comments_'+id,JSON.stringify(items))}
 function ensureMomentActions(post){
@@ -4473,7 +4475,7 @@ function renderStoredMomentComment(post,item){
 }
 function deleteMomentWithConfirm(post){
   if(!confirm('确定删除这条动态吗？'))return;
-  const id=post.dataset.id;saveMomentsStore(momentsStore().filter(x=>x.id!==id));const gone=deletedMoments();if(!gone.includes(id)){gone.push(id);saveDeletedMoments(gone)}localStorage.removeItem('reverie_moment_comments_'+id);post.remove();
+  const id=post.dataset.id;const deletedText=(post.querySelector('.moment-body')?.textContent||'').trim();saveMomentsStore(momentsStore().filter(x=>x.id!==id));const deadTexts=deletedMomentTexts();if(deletedText&&!deadTexts.includes(deletedText)){deadTexts.push(deletedText);saveDeletedMomentTexts(deadTexts)}const gone=deletedMoments();if(!gone.includes(id)){gone.push(id);saveDeletedMoments(gone)}localStorage.removeItem('reverie_moment_comments_'+id);post.remove();
 }
 function loadStoredMoments(){
   const feed=document.querySelector('#page-moments .moments-feed');if(!feed)return;
@@ -4697,7 +4699,7 @@ window.publishAIMoment=publishAIMoment;
 
 
 function storeAIMoment(text,images=[]){
-  const body=String(text||'').trim();if(!body)return null;
+  const body=String(text||'').trim();if(!body)return null;if(deletedMomentTexts().includes(body))return null;
   const item={id:'post-'+Date.now()+'-'+Math.random().toString(36).slice(2,6),author:'Shenyu',text:body,images:Array.isArray(images)?images:[],createdAt:new Date().toISOString()};
   const list=momentsStore();
   // 历史聊天重新渲染时避免同一条 AI 动态重复写入朋友圈
