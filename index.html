@@ -99,7 +99,7 @@ function navTo(name){
 }
 </style>
 <link rel="stylesheet" href="style.css?v=143">
-<link rel="stylesheet" href="live-status.css?v=35">
+<link rel="stylesheet" href="live-status.css?v=36">
 </head>
 <body>
 
@@ -282,6 +282,12 @@ function navTo(name){
       <div class="setting-row"><span class="setting-label">获取模型</span><button class="setting-fetch-btn" id="fetchImgModelsBtn" onclick="fetchImgModels()">获取模型</button></div>
       <div class="setting-row" style="flex-direction:column;align-items:flex-start;gap:6px"><span class="setting-label">正向提示词</span><textarea class="setting-input" id="cfgPosProm" placeholder="输入正向提示词" style="text-align:left;border:.5px solid #f0f0f0;border-radius:8px;padding:6px;width:100%;resize:none;height:60px;font-size:13px"></textarea></div>
       <div class="setting-row" style="flex-direction:column;align-items:flex-start;gap:6px"><span class="setting-label">负向提示词</span><textarea class="setting-input" id="cfgNegProm" placeholder="输入负向提示词" style="text-align:left;border:.5px solid #f0f0f0;border-radius:8px;padding:6px;width:100%;resize:none;height:60px;font-size:13px"></textarea></div>
+    </div></div>
+    <div class="setting-group"><div class="setting-group-label">识图 API</div><div class="setting-card">
+      <div class="setting-row"><span class="setting-label">接口地址</span><input class="setting-input" id="cfgVisionApi" placeholder="兼容 OpenAI Vision 的接口地址"></div>
+      <div class="setting-row"><span class="setting-label">API 密钥</span><input class="setting-input secret" id="cfgVisionKey" placeholder="留空则使用聊天 Key"></div>
+      <div class="setting-row"><span class="setting-label">模型</span><input class="setting-input" id="cfgVisionModel" placeholder="如 gpt-4o-mini"></div>
+      <div class="setting-hint">用于朋友圈图片“内容”识别，未配置时仍可查看原图。</div>
     </div></div>
     <div class="setting-group"><div class="setting-group-label">系统</div><div class="setting-card">
       <div class="setting-row"><span class="setting-label">消息通知</span><div class="toggle" id="cfgNotify" onclick="clickToggle('cfgNotify')"><div class="toggle-knob"></div></div></div>
