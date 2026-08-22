@@ -1012,3 +1012,14 @@
 .moment-viewer-image{max-width:100%;max-height:78vh;object-fit:contain}.moment-viewer-content{max-width:86%;color:#fff;font-size:15px;line-height:1.7;text-align:center}
 
 .moments-composer-screen[hidden]{display:none!important}
+
+/* Moments · compact author/date and threaded comment affordance */
+.moment-line{justify-content:flex-start!important;gap:6px!important}
+.moment-line time{margin-left:auto!important}
+.moment-date{margin-left:2px!important;font-size:7px!important}
+.moment-avatar{width:30px!important;height:30px!important;margin-top:3px!important}
+.moment-post{gap:9px!important}
+.moment-comment{margin-top:6px!important}
+.moment-reply-editor{gap:5px!important}
+.moment-reply-target{font-size:10px!important;color:#8F8D90!important;white-space:nowrap}
+.moment-reply{cursor:pointer!important}
