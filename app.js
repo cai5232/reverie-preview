@@ -2897,7 +2897,8 @@ async function xkAgenticLoop(sendOptions, mcpServerMap, round, memCtx){
         return m
       })
     }
-    const systemPrompt = SYSTEM_PROMPT + (memCtx ? '\n\n【相关记忆（来自OB）】\n'+memCtx : '')
+    const momentCtx=buildMomentsContext();
+    const systemPrompt = SYSTEM_PROMPT + (memCtx ? '\n\n【相关记忆（来自OB）】\n'+memCtx : '') + (momentCtx ? '\n\n【朋友圈上下文】\n'+momentCtx : '')
     const body = {
       model: cfg.model,
       messages: [{role:'system',content:systemPrompt},...stripBase64FromHistory(xkHistory)],
@@ -4448,6 +4449,24 @@ window.openMomentReplyFromComment=openMomentReplyFromComment;window.sendMomentRe
 /* Moments · persistence, post container and actions */
 function momentsStore(){try{return JSON.parse(localStorage.getItem('reverie_moments_posts')||'[]')}catch(e){return[]}}
 function saveMomentsStore(items){localStorage.setItem('reverie_moments_posts',JSON.stringify(items))}
+function buildMomentsContext(){
+  try{
+    const gone=new Set(deletedMoments());
+    const posts=momentsStore().filter(p=>p&&!gone.has(p.id)).slice(0,30);
+    if(!posts.length)return '';
+    const lines=['以下是当前朋友圈的可见内容（这是应用状态，不是聊天历史）：'];
+    posts.forEach(p=>{
+      const author=p.author||'Koi';
+      const date=p.createdAt?new Date(p.createdAt).toISOString().slice(0,10):'';
+      lines.push('动态 '+author+(date?' '+date:'')+'：'+String(p.text||'').trim());
+      momentsComments(p.id).slice(-20).forEach(cm=>{
+        const who=cm.author||'Koi';
+        lines.push('评论 '+(cm.replyTo?who+'回复'+cm.replyTo:who)+'：'+String(cm.text||'').trim());
+      });
+    });
+    return lines.join('\\n').slice(0,12000);
+  }catch(e){return ''}
+}
 function deletedMoments(){try{return JSON.parse(localStorage.getItem('reverie_moments_deleted')||'[]')}catch(e){return[]}}
 function saveDeletedMoments(items){localStorage.setItem('reverie_moments_deleted',JSON.stringify(items))}
 function deletedMomentTexts(){try{return JSON.parse(localStorage.getItem('reverie_moments_deleted_texts')||'[]')}catch(e){return[]}}
