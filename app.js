@@ -661,6 +661,9 @@ function renderSetting(){
   })
   document.getElementById('cfgImgApi').value=localStorage.getItem('cfg_img_api')||''
   document.getElementById('cfgImgKey').value=localStorage.getItem('cfg_img_key')||''
+  if(document.getElementById('cfgVisionApi')) document.getElementById('cfgVisionApi').value=localStorage.getItem('cfg_vision_api')||''
+  if(document.getElementById('cfgVisionKey')) document.getElementById('cfgVisionKey').value=localStorage.getItem('cfg_vision_key')||''
+  if(document.getElementById('cfgVisionModel')) document.getElementById('cfgVisionModel').value=localStorage.getItem('cfg_vision_model')||''
   document.getElementById('cfgPosProm').value=localStorage.getItem('cfg_pos_prom')||''
   document.getElementById('cfgNegProm').value=localStorage.getItem('cfg_neg_prom')||''
   // 生成文章专属API
@@ -808,6 +811,9 @@ function saveCfg(){
   localStorage.setItem('cfg_keepalive',cfg.keepalive)
   localStorage.setItem('cfg_img_api',document.getElementById('cfgImgApi').value.trim())
   localStorage.setItem('cfg_img_key',document.getElementById('cfgImgKey').value.trim())
+  localStorage.setItem('cfg_vision_api',document.getElementById('cfgVisionApi')?.value.trim()||'')
+  localStorage.setItem('cfg_vision_key',document.getElementById('cfgVisionKey')?.value.trim()||'')
+  localStorage.setItem('cfg_vision_model',document.getElementById('cfgVisionModel')?.value.trim()||'')
   localStorage.setItem('cfg_pos_prom',document.getElementById('cfgPosProm').value.trim())
   localStorage.setItem('cfg_neg_prom',document.getElementById('cfgNegProm').value.trim())
   // 生成文章专属API
@@ -4308,3 +4314,55 @@ async function syncMailboxKind(kind,base,key){
     renderMailboxItems(kind); renderMailboxItems('recent')
   }catch(e){}
 }
+
+
+/* Moments interactions */
+function openMomentReply(button){
+  const main=button && button.closest('.moment-main')
+  if(!main) return
+  let box=main.querySelector('.moment-reply-editor')
+  if(!box){
+    box=document.createElement('div')
+    box.className='moment-reply-editor'
+    box.innerHTML='<input type="text" placeholder="回复这条动态…" maxlength="200"><button type="button">发送</button>'
+    box.querySelector('button').onclick=function(){sendMomentReply(this)}
+    main.appendChild(box)
+  }
+  const input=box.querySelector('input'); box.hidden=false; input.focus()
+}
+function sendMomentReply(button){
+  const box=button && button.closest('.moment-reply-editor'), input=box&&box.querySelector('input')
+  const text=input&&input.value.trim()
+  if(!text) return
+  const main=box.closest('.moment-main')
+  const reply=document.createElement('div'); reply.className='moment-cai moment-reply'; reply.textContent='回复：'+text
+  main.appendChild(reply); box.remove()
+}
+function openMomentComposer(){
+  const s=document.getElementById('momentsComposer'); if(!s)return
+  s.hidden=false
+  const t=document.getElementById('momentComposeText'); if(t){t.value='';setTimeout(()=>t.focus(),80)}
+  const g=document.getElementById('momentImageGrid'); if(g) g.querySelectorAll('.moment-image-thumb').forEach(x=>x.remove())
+}
+function closeMomentComposer(){const s=document.getElementById('momentsComposer');if(s)s.hidden=true}
+function previewMomentImages(event){
+  const grid=document.getElementById('momentImageGrid'); if(!grid)return
+  Array.from(event.target.files||[]).forEach(file=>{
+    const reader=new FileReader()
+    reader.onload=()=>{const img=document.createElement('img');img.className='moment-image-thumb';img.src=reader.result;img.onclick=()=>openMomentImage(reader.result);grid.insertBefore(img,grid.firstChild)}
+    reader.readAsDataURL(file)
+  })
+}
+function openMomentImage(src){
+  let overlay=document.getElementById('momentImageViewer')
+  if(!overlay){overlay=document.createElement('div');overlay.id='momentImageViewer';overlay.className='moment-image-viewer';overlay.innerHTML='<button class="moment-viewer-close" onclick="this.parentElement.remove()">×</button><div class="moment-viewer-tabs"><button class="active" data-view="original">原图</button><button data-view="content">内容</button></div><img class="moment-viewer-image"><p class="moment-viewer-content" hidden>识图结果将在配置识图 API 后显示。</p>';document.body.appendChild(overlay);overlay.querySelectorAll('.moment-viewer-tabs button').forEach(btn=>btn.onclick=function(){overlay.querySelectorAll('.moment-viewer-tabs button').forEach(b=>b.classList.remove('active'));this.classList.add('active');const isContent=this.dataset.view==='content';overlay.querySelector('.moment-viewer-image').hidden=isContent;overlay.querySelector('.moment-viewer-content').hidden=!isContent})}
+  overlay.querySelector('.moment-viewer-image').src=src;overlay.style.display='flex'
+}
+function publishMoment(){
+  const text=(document.getElementById('momentComposeText')?.value||'').trim(); if(!text){showToast('请先写点内容');return}
+  const feed=document.querySelector('#page-moments .moments-feed'); if(!feed)return
+  const post=document.createElement('article');post.className='moment-post'
+  post.innerHTML='<img class="moment-avatar" src="https://i.ibb.co/Q7Lcr1yw/IMG-6805.jpg" alt=""><div class="moment-main"><div class="moment-line"><h2>Koi</h2><span class="moment-date">'+new Date().toLocaleDateString('zh-CN')+'</span><time>刚刚</time></div><p class="moment-body"></p><button class="moment-comment" type="button" aria-label="回复" onclick="openMomentReply(this)"><svg viewBox="0 0 24 24"><path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.4 8.4 0 0 1-3.5-.8L4 19.5l1.4-3.8A7.4 7.4 0 0 1 4.5 12 7.5 7.5 0 1 1 20 11.5Z"/></svg></button></div>'
+  post.querySelector('.moment-body').textContent=text;feed.prepend(post);closeMomentComposer();showToast('已发布')
+}
+window.openMomentComposer=openMomentComposer;window.closeMomentComposer=closeMomentComposer;window.previewMomentImages=previewMomentImages;window.openMomentImage=openMomentImage;window.publishMoment=publishMoment;window.openMomentReply=openMomentReply;window.sendMomentReply=sendMomentReply
