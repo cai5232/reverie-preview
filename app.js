@@ -4605,11 +4605,7 @@ setTimeout(()=>loadStoredMoments(),50);
 
 /* Moments · provider-neutral OpenAI-compatible API */
 function momentsApiConfig(){
-  return {
-    api:(localStorage.getItem('cfg_moments_api')||'').trim(),
-    key:(localStorage.getItem('cfg_moments_key')||'').trim(),
-    model:(localStorage.getItem('cfg_moments_model')||'').trim()
-  };
+  return {api:cfg.api,key:cfg.key,model:cfg.model};
 }
 async function requestMomentsAI(prompt){
   const cfgM=momentsApiConfig();
@@ -4639,16 +4635,4 @@ async function publishAIMoment(prompt,images=[]){
 }
 window.requestMomentsAI=requestMomentsAI;
 window.publishAIMoment=publishAIMoment;
-const _saveCfgMomentsBase=saveCfg;
-saveCfg=function(){
-  _saveCfgMomentsBase();
-  localStorage.setItem('cfg_moments_api',document.getElementById('cfgMomentsApi')?.value.trim()||'');
-  localStorage.setItem('cfg_moments_key',document.getElementById('cfgMomentsKey')?.value.trim()||'');
-  localStorage.setItem('cfg_moments_model',document.getElementById('cfgMomentsModel')?.value.trim()||'');
-};
-setTimeout(()=>{
-  const mapi=document.getElementById('cfgMomentsApi'),mkey=document.getElementById('cfgMomentsKey'),mmodel=document.getElementById('cfgMomentsModel');
-  if(mapi)mapi.value=localStorage.getItem('cfg_moments_api')||'';
-  if(mkey)mkey.value=localStorage.getItem('cfg_moments_key')||'';
-  if(mmodel)mmodel.value=localStorage.getItem('cfg_moments_model')||'';
-},0);
+
