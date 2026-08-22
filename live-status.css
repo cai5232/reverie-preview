@@ -682,3 +682,71 @@
   background:var(--pearl-pink)!important;
 }
 .state-page .todo-history-btn{color:var(--pearl-gray)!important}
+
+
+/* Mailbox · Pearl Ribbon palette */
+.mailbox-page,
+.mailbox-screen{
+  --pearl-pink:#F0D5DC!important;
+  --pearl-white:#F9F7FA!important;
+  --pearl-gray:#B0AFB1!important;
+  --pearl-blush:#FDE6EC!important;
+  background:var(--pearl-white)!important;
+  color:var(--pearl-gray)!important;
+}
+.mailbox-header,
+.mailbox-screen-head,
+.mailbox-refresh,
+.mail-detail-toolbar,
+.mail-detail-meta{
+  background:var(--pearl-white)!important;
+  color:var(--pearl-gray)!important;
+  border-color:rgba(176,175,177,.25)!important;
+}
+.mailbox-content h1,
+.mailbox-card-title,
+.mailbox-inline-head,
+.mail-entry-head,
+.mail-detail h1{
+  color:var(--pearl-gray)!important;
+}
+.mailbox-kicker,
+.mailbox-desc,
+.mailbox-card small,
+.mail-entry p,
+.mail-entry-footer,
+.mail-entry-head time,
+.mail-entry-meta,
+.mail-detail-meta b,
+.mail-detail-meta span{
+  color:var(--pearl-gray)!important;
+  opacity:.82;
+}
+.mailbox-card,
+.mail-entry{
+  background:rgba(249,247,250,.76)!important;
+  border-color:rgba(176,175,177,.38)!important;
+  box-shadow:none!important;
+}
+.mailbox-card:before{
+  background:rgba(176,175,177,.5)!important;
+}
+.mailbox-card:nth-child(2):before{
+  background:var(--pearl-pink)!important;
+}
+.mailbox-icon,
+.mailbox-icon-pink{
+  border-color:rgba(176,175,177,.5)!important;
+  color:var(--pearl-gray)!important;
+}
+.mailbox-card:active,
+.mail-entry:active,
+.mailbox-refresh:active{
+  background:var(--pearl-blush)!important;
+}
+.mail-detail-body{
+  color:var(--pearl-gray)!important;
+}
+.mail-detail-toolbar button{
+  color:var(--pearl-gray)!important;
+}
