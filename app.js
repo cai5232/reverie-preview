@@ -144,23 +144,27 @@ function maybeInsertTimeLabel(box){
 
 // 页面导航
 function navTo(name){
-  // 关掉所有page
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'))
   cur=name
   const target=document.getElementById('page-'+name)
   if(target)target.classList.add('active')
+  const homePages=['letter','music','novel','game','dream','diary','shop','forum','couple']
+  const activeName=(name==='setting-api'||name==='memory2'||name==='mcp')?'setting':(homePages.includes(name)?'home':name)
+  document.querySelectorAll('.bottom-nav-item').forEach(el=>{
+    el.classList.toggle('active',el.getAttribute('data-nav')===activeName)
+  })
   closeSidebar()
-  if(name==='setting')renderSetting()
-  if(name==='memory2')mem2Load()
-  if(name==='state')loadLiveState()
+  if(name==='setting-api'&&typeof renderSetting==='function')renderSetting()
+  if(name==='memory2'&&typeof mem2Load==='function')mem2Load()
+  if(name==='state'&&typeof loadLiveState==='function')loadLiveState()
 }
 function openSidebar(){
-  document.getElementById('sidebar').classList.add('open')
-  document.getElementById('overlay').classList.add('open')
+  if(typeof navTo==='function')navTo('home')
 }
 function closeSidebar(){
-  document.getElementById('sidebar').classList.remove('open')
-  document.getElementById('overlay').classList.remove('open')
+  const s=document.getElementById('sidebar'),o=document.getElementById('overlay')
+  if(s)s.classList.remove('open')
+  if(o)o.classList.remove('open')
 }
 
 function openDotsMenu(){document.getElementById('dotsOverlay').classList.add('open')}
