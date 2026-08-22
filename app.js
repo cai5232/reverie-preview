@@ -4644,7 +4644,10 @@ window.publishAIMoment=publishAIMoment;
 function storeAIMoment(text,images=[]){
   const body=String(text||'').trim();if(!body)return null;
   const item={id:'post-'+Date.now()+'-'+Math.random().toString(36).slice(2,6),author:'Shenyu',text:body,images:Array.isArray(images)?images:[],createdAt:new Date().toISOString()};
-  const list=momentsStore();list.unshift(item);saveMomentsStore(list);
+  const list=momentsStore();
+  // 历史聊天重新渲染时避免同一条 AI 动态重复写入朋友圈
+  if(list.some(p=>p.author==='Shenyu'&&p.text===body))return list.find(p=>p.author==='Shenyu'&&p.text===body);
+  list.unshift(item);saveMomentsStore(list);
   const feed=document.querySelector('#page-moments .moments-feed');
   if(feed){const post=buildMomentPost(item);feed.prepend(post);ensureMomentActions(post)}
   return item;
