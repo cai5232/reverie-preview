@@ -1230,3 +1230,11 @@ body{color:var(--ink);background:var(--milk)!important}
 .bottom-nav-item svg{width:19px!important;height:19px!important}
 .bottom-nav-item.active{background:rgba(246,199,207,.28)!important;color:#7D6868!important}
 .bottom-nav-item.active svg{stroke:#F6C7CF!important;stroke-width:2!important}
+
+/* Lower and slimmer navigation */
+.bottom-nav{height:54px!important;flex-basis:54px!important;margin-top:0!important;margin-bottom:2px!important;padding:3px!important;border-radius:28px!important}
+.bottom-nav-item{height:46px!important;border-radius:24px!important;font-size:9px!important}
+.bottom-nav-item svg{width:18px!important;height:18px!important}
+.bottom-nav-item.active{background:rgba(246,199,207,.32)!important;color:#756364!important}
+.bottom-nav-item.active svg{stroke:#F6C7CF!important;fill:none!important}
+#page-xiaoke .xk-bar{margin-bottom:0!important;padding-bottom:0!important}
