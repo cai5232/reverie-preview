@@ -445,3 +445,50 @@
   .state-page .state-note-cards{gap:12px!important;margin-top:22px!important}
   .state-page .state-note-card{min-height:108px!important;padding:14px 14px!important}
 }
+
+
+/* State · scroll and soft blush background correction */
+.page.state-page.active{
+  display:flex!important;
+  flex-direction:column!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  -webkit-overflow-scrolling:touch!important;
+  touch-action:pan-y!important;
+}
+.state-page{
+  background:#fff9fb!important;
+}
+.state-page .state-nav{
+  background:rgba(255,249,251,.94)!important;
+}
+.state-page .state-content{
+  background:#fff9fb!important;
+  min-height:max-content!important;
+  padding-bottom:88px!important;
+}
+.state-page .state-report{
+  min-height:max-content!important;
+  overflow:visible!important;
+}
+.state-page .state-note-cards{
+  padding-bottom:8px!important;
+}
+.state-page .state-note-card{
+  overflow:visible!important;
+}
+.state-page .todo-check{
+  border:1.5px solid #d5d1d8!important;
+  background:#fff9fb!important;
+}
+.state-page .todo-check:active{
+  border-color:#e6a8b9!important;
+  background:#f5dfe6!important;
+}
+.state-page .todo-check.is-done{
+  border-color:#e6a8b9!important;
+  background:#e6a8b9!important;
+}
+@media(max-width:600px){
+  .state-page .state-content{padding-bottom:96px!important}
+}
