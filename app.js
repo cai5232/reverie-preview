@@ -4451,11 +4451,17 @@ function momentsStore(){try{return JSON.parse(localStorage.getItem('reverie_mome
 function saveMomentsStore(items){localStorage.setItem('reverie_moments_posts',JSON.stringify(items))}
 function buildMomentsContext(){
   try{
-    const gone=new Set(deletedMoments());
-    const posts=momentsStore().filter(p=>p&&!gone.has(p.id)).slice(0,30);
-    if(!posts.length)return '';
+    const gone=new Set(deletedMoments()), seen=new Set(), records=[];
+    momentsStore().filter(p=>p&&!gone.has(p.id)).slice(0,30).forEach(p=>{records.push(p);seen.add(p.id)});
+    document.querySelectorAll('#page-moments .moment-post').forEach(post=>{
+      const id=post.dataset.id||'';
+      if(!id||gone.has(id)||seen.has(id))return;
+      records.push({id,author:post.querySelector('.moment-line h2')?.textContent?.trim()||'Koi',text:post.querySelector('.moment-body')?.textContent?.trim()||'',createdAt:''});
+      seen.add(id);
+    });
+    if(!records.length)return '';
     const lines=['以下是当前朋友圈的可见内容（这是应用状态，不是聊天历史）：','你可以直接读取这些动态和评论来回答用户，不要声称看不到；只有输出[MOMENT]...[/MOMENT]才会创建新动态。'];
-    posts.forEach(p=>{
+    records.slice(0,40).forEach(p=>{
       const author=p.author||'Koi';
       const date=p.createdAt?new Date(p.createdAt).toISOString().slice(0,10):'';
       lines.push('动态 '+author+(date?' '+date:'')+'：'+String(p.text||'').trim());
@@ -4499,8 +4505,9 @@ function deleteMomentWithConfirm(post){
 function loadStoredMoments(){
   const feed=document.querySelector('#page-moments .moments-feed');if(!feed)return;
   const gone=new Set(deletedMoments());
-  feed.querySelectorAll('.moment-post').forEach((post,i)=>{if(!post.dataset.id)post.dataset.id='seed-'+i;if(gone.has(post.dataset.id)){post.remove();return}ensureMomentActions(post)});
-  momentsStore().filter(item=>!gone.has(item.id)).forEach(item=>{if(feed.querySelector('[data-id="'+item.id+'"]'))return;const post=buildMomentPost(item);feed.prepend(post);ensureMomentActions(post)})
+  const deadTexts=new Set(deletedMomentTexts());
+  feed.querySelectorAll('.moment-post').forEach((post,i)=>{if(!post.dataset.id)post.dataset.id='seed-'+i;const body=(post.querySelector('.moment-body')?.textContent||'').trim();if(gone.has(post.dataset.id)||deadTexts.has(body)){post.remove();return}ensureMomentActions(post)});
+  momentsStore().filter(item=>!gone.has(item.id)&&!deadTexts.has(String(item.text||'').trim())).forEach(item=>{if(feed.querySelector('[data-id="'+item.id+'"]'))return;const post=buildMomentPost(item);feed.prepend(post);ensureMomentActions(post)})
 }
 function extractMomentMarkersFromChat(){
   const re=/(?:<moment>|\[MOMENT\])([\s\S]*?)(?:<\/moment>|\[\/MOMENT\])/gi;
