@@ -1043,3 +1043,25 @@
 .moment-action-menu button{border:0;background:transparent;color:#555;padding:6px 14px;font-size:12px}
 
 .moment-main{position:relative!important}
+
+/* Moments · only comments use a background block */
+.moment-post{
+  background:transparent!important;
+  border-bottom:1px solid rgba(143,141,144,.18)!important;
+  border-radius:0!important;
+  padding:0 0 20px!important;
+  margin:0 0 20px!important;
+}
+.moment-comments{
+  background:transparent!important;
+  border-radius:0!important;
+}
+.moment-cai.moment-reply{
+  background:#f1f1f1!important;
+  border-radius:10px!important;
+}
+#momentComposeText{
+  font-size:16px!important;
+  line-height:1.7!important;
+  min-height:190px!important;
+}
